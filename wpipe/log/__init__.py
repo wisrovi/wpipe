@@ -1,0 +1,1 @@
+from .log import new_logger
