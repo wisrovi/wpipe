@@ -33,6 +33,8 @@ pip install .
 ```
 
 Esto instalará las dependencias necesarias y permitirá que puedas importar Pipeline en tu proyecto.
+
+
 ## Configuración
 
 La librería Pipeline puede ser utilizada de dos maneras:
@@ -57,10 +59,10 @@ from wpipe.pipe import Pipeline
 pipeline = Pipeline()
 
 # Definir pasos del pipeline
-def step1(data: dict)):
+def step1(data: dict):
     return {"resultado1": "Paso 1 completado"}
 
-def step2(data: dict)):
+def step2(data: dict):
     return {"resultado2": "Paso 2 completado"}
 
 class Demo:
@@ -735,6 +737,26 @@ Para que la librería funcione correctamente, necesitas las siguientes dependenc
     - loguru: Para gestionar los logs.
     - pandas: Para el manejo de datos en formato tabular.
     - pyyaml: Para la manipulación de archivos en formato YAML.
+
+
+
+
+
+## Contribuyendo
+
+1. Haz un fork del proyecto.
+2. Crea una rama con tu nueva funcionalidad: git checkout -b mi-nueva-funcionalidad.
+3. Haz commit de tus cambios: git commit -m 'Agregar nueva funcionalidad'.
+4. Haz push de la rama: git push origin mi-nueva-funcionalidad.
+5. Crea un Pull Request.
+
+
+
+
+
 ## Licencia
 
 Este proyecto está bajo la licencia MIT, lo que significa que puedes usarlo, modificarlo y distribuirlo libremente, siempre que mantengas la atribución al autor original. Ver el archivo LICENSE para más detalles.
+
+
+[MIT](https://choosealicense.com/licenses/mit/)

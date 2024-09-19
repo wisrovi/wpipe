@@ -1,4 +1,8 @@
+from rich.progress import Progress
+
 from wpipe.api_client.api_client import APIClient
+from wpipe.exception import TaskError, ProcessError, ApiError, Codes
+from wpipe.exception.api_error import TaskError
 
 
 # Definición de la clase
@@ -7,7 +11,9 @@ class Pipeline(APIClient):
     process_id: str = None
     send_to_api: bool = False
     api_config: dict = None
-    tasks_list: list = []  # Inicializa un atributo lista vacío
+    tasks_list: list = []
+
+    SHOW_API_ERRORS = False
 
     def __init__(
         self, worker_id: str = None, api_config: dict = None, verbose: bool = False
@@ -58,50 +64,69 @@ class Pipeline(APIClient):
 
                 return worker_id
 
+    def _api_task_update(self, msg: dict):
+        if self.send_to_api:
+            try:
+                task_updated = self.update_task(msg)
+                if self.verbose:
+                    print(
+                        f"[task] [ERROR] '{self.task_name}': {task_updated}",
+                    )
+            except:
+                print("Problem update task")
+                if self.SHOW_API_ERRORS:
+                    raise ApiError("Problem update task", Codes.UPDATE_TASK)
+
+    def _api_process_update(self, msg: dict, start: bool = False):
+        if self.send_to_api:
+            try:
+                if start:
+                    process_registed = self.register_process(msg)
+
+                    self.tasks_list = [
+                        (rta[0], rta[1], rta[2], son["id"])
+                        for son, rta in zip(process_registed["sons"], self.tasks_list)
+                    ]
+
+                    self.process_id = process_registed["father"]
+
+                    if self.verbose:
+                        print(
+                            "\t",
+                            f"[INFO] [START] pipeline: new process ({self.process_id})",
+                        )
+                else:
+                    status = self.end_process(msg)
+
+                    if not status:
+                        if self.verbose:
+                            print("\t", f"[INFO] [END] pipeline: {status}")
+                        if self.SHOW_API_ERRORS:
+                            raise ApiError("API problem", Codes.UPDATE_PROCESS_OK)
+            except:
+                print("Problem update Process")
+                if self.SHOW_API_ERRORS:
+                    raise ApiError("Problem update Process", Codes.UPDATE_PROCESS_ERROR)
+
     def _decorator_task_report(func):
         """Decorador para reportar la ejecución de cada tarea."""
 
         def wrapper(self, *args, **kwargs):
 
-            if self.send_to_api:
-                task_updated = self.update_task(
-                    {"task_id": self.task_id, "status": "start"}
-                )
-                if self.verbose:
-                    print(
-                        "\t" * 2,
-                        f"[INFO] [START] task '{self.task_name}': {task_updated}",
-                    )
+            self._api_task_update({"task_id": self.task_id, "status": "start"})
 
             resultado = {}
             try:
                 resultado = func(self, *args, **kwargs)
-
-                if self.send_to_api:
-                    task_updated = self.update_task(
-                        {"task_id": self.task_id, "status": "success"}
-                    )
-
-                    if not task_updated:
-                        raise Exception("Problem task")
-
-                    if self.verbose:
-                        print(
-                            "\t" * 2,
-                            f"[INFO] [END] task '{self.task_name}': {task_updated}",
-                        )
+                self._api_task_update({"task_id": self.task_id, "status": "success"})
             except Exception as e:
-                details = str(e)
-                resultado["error"] = details
+                resultado["error"] = str(e)
+                self._api_task_update({"task_id": self.task_id, "status": "error"})
 
-                if self.send_to_api:
-                    task_updated = self.update_task(
-                        {"task_id": self.task_id, "status": "error"}
-                    )
-                    print(
-                        "\t" * 2,
-                        f"[ERROR] [END] task '{self.task_name}': {task_updated}",
-                    )
+                raise TaskError(
+                    f"[task] [{self.task_name}] Fail: [{str(e)}]",
+                    Codes.TASK_FAILED,
+                )
 
             return resultado
 
@@ -119,44 +144,21 @@ class Pipeline(APIClient):
                 print("\n", f"\t [WORKER] {self.worker_id}")
                 print("\n\t", "*" * 50)
 
-            if self.send_to_api:
-                process_registed = self.register_process({"id": worker_id})
-
-                if process_registed:
-                    self.tasks_list = [
-                        (rta[0], rta[1], rta[2], son["id"])
-                        for son, rta in zip(process_registed["sons"], self.tasks_list)
-                    ]
-
-                    self.process_id = process_registed["father"]
-
-                if self.verbose:
-                    print(
-                        "\t",
-                        f"[INFO] [START] pipeline: new process ({self.process_id})",
-                    )
+            self._api_process_update({"id": worker_id}, start=True)
 
             resultado = {}
             try:
                 resultado = func(self, *args, **kwargs)
 
-                if self.send_to_api:
-                    status = self.end_process({"id": self.process_id, "details": ""})
-                    if not status:
-                        raise Exception("API problem")
-
-                    if self.verbose:
-                        print("\t", f"[INFO] [END] pipeline: {status}")
-
-            except Exception as e:
-                details = str(e)
-                resultado["error"] = details
-
-                if self.send_to_api:
-                    status = self.end_process(
-                        {"id": self.process_id, "details": details}
-                    )
-                    print("\t", f"[ERROR] [END] pipeline: {status}")
+                self._api_process_update({"id": self.process_id, "details": ""})
+            except TaskError as te:
+                self._api_process_update({"id": self.process_id, "details": str(te)})
+                raise ProcessError(
+                    f"[ERROR] [Pipeline] {str(te)}",
+                    Codes.TASK_FAILED,
+                )
+            except ApiError as ae:
+                raise ApiError(str(ae), Codes.API_ERROR)
 
             return resultado
 
@@ -198,27 +200,40 @@ class Pipeline(APIClient):
 
         resultado = None
         data = {}
-        # TODO: poner un tqdm para ver como van avanzando el progreso de las tareas
-        for i, (func, name, version, _id) in enumerate(self.tasks_list):
-            self.task_name = name
-            self.task_id = _id
 
-            data.update(args[0])
+        advance_id = 0
+        with Progress() as progress:
+            task = progress.add_task(
+                "[cyan]Processing tasks...", total=len(self.tasks_list)
+            )
+            while not progress.finished:
+                (func, name, version, _id) = self.tasks_list[advance_id]
 
-            if i == 0:
-                resultado = self._task_invoke(func, name, *(data,), **kwargs)
-            else:
-                resultado = self._task_invoke(func, name, *(data,), **kwargs)
+                self.task_name = name
+                self.task_id = _id
 
-            data.update(resultado)
+                data.update(args[0])
 
-            if self.verbose:
-                print()
+                if advance_id == 0:
+                    resultado = self._task_invoke(func, name, *(data,), **kwargs)
+                else:
+                    resultado = self._task_invoke(func, name, *(data,), **kwargs)
 
-            if "error" in data:
-                break
+                data.update(resultado)
+
+                if self.verbose:
+                    print()
+
+                if "error" in data:
+                    break
+
+                advance_id += 1
+                progress.update(task, advance=1)
 
         if "error" in data:
-            raise Exception(f"[{self.task_name}] Fail the pipeline:{data['error']}")
+            raise TaskError(
+                f"[{self.task_name}] Fail the pipeline:{data['error']}",
+                Codes.TASK_FAILED,
+            )
 
         return data
