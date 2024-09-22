@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="wpipe",  # El nombre de tu paquete
-    version="0.1.2",  # La versión de tu paquete
+    version="0.1.3",  # La versión de tu paquete
     description="Libreria para crear pipelines conectados a una API",
     author="William Steve Rodriguez Villamizar",
     author_email="wisrovi.rodriguez@gmail.com",

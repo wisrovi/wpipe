@@ -1,3 +1,5 @@
+import traceback
+import json
 from rich.progress import Progress
 
 from wpipe.api_client.api_client import APIClient
@@ -120,13 +122,35 @@ class Pipeline(APIClient):
                 resultado = func(self, *args, **kwargs)
                 self._api_task_update({"task_id": self.task_id, "status": "success"})
             except Exception as e:
-                resultado["error"] = str(e)
-                self._api_task_update({"task_id": self.task_id, "status": "error"})
+                errors_traceback = traceback.extract_tb(e.__traceback__)
 
-                raise TaskError(
-                    f"[task] [{self.task_name}] Fail: [{str(e)}]",
-                    Codes.TASK_FAILED,
+                errors_list = []
+                for error_traceback in errors_traceback:
+                    errors_list.append(
+                        {
+                            "file": error_traceback.filename,
+                            "line": error_traceback.lineno,
+                            "method": error_traceback.name,
+                        }
+                    )
+
+                error = {
+                    "task_name": self.task_name,
+                    "error": errors_list,
+                    "task_id": self.task_id,
+                }
+
+                resultado["error"] = error["error"]
+
+                self._api_task_update(
+                    {
+                        "task_id": self.task_id,
+                        "status": "error",
+                        "details": json.dumps(error),
+                    }
                 )
+
+                raise TaskError(error, Codes.TASK_FAILED)
 
             return resultado
 
@@ -152,11 +176,16 @@ class Pipeline(APIClient):
 
                 self._api_process_update({"id": self.process_id, "details": ""})
             except TaskError as te:
-                self._api_process_update({"id": self.process_id, "details": str(te)})
-                raise ProcessError(
-                    f"[ERROR] [Pipeline] {str(te)}",
-                    Codes.TASK_FAILED,
+                error = te.args[0]
+
+                error["process_name"] = self.process_id
+                error["worker_name"] = self.worker_id
+
+                self._api_process_update(
+                    {"id": self.process_id, "details": json.dumps(error)}
                 )
+
+                raise ProcessError(error, Codes.TASK_FAILED)
             except ApiError as ae:
                 raise ApiError(str(ae), Codes.API_ERROR)
 

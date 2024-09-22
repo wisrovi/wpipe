@@ -39,7 +39,7 @@ class Wsqlite:
     def _create(self, input: dict):
         id = None
         with SQLite(self.db_name) as conection_db:
-            id = conection_db.async_write(input=input)
+            id = conection_db.write(input=input)
 
         self.id = str(id)
 
