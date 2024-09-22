@@ -1,0 +1,13 @@
+name: Microservicio_1
+version: v1.0
+# kafka
+# kafka_server: 192.168.1.60:9092
+kafka_server: localhost:9092
+# pipeline
+worker_id_file: worker_id.yaml # yaml
+pipeline_use: true
+# pipeline_server: http://192.168.1.60:8418
+pipeline_server: http://localhost:8418
+pipeline_token_server: mysecrettoken
+# sqlite
+sqlite_db_name: register.db
