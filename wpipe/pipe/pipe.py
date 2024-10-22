@@ -1,6 +1,9 @@
+import time
 import traceback
 import json
 from rich.progress import Progress
+from rich.errors import LiveError
+from tqdm import tqdm
 
 from wpipe.api_client.api_client import APIClient
 from wpipe.exception import TaskError, ProcessError, ApiError, Codes
@@ -16,6 +19,8 @@ class Pipeline(APIClient):
     tasks_list: list = []
 
     SHOW_API_ERRORS = False
+
+    task_name: str = "Processing pipeline tasks"
 
     def __init__(
         self, worker_id: str = None, api_config: dict = None, verbose: bool = False
@@ -119,7 +124,11 @@ class Pipeline(APIClient):
 
             resultado = {}
             try:
-                resultado = func(self, *args, **kwargs)
+                if isinstance(func, Pipeline):
+                    resultado = func.run(self, *args, **kwargs)
+                else:
+                    resultado = func(self, *args, **kwargs)
+
                 self._api_task_update({"task_id": self.task_id, "status": "success"})
             except Exception as e:
                 errors_traceback = traceback.extract_tb(e.__traceback__)
@@ -230,34 +239,50 @@ class Pipeline(APIClient):
         resultado = None
         data = {}
 
-        advance_id = 0
-        with Progress() as progress:
-            task = progress.add_task(
-                "[cyan]Processing tasks...", total=len(self.tasks_list)
-            )
-            while not progress.finished:
-                (func, name, version, _id) = self.tasks_list[advance_id]
+        def ProgressBar(size: int):
+            try:
+                advance_id = 0
+                with Progress() as progress:
+                    task = progress.add_task(f"[cyan]{self.task_name}", total=size)
+                    while not progress.finished:
+                        progress.update(task, description=f"[cyan]{self.task_name}")
 
-                self.task_name = name
-                self.task_id = _id
+                        yield advance_id
 
-                data.update(args[0])
+                        advance_id += 1
+                        progress.update(task, advance=1)
+            except LiveError as e:
+                for advance_id in tqdm(
+                    range(size),
+                    desc=f"{self.task_name}",
+                    unit="steps",
+                ):
+                    yield advance_id
 
-                if advance_id == 0:
-                    resultado = self._task_invoke(func, name, *(data,), **kwargs)
-                else:
-                    resultado = self._task_invoke(func, name, *(data,), **kwargs)
+        for advance_id in ProgressBar(size=len(self.tasks_list)):
+            (func, name, version, _id) = self.tasks_list[advance_id]
 
-                data.update(resultado)
+            self.task_name = name
+            self.task_id = _id
 
-                if self.verbose:
-                    print()
+            data.update(args[0])
 
-                if "error" in data:
-                    break
+            if advance_id == 0:
+                resultado = self._task_invoke(func, name, *(data,), **kwargs)
+            else:
+                resultado = self._task_invoke(func, name, *(data,), **kwargs)
 
-                advance_id += 1
-                progress.update(task, advance=1)
+            assert isinstance(
+                resultado, dict
+            ), f"The result of state ({self.task_name}) on pipeline have to a dict"
+
+            data.update(resultado)
+
+            if self.verbose:
+                print()
+
+            if "error" in data:
+                break
 
         if "error" in data:
             raise TaskError(

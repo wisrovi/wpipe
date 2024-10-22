@@ -3,7 +3,7 @@ import time
 import threading
 from tqdm import tqdm
 from datetime import datetime
-from demo_microservice import demo_microservice
+from example.basic_demo import demo_microservice
 from wpipe.util.utils import escribir_yaml, leer_yaml
 from wpipe.sqlite.Wsqlite import Wsqlite
 from wpipe.log.log import new_logger

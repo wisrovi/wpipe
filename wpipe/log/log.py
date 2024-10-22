@@ -3,11 +3,20 @@ This program has a functions that returns
 a logger object.
 """
 
+import os
+import pathlib
 import sys
 from loguru import logger
 
 
-def new_logger(process_name: str, path_file: str = "/logs/file_{time}.log"):
+def new_logger(
+    process_name: str = "wpipe",
+    path_file: str = (
+        "/logs/file_{time:YYYY-MM-DD}.log"
+        if os.path.exists("/logs")
+        else "logs/file_{time:YYYY-MM-DD}.log"
+    ),
+):
 
     # for print in console
     logger.add(

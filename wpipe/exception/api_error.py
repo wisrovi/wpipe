@@ -1,3 +1,8 @@
+from wpipe.log import new_logger
+
+logger = new_logger()
+
+
 class Codes:
     UPDATE_TASK = 505
     UPDATE_PROCESS_ERROR = 504
@@ -11,14 +16,20 @@ class ApiError(Exception):
         super().__init__(message)
         self.error_code = error_code
 
+        logger.error(message)
+
 
 class TaskError(Exception):
     def __init__(self, message, error_code):
         super().__init__(message)
         self.error_code = error_code
 
+        logger.error(message)
+
 
 class ProcessError(Exception):
     def __init__(self, message, error_code):
         super().__init__(message)
         self.error_code = error_code
+
+        logger.error(message)
