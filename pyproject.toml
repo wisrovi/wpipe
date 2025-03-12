@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "wpipe"
-version = "0.1.4"
+version = "0.1.7"
 authors = [
     { name="wisrovi", email="wisrovi.rodriguez@gmail.com" },
 ]
@@ -17,6 +17,16 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+    "requests",
+    "loguru",
+    "pandas",
+    "pyyaml",
+    "tqdm",
+    "prefect",
+    "rich",
+]
+
 
 [project.urls]
 "Homepage" = "https://github.com/wisrovi/wpipe"

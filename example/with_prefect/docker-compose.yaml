@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  prefect-server:
+    image: prefecthq/prefect:3.2.9-python3.10
+    command: prefect server start --host 0.0.0.0
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+    ports:
+      - "4200:4200"
+
+  prefect-worker:
+    image: prefecthq/prefect:3.2.9-python3.10
+    container_name: prefect-worker
+    restart: always
+    depends_on:
+      - prefect-server
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+    command: ["prefect", "worker", "start", "-q", "default"]
+
+
+  pipeline-runner:
+    build: .
+    container_name: pipeline-runner
+    depends_on:
+      - prefect-server
+      - prefect-worker
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+    command: tail -f /dev/null

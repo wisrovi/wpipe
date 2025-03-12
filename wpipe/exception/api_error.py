@@ -24,7 +24,9 @@ class TaskError(Exception):
         super().__init__(message)
         self.error_code = error_code
 
-        logger.error(message)
+        # logger.error(message)
+    def __str__(self):
+        return f"[Error Code: {self.error_code}] {super().__str__()}"
 
 
 class ProcessError(Exception):
@@ -32,4 +34,4 @@ class ProcessError(Exception):
         super().__init__(message)
         self.error_code = error_code
 
-        logger.error(message)
+        # logger.error(message)

@@ -11,27 +11,32 @@ from loguru import logger
 
 def new_logger(
     process_name: str = "wpipe",
-    path_file: str = (
-        "/logs/file_{time:YYYY-MM-DD}.log"
-        if os.path.exists("/logs")
-        else "logs/file_{time:YYYY-MM-DD}.log"
-    ),
+    path_file: str = ("/logs" if os.path.exists("/logs") else "logs"),
+    filename_format: str = "{time:YYYY-MM-DD}",
 ):
 
     # for print in console
     logger.add(
         sys.stderr,
-        format="{time} {level} {message}",
+        format="<green>{time:YYYY-MM-DD at HH:mm:ss}</green>"
+        + "| <level>{level}</level> | <blue>{message}</blue>",
+        filter=f"{process_name}",
+        level="WARNING",
+        colorize=True,
+    )
+    logger.add(
+        sys.stdout,
+        format="<green>{time:YYYY-MM-DD at HH:mm:ss}</green>"
+        + "| <level>{level}</level> | <blue>{message}</blue>",
         filter=f"{process_name}",
         level="INFO",
     )
 
     # for save in file
     logger.add(
-        path_file,
+        f"{path_file}/{process_name}_{filename_format}.log",
         colorize=True,
-        format="<green>{time:YYYY-MM-DD at HH:mm:ss}</green>"
-        + "| <level>{level}</level> | <blue>{message}</blue>",
+        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {module}:{function}:{line} | {message}",
         rotation="50 MB",
         compression="zip",
         retention="10 days",

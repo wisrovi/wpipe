@@ -1,18 +1,42 @@
+import json
 import time
 import traceback
-import json
-from rich.progress import Progress
+
+from prefect import flow, task
 from rich.errors import LiveError
+from rich.progress import Progress
 from tqdm import tqdm
 
 from wpipe.api_client.api_client import APIClient
-from wpipe.exception import TaskError, ProcessError, ApiError, Codes
+from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import TaskError
+from build.lib.wpipe.exception.api_error import logger
+
+
+class ProgressManager:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.progress = Progress()
+        return cls._instance
+
+    def __enter__(self):
+        self.progress.__enter__()
+        return self.progress
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.progress.__exit__(exc_type, exc_val, exc_tb)
 
 
 # Definición de la clase
 class Pipeline(APIClient):
     worker_id: str = None
+    worker_name: str = "worker"
+    verbose: bool = False
+    task_id: str = None
+
     process_id: str = None
     send_to_api: bool = False
     api_config: dict = None
@@ -21,9 +45,14 @@ class Pipeline(APIClient):
     SHOW_API_ERRORS = False
 
     task_name: str = "Processing pipeline tasks"
+    progress_rich: Progress = None
 
     def __init__(
-        self, worker_id: str = None, api_config: dict = None, verbose: bool = False
+        self,
+        worker_id: str = None,
+        worker_name: str = None,
+        api_config: dict = None,
+        verbose: bool = False,
     ):
         if api_config:
             # invoca el constructor de APIClient
@@ -34,6 +63,9 @@ class Pipeline(APIClient):
 
         if worker_id:
             self.set_worker_id(worker_id)
+
+        if worker_name:
+            self.worker_name = worker_name
 
         self.verbose = verbose
 
@@ -145,11 +177,12 @@ class Pipeline(APIClient):
 
                 error = {
                     "task_name": self.task_name,
-                    "error": errors_list,
+                    "error_traceback": errors_list,
+                    "error_message": str(e),  # Agrega el mensaje del error
                     "task_id": self.task_id,
                 }
 
-                resultado["error"] = error["error"]
+                resultado["error"] = error["error_message"]
 
                 self._api_task_update(
                     {
@@ -158,6 +191,10 @@ class Pipeline(APIClient):
                         "details": json.dumps(error),
                     }
                 )
+
+                if self.verbose:
+                    for error in errors_list:
+                        logger.error(error)
 
                 raise TaskError(error, Codes.TASK_FAILED)
 
@@ -188,12 +225,15 @@ class Pipeline(APIClient):
                 error = te.args[0]
 
                 error["process_name"] = self.process_id
-                error["worker_name"] = self.worker_id
+                error["worker_id"] = self.worker_id
+                error["worker_name"] = self.worker_name or "worker"
+                error["task_name"] = self.task_name
+                error["task_id"] = self.task_id
 
                 self._api_process_update(
                     {"id": self.process_id, "details": json.dumps(error)}
                 )
-
+                # logger.error(error)
                 raise ProcessError(error, Codes.TASK_FAILED)
             except ApiError as ae:
                 raise ApiError(str(ae), Codes.API_ERROR)
@@ -242,39 +282,53 @@ class Pipeline(APIClient):
         def ProgressBar(size: int):
             try:
                 advance_id = 0
-                with Progress() as progress:
-                    task = progress.add_task(f"[cyan]{self.task_name}", total=size)
-                    while not progress.finished:
-                        progress.update(task, description=f"[cyan]{self.task_name}")
+                progress_manager = ProgressManager()
 
-                        yield advance_id
+                with progress_manager as progress_rich:
+                    self.progress_rich = progress_rich
+
+                    task = progress_rich.add_task(
+                        f"[cyan][{self.worker_name}]{self.task_name}", total=size
+                    )
+                    while not progress_rich.finished:
+                        progress_rich.update(
+                            task,
+                            description=f"[cyan][{self.worker_name}]{self.task_name}",
+                        )
+
+                        yield advance_id, progress_rich
 
                         advance_id += 1
-                        progress.update(task, advance=1)
+                        progress_rich.update(task, advance=1)
             except LiveError as e:
                 for advance_id in tqdm(
                     range(size),
                     desc=f"{self.task_name}",
                     unit="steps",
                 ):
-                    yield advance_id
+                    yield advance_id, None
 
-        for advance_id in ProgressBar(size=len(self.tasks_list)):
+        for advance_id, progress in ProgressBar(size=len(self.tasks_list)):
+            if advance_id >= len(self.tasks_list):
+                return data
+
             (func, name, version, _id) = self.tasks_list[advance_id]
 
             self.task_name = name
             self.task_id = _id
+            self.progress_rich = progress
 
             data.update(args[0])
 
             if advance_id == 0:
+                data.update({"progress_rich": progress})
                 resultado = self._task_invoke(func, name, *(data,), **kwargs)
             else:
                 resultado = self._task_invoke(func, name, *(data,), **kwargs)
 
             assert isinstance(
                 resultado, dict
-            ), f"The result of state ({self.task_name}) on pipeline have to a dict"
+            ), f"[ERROR] The result of state ({self.task_name}) on pipeline have to a dict"
 
             data.update(resultado)
 
@@ -289,5 +343,8 @@ class Pipeline(APIClient):
                 f"[{self.task_name}] Fail the pipeline:{data['error']}",
                 Codes.TASK_FAILED,
             )
+
+        # remove the progress_rich from the data
+        data.pop("progress_rich", None)
 
         return data

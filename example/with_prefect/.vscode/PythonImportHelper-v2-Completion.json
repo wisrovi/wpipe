@@ -1,0 +1,45 @@
+[
+    {
+        "label": "flow",
+        "importPath": "prefect",
+        "description": "prefect",
+        "isExtraImport": true,
+        "detail": "prefect",
+        "documentation": {}
+    },
+    {
+        "label": "task",
+        "importPath": "prefect",
+        "description": "prefect",
+        "isExtraImport": true,
+        "detail": "prefect",
+        "documentation": {}
+    },
+    {
+        "label": "print_hello",
+        "kind": 2,
+        "importPath": "run_pipeline",
+        "description": "run_pipeline",
+        "peekOfCode": "def print_hello(name):\n    msg = f\"Hello {name}!\"\n    print(msg)\n    return msg\n@task(name=\"welcome\")\ndef welcome(data):\n    print(f\"Bienvenido {data}\")\n@flow(name=\"Hello Flow\")\ndef hello_world(name=\"world\"):\n    message = print_hello(name)",
+        "detail": "run_pipeline",
+        "documentation": {}
+    },
+    {
+        "label": "welcome",
+        "kind": 2,
+        "importPath": "run_pipeline",
+        "description": "run_pipeline",
+        "peekOfCode": "def welcome(data):\n    print(f\"Bienvenido {data}\")\n@flow(name=\"Hello Flow\")\ndef hello_world(name=\"world\"):\n    message = print_hello(name)\n    welcome(message)\nif __name__ == \"__main__\":\n    hello_world(\"Marvin\")\n    # sudo apt install graphviz\n    hello_world.visualize()",
+        "detail": "run_pipeline",
+        "documentation": {}
+    },
+    {
+        "label": "hello_world",
+        "kind": 2,
+        "importPath": "run_pipeline",
+        "description": "run_pipeline",
+        "peekOfCode": "def hello_world(name=\"world\"):\n    message = print_hello(name)\n    welcome(message)\nif __name__ == \"__main__\":\n    hello_world(\"Marvin\")\n    # sudo apt install graphviz\n    hello_world.visualize()",
+        "detail": "run_pipeline",
+        "documentation": {}
+    }
+]
