@@ -1,7 +1,7 @@
 """
-07 Basic Pipeline - Multiple Parallel Data Sets
+07 Pipeline - Multiple Pipeline Runs
 
-Shows running a pipeline with different input data sets.
+Shows running the same pipeline multiple times with different inputs.
 """
 
 from wpipe import Pipeline
@@ -15,7 +15,7 @@ def validate(data):
     return {"valid": data["transformed"] > 0}
 
 
-def format(data):
+def format_output(data):
     return {"output": f"Value is {data['transformed']}, valid: {data['valid']}"}
 
 
@@ -25,7 +25,7 @@ def run_for_value(value):
         [
             (transform, "Transform", "v1.0"),
             (validate, "Validate", "v1.0"),
-            (format, "Format", "v1.0"),
+            (format_output, "Format", "v1.0"),
         ]
     )
     return pipeline.run({"value": value})
