@@ -10,7 +10,7 @@ from tqdm import tqdm
 from wpipe.api_client.api_client import APIClient
 from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import TaskError
-from build.lib.wpipe.exception.api_error import logger
+from wpipe.exception.api_error import logger
 
 
 class ProgressManager:

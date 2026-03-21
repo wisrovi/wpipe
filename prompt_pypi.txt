@@ -1,0 +1,263 @@
+================================================================================
+PROMPT PARA CONSTRUIR Y PUBLICAR EN PyPI
+================================================================================
+
+INSTRUCCIONES GENERALES
+-----------------------
+- Este prompt asume que el código ya está listo para publicar
+- Sigue cada paso en orden
+- Habla en ESPAÑOL con el usuario
+
+================================================================================
+PASO 1: VERIFICAR DEPENDENCIAS
+================================================================================
+
+1.1 INSTALAR HERRAMIENTAS DE BUILD
+----------------------------------
+Ejecuta:
+```bash
+pip install build twine
+```
+
+1.2 VERIFICAR INSTALACIÓN
+-------------------------
+```bash
+pip list | grep -E "(build|twine)"
+```
+
+================================================================================
+PASO 2: VERIFICAR pyproject.toml
+================================================================================
+
+2.1 CONTENIDO MÍNIMO REQUERIDO
+------------------------------
+Verifica que pyproject.toml tenga:
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wFabricSecurity"
+version = "X.X.X"  <- Incrementar versión
+authors = [
+    { name = "Nombre", email = "email@example.com" },
+]
+description = "Descripción del paquete"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+2.2 ACTUALIZAR VERSIÓN
+----------------------
+- Si ya existe versión 1.0.0, usar 1.0.1
+- Formato: MAJOR.MINOR.PATCH
+- MAJOR: cambios incompatibles
+- MINOR: nuevas funcionalidades compatibles
+- PATCH: correcciones de bugs
+
+================================================================================
+PASO 3: LIMPIAR BUILD ANTERIOR
+================================================================================
+
+3.1 ELIMINAR CARPETAS DE BUILD
+------------------------------
+```bash
+rm -rf dist/
+rm -rf build/
+rm -rf *.egg-info
+```
+
+================================================================================
+PASO 4: CONSTRUIR EL PAQUETE
+================================================================================
+
+4.1 EJECUTAR BUILD
+------------------
+```bash
+python -m build
+```
+
+4.2 VERIFICAR SALIDA
+--------------------
+Deberías ver:
+```
+Successfully built wfabricsecurity-X.X.X.tar.gz
+Successfully built wfabricsecurity-X.X.X-py3-none-any.whl
+```
+
+4.3 VERIFICAR ARCHIVOS GENERADOS
+---------------------------------
+```bash
+ls -la dist/
+```
+
+================================================================================
+PASO 5: VERIFICAR EL PAQUETE
+================================================================================
+
+5.1 TWINE CHECK
+----------------
+```bash
+twine check dist/*
+```
+
+5.2 VERIFICAR CONTENIDO DEL WHL
+-------------------------------
+```bash
+unzip -l dist/*.whl | head -50
+```
+
+5.3 VERIFICAR QUE ESTÉ TODO
+---------------------------
+- wFabricSecurity/__init__.py
+- wFabricSecurity/fabric_security/*.py
+- README.md
+- LICENSE
+
+================================================================================
+PASO 6: OBTENER TOKEN DE PyPI
+================================================================================
+
+6.1 IR A PyPI
+-------------
+Abre: https://pypi.org/manage/account/#api-tokens
+
+6.2 CREAR TOKEN
+---------------
+1. Click en "Create API token"
+2. Nombre: wFabricSecurity
+3. Scope: "Entire account" o "wFabricSecurity project"
+4. Copiar el token (comienza con pypi-)
+
+6.3 NOTA IMPORTANTE
+------------------
+El token es como una contraseña - NO lo compartas.
+
+================================================================================
+PASO 7: PUBLICAR EN PyPI
+================================================================================
+
+7.1 SUBIR PAQUETE
+------------------
+```bash
+twine upload dist/* --username __token__ --password "TU_TOKEN_AQUI"
+```
+
+7.2 VERIFICAR ÉXITO
+--------------------
+Deberías ver:
+```
+View at: https://pypi.org/project/wFabricSecurity/X.X.X/
+```
+
+7.3 SI HAY ERROR 400
+--------------------
+- Versión ya existe: Incrementar versión en pyproject.toml
+- Error de metadata: Revisar pyproject.toml
+- Token inválido: Generar nuevo token
+
+================================================================================
+PASO 8: VERIFICAR EN PyPI
+================================================================================
+
+8.1 ABRIR PÁGINA DEL PAQUETE
+-----------------------------
+Ir a: https://pypi.org/project/wFabricSecurity/
+
+8.2 VERIFICAR CONTENIDO
+------------------------
+- Título correcto
+- Descripción visible
+- README.md renderizado (sin Mermaid)
+- Links funcionando
+- Versión correcta
+
+8.3 PROBAR INSTALACIÓN
+----------------------
+```bash
+pip install wFabricSecurity
+```
+
+================================================================================
+PASO 9: ACTUALIZAR GITHUB (OPCIONAL)
+================================================================================
+
+9.1 CREAR TAG
+-------------
+```bash
+git tag -a vX.X.X -m "Version X.X.X"
+git push origin vX.X.X
+```
+
+9.2 CREAR RELEASE EN GITHUB
+---------------------------
+1. Ir a: https://github.com/USUARIO/wFabricSecurity/releases
+2. Click en "Draft a new release"
+3. Seleccionar el tag
+4. Poner título y descripción
+5. Publicar release
+
+================================================================================
+RESUMEN DE COMANDOS
+================================================================================
+
+# 1. Instalar herramientas
+pip install build twine
+
+# 2. Limpiar builds anteriores
+rm -rf dist/ build/ *.egg-info
+
+# 3. Construir
+python -m build
+
+# 4. Verificar
+twine check dist/*
+
+# 5. Publicar (reemplazar TOKEN con tu token)
+twine upload dist/* --username __token__ --password "TOKEN"
+
+# 6. Verificar en navegador
+# https://pypi.org/project/wFabricSecurity/
+
+================================================================================
+SOLUCIÓN DE PROBLEMAS
+================================================================================
+
+PROBLEMA: "HTTP 400 Bad Request"
+SOLUCIÓN: La versión ya existe. Cambiar versión en pyproject.toml
+
+PROBLEMA: "Invalid distribution file"
+SOLUCIÓN: Revisar que README.md no tenga caracteres inválidos
+
+PROBLEMA: "Authentication failed"
+SOLUCIÓN: Token incorrecto o expirado. Generar nuevo.
+
+PROBLEMA: "File already exists"
+SOLUCIÓN: Ya se subió ese archivo. Incrementar versión.
+
+PROBLEMA: "README won't render"
+SOLUCIÓN: README.md tiene sintaxis no soportada por PyPI
+         - NO usar Mermaid
+         - NO usar Graphviz
+         - NO usar JavaScript
+         - Usar solo Markdown básico
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. Siempre incrementar versión antes de subir
+2. El README de PyPI NO debe tener Mermaid/Graphviz
+3. Mantener el token seguro
+4. Verificar que twine check pase antes de subir
+5. Después de subir, verificar en la web de PyPI
+
+================================================================================
+FIN DEL PROMPT
+================================================================================

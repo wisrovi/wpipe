@@ -1,0 +1,492 @@
+
+
+INSTRUCCIONES GENERALES
+----------------------
+- Lee TODOS los archivos del proyecto para entender la estructura
+- NO modifiques la lógica de negocio existente
+- Mantén los nombres de funciones, clases y variables en INGLÉS
+- Los comentarios deben ser en INGLÉS
+- Habla en ESPAÑOL con el usuario
+
+================================================================================
+PARTE 1: POLIR Y ENTENDER EL CÓDIGO EXISTENTE
+================================================================================
+
+1.1 EXPLORAR EL PROYECTO
+-------------------------
+- Lee todos los archivos .py en /wFabricSecurity/
+- Lee todos los archivos de configuración (pyproject.toml, setup.py, etc.)
+- Lee todos los tests existentes en /test/
+- Lee todos los ejemplos en /examples/
+- Lee toda la documentación existente en /docs/
+
+1.2 ENTENDER LA ESTRUCTURA
+--------------------------
+- Identifica las clases principales (Fabr
+
+icSecurity, FabricSecuritySimple)
+- Identifica los servicios de seguridad (IntegrityVerifier, PermissionManager, etc.)
+- Identifica los servicios criptográficos (HashingService, SigningService, etc.)
+- Identifica la integración con Hyperledger Fabric
+- Identifica las excepciones personalizadas
+- Identifica los modelos de datos
+
+1.3 DOCUMENTAR LA ESTRUCTURA
+----------------------------
+- Crea README.md en cada subcarpeta del proyecto explicando su propósito
+- Usa el formato:
+
+  # NombreDelModulo
+  Descripción breve del módulo.
+  
+  ## Classes/Functions
+  Lista de clases y funciones exportadas.
+
+================================================================================
+PARTE 2: CREAR EJEMPLOS FUNCIONALES
+================================================================================
+
+2.1 EXPLORAR EJEMPLOS EXISTENTES
+--------------------------------
+- Lee todos los archivos en /examples/
+- Identifica qué ejemplos faltan o están incompletos
+- Nota: Los ejemplos deben ser REALES, no mocks
+
+2.2 CREAR NUEVOS EJEMPLOS
+-------------------------
+Crea ejemplos funcionales en /examples/ que demuestren:
+
+- ejemplo_master.py: Ejemplo completo de un nodo Master
+  - Inicialización de seguridad
+  - Registro de identidad
+  - Registro de código
+  - Creación de mensajes firmados
+  
+- ejemplo_slave.py: Ejemplo completo de un nodo Slave
+  - Inicialización de seguridad
+  - Verificación de mensajes
+  - Procesamiento de tareas
+  
+- ejemplo_conFabric.py: Integración con Hyperledger Fabric
+  - Conexión a gateway
+  - Transacciones con chaincode
+  - Almacenamiento en ledger
+
+- ejemplo_seguridad.py: Demostración de características de seguridad
+  - Verificación de integridad
+  - Firmas digitales
+  - Permisos de comunicación
+  - Rate limiting
+
+Cada ejemplo debe:
+- Ser ejecutable de forma independiente
+- Incluir docstrings completos
+- Incluir comentarios explicativos
+- Usar rutas configurables
+- Manejar errores apropiadamente
+
+================================================================================
+PARTE 3: CREAR TESTS PARA LOS EJEMPLOS
+================================================================================
+
+3.1 ESTRUCTURA DE TESTS
+------------------------
+En /test/ crea:
+
+test_examples_master.py
+- Test de inicialización de master
+- Test de registro de identidad
+- Test de creación de mensajes
+
+test_examples_slave.py
+- Test de inicialización de slave
+- Test de verificación de mensajes
+- Test de procesamiento
+
+test_examples_fabric.py
+- Test de conexión a gateway
+- Test de transacciones
+- Test de almacenamiento
+
+test_examples_security.py
+- Test de integridad
+- Test de firmas
+- Test de permisos
+
+3.2 REGLAS PARA TESTS
+---------------------
+- NO uses mocks para componentes principales
+- Los tests deben comunicar
+
+se con componentes reales cuando sea posible
+- Si necesitas mockear algo, usa pytest-mock
+- Cada test debe ser independiente
+- Usa fixtures de pytest para reutilizar setup
+- Incluye assertions claros con mensajes descriptivos
+
+3.3 COBERTURA DE TESTS
+----------------------
+- El objetivo es 85%+ de cobertura
+- Ejecuta: pytest --cov=wFabricSecurity --cov-report=html
+- Identifica módulos con baja cobertura
+- Agrega tests para esos módulos
+
+================================================================================
+PARTE 4: CREAR TESTS PARA EL CÓDIGO PRINCIPAL
+================================================================================
+
+4.1 ESTRUCTURA MODULAR
+----------------------
+Crea archivos de test modulares en /test/:
+
+test_main.py
+- Tests para FabricSecurity
+- Tests para FabricSecuritySimple
+
+test_core.py
+- Tests para excepciones
+- Tests para enums
+- Tests para modelos de datos
+
+test_config.py
+- Tests para configuración
+- Tests para settings
+
+test_crypto.py
+- Tests para HashingService
+- Tests para SigningService
+- Tests para IdentityManager
+
+test_fabric.py
+- Tests para FabricGateway
+- Tests para FabricNetwork
+- Tests para FabricContract
+
+test_security.py
+- Tests para IntegrityVerifier
+- Tests para PermissionManager
+- Tests para MessageManager
+
+test_rate_retry.py
+- Tests para RateLimiter
+- Tests para RetryLogic
+
+test_storage.py
+- Tests para LocalStorage
+- Tests para FabricStorage
+
+4.2 CONFTEST.PY
+----------------
+Crea /test/conftest.py con fixtures compartidos:
+- msp_path fixture
+- gateway_path fixture
+- certificate fixtures
+- participant fixtures
+- message fixtures
+
+4.3 MANTENER TESTS EXISTENTES
+-----------------------------
+- NO elimines tests existentes sin consentimiento
+- Si hay conflictos de nombres, usa prefijos (legacy_)
+- Verifica que todos los tests pasen: pytest -v
+
+================================================================================
+PARTE 5: CREAR index.html (PRESENTACIÓN)
+================================================================================
+
+5.1 ESTRUCTURA DEL HTML
+-----------------------
+Crea /index.html con diseño profesional:
+
+- Hero section con gradiente
+- Título: "wFabricSecurity - Zero Trust Security System"
+- Badges: Python, License, Tests, Coverage
+- Lista de características con iconos
+- Matriz de validación de integridad
+- Sección de author con links
+- Footer con links importantes
+
+5.2 DISEÑO VISUAL
+----------------
+- Usa CSS con variables para colores
+- Paleta: púrpura/azul (#667eea, #764ba2)
+- Cards con sombras y hover effects
+- Responsive design
+- Animaciones sutiles
+
+5.3 CONTENIDO
+-------------
+- Stats del proyecto (tests, cobertura, etc.)
+- Lista de características de seguridad
+- Matriz de validación (código, firmas, permisos, etc.)
+- Links a documentación
+- Link al README.md en GitHub
+
+5.4 GENERACIÓN DINÁMICA (Opcional)
+-----------------------------------
+Crea un script Python que genere el HTML basándose en:
+- Resultados de pytest
+- Datos de coverage
+- Estadísticas del proyecto
+
+================================================================================
+PARTE 6: CREAR DOCUMENTACIÓN SPHINX (ReadTheDocs)
+================================================================================
+
+6.1 CONFIGURACIÓN
+-----------------
+Crea /docs/source/conf.py:
+- Configura Sphinx con autodoc
+- Incluye extensiones: autodoc, napoleon, graphviz, mermaid
+- Configura tema sphinx_rtd_theme
+- Configura intersphinx para Python
+- Agrega copybutton, design, sitemap
+
+6.2 ARCHIVOS RST
+----------------
+Crea en /docs/source/:
+
+index.rst (Landing page)
+- Hero section con badges
+- Quick start
+- Características principales
+- Link a documentación completa
+- Link a PyPI
+
+getting_started.rst
+- Prerequisites
+- Installation
+- Quick start
+- Complete example
+
+installation.rst
+- Requirements
+- Installation via pip
+- Installation from source
+- Docker installation
+- Troubleshooting
+
+usage.rst
+- Basic usage
+- Configuration
+- Examples
+
+api_reference.rst
+- Documentación auto-generada de clases
+- Ejemplos de uso
+- Diagramas de arquitectura
+
+tutorials.rst
+- Tutorial 1: Basic Setup
+- Tutorial 2: Identity Management
+- Tutorial 3: Code Integrity
+- Tutorial 4: Communication Permissions
+- Tutorial 5: Rate Limiting
+- Tutorial 6: Fabric Integration
+
+faq.rst
+- General questions
+- Installation questions
+- Security questions
+- Troubleshooting
+
+architecture.rst
+- Diagramas de arquitectura
+- Componentes del sistema
+- Flujos de seguridad
+- Patrones de diseño
+
+glossary.rst
+- Términos técnicos
+- Definiciones
+- Acrónimos
+
+changelog.rst
+- Formato keepachangelog
+- Versiones
+- Breaking changes
+
+bibliography.rst
+- Referencias
+- Papers relacionados
+
+6.3 ESTILOS PERSONALIZADOS
+--------------------------
+Crea /docs/source/_static/css/custom.css:
+- Variables de color
+- Estilos para hero sections
+- Estilos para cards
+- Estilos para tablas
+- Responsive design
+
+6.4 CONFIGURACIÓN ReadTheDocs
+-----------------------------
+Crea /.readthedocs.yaml:
+- Versión de Python
+- Configuración de Sphinx
+- Dependencias de docs
+
+Crea /docs/requirements.txt:
+- sphinx
+- sphinx-rtd-theme
+- sphinx-copybutton
+- myst-parser
+- sphinx-sitemap
+- sphinx-design
+
+================================================================================
+PARTE 7: CONFIGURAR pyproject.toml PARA PyPI
+================================================================================
+
+7.1 METADATOS
+-------------
+Configura pyproject.toml:
+- name: wFabricSecurity
+- version: 1.0.0
+- description: Zero Trust Security System for Hyperledger Fabric
+- author: William Rodriguez
+- author_email: william.rodriguez@ecapturedtech.com
+- url: https://github.com/wisrovi/wFabricSecurity
+- license: MIT
+
+7.2 DEPENDENCIAS
+----------------
+- cryptography>=41.0.0
+- ecdsa>=0.18.0
+- requests>=2.31.0
+- pyyaml>=6.0.1
+
+7.3 EXTRAS
+-----------
+- dev: pytest, pytest-cov, black, ruff
+- docs: sphinx, sphinx-rtd-theme
+
+7.4 CLASIFICADORES
+------------------
+- Programming Language :: Python :: 3.10+
+- License :: OSI Approved :: MIT License
+- Topic :: Security
+- Topic :: Security :: Cryptography
+
+7.5 URLS
+--------
+- Homepage: GitHub
+- Documentation: ReadTheDocs
+- Repository: GitHub
+- Issues: GitHub
+
+================================================================================
+PARTE 8: README SEPARADOS
+================================================================================
+
+8.1 README.md (Para PyPI)
+-------------------------
+Crea README.md simple, SIN diagramas Mermaid/Graphviz:
+- Badges
+- Descripción corta
+- Features
+- Installation
+- Quick start
+- Links
+
+8.2 README_complete.md (Para GitHub)
+-------------------------------------
+Renombra el README actual a README_complete.md:
+- Incluye todos los diagramas
+- Incluye toda la documentación técnica
+- Mantén los Mermaid diagrams
+
+8.3 README EN CADA CARPETA
+--------------------------
+Crea README.md en cada subcarpeta significativa:
+- /wFabricSecurity/README.md
+- /wFabricSecurity/fabric_security/README.md
+- /test/README.md
+- /examples/README.md
+
+Cada README debe tener:
+- Descripción del módulo
+- Clases/funciones exportadas
+- Ejemplo de uso básico
+
+================================================================================
+PARTE 9: LINKS OFICIALES
+================================================================================
+
+9.1 URLs A CONFIGURAR
+---------------------
+En todos los archivos relevantes, agrega:
+
+- URL oficial documentación: https://wFabricSecurity.readthedocs.io/en/latest/
+- URL PyPI: https://pypi.org/project/wFabricSecurity/
+- URL GitHub: https://github.com/wisrovi/wFabricSecurity/
+
+9.2 DONDE AGREGAR
+-----------------
+- README.md (PyPI)
+- README_complete.md
+- index.html
+- docs/source/index.rst
+- docs/source/conf.py
+- pyproject.toml
+
+================================================================================
+PARTE 10: VERIFICACIÓN FINAL
+================================================================================
+
+10.1 TESTS
+-----------
+- Ejecuta: pytest -v
+- Verifica: pytest --cov=wFabricSecurity --cov-report=term-missing
+- Objetivo: 85%+ cobertura
+
+10.2 DOCUMENTACIÓN
+-----------------
+- Ejecuta: cd docs && make html
+- Verifica que no haya errores
+- Revisa los archivos generados
+
+10.3 CONSTRUCCIÓN
+-----------------
+- Ejecuta: python -m build
+- Verifica: twine check dist/*
+- Revisa el contenido de dist/
+
+10.4 PUSH A GITHUB
+------------------
+- git add -A
+- git commit -m "[DESCRIPCION]"
+- git push origin main
+
+================================================================================
+RESUMEN DE ARCHIVOS A CREAR/MODIFICAR
+================================================================================
+
+ARCHIVOS NUEVOS:
+- /test/test_examples_*.py
+- /test/conftest.py (actualizado)
+- /examples/ejemplo_*.py
+- /index.html
+- /README.md (PyPI)
+- /README_complete.md
+- /docs/source/*.rst (architecture, glossary, changelog, etc.)
+- /docs/source/conf.py
+- /docs/source/_static/css/custom.css
+- /docs/requirements.txt
+- /.readthedocs.yaml
+- /*/README.md (en subcarpetas)
+
+ARCHIVOS A MODIFICAR:
+- /pyproject.toml
+- /test/test_*.py (modularizar si es necesario)
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. NO modifiques la lógica de negocio sin permiso
+2. Mantén backwards compatibility
+3. Todos los tests deben pasar
+4. La documentación debe compilar sin errores
+5. El paquete debe pasar twine check
+6. Habla en ESPAÑOL con el usuario

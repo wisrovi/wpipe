@@ -4,30 +4,127 @@ build-backend = "hatchling.build"
 
 [project]
 name = "wpipe"
-version = "0.1.7"
+version = "1.0.0"
 authors = [
-    { name="wisrovi", email="wisrovi.rodriguez@gmail.com" },
+    { name = "William Steve Rodriguez Villamizar", email = "wisrovi.rodriguez@gmail.com" }
 ]
-description = "Pipeline con API"
+description = "Pipeline library with API integration for task orchestration and execution tracking"
 readme = "README.md"
-license = { file="LICENSE" }
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
+keywords = [
+    "pipeline",
+    "workflow",
+    "tasks",
+    "orchestration",
+    "api",
+    "worker",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Intended Audience :: Developers",
+    "Development Status :: 5 - Production/Stable",
 ]
 dependencies = [
-    "requests",
-    "loguru",
-    "pandas",
-    "pyyaml",
-    "tqdm",
-    "prefect",
-    "rich",
+    "requests>=2.31.0",
+    "loguru>=0.7.0",
+    "pandas>=2.0.0",
+    "pyyaml>=6.0.1",
+    "tqdm>=4.66.0",
+    "prefect>=2.14.0",
+    "rich>=13.7.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+]
+docs = [
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "sphinx-copybutton>=0.5.0",
+    "myst-parser>=2.0.0",
+    "sphinx-sitemap>=2.5.0",
+    "sphinx-design>=0.5.0",
+]
 
 [project.urls]
-"Homepage" = "https://github.com/wisrovi/wpipe"
-"Bug Tracker" = "https://github.com/wisrovi/wpipe/issues"
+Homepage = "https://github.com/wisrovi/wpipe"
+Documentation = "https://wpipe.readthedocs.io/en/latest/"
+Repository = "https://github.com/wisrovi/wpipe"
+Issues = "https://github.com/wisrovi/wpipe/issues"
+Changelog = "https://github.com/wisrovi/wpipe/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/wpipe",
+    "/examples",
+    "/test",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["wpipe"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["wpipe"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/examples/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+show_missing = true
+fail_under = 80
+
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311"]
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long
+    "B008",  # do not perform function calls in argument defaults
+]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

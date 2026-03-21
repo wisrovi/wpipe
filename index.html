@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wpipe - Pipeline Library with API Integration</title>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --bg-color: #f8fafc;
+            --text-color: #2d3748;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 0 0 2rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin: 3rem 0 2rem;
+            color: var(--text-color);
+        }
+
+        .author-section {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+
+        .author-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .author-name {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .link:hover {
+            color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #2d3748;
+            color: white;
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .install-code {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            font-family: "Fira Code", monospace;
+            text-align: center;
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+
+        .install-code code {
+            color: #68d391;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1>wpipe</h1>
+        <p>Pipeline library with API integration for task orchestration and execution tracking</p>
+
+        <div class="badge-container">
+            <span class="badge">Python 3.9+</span>
+            <span class="badge">MIT License</span>
+            <span class="badge">PyPI Package</span>
+            <span class="badge">Active Development</span>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="install-code">
+            <code>pip install wpipe</code>
+        </div>
+
+        <h2 class="section-title">Features</h2>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">Pipeline</div>
+                <h3>Pipeline Orchestration</h3>
+                <p>Create and execute pipelines with step functions and track execution progress.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">API</div>
+                <h3>API Integration</h3>
+                <p>Connect pipelines to external APIs for tracking and monitoring.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">Database</div>
+                <h3>SQLite Support</h3>
+                <p>Persist pipeline execution results with built-in SQLite integration.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">YAML</div>
+                <h3>YAML Configuration</h3>
+                <p>Load and manage configurations using YAML files.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">Error</div>
+                <h3>Error Handling</h3>
+                <p>Robust error handling with detailed tracebacks and error reporting.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">Progress</div>
+                <h3>Progress Tracking</h3>
+                <p>Visual progress tracking with rich terminal output.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">Project Statistics</h2>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">6+</div>
+                <div class="stat-label">Test Files</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">50+</div>
+                <div class="stat-label">Tests</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">80%</div>
+                <div class="stat-label">Coverage</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Modules</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="author-section">
+        <h2>Author</h2>
+        <p class="author-name">William Steve Rodriguez Villamizar</p>
+        <p>Software Developer</p>
+
+        <div class="links">
+            <a href="https://github.com/wisrovi/wpipe" class="link" target="_blank">
+                GitHub Repository
+            </a>
+            <a href="https://wpipe.readthedocs.io/en/latest/" class="link" target="_blank">
+                Documentation
+            </a>
+            <a href="https://pypi.org/project/wpipe/" class="link" target="_blank">
+                PyPI Package
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>
+            wpipe - Pipeline Library | 
+            <a href="https://github.com/wisrovi/wpipe">GitHub</a> |
+            <a href="https://wpipe.readthedocs.io/en/latest/">Documentation</a>
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            MIT License - 2024
+        </p>
+    </footer>
+</body>
+</html>
