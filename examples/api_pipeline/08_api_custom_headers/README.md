@@ -74,16 +74,19 @@ flowchart TB
     end
     
     subgraph HEADER_EXAMPLE
-        H1["X-Custom-Header": "value"]
-        H2["Authorization": "Bearer token"]
-        H3["Content-Type": "application/json"]
+        H1[X-Custom-Header]
+        H2[Authorization]
+        H3[Content-Type]
     end
     
     subgraph API_CALL
         A1[Send request]
-        A2[Include all headers]
     end
     
-    C1 --> H1 & H2 & H3
-    H1 & H2 & H3 --> A1
+    C1 --> H1
+    C1 --> H2
+    C1 --> H3
+    H1 --> A1
+    H2 --> A1
+    H3 --> A1
 ```

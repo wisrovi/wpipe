@@ -70,7 +70,6 @@ flowchart LR
     
     subgraph RESPONSE
         R1[401 Unauthorized]
-        R2[Error message]
     end
     
     subgraph RECOVERY
@@ -78,5 +77,9 @@ flowchart LR
         RC2[Continue locally]
     end
     
-    T1 & T2 & T3 --> R1 --> RC1 --> RC2
+    T1 --> R1
+    T2 --> R1
+    T3 --> R1
+    R1 --> RC1
+    RC1 --> RC2
 ```

@@ -40,7 +40,6 @@ sequenceDiagram
 graph TB
     subgraph PIPELINE
         P1[Pipeline with verbose=True]
-        P2[worker_name: logging_test]
     end
     
     subgraph LOGGING
@@ -56,8 +55,13 @@ graph TB
         O2[Logs saved]
     end
     
-    P1 --> L1 --> L2 --> L3 --> L4 --> L5
-    L5 --> O1 & O2
+    P1 --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L5 --> O1
+    L5 --> O2
 ```
 
 ```mermaid
@@ -75,17 +79,17 @@ stateDiagram-v2
 ```mermaid
 flowchart TB
     subgraph LOG_LEVELS
-        L1[DEBUG: Detailed info]
-        L2[INFO: General flow]
-        L3[WARNING: Issues]
-        L4[ERROR: Failures]
+        L1[DEBUG]
+        L2[INFO]
+        L3[WARNING]
+        L4[ERROR]
     end
     
     subgraph LOG_TYPES
         T1[Pipeline initialization]
         T2[Step execution]
-        T3[API requests/responses]
-        T4[Errors and exceptions]
+        T3[API requests]
+        T4[Errors]
     end
     
     subgraph STORAGE
@@ -93,6 +97,12 @@ flowchart TB
         S2[Log files]
     end
     
-    L1 --> T1 --> T2 --> T3 --> T4
-    T1 & T2 & T3 & T4 --> S1 & S2
+    L1 --> T1
+    L2 --> T2
+    L3 --> T3
+    L4 --> T4
+    T1 --> S1
+    T2 --> S1
+    T3 --> S2
+    T4 --> S2
 ```

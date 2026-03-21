@@ -45,16 +45,20 @@ graph TB
         E3[Continue locally]
     end
     
-    U1 & U2 & U3 --> E1 --> E2 --> E3
+    U1 --> E1
+    U2 --> E1
+    U3 --> E1
+    E1 --> E2
+    E2 --> E3
 ```
 
 ```mermaid
 stateDiagram-v2
     [*] --> ValidateURL
-    ValidateURL --> Invalid: Parse error
-    Invalid --> Handle: Log error
-    Handle --> Continue: Local mode
-    Continue --> [*]: Complete
+    ValidateURL --> Invalid
+    Invalid --> Handle
+    Handle --> Continue
+    Continue --> [*]
 ```
 
 ```mermaid
@@ -70,5 +74,8 @@ flowchart LR
         O2[Local execution]
     end
     
-    M1 & M2 & M3 --> O1 --> O2
+    M1 --> O1
+    M2 --> O1
+    M3 --> O1
+    O1 --> O2
 ```

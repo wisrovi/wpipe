@@ -90,5 +90,6 @@ flowchart LR
         G2[Explicit error handling]
     end
     
-    E1 --> G1 & G2
+    E1 --> G1
+    E1 --> G2
 ```

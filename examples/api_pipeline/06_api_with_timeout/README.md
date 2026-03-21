@@ -75,7 +75,6 @@ stateDiagram-v2
 flowchart TB
     subgraph CONFIGURATION
         C1[timeout: 30]
-        C2[Timeout from api_config]
     end
     
     subgraph BEHAVIOR
@@ -85,9 +84,11 @@ flowchart TB
     end
     
     subgraph RESULT
-        R1[{result: value * 2}]
+        R1[result: value * 2]
     end
     
-    C1 --> B1 --> B2 & B3
+    C1 --> B1
+    B1 --> B2
+    B1 --> B3
     B3 --> R1
 ```

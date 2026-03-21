@@ -56,11 +56,13 @@ graph TB
 ```mermaid
 stateDiagram-v2
     [*] --> SubmitTasks
-    SubmitTasks --> Running: ThreadPool
-    Running --> Complete1: Worker 1
-    Running --> Complete2: Worker 2
-    Running --> Complete3: Worker 3
-    Complete1 & Complete2 & Complete3 --> [*]: All done
+    SubmitTasks --> Running
+    Running --> Complete1
+    Running --> Complete2
+    Running --> Complete3
+    Complete1 --> [*]
+    Complete2 --> [*]
+    Complete3 --> [*]
 ```
 
 ```mermaid
@@ -76,6 +78,8 @@ flowchart LR
         C2[concurrent.futures]
     end
     
-    I1 & I2 & I3 --> C1
+    I1 --> C1
+    I2 --> C1
+    I3 --> C1
     C1 --> C2
 ```

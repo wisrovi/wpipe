@@ -45,9 +45,9 @@ graph TB
     end
     
     subgraph SERVICES
-        S1[api: http://...]
-        S2[database: postgresql://...]
-        S3[cache: redis://...]
+        S1[api]
+        S2[database]
+        S3[cache]
     end
     
     subgraph CONFIG
@@ -60,9 +60,17 @@ graph TB
         T2[Report status]
     end
     
-    D1 --> D2 --> D3
-    D3 --> S1 & S2 & S3
-    S1 & S2 & S3 --> C1 --> C2 --> T1 --> T2
+    D1 --> D2
+    D2 --> D3
+    D3 --> S1
+    D3 --> S2
+    D3 --> S3
+    S1 --> C1
+    S2 --> C1
+    S3 --> C1
+    C1 --> C2
+    C2 --> T1
+    T1 --> T2
 ```
 
 ```mermaid

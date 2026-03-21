@@ -1,35 +1,35 @@
 # API Pipeline
 
-Integración de Pipeline con servidores API externos para tracking, registro de workers y comunicación asíncrona.
+Pipeline integration with external API servers for worker tracking, registration, and asynchronous communication.
 
 ## Overview
 
-El módulo `api_pipeline` permite que los pipelines de wpipe se comuniquen con servidores API externos, habilitando:
+The `api_pipeline` module enables wpipe pipelines to communicate with external API servers, providing:
 
-- **Worker Registration**: Registro automático de workers en el servidor
-- **Task Tracking**: Seguimiento de ejecuciones de tareas
-- **Async Communication**: Comunicación asíncrona con servicios externos
-- **Error Handling**: Manejo robusto de errores de red
-- **Configuration**: Configuración flexible de timeouts, retries y headers
+- **Worker Registration**: Automatic worker registration with the server
+- **Task Tracking**: Tracking of task executions
+- **Async Communication**: Asynchronous communication with external services
+- **Error Handling**: Robust network error handling
+- **Configuration**: Flexible timeout, retry, and header configuration
 
 ## Architecture
 
 ```mermaid
 graph TB
-    subgraph CLIENT
+    subgraph Client
         P[Pipeline]
         AC[api_config]
         WC[worker_id]
     end
     
-    subgraph API_CLIENT
+    subgraph API_Client
         RS[Requests Session]
         HT[HTTP Transport]
         RL[Retry Logic]
         LG[Logging]
     end
     
-    subgraph API_SERVER
+    subgraph API_Server
         NW[newprocess endpoint]
         EW[endprocess endpoint]
         MR[matricula endpoint]
@@ -39,7 +39,9 @@ graph TB
     P --> WC
     P --> RS
     RS --> HT
-    HT --> NW & EW & MR
+    HT --> NW
+    HT --> EW
+    HT --> MR
     RL -.-> RS
     LG -.-> RS
 ```
@@ -87,79 +89,79 @@ graph LR
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `base_url` | str | required | URL base del servidor API |
-| `token` | str | required | Token de autenticación |
-| `timeout` | int | 30 | Timeout en segundos |
-| `headers` | dict | {} | Headers personalizados |
-| `worker_metadata` | dict | {} | Metadatos del worker |
+| `base_url` | str | required | Base URL of the API server |
+| `token` | str | required | Authentication token |
+| `timeout` | int | 30 | Timeout in seconds |
+| `headers` | dict | {} | Custom headers |
+| `worker_metadata` | dict | {} | Worker metadata |
 
 ### Pipeline Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `worker_name` | str | required | Nombre identificador del worker |
-| `api_config` | dict | None | Configuración de API |
-| `max_retries` | int | 3 | Número máximo de reintentos |
-| `verbose` | bool | False | Logging detallado |
+| `worker_name` | str | required | Worker identifier name |
+| `api_config` | dict | None | API configuration |
+| `max_retries` | int | 3 | Maximum retry attempts |
+| `verbose` | bool | False | Detailed logging |
 
 ## Examples
 
-Los ejemplos están organizados en subcarpetas numeradas:
+Examples are organized in numbered subfolders:
 
 ### Basic (01-05)
 
 | Example | Description |
 |---------|-------------|
-| [01_basic_api](01_basic_api/) | Configuración básica con API |
-| [02_worker_id](02_worker_id/) | Gestión de worker_id |
-| [03_no_api](03_no_api/) | Pipeline sin API (modo local) |
-| [04_api_errors](04_api_errors/) | Manejo de errores de API |
-| [05_show_errors](05_show_errors/) | Flag SHOW_API_ERRORS |
+| [01_basic_api](01_basic_api/) | Basic API configuration |
+| [02_worker_id](02_worker_id/) | Worker ID management |
+| [03_no_api](03_no_api/) | Pipeline without API (local mode) |
+| [04_api_errors](04_api_errors/) | API error handling |
+| [05_show_errors](05_show_errors/) | SHOW_API_ERRORS flag |
 
 ### Configuration (06-09)
 
 | Example | Description |
 |---------|-------------|
-| [06_api_with_timeout](06_api_with_timeout/) | Configuración de timeout |
-| [06_full_config](06_full_config/) | Configuración completa |
-| [07_api_retry_config](07_api_retry_config/) | Configuración de reintentos |
-| [08_api_custom_headers](08_api_custom_headers/) | Headers personalizados |
-| [09_api_logging](09_api_logging/) | Configuración de logging |
+| [06_api_with_timeout](06_api_with_timeout/) | Timeout configuration |
+| [06_full_config](06_full_config/) | Full configuration |
+| [07_api_retry_config](07_api_retry_config/) | Retry configuration |
+| [08_api_custom_headers](08_api_custom_headers/) | Custom headers |
+| [09_api_logging](09_api_logging/) | Logging configuration |
 
 ### Advanced (10-15)
 
 | Example | Description |
 |---------|-------------|
-| [10_worker_metadata](10_worker_metadata/) | Metadatos del worker |
+| [10_worker_metadata](10_worker_metadata/) | Worker metadata |
 | [11_rate_limiting](11_rate_limiting/) | Rate limiting |
-| [12_batch_operations](12_batch_operations/) | Operaciones en lote |
-| [13_authentication](13_authentication/) | Autenticación |
+| [12_batch_operations](12_batch_operations/) | Batch operations |
+| [13_authentication](13_authentication/) | Authentication |
 | [14_health_checks](14_health_checks/) | Health checks |
-| [15_service_discovery](15_service_discovery/) | Descubrimiento de servicios |
+| [15_service_discovery](15_service_discovery/) | Service discovery |
 
 ### Edge Cases (16-20)
 
 | Example | Description |
 |---------|-------------|
-| [16_expired_token](16_expired_token/) | Token expirado/inválido |
-| [17_network_timeout](17_network_timeout/) | Timeout de red |
-| [18_invalid_url](18_invalid_url/) | URLs inválidas |
-| [19_concurrent_workers](19_concurrent_workers/) | Workers concurrentes |
-| [20_reconnection](20_reconnection/) | Reconexión automática |
+| [16_expired_token](16_expired_token/) | Expired/invalid token |
+| [17_network_timeout](17_network_timeout/) | Network timeout |
+| [18_invalid_url](18_invalid_url/) | Invalid URLs |
+| [19_concurrent_workers](19_concurrent_workers/) | Concurrent workers |
+| [20_reconnection](20_reconnection/) | Automatic reconnection |
 
 ## Error Handling
 
 ```mermaid
 stateDiagram-v2
     [*] --> APICall
-    APICall --> Success: Response 200-299
-    APICall --> Retry: Response 500-599
-    APICall --> ClientError: Response 400-499
-    Retry --> Success: After retry
-    Retry --> MaxRetries: Exceeded
-    MaxRetries --> [*]: Raise exception
-    ClientError --> [*]: Raise exception
-    Success --> [*]: Continue
+    APICall --> Success
+    APICall --> Retry
+    APICall --> ClientError
+    Retry --> Success
+    Retry --> MaxRetries
+    MaxRetries --> [*]
+    ClientError --> [*]
+    Success --> [*]
 ```
 
 ### SHOW_API_ERRORS Flag
@@ -173,9 +175,9 @@ pipeline.SHOW_API_ERRORS = False  # Silently continues (default)
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/matricula` | POST | Registrar worker |
-| `/newprocess` | POST | Iniciar proceso |
-| `/endprocess` | POST | Finalizar proceso |
+| `/matricula` | POST | Register worker |
+| `/newprocess` | POST | Start process |
+| `/endprocess` | POST | End process |
 
 ## Testing
 
@@ -193,26 +195,26 @@ python examples/api_pipeline/01_basic_api/example.py
 ## Best Practices
 
 ```mermaid
-flowchart TB
-    subgraph DO
-        D1[Usar try/except]
-        D2[Manejar API unavailable]
-        D3[Configurar timeouts]
-        D4[Usar retries]
+flowchart LR
+    subgraph Do
+        D1[Handle exceptions]
+        D2[Handle API unavailable]
+        D3[Configure timeouts]
+        D4[Use retries]
     end
     
-    subgraph DONT
-        N1[No asumir API disponible]
-        N2[No hardcodear URLs]
-        N3[No ignorar errores]
+    subgraph Dont
+        N1[Assume API available]
+        N2[Hardcode URLs]
+        N3[Ignore errors]
     end
 ```
 
-1. **Siempre manejar errores de API** - Usar try/except
-2. **Configurar timeouts apropiados** - No dejar indefinitely hanging
-3. **Usar retries para operaciones críticas** - Configurar max_retries
-4. **Verificar worker_id antes de enviar** - Solo enviar si está configurado
-5. **Usar verbose=True en desarrollo** - Para debugging
+1. **Always handle API errors** - Use try/except blocks
+2. **Configure appropriate timeouts** - Prevent indefinite hanging
+3. **Use retries for critical operations** - Configure max_retries
+4. **Verify worker_id before sending** - Only send if configured
+5. **Use verbose=True in development** - For debugging
 
 ## See Also
 
