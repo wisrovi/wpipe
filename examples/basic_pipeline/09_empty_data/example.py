@@ -1,7 +1,7 @@
 """
-09 Pipeline - Empty Data Handling
+Basic Pipeline - Empty Data Handling
 
-Shows how pipeline handles empty or missing data.
+Handling missing or empty input data.
 """
 
 from wpipe import Pipeline
@@ -21,12 +21,10 @@ def step_b(data):
 def main():
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps(
-        [
-            (step_a, "Step A", "v1.0"),
-            (step_b, "Step B", "v1.0"),
-        ]
-    )
+    pipeline.set_steps([
+        (step_a, "Step A", "v1.0"),
+        (step_b, "Step B", "v1.0"),
+    ])
 
     result = pipeline.run({})
     print(f"Result with empty data: {result}")

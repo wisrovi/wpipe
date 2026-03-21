@@ -1,12 +1,7 @@
 """
-01 Basic Pipeline - Simple Function Pipeline
+Basic Pipeline - Simple Function Pipeline
 
-This is the simplest possible pipeline example. It demonstrates:
-- Creating a Pipeline instance
-- Defining steps as simple functions
-- Running the pipeline with input data
-
-Steps are numbered from 01 to indicate progression from simple to complex.
+The simplest pipeline example. Shows basic pipeline creation with sequential functions.
 """
 
 from wpipe import Pipeline

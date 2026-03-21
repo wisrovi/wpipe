@@ -1,7 +1,7 @@
 """
-07 Pipeline - Multiple Pipeline Runs
+Basic Pipeline - Multiple Runs
 
-Shows running the same pipeline multiple times with different inputs.
+Running same pipeline with different inputs.
 """
 
 from wpipe import Pipeline
@@ -21,13 +21,11 @@ def format_output(data):
 
 def run_for_value(value):
     pipeline = Pipeline(verbose=False)
-    pipeline.set_steps(
-        [
-            (transform, "Transform", "v1.0"),
-            (validate, "Validate", "v1.0"),
-            (format_output, "Format", "v1.0"),
-        ]
-    )
+    pipeline.set_steps([
+        (transform, "Transform", "v1.0"),
+        (validate, "Validate", "v1.0"),
+        (format_output, "Format", "v1.0"),
+    ])
     return pipeline.run({"value": value})
 
 

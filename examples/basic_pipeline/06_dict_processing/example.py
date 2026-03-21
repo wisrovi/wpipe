@@ -1,7 +1,7 @@
 """
-06 Pipeline - Dictionary Processing
+Basic Pipeline - Dictionary Processing
 
-Shows processing dictionaries and lists within pipeline steps.
+Processing complex nested data structures.
 """
 
 from wpipe import Pipeline
@@ -29,24 +29,20 @@ def apply_discount(data):
 def main():
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps(
-        [
-            (process_items, "Process Items", "v1.0"),
-            (calculate_total, "Calculate Total", "v1.0"),
-            (apply_discount, "Apply Discount", "v1.0"),
-        ]
-    )
+    pipeline.set_steps([
+        (process_items, "Process Items", "v1.0"),
+        (calculate_total, "Calculate Total", "v1.0"),
+        (apply_discount, "Apply Discount", "v1.0"),
+    ])
 
-    result = pipeline.run(
-        {
-            "items": [
-                {"name": "Item1", "price": 100},
-                {"name": "Item2", "price": 200},
-                {"name": "Item3", "price": 50},
-            ],
-            "discount": 10,
-        }
-    )
+    result = pipeline.run({
+        "items": [
+            {"name": "Item1", "price": 100},
+            {"name": "Item2", "price": 200},
+            {"name": "Item3", "price": 50},
+        ],
+        "discount": 10
+    })
 
     print(f"Result: {result}")
     assert result["count"] == 3
