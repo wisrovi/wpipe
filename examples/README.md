@@ -12,7 +12,9 @@ examples/
 ├── nested_pipelines/    - Nested pipeline execution
 ├── sqlite_integration/   - SQLite database integration
 ├── yaml_config/         - YAML configuration loading
-├── test/                - Test files for all examples
+├── retry/              - Automatic retry on failure
+├── condition/          - Conditional branching
+├── test/               - Test files for all examples
 └── README.md
 ```
 
