@@ -11,8 +11,9 @@ What it evaluates:
 - Thread-safe operations
 """
 
-from wpipe import Pipeline
 import concurrent.futures
+
+from wpipe import Pipeline
 
 
 def process_task(data):

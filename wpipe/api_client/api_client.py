@@ -3,7 +3,7 @@ API Client module for pipeline tracking and communication.
 """
 
 import json
-from typing import Any, Optional
+from typing import Optional
 
 import requests
 

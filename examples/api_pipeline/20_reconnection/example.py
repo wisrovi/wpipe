@@ -11,8 +11,9 @@ What it evaluates:
 - Graceful degradation and recovery
 """
 
-from wpipe import Pipeline
 import time
+
+from wpipe import Pipeline
 
 
 class APIConnectionSimulator:

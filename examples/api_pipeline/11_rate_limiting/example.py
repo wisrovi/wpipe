@@ -10,9 +10,9 @@ What it evaluates:
 - API quota management
 """
 
-from wpipe import Pipeline
 import time
 
+from wpipe import Pipeline
 
 request_times = []
 RATE_LIMIT = 5

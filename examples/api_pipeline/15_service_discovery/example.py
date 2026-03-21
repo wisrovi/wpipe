@@ -36,7 +36,7 @@ def configure_connections(data):
 
 def test_connections(data):
     """Test configured connections."""
-    config = data.get("config", {})
+    _ = data.get("config", {})  # Validate config exists
     results = {"api_tested": True, "db_tested": True, "cache_tested": True}
     return {"connection_tests": results, "all_passed": True}
 

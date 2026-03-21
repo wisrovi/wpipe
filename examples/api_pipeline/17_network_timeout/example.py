@@ -11,8 +11,9 @@ What it evaluates:
 - Retry behavior on timeout
 """
 
-from wpipe import Pipeline
 import time
+
+from wpipe import Pipeline
 
 
 def slow_operation(data):
