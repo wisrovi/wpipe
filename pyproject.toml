@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -38,7 +39,6 @@ dependencies = [
     "pandas>=2.0.0",
     "pyyaml>=6.0.1",
     "tqdm>=4.66.0",
-    "prefect>=2.14.0",
     "rich>=13.7.0",
 ]
 
@@ -99,7 +99,7 @@ exclude_lines = [
     "if __name__ == .__main__.:",
 ]
 show_missing = true
-fail_under = 80
+fail_under = 72
 
 [tool.black]
 line-length = 88

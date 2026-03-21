@@ -41,7 +41,6 @@ def main():
     pipeline2 = Pipeline(verbose=False)
     pipeline2.set_steps(
         [
-            (pipeline1.run, "Nested Pipeline 1", "v1.0"),
             (aggregate_results, "Aggregate", "v1.0"),
         ]
     )

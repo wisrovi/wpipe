@@ -1,54 +1,81 @@
+"""
+SQLite wrapper module for simplified database operations.
+"""
+
+from typing import Any, Optional
+
 from wpipe.sqlite.Sqlite import SQLite
 
 
 class Wsqlite:
+    """Simplified SQLite wrapper for pipeline records."""
 
-    id: str = None
-
-    output_db: dict = {}
-    details_db: dict = {}
-    input_db: dict = {}
+    id: Optional[str] = None
 
     def __init__(self, db_name: str = "register.db") -> None:
+        """
+        Initialize Wsqlite wrapper.
+
+        Args:
+            db_name: Path to the SQLite database file.
+        """
         self.db_name = db_name
+        self._output_db: dict = {}
+        self._details_db: dict = {}
+        self._input_db: dict = {}
 
     @property
-    def _input(self):
-        pass
+    def input(self) -> dict:
+        """Get input data."""
+        return self._input_db
 
-    @_input.setter
-    def input(self, input: dict):
-        self._create(input=input)
-
-    @property
-    def _output(self):
-        pass
-
-    @_output.setter
-    def output(self, output: dict):
-        self.output_db = output
+    @input.setter
+    def input(self, value: dict) -> None:
+        """Set input data and create a new record."""
+        self._create(input_data=value)
 
     @property
-    def _details(self):
-        pass
+    def output(self) -> dict:
+        """Get output data."""
+        return self._output_db
 
-    @_details.setter
-    def details(self, details: dict):
-        self.details_db = details
+    @output.setter
+    def output(self, value: dict) -> None:
+        """Set output data."""
+        self._output_db = value
 
-    def _create(self, input: dict):
-        id = None
-        with SQLite(self.db_name) as conection_db:
-            id = conection_db.write(input=input)
+    @property
+    def details(self) -> dict:
+        """Get details data."""
+        return self._details_db
 
-        self.id = str(id)
+    @details.setter
+    def details(self, value: dict) -> None:
+        """Set details data."""
+        self._details_db = value
 
-    def _update(self, output: dict, details: dict = {}):
-        with SQLite(self.db_name) as conection_db:
-            conection_db.async_write(output=output, details=details, id=self.id)
+    def _create(self, input_data: dict) -> None:
+        """Create a new record with input data."""
+        record_id = None
+        with SQLite(self.db_name) as connection_db:
+            record_id = connection_db.write(input_data=input_data)
 
-    def __enter__(self):
+        if record_id is not None:
+            self.id = str(record_id)
+
+    def _update(self, output: dict, details: Optional[dict] = None) -> None:
+        """Update the current record with output and details."""
+        details = details or {}
+        if self.id is not None:
+            with SQLite(self.db_name) as connection_db:
+                connection_db.async_write(
+                    output=output, details=details, record_id=int(self.id)
+                )
+
+    def __enter__(self) -> "Wsqlite":
+        """Enter context manager."""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._update(output=self.output_db, details=self.details_db)
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit context manager and update record."""
+        self._update(output=self._output_db, details=self._details_db)

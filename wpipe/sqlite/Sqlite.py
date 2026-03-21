@@ -1,58 +1,91 @@
+"""
+SQLite database module for storing pipeline execution records.
+"""
+
 import json
 import os
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
-from typing import Literal
 from datetime import datetime
+from typing import Any, Optional, Union
+
 import pandas as pd
 
 
 class SQLite:
-    def __init__(self, db_name: str = "register.db"):
-        # nombre absoluto de db_name
-        # self.db_name = os.path.basename(db_name)
+    """SQLite database wrapper for storing pipeline records."""
+
+    def __init__(self, db_name: str = "register.db") -> None:
+        """
+        Initialize SQLite database.
+
+        Args:
+            db_name: Path to the SQLite database file.
+        """
         self.db_name = db_name
         self._create_table_if_not_exists()
-
         self.executor = ThreadPoolExecutor(max_workers=10)
 
-    def _create_table_if_not_exists(self):
+    def _create_table_if_not_exists(self) -> None:
+        """Create the records table if it doesn't exist."""
         if not self.db_name:
             return
 
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                """CREATE TABLE IF NOT EXISTS records
-                              (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                               input TEXT,
-                               output TEXT,
-                               details TEXT DEFAULT NULL,
-                               datetime TEXT DEFAULT CURRENT_TIMESTAMP)"""
-            )
+            cursor.execute("""CREATE TABLE IF NOT EXISTS records
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 input TEXT,
+                 output TEXT,
+                 details TEXT DEFAULT NULL,
+                 datetime TEXT DEFAULT CURRENT_TIMESTAMP)""")
 
     def async_write(
-        self, input: str = None, output: str = None, details: str = None, id: int = None
-    ):
-        self.executor.submit(self.write, input, output, details, id)
+        self,
+        input_data: Optional[Union[str, dict]] = None,
+        output: Optional[Union[str, dict]] = None,
+        details: Optional[Union[str, dict]] = None,
+        record_id: Optional[int] = None,
+    ) -> None:
+        """
+        Asynchronously write a record to the database.
+
+        Args:
+            input_data: Input data to store.
+            output: Output data to store.
+            details: Additional details to store.
+            record_id: Optional ID for updating existing record.
+        """
+        self.executor.submit(self.write, input_data, output, details, record_id)
 
     def write(
         self,
-        input: str = None,
-        output: Literal["str", "dict"] = None,
-        details: str = None,
-        id: int = None,
-    ):
-        if not self.check_table_exists():
-            return
+        input_data: Optional[Union[str, dict]] = None,
+        output: Optional[Union[str, dict]] = None,
+        details: Optional[Union[str, dict]] = None,
+        record_id: Optional[int] = None,
+    ) -> Optional[int]:
+        """
+        Write a record to the database.
 
-        if isinstance(input, dict):
-            input = json.dumps(input)
+        Args:
+            input_data: Input data to store.
+            output: Output data to store.
+            details: Additional details to store.
+            record_id: Optional ID for updating existing record.
+
+        Returns:
+            Record ID or None if write failed.
+        """
+        if not self.check_table_exists():
+            return None
+
+        if isinstance(input_data, dict):
+            input_data = json.dumps(input_data)
 
         if isinstance(output, dict):
             output["datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             output = json.dumps(output)
-
         elif isinstance(output, str):
             output = json.dumps(
                 {
@@ -67,44 +100,51 @@ class SQLite:
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
 
-            if not id:
-                # insert
+            if not record_id:
                 cursor.execute(
                     "INSERT INTO records (input, output, details) VALUES (?, ?, ?)",
-                    (input, output, details),
+                    (input_data, output, details),
                 )
-
-                id = cursor.lastrowid
+                record_id = cursor.lastrowid
             else:
-                # update
-                if not self.read_by_id(id):
-                    return
+                if not self.read_by_id(record_id):
+                    return None
 
-                if not input and not details and output:
+                if not input_data and not details and output:
                     cursor.execute(
                         "UPDATE records SET output = ? WHERE id = ?",
-                        (output, id),
+                        (output, record_id),
                     )
-                elif not input and output and details:
+                elif not input_data and output and details:
                     cursor.execute(
                         "UPDATE records SET output = ?, details = ? WHERE id = ?",
-                        (output, details, id),
+                        (output, details, record_id),
                     )
-                elif input and output and details:
+                elif input_data and output and details:
                     cursor.execute(
-                        "UPDATE records SET input = ?, output = ?, details = ? WHERE id = ?",
-                        (input, output, details, id),
+                        "UPDATE records SET input = ?, output = ?, "
+                        "details = ? WHERE id = ?",
+                        (input_data, output, details, record_id),
                     )
-                elif input and output and not details:
+                elif input_data and output and not details:
                     cursor.execute(
                         "UPDATE records SET input = ?, output = ? WHERE id = ?",
-                        (input, output, id),
+                        (input_data, output, record_id),
                     )
             conn.commit()
 
-        return id
+        return record_id
 
-    def read_by_id(self, id: int) -> list:
+    def read_by_id(self, record_id: int) -> list:
+        """
+        Read a record by ID.
+
+        Args:
+            record_id: The record ID to fetch.
+
+        Returns:
+            List of records (usually 0 or 1).
+        """
         if not self.check_table_exists():
             return []
 
@@ -112,23 +152,34 @@ class SQLite:
 
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM records WHERE id = ?", (id,))
-
+            cursor.execute("SELECT * FROM records WHERE id = ?", (record_id,))
             results = cursor.fetchall()
-
-            if cursor.rowcount == 0:
-                # print("No records found for the specified id")
-                pass
 
         return results
 
     def _view_records(self) -> pd.DataFrame:
+        """
+        Internal method to view all records.
+
+        Returns:
+            DataFrame with all records.
+        """
         with sqlite3.connect(self.db_name) as conn:
             return pd.read_sql_query("SELECT * FROM records", conn)
 
     def export_to_dataframe(
         self, save_csv: bool = False, csv_name: str = "records.csv"
     ) -> pd.DataFrame:
+        """
+        Export records to a pandas DataFrame.
+
+        Args:
+            save_csv: Whether to save to CSV file.
+            csv_name: Path for CSV output.
+
+        Returns:
+            DataFrame containing the records.
+        """
         if not self.check_table_exists():
             return pd.DataFrame()
 
@@ -140,6 +191,16 @@ class SQLite:
         return df
 
     def get_records_by_date_range(self, start_date: str, end_date: str) -> list:
+        """
+        Get records within a date range.
+
+        Args:
+            start_date: Start date in ISO format.
+            end_date: End date in ISO format.
+
+        Returns:
+            List of records within the date range.
+        """
         if not self.check_table_exists():
             return []
 
@@ -152,6 +213,12 @@ class SQLite:
             return cursor.fetchall()
 
     def count_records(self) -> int:
+        """
+        Count total records in the database.
+
+        Returns:
+            Number of records.
+        """
         if not self.check_table_exists():
             return 0
 
@@ -160,20 +227,32 @@ class SQLite:
             cursor.execute("SELECT COUNT(*) FROM records")
             return cursor.fetchone()[0]
 
-    def delete_by_id(self, id_saved: int):
+    def delete_by_id(self, record_id: int) -> None:
+        """
+        Delete a record by ID.
+
+        Args:
+            record_id: The record ID to delete.
+        """
         if not self.check_table_exists():
             return
 
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM records WHERE id = ?", (id_saved,))
+            cursor.execute("DELETE FROM records WHERE id = ?", (record_id,))
             conn.commit()
 
     def check_table_exists(self) -> bool:
+        """
+        Check if the table exists and is accessible.
+
+        Returns:
+            True if table exists, False otherwise.
+        """
         if not self.db_name:
             return False
 
-        if len(os.path.dirname(self.db_name)) > 0:
+        if os.path.dirname(self.db_name):
             if not os.path.exists(os.path.dirname(self.db_name)):
                 os.makedirs(os.path.dirname(self.db_name))
 
@@ -181,27 +260,11 @@ class SQLite:
 
         return True
 
-    def __enter__(self):
+    def __enter__(self) -> "SQLite":
+        """Enter context manager."""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit context manager."""
         if self.executor:
             self.executor.shutdown(wait=True)
-
-
-if __name__ == "__main__":
-    import uuid
-
-    my_uuid = str(uuid.uuid4().hex)
-
-    with SQLite() as registro:
-        registro.write(topic="topic 1", type_data="image", value=my_uuid)
-        registro.write(topic="topic 2", type_data="image", value=my_uuid)
-        registro.write(topic="topic 3", type_data="image", value=my_uuid)
-        registro.write(topic="topic 4", type_data="image", value=my_uuid)
-
-        print(registro.read_by_id(str(uuid.uuid4().hex)))
-
-        print(registro.export_to_dataframe().head())
-
-        print("total", registro.count_records())

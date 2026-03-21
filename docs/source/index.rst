@@ -13,7 +13,7 @@ wpipe Documentation
    :target: https://github.com/wisrovi/wpipe/blob/main/LICENSE
    :alt: License
 
-**wpipe** is a Python library for creating and executing pipelines with task orchestration, 
+**wpipe** is a Python library for creating and executing pipelines with task orchestration,
 API integration, and execution tracking.
 
 Features
@@ -27,6 +27,8 @@ Features
 - Nested pipeline execution
 - Rich progress visualization
 - Comprehensive error handling
+- Type hints and comprehensive docstrings
+- High code quality (Pylint 9.47/10)
 
 Quick Start
 -----------
@@ -45,7 +47,7 @@ Basic Usage
 
 .. code-block:: python
 
-   from wpipe.pipe import Pipeline
+   from wpipe import Pipeline
 
    def step1(data):
        return {"result": data["x"] * 2}
@@ -61,6 +63,13 @@ Basic Usage
 
    result = pipeline.run({"x": 5})
    print(result)  # {'result': 10, 'final': 20}
+
+Code Quality
+-----------
+
+- **Pylint Score**: 9.47/10
+- **Tests**: 84 passing
+- **Python Support**: 3.9, 3.10, 3.11, 3.12, 3.13
 
 Contents
 --------

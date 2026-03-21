@@ -1,63 +1,152 @@
+"""
+Pipeline module for orchestrating task execution.
+
+This module provides the Pipeline class for managing and executing
+a sequence of tasks, with support for conditional branching,
+retry logic, and API tracking.
+"""
+
 import json
 import time
 import traceback
+from typing import Any, Callable, Optional
 
-from prefect import flow, task
 from rich.errors import LiveError
 from rich.progress import Progress
 from tqdm import tqdm
 
 from wpipe.api_client.api_client import APIClient
 from wpipe.exception import ApiError, Codes, ProcessError, TaskError
-from wpipe.exception.api_error import TaskError
 from wpipe.exception.api_error import logger
 
 
+class Condition:
+    """Represents a conditional branch in the pipeline."""
+
+    def __init__(
+        self,
+        expression: str,
+        branch_true: list,
+        branch_false: Optional[list] = None,
+    ) -> None:
+        """
+        Initialize a Condition.
+
+        Args:
+            expression: The condition expression to evaluate.
+            branch_true: Steps to execute if condition is True.
+            branch_false: Steps to execute if condition is False.
+        """
+        self.expression = expression
+        self.branch_true = branch_true
+        self.branch_false = branch_false or []
+
+    def evaluate(self, data: dict) -> bool:
+        """
+        Evaluate the condition expression against data.
+
+        Args:
+            data: Dictionary containing data for evaluation.
+
+        Returns:
+            True if condition is met, False otherwise.
+        """
+        safe_globals = {"True": True, "False": False, "None": None}
+        safe_locals = data.copy()
+        try:
+            return eval(self.expression, safe_globals, safe_locals)
+        except Exception as e:
+            raise ValueError(
+                f"Invalid condition expression: {self.expression}. Error: {e}"
+            ) from e
+
+    def get_branch(self, data: dict) -> list:
+        """
+        Get the appropriate branch based on evaluation.
+
+        Args:
+            data: Dictionary containing data for evaluation.
+
+        Returns:
+            List of steps to execute.
+        """
+        if self.evaluate(data):
+            return self.branch_true
+        if self.branch_false:
+            return self.branch_false
+        return []
+
+
 class ProgressManager:
+    """Singleton manager for Rich Progress bars."""
+
     _instance = None
 
     def __new__(cls):
+        """Create or return the singleton instance."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.progress = Progress()
         return cls._instance
 
     def __enter__(self):
+        """Enter context manager."""
         self.progress.__enter__()
         return self.progress
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit context manager."""
         self.progress.__exit__(exc_type, exc_val, exc_tb)
 
 
-# Definición de la clase
 class Pipeline(APIClient):
-    worker_id: str = None
+    """Pipeline for orchestrating task execution with API tracking support."""
+
+    worker_id: Optional[str] = None
     worker_name: str = "worker"
     verbose: bool = False
-    task_id: str = None
+    task_id: Optional[str] = None
 
-    process_id: str = None
+    process_id: Optional[str] = None
     send_to_api: bool = False
-    api_config: dict = None
+    api_config: Optional[dict] = None
     tasks_list: list = []
 
     SHOW_API_ERRORS = False
 
     task_name: str = "Processing pipeline tasks"
-    progress_rich: Progress = None
+    progress_rich: Optional[Progress] = None
+
+    max_retries: int = 0
+    retry_delay: float = 1.0
+    retry_on_exceptions: tuple = (Exception,)
 
     def __init__(
         self,
-        worker_id: str = None,
-        worker_name: str = None,
-        api_config: dict = None,
+        worker_id: Optional[str] = None,
+        worker_name: Optional[str] = None,
+        api_config: Optional[dict] = None,
         verbose: bool = False,
-    ):
+        max_retries: int = 0,
+        retry_delay: float = 1.0,
+        retry_on_exceptions: tuple = (Exception,),
+    ) -> None:
+        """
+        Initialize the Pipeline.
+
+        Args:
+            worker_id: Unique identifier for this worker.
+            worker_name: Human-readable name for the worker.
+            api_config: Configuration for API tracking.
+            verbose: Enable verbose output.
+            max_retries: Maximum retry attempts for failed tasks.
+            retry_delay: Delay between retries in seconds.
+            retry_on_exceptions: Tuple of exception types to retry on.
+        """
         if api_config:
-            # invoca el constructor de APIClient
             super().__init__(
-                base_url=api_config.get("base_url"), token=api_config.get("token")
+                base_url=api_config.get("base_url"),
+                token=api_config.get("token"),
             )
             self.api_config = api_config
 
@@ -68,21 +157,43 @@ class Pipeline(APIClient):
             self.worker_name = worker_name
 
         self.verbose = verbose
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+        self.retry_on_exceptions = retry_on_exceptions
 
-    def set_worker_id(self, id: str):
-        if id and isinstance(id, str):
-            if len(id) > 5:
-                if self.api_config and not self.worker_id:
-                    self.send_to_api = True
-                    print("[INFO] worker_id defined correct")
+    def set_worker_id(self, worker_id: str) -> None:
+        """
+        Set the worker ID.
 
-                self.worker_id = id
-            else:
-                self.worker_id = None
+        Args:
+            worker_id: The worker ID to set.
+
+        Raises:
+            TypeError: If worker_id is not a string.
+            ValueError: If worker_id is too short (must be > 5 chars).
+        """
+        if not isinstance(worker_id, str):
+            raise TypeError(f"worker_id must be a string, got {type(worker_id)}")
+
+        if len(worker_id) > 5:
+            if self.api_config and not self.worker_id:
+                self.send_to_api = True
+                print("[INFO] worker_id defined correct")
+            self.worker_id = worker_id
         else:
-            raise Exception(f"[ERROR] {id} is not correct, have to be a string")
+            self.worker_id = None
 
-    def worker_register(self, name: str, version: str):
+    def worker_register(self, name: str, version: str) -> Optional[dict]:
+        """
+        Register the worker with the API.
+
+        Args:
+            name: Worker name.
+            version: Worker version.
+
+        Returns:
+            Worker registration data if successful, None otherwise.
+        """
         data = {
             "name": name,
             "version": version,
@@ -91,43 +202,43 @@ class Pipeline(APIClient):
                     "name": name,
                     "version": version,
                 }
-                for func, name, version, _id in self.tasks_list
+                for func, step_name, step_version, _step_id in self.tasks_list
             ],
         }
 
         if self.api_config:
-            worker_id = self.register_worker(data)
+            worker_data = self.register_worker(data)
 
-            if worker_id and "id" in worker_id:
-                self.set_worker_id(worker_id.get("id"))
+            if worker_data and "id" in worker_data:
+                self.set_worker_id(worker_data.get("id"))
+                return worker_data
+        return None
 
-                return worker_id
-
-    def _api_task_update(self, msg: dict):
+    def _api_task_update(self, msg: dict) -> None:
+        """Update task status via API."""
         if self.send_to_api:
             try:
                 task_updated = self.update_task(msg)
                 if self.verbose:
-                    print(
-                        f"[task] [ERROR] '{self.task_name}': {task_updated}",
-                    )
-            except:
+                    print(f"[task] [ERROR] '{self.task_name}': {task_updated}")
+            except Exception as exc:  # noqa: BLE001
                 print("Problem update task")
                 if self.SHOW_API_ERRORS:
-                    raise ApiError("Problem update task", Codes.UPDATE_TASK)
+                    raise ApiError("Problem update task", Codes.UPDATE_TASK) from exc
 
-    def _api_process_update(self, msg: dict, start: bool = False):
+    def _api_process_update(self, msg: dict, start: bool = False) -> None:
+        """Update process status via API."""
         if self.send_to_api:
             try:
                 if start:
-                    process_registed = self.register_process(msg)
+                    process_registered = self.register_process(msg)
 
                     self.tasks_list = [
                         (rta[0], rta[1], rta[2], son["id"])
-                        for son, rta in zip(process_registed["sons"], self.tasks_list)
+                        for son, rta in zip(process_registered["sons"], self.tasks_list)
                     ]
 
-                    self.process_id = process_registed["father"]
+                    self.process_id = process_registered["father"]
 
                     if self.verbose:
                         print(
@@ -142,165 +253,313 @@ class Pipeline(APIClient):
                             print("\t", f"[INFO] [END] pipeline: {status}")
                         if self.SHOW_API_ERRORS:
                             raise ApiError("API problem", Codes.UPDATE_PROCESS_OK)
-            except:
+            except Exception as exc:  # noqa: BLE001
                 print("Problem update Process")
                 if self.SHOW_API_ERRORS:
-                    raise ApiError("Problem update Process", Codes.UPDATE_PROCESS_ERROR)
+                    raise ApiError(
+                        "Problem update Process", Codes.UPDATE_PROCESS_ERROR
+                    ) from exc
 
-    def _decorator_task_report(func):
-        """Decorador para reportar la ejecución de cada tarea."""
+    def _task_invoke_with_report(
+        self, func: Callable, *args: Any, **kwargs: Any
+    ) -> dict:
+        """
+        Invoke a task with API reporting.
 
-        def wrapper(self, *args, **kwargs):
+        Args:
+            func: Function to invoke.
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
 
-            self._api_task_update({"task_id": self.task_id, "status": "start"})
+        Returns:
+            Result dictionary from the function.
+        """
+        self._api_task_update({"task_id": self.task_id, "status": "start"})
 
-            resultado = {}
-            try:
-                if isinstance(func, Pipeline):
-                    resultado = func.run(self, *args, **kwargs)
-                else:
-                    resultado = func(self, *args, **kwargs)
+        result = {}
+        try:
+            if isinstance(func, Pipeline):
+                result = func.run(*args, **kwargs)
+            else:
+                result = func(*args, **kwargs)
 
-                self._api_task_update({"task_id": self.task_id, "status": "success"})
-            except Exception as e:
-                errors_traceback = traceback.extract_tb(e.__traceback__)
+            self._api_task_update({"task_id": self.task_id, "status": "success"})
+        except Exception as e:
+            errors_tb = traceback.extract_tb(e.__traceback__)
 
-                errors_list = []
-                for error_traceback in errors_traceback:
-                    errors_list.append(
-                        {
-                            "file": error_traceback.filename,
-                            "line": error_traceback.lineno,
-                            "method": error_traceback.name,
-                        }
-                    )
-
-                error = {
-                    "task_name": self.task_name,
-                    "error_traceback": errors_list,
-                    "error_message": str(e),  # Agrega el mensaje del error
-                    "task_id": self.task_id,
-                }
-
-                resultado["error"] = error["error_message"]
-
-                self._api_task_update(
+            errors_list = []
+            for error_traceback in errors_tb:
+                errors_list.append(
                     {
-                        "task_id": self.task_id,
-                        "status": "error",
-                        "details": json.dumps(error),
+                        "file": error_traceback.filename,
+                        "line": error_traceback.lineno,
+                        "method": error_traceback.name,
                     }
                 )
 
-                if self.verbose:
-                    for error in errors_list:
-                        logger.error(error)
+            error_info = {
+                "task_name": self.task_name,
+                "error_traceback": errors_list,
+                "error_message": str(e),
+                "task_id": self.task_id,
+            }
 
-                raise TaskError(error, Codes.TASK_FAILED)
+            result["error"] = error_info["error_message"]
 
-            return resultado
-
-        return wrapper
-
-    def _decorator_pipeline_report(func):
-        """Decorador para reportar la ejecución del pipeline completo."""
-
-        def wrapper(self, *args, **kwargs):
-
-            worker_id = self.worker_id
+            self._api_task_update(
+                {
+                    "task_id": self.task_id,
+                    "status": "error",
+                    "details": json.dumps(error_info),
+                }
+            )
 
             if self.verbose:
-                print("\n", "\t", "*" * 50)
-                print("\n", f"\t [WORKER] {self.worker_id}")
-                print("\n\t", "*" * 50)
+                for error in errors_list:
+                    logger.error(error)
 
-            self._api_process_update({"id": worker_id}, start=True)
+            raise TaskError(error_info, Codes.TASK_FAILED) from e
 
-            resultado = {}
-            try:
-                resultado = func(self, *args, **kwargs)
+        return result
 
-                self._api_process_update({"id": self.process_id, "details": ""})
-            except TaskError as te:
-                error = te.args[0]
-
-                error["process_name"] = self.process_id
-                error["worker_id"] = self.worker_id
-                error["worker_name"] = self.worker_name or "worker"
-                error["task_name"] = self.task_name
-                error["task_id"] = self.task_id
-
-                self._api_process_update(
-                    {"id": self.process_id, "details": json.dumps(error)}
-                )
-                # logger.error(error)
-                raise ProcessError(error, Codes.TASK_FAILED)
-            except ApiError as ae:
-                raise ApiError(str(ae), Codes.API_ERROR)
-
-            return resultado
-
-        return wrapper
-
-    def set_steps(self, lista):
+    def _pipeline_run_with_report(self, *args: Any, **kwargs: Any) -> dict:
         """
-        Define los pasos del pipeline, verificando que cada elemento sea una tupla
-        compuesta por una función y un nombre en string.
-        """
+        Run the pipeline with API reporting.
 
+        Args:
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
+
+        Returns:
+            Result dictionary from the pipeline.
+        """
+        worker_id = self.worker_id
+
+        if self.verbose:
+            print("\n", "\t", "*" * 50)
+            print("\n", f"\t [WORKER] {self.worker_id}")
+            print("\n\t", "*" * 50)
+
+        self._api_process_update({"id": worker_id}, start=True)
+
+        result = {}
+        try:
+            result = self._pipeline_run(*args, **kwargs)
+
+            self._api_process_update({"id": self.process_id, "details": ""})
+        except TaskError as te:
+            error = {
+                "message": str(te),
+                "error_code": te.error_code,
+                "process_name": self.process_id,
+                "worker_id": self.worker_id,
+                "worker_name": self.worker_name or "worker",
+                "task_name": self.task_name,
+                "task_id": self.task_id,
+            }
+
+            self._api_process_update(
+                {"id": self.process_id, "details": json.dumps(error)}
+            )
+            raise ProcessError(str(te), Codes.TASK_FAILED) from te
+        except ApiError as ae:
+            raise ApiError(str(ae), Codes.API_ERROR) from ae
+
+        return result
+
+    def set_steps(self, steps: list) -> None:
+        """
+        Set the pipeline steps.
+
+        Args:
+            steps: List of steps (tuples or Conditions).
+
+        Raises:
+            ValueError: If step format is invalid.
+        """
         new_list = []
 
-        for item in lista:
-            if not (
+        def normalize_step(step: tuple) -> tuple:
+            """Normalize a step tuple to 4 elements."""
+            if isinstance(step, tuple) and len(step) == 3 and callable(step[0]):
+                return (step[0], step[1], step[2], "")
+            return step
+
+        for item in steps:
+            if isinstance(item, Condition):
+                normalized_true = [normalize_step(s) for s in item.branch_true]
+                normalized_false = [
+                    normalize_step(s) for s in (item.branch_false or [])
+                ]
+                condition = Condition(
+                    expression=item.expression,
+                    branch_true=normalized_true,
+                    branch_false=normalized_false,
+                )
+                new_list.append(condition)
+            elif not (
                 isinstance(item, tuple)
                 and len(item) == 3
                 and callable(item[0])
                 and isinstance(item[1], str)
             ):
                 raise ValueError(
-                    "Cada elemento de la lista debe ser una tupla (función, nombre)."
+                    "Each element must be a tuple (function, name, version) "
+                    "or a Condition object."
                 )
             else:
                 new_list.append((item[0], item[1], item[2], ""))
 
         self.tasks_list = new_list
 
-    @_decorator_task_report
-    def _task_invoke(self, func, name, *args, **kwargs):
-        return func(*args, **kwargs)
-
-    @_decorator_pipeline_report
-    def run(self, *args, **kwargs):
+    def _execute_with_retry(
+        self, func: Callable, name: str, *args: Any, **kwargs: Any
+    ) -> Any:
         """
-        Ejecuta el pipeline completo, pasando los resultados de una función como
-        entrada a la siguiente.
-        """
+        Execute a function with retry logic.
 
-        resultado = None
+        Args:
+            func: Function to execute.
+            name: Function name for logging.
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
+
+        Returns:
+            Result from function execution.
+
+        Raises:
+            Exception: The last exception if all retries fail.
+        """
+        last_exception = None
+
+        for attempt in range(self.max_retries + 1):
+            try:
+                if isinstance(func, Pipeline):
+                    return func.run(*args, **kwargs)
+                return func(*args, **kwargs)
+            except self.retry_on_exceptions as e:
+                last_exception = e
+                if attempt < self.max_retries:
+                    if self.verbose:
+                        print(
+                            f"[RETRY] {name} failed "
+                            f"(attempt {attempt + 1}/{self.max_retries + 1}): {e}"
+                        )
+                        print(
+                            f"[RETRY] Waiting {self.retry_delay}s "
+                            "before next attempt..."
+                        )
+                    time.sleep(self.retry_delay)
+                else:
+                    if self.verbose:
+                        print(
+                            f"[RETRY] {name} failed "
+                            f"after {self.max_retries + 1} attempts"
+                        )
+
+        raise last_exception
+
+    def _task_invoke(self, func: Callable, name: str, *args: Any, **kwargs: Any) -> Any:
+        """
+        Invoke a task, optionally with retry logic.
+
+        Args:
+            func: Function to invoke.
+            name: Function name.
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
+
+        Returns:
+            Result from function.
+
+        Raises:
+            TaskError: If the task raises an exception.
+        """
+        try:
+            if self.max_retries > 0:
+                return self._execute_with_retry(func, name, *args, **kwargs)
+
+            if isinstance(func, Pipeline):
+                return func.run(*args, **kwargs)
+            return func(*args, **kwargs)
+        except (TaskError, ApiError):
+            raise
+        except Exception as e:
+            raise TaskError(str(e), Codes.TASK_FAILED) from e
+
+    def _run_branch(self, steps: list, data: dict, **kwargs: Any) -> dict:
+        """
+        Execute a branch of steps.
+
+        Args:
+            steps: List of steps to execute.
+            data: Initial data dictionary.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Updated data dictionary.
+        """
+        for item in steps:
+            if isinstance(item, Condition):
+                branch = item.get_branch(data)
+                data = self._run_branch(branch, data, **kwargs)
+            else:
+                func, name, _, step_id = item
+                self.task_name = name
+                self.task_id = step_id
+
+                data["progress_rich"] = self.progress_rich
+                result = self._task_invoke(func, name, *(data,), **kwargs)
+
+                assert isinstance(result, dict), (
+                    f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                )
+
+                data.update(result)
+
+                if "error" in data:
+                    break
+
+        return data
+
+    def _pipeline_run(self, *args: Any, **kwargs: Any) -> dict:
+        """
+        Internal pipeline run implementation.
+
+        Args:
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
+
+        Returns:
+            Result dictionary from pipeline execution.
+        """
+        result_data = {}
         data = {}
+        total_steps = sum(
+            1
+            for item in self.tasks_list
+            if not isinstance(item, Condition) or item.branch_true
+        )
 
-        def ProgressBar(size: int):
+        def progress_bar_generator(size: int):
+            """Generate progress bar updates."""
             try:
                 advance_id = 0
                 progress_manager = ProgressManager()
 
-                with progress_manager as progress_rich:
-                    self.progress_rich = progress_rich
+                with progress_manager as progress_rich_instance:
+                    self.progress_rich = progress_rich_instance
 
-                    task = progress_rich.add_task(
-                        f"[cyan][{self.worker_name}]{self.task_name}", total=size
+                    task = progress_rich_instance.add_task(
+                        f"[cyan][{self.worker_name}]{self.task_name}",
+                        total=size,
                     )
-                    while not progress_rich.finished:
-                        progress_rich.update(
-                            task,
-                            description=f"[cyan][{self.worker_name}]{self.task_name}",
-                        )
-
-                        yield advance_id, progress_rich
+                    while not progress_rich_instance.finished:
+                        yield advance_id, progress_rich_instance
 
                         advance_id += 1
-                        progress_rich.update(task, advance=1)
-            except LiveError as e:
+                        progress_rich_instance.update(task, advance=1)
+            except LiveError:
                 for advance_id in tqdm(
                     range(size),
                     desc=f"{self.task_name}",
@@ -308,35 +567,39 @@ class Pipeline(APIClient):
                 ):
                     yield advance_id, None
 
-        for advance_id, progress in ProgressBar(size=len(self.tasks_list)):
+        for advance_id, progress in progress_bar_generator(size=total_steps):
             if advance_id >= len(self.tasks_list):
                 return data
 
-            (func, name, version, _id) = self.tasks_list[advance_id]
+            item = self.tasks_list[advance_id]
 
-            self.task_name = name
-            self.task_id = _id
-            self.progress_rich = progress
-
-            data.update(args[0])
-
-            if advance_id == 0:
-                data.update({"progress_rich": progress})
-                resultado = self._task_invoke(func, name, *(data,), **kwargs)
+            if isinstance(item, Condition):
+                if self.verbose:
+                    print(f"\n[CONDITION] Evaluating: {item.expression}")
+                data = self._run_branch([item], data, **kwargs)
             else:
-                resultado = self._task_invoke(func, name, *(data,), **kwargs)
+                func, name, _, step_id = item
 
-            assert isinstance(
-                resultado, dict
-            ), f"[ERROR] The result of state ({self.task_name}) on pipeline have to a dict"
+                self.task_name = name
+                self.task_id = step_id
+                self.progress_rich = progress
 
-            data.update(resultado)
+                data.update(args[0] if args else {})
+                data["progress_rich"] = progress
 
-            if self.verbose:
-                print()
+                result_data = self._task_invoke(func, name, *(data,), **kwargs)
 
-            if "error" in data:
-                break
+                assert isinstance(result_data, dict), (
+                    f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                )
+
+                data.update(result_data)
+
+                if self.verbose:
+                    print()
+
+                if "error" in data:
+                    break
 
         if "error" in data:
             raise TaskError(
@@ -344,7 +607,28 @@ class Pipeline(APIClient):
                 Codes.TASK_FAILED,
             )
 
-        # remove the progress_rich from the data
         data.pop("progress_rich", None)
 
         return data
+
+    def run(self, *args: Any, **kwargs: Any) -> dict:
+        """
+        Execute the pipeline.
+
+        Args:
+            *args: Initial data dictionary.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Result dictionary from pipeline execution.
+
+        Raises:
+            TaskError: If a task fails.
+        """
+        if "error" in (args[0] if args else {}):
+            raise TaskError(
+                f"[{self.task_name}] Initial data contains error",
+                Codes.TASK_FAILED,
+            )
+
+        return self._pipeline_run_with_report(*args, **kwargs)

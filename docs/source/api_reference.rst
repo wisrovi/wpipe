@@ -63,4 +63,4 @@ RAM Utilities
 
 .. autofunction:: wpipe.ram.memory
 
-.. autofunction:: wpipe.ram.get_memory
+.. autofunction:: wpipe.ram.ram.get_memory

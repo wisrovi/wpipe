@@ -1,5 +1,5 @@
 project = "wpipe"
-copyright = "2024, William Steve Rodriguez Villamizar"
+copyright = "2024-2026, William Steve Rodriguez Villamizar"
 author = "William Steve Rodriguez Villamizar"
 version = "1.0.0"
 release = "1.0.0"

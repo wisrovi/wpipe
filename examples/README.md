@@ -2,38 +2,54 @@
 
 This directory contains example scripts demonstrating wpipe library functionality.
 
-## Available Examples
+## Structure
 
-### Basic Examples
-
-- `example_01_basic_pipeline.py` - Basic pipeline execution without API
-- `example_02_api_pipeline.py` - Pipeline with API connection
-- `example_03_error_handling.py` - Error handling in pipelines
-- `example_04_nested_pipelines.py` - Nested pipeline execution
-- `example_05_sqlite_integration.py` - SQLite database integration
-- `example_06_yaml_config.py` - YAML configuration loading
+```
+examples/
+├── basic_pipeline/       - Basic pipeline with functions and classes
+├── api_pipeline/        - Pipeline with API tracking
+├── error_handling/      - Error handling in pipelines
+├── nested_pipelines/    - Nested pipeline execution
+├── sqlite_integration/   - SQLite database integration
+├── yaml_config/         - YAML configuration loading
+├── test/                - Test files for all examples
+└── README.md
+```
 
 ## Running Examples
 
-Run any example with:
 ```bash
-python examples/example_01_basic_pipeline.py
+# Basic pipeline
+python examples/basic_pipeline/pipeline.py
+
+# API tracking
+python examples/api_pipeline/client.py
+
+# Error handling
+python examples/error_handling/errors.py
+
+# Nested pipelines
+python examples/nested_pipelines/nested.py
+
+# SQLite integration
+python examples/sqlite_integration/database.py
+
+# YAML configuration
+python examples/yaml_config/config_loader.py
 ```
 
-## Legacy Examples
+## Running Tests
 
-The `example/` directory contains legacy examples that may require additional dependencies (e.g., wkafka).
+```bash
+# Run all example tests
+pytest examples/test/
 
-## Creating Custom Pipelines
-
-Basic pipeline structure:
-```python
-from wpipe.pipe import Pipeline
-
-def my_step(data):
-    return {"result": data["input"] * 2}
-
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([(my_step, "My Step", "v1.0")])
-result = pipeline.run({"input": 10})
+# Run with coverage
+pytest examples/test/ --cov --cov-report=html
 ```
+
+## Code Quality
+
+- **Pylint Score**: 9.47/10
+- **Tests**: 84 passing
+- **Python Support**: 3.9 - 3.13
