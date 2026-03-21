@@ -7,12 +7,25 @@ Shows adding custom headers to API requests.
 from wpipe import Pipeline
 
 
-def process(data):
+def process(data: dict) -> dict:
+    """Process data through the pipeline.
+
+    Args:
+        data: Input data dictionary to process.
+
+    Returns:
+        Dictionary with processing result.
+
+    Example:
+        >>> process({})
+        {'result': 'done'}
+    """
     return {"result": "done"}
 
 
-def main():
-    api_config = {
+def main() -> None:
+    """Run the custom headers example pipeline."""
+    api_config: dict[str, str | dict[str, str]] = {
         "base_url": "http://localhost:8418",
         "token": "test_token",
         "headers": {"X-Custom-Header": "value"},

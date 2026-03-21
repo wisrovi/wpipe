@@ -8,14 +8,40 @@ Note: Requires an API server running at the configured URL.
 from wpipe import Pipeline
 
 
-def process(data):
+def process(data: dict) -> dict:
+    """Process input data and return result.
+
+    Args:
+        data: Dictionary containing 'value' key with numeric value.
+
+    Returns:
+        Dictionary with 'result' (doubled value) and 'status'.
+
+    Example:
+        >>> process({"value": 10})
+        {"result": 20, "status": "success"}
+    """
     return {"result": data["value"] * 2, "status": "success"}
 
 
-def main():
-    api_config = {"base_url": "http://localhost:8418", "token": "test_token_123"}
+def main() -> None:
+    """Run the basic API pipeline example.
 
-    pipeline = Pipeline(worker_name="demo_worker", api_config=api_config, verbose=True)
+    Demonstrates:
+        - Creating Pipeline with api_config
+        - Worker registration
+        - Graceful fallback when API is unavailable
+    """
+    api_config: dict[str, str] = {
+        "base_url": "http://localhost:8418",
+        "token": "test_token_123",
+    }
+
+    pipeline = Pipeline(
+        worker_name="demo_worker",
+        api_config=api_config,
+        verbose=True,
+    )
 
     pipeline.set_steps(
         [

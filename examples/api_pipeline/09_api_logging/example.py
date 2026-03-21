@@ -7,12 +7,28 @@ Shows configuring logging for API calls.
 from wpipe import Pipeline
 
 
-def process(data):
+def process(data: dict) -> dict:
+    """Process data through the pipeline.
+
+    Args:
+        data: Input data dictionary to process.
+
+    Returns:
+        Dictionary with processing result.
+
+    Example:
+        >>> process({})
+        {'result': 'done'}
+    """
     return {"result": "done"}
 
 
-def main():
-    api_config = {"base_url": "http://localhost:8418", "token": "test_token"}
+def main() -> None:
+    """Run the logging configuration example pipeline."""
+    api_config: dict[str, str] = {
+        "base_url": "http://localhost:8418",
+        "token": "test_token",
+    }
 
     pipeline = Pipeline(worker_name="logging_test", api_config=api_config, verbose=True)
 

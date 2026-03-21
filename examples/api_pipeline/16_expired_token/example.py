@@ -14,13 +14,28 @@ What it evaluates:
 from wpipe import Pipeline
 
 
-def process_data(data):
-    """Simple processing function."""
+def process_data(data: dict) -> dict:
+    """Simple processing function.
+
+    Args:
+        data: Input data dictionary containing 'value'.
+
+    Returns:
+        Dictionary with processed result and status.
+
+    Example:
+        >>> process_data({"value": 10})
+        {'result': 20, 'status': 'authenticated'}
+    """
     return {"result": data.get("value", 0) * 2, "status": "authenticated"}
 
 
-def main():
-    api_config = {"base_url": "http://localhost:8418", "token": "expired_token_12345"}
+def main() -> None:
+    """Run the expired token example pipeline."""
+    api_config: dict[str, str] = {
+        "base_url": "http://localhost:8418",
+        "token": "expired_token_12345",
+    }
 
     pipeline = Pipeline(
         worker_name="expired_token_worker", api_config=api_config, verbose=True

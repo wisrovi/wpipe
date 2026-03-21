@@ -13,28 +13,65 @@ What it evaluates:
 from wpipe import Pipeline
 
 
-def validate_batch(data):
-    """Validate batch of items."""
-    items = data.get("items", [])
-    valid = [item for item in items if item > 0]
+def validate_batch(data: dict) -> dict:
+    """Validate batch of items.
+
+    Args:
+        data: Input data dictionary containing 'items' list.
+
+    Returns:
+        Dictionary with valid items and validation statistics.
+
+    Example:
+        >>> validate_batch({"items": [1, 2, -1, 3]})
+        {'valid_items': [1, 2, 3], 'total': 4, 'valid_count': 3}
+    """
+    items: list = data.get("items", [])
+    valid: list = [item for item in items if item > 0]
     return {"valid_items": valid, "total": len(items), "valid_count": len(valid)}
 
 
-def transform_batch(data):
-    """Transform valid items in batch."""
-    valid = data.get("valid_items", [])
-    transformed = [item * 2 for item in valid]
+def transform_batch(data: dict) -> dict:
+    """Transform valid items in batch.
+
+    Args:
+        data: Input data dictionary containing 'valid_items' list.
+
+    Returns:
+        Dictionary with transformed items and original count.
+
+    Example:
+        >>> transform_batch({"valid_items": [1, 2, 3]})
+        {'transformed_items': [2, 4, 6], 'original_count': 3}
+    """
+    valid: list = data.get("valid_items", [])
+    transformed: list = [item * 2 for item in valid]
     return {"transformed_items": transformed, "original_count": len(valid)}
 
 
-def aggregate_results(data):
-    """Aggregate transformed results."""
-    items = data.get("transformed_items", [])
+def aggregate_results(data: dict) -> dict:
+    """Aggregate transformed results.
+
+    Args:
+        data: Input data dictionary containing 'transformed_items' list.
+
+    Returns:
+        Dictionary with final items, sum, and count.
+
+    Example:
+        >>> aggregate_results({"transformed_items": [2, 4, 6]})
+        {'final_items': [2, 4, 6], 'sum': 12, 'count': 3}
+    """
+    items: list = data.get("transformed_items", [])
     return {"final_items": items, "sum": sum(items), "count": len(items)}
 
 
-def main():
-    api_config = {"base_url": "http://localhost:8418", "token": "batch_token"}
+def main() -> None:
+    """Run the batch operations example pipeline."""
+    api_config: dict[str, str] = {
+        "base_url": "http://localhost:8418",
+        "token": "batch_token",
+    }
 
     pipeline = Pipeline(worker_name="batch_worker", api_config=api_config, verbose=True)
 

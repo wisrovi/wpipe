@@ -14,13 +14,25 @@ What it evaluates:
 from wpipe import Pipeline
 
 
-def process_data(data):
-    """Simple processing function."""
+def process_data(data: dict) -> dict:
+    """Simple processing function.
+
+    Args:
+        data: Input data dictionary containing 'value'.
+
+    Returns:
+        Dictionary with doubled value result.
+
+    Example:
+        >>> process_data({"value": 5})
+        {'result': 10}
+    """
     return {"result": data.get("value", 0) * 2}
 
 
-def main():
-    invalid_urls = [
+def main() -> None:
+    """Run the invalid URL example pipeline."""
+    invalid_urls: list[str] = [
         "not-a-url",
         "http://",
         "://missing-protocol.com",
@@ -28,7 +40,7 @@ def main():
     ]
 
     for url in invalid_urls:
-        api_config = {"base_url": url, "token": "test_token"}
+        api_config: dict[str, str] = {"base_url": url, "token": "test_token"}
 
         pipeline = Pipeline(
             worker_name="invalid_url_worker", api_config=api_config, verbose=False
