@@ -1,18 +1,30 @@
 """
-Ejemplo 02: Procesador de Mensajes
+Example 02: Message Processor
 
-Este ejemplo demonstra un procesador de mensajes que simula
-la recepcion de mensajes y los procesa con pipelines.
+Demonstrates a message processor that simulates receiving
+messages and processes them through pipelines.
 """
 
-import time
 from datetime import datetime
+
 from wpipe import Pipeline
 from wpipe.log import new_logger
 
 
 def paso_extraccion(data: dict) -> dict:
-    """Extrae datos del mensaje."""
+    """Extracts data from the message.
+
+    Args:
+        data: Dictionary containing the message.
+
+    Returns:
+        Dictionary with extracted fields.
+
+    Example:
+        >>> result = paso_extraccion({"id": "123", "tipo": "user"})
+        >>> print(result["extraido"])
+        True
+    """
     print("    [EXTRACCION] Extrayendo campos...")
     return {
         "extraido": True,
@@ -22,7 +34,19 @@ def paso_extraccion(data: dict) -> dict:
 
 
 def paso_transformacion(data: dict) -> dict:
-    """Transforma los datos extraidos."""
+    """Transforms extracted data.
+
+    Args:
+        data: Dictionary containing extracted data.
+
+    Returns:
+        Dictionary with transformed data.
+
+    Example:
+        >>> result = paso_transformacion({"id": "abc", "tipo": "USER"})
+        >>> print(result["transformado"])
+        True
+    """
     print("    [TRANSFORMACION] Transformando datos...")
     return {
         "transformado": True,
@@ -34,7 +58,19 @@ def paso_transformacion(data: dict) -> dict:
 
 
 def paso_enriquecimiento(data: dict) -> dict:
-    """Enriquece con metadatos."""
+    """Enriches data with metadata.
+
+    Args:
+        data: Dictionary containing data to enrich.
+
+    Returns:
+        Dictionary with enriched data and metadata.
+
+    Example:
+        >>> result = paso_enriquecimiento({})
+        >>> print(result["enriquecido"])
+        True
+    """
     print("    [ENRIQUECIMIENTO] Agregando metadatos...")
     return {
         "enriquecido": True,
@@ -46,7 +82,19 @@ def paso_enriquecimiento(data: dict) -> dict:
 
 
 def paso_persistencia(data: dict) -> dict:
-    """Prepara datos para persistencia."""
+    """Prepares data for persistence.
+
+    Args:
+        data: Dictionary containing processed data.
+
+    Returns:
+        Dictionary ready for storage.
+
+    Example:
+        >>> result = paso_persistencia({"id": "123", "datos_transformados": {}})
+        >>> print(result["listo_para_guardar"])
+        True
+    """
     print("    [PERSISTENCIA] Preparando guardado...")
     return {
         "listo_para_guardar": True,
@@ -59,9 +107,20 @@ def paso_persistencia(data: dict) -> dict:
 
 
 class ProcesadorMensajes:
-    """Procesador de mensajes con pipeline."""
+    """Message processor with integrated pipeline.
 
-    def __init__(self, nombre: str = "procesador"):
+    Attributes:
+        nombre: Processor name identifier.
+        mensajes_procesados: Count of successfully processed messages.
+        errores: Count of processing errors.
+    """
+
+    def __init__(self, nombre: str = "procesador") -> None:
+        """Initializes the message processor.
+
+        Args:
+            nombre: Processor name identifier. Defaults to "procesador".
+        """
         self.nombre = nombre
         self.mensajes_procesados = 0
         self.errores = 0
@@ -81,7 +140,20 @@ class ProcesadorMensajes:
         )
 
     def procesar(self, mensaje: dict) -> dict:
-        """Procesa un mensaje con el pipeline."""
+        """Processes a message through the pipeline.
+
+        Args:
+            mensaje: Dictionary containing the message to process.
+
+        Returns:
+            Dictionary with processing result or error.
+
+        Example:
+            >>> proc = ProcesadorMensajes("test")
+            >>> result = proc.procesar({"id": "1", "tipo": "test"})
+            >>> print(result.get("extraido", False) or "error" in result)
+            True
+        """
         try:
             print(f"\n[PROCESANDO] Mensaje ID: {mensaje.get('id', 'N/A')}")
             resultado = self.pipeline.run(mensaje)
@@ -94,7 +166,17 @@ class ProcesadorMensajes:
             return {"error": str(e)}
 
     def obtener_estadisticas(self) -> dict:
-        """Retorna estadisticas del procesador."""
+        """Returns processor statistics.
+
+        Returns:
+            Dictionary with processor statistics.
+
+        Example:
+            >>> proc = ProcesadorMensajes("test")
+            >>> stats = proc.obtener_estadisticas()
+            >>> print(stats["nombre"])
+            test
+        """
         return {
             "nombre": self.nombre,
             "procesados": self.mensajes_procesados,
@@ -105,7 +187,19 @@ class ProcesadorMensajes:
 
 
 def generar_mensaje_simulado(indice: int) -> dict:
-    """Genera un mensaje simulado."""
+    """Generates a simulated message.
+
+    Args:
+        indice: Message index for ID generation.
+
+    Returns:
+        Dictionary with simulated message data.
+
+    Example:
+        >>> msg = generar_mensaje_simulado(1)
+        >>> print("id" in msg and "tipo" in msg)
+        True
+    """
     tipos = ["usuario", "producto", "orden", "pago"]
     return {
         "id": f"MSG-{indice:04d}",
@@ -114,7 +208,8 @@ def generar_mensaje_simulado(indice: int) -> dict:
     }
 
 
-def main():
+def main() -> None:
+    """Runs the message processor example."""
     print("=" * 70)
     print("PROCESADOR DE MENSAJES")
     print("=" * 70)
@@ -126,7 +221,7 @@ def main():
 
     mensajes_simulados = [generar_mensaje_simulado(i) for i in range(1, 6)]
 
-    print(f"Mensajes a procesar: {len(mensuales for _ in mensajes_simulados)}")
+    print(f"Mensajes a procesar: {len(mensajes_simulados)}")
 
     for i, msg in enumerate(mensajes_simulados, 1):
         print(f"\n{'=' * 50}")
@@ -137,7 +232,7 @@ def main():
 
         resultado = procesador.procesar(msg)
 
-        print(f"\n[RESULTADO]")
+        print("\n[RESULTADO]")
         print(f"  Extraido: {resultado.get('extraido', False)}")
         print(f"  Transformado: {resultado.get('transformado', False)}")
         print(f"  Enriquecido: {resultado.get('enriquecido', False)}")
@@ -156,7 +251,8 @@ def main():
     print("\n" + "=" * 70)
     print("FLUJO DE PROCESAMIENTO")
     print("=" * 70)
-    print("""
+    print(
+        """
 Flujo de un mensaje a traves del procesador:
 
 1. RECEPCION
@@ -178,7 +274,8 @@ Flujo de un mensaje a traves del procesador:
 5. PERSISTENCIA
    - Prepara registro para guardar
    - Devuelve resultado
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

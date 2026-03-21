@@ -3,6 +3,7 @@ Tests for basic pipeline functionality.
 """
 
 import pytest
+
 from wpipe.pipe import Pipeline
 
 
@@ -205,6 +206,7 @@ class TestMemoryFunctions:
     def test_memory_limit_non_linux(self):
         """Test memory_limit on non-Linux systems."""
         from unittest.mock import patch
+
         from wpipe.ram.ram import memory_limit
 
         with patch("platform.system", return_value="Windows"):

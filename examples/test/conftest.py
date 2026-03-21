@@ -2,11 +2,11 @@
 Pytest configuration and shared fixtures for wpipe examples tests.
 """
 
-import os
 import sys
 import tempfile
-import pytest
 from pathlib import Path
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 

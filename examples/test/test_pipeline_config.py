@@ -2,10 +2,8 @@
 Tests for pipeline configuration functionality.
 """
 
-import os
-import pytest
 from wpipe.pipe import Pipeline
-from wpipe.util import leer_yaml, escribir_yaml
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 class TestPipelineSteps:
@@ -128,6 +126,6 @@ class TestPipelineExecution:
 
         try:
             pipeline.run({})
-            assert False, "Should have raised an error"
+            raise AssertionError("Should have raised an error")
         except Exception:
             pass

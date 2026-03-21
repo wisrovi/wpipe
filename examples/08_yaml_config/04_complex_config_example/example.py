@@ -1,33 +1,59 @@
 """
-Ejemplo 04: Configuracion Compleja con Múltiples Secciones
+Example 04: Complex Multi-Section Configuration
 
-Este ejemplo demonstra configuraciones complejas con múltiples
-secciones y perfiles de configuración.
+This example demonstrates complex configurations with multiple
+sections and environment profiles.
 """
 
 import os
 import tempfile
+
 from wpipe import Pipeline
-from wpipe.util import leer_yaml, escribir_yaml
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 def paso_extraccion(data: dict) -> dict:
-    """Paso de extraccion."""
+    """Data extraction step.
+
+    Args:
+        data: Input data dictionary with fuente parameter.
+
+    Returns:
+        dict: Extraction result with extraido flag and datos.
+    """
     return {"extraido": True, "datos": data.get("fuente", "unknown")}
 
 
 def paso_transformacion(data: dict) -> dict:
-    """Paso de transformacion."""
+    """Data transformation step.
+
+    Args:
+        data: Input data dictionary.
+
+    Returns:
+        dict: Transformation result with transformado and procesado flags.
+    """
     return {"transformado": True, "procesado": True}
 
 
 def paso_carga(data: dict) -> dict:
-    """Paso de carga."""
+    """Data loading step.
+
+    Args:
+        data: Input data dictionary with destino parameter.
+
+    Returns:
+        dict: Loading result with cargado flag and destino.
+    """
     return {"cargado": True, "destino": data.get("destino", "unknown")}
 
 
-def crear_config_multientorno():
-    """Crea configuracion con multiples entornos."""
+def crear_config_multientorno() -> str:
+    """Create a multi-environment configuration file.
+
+    Returns:
+        str: Path to the created temporary configuration file.
+    """
     config = {
         "aplicacion": {"nombre": "etl_multientorno", "version": "1.0.0"},
         "entornos": {
@@ -54,7 +80,11 @@ def crear_config_multientorno():
         },
         "conexiones": {
             "oracle": {"host": "oracle.db.local", "puerto": 1521, "sid": "ORCL"},
-            "postgresql": {"host": "pg.db.local", "puerto": 5432, "base_datos": "mydb"},
+            "postgresql": {
+                "host": "pg.db.local",
+                "puerto": 5432,
+                "base_datos": "mydb",
+            },
         },
     }
 
@@ -63,7 +93,8 @@ def crear_config_multientorno():
         return f.name
 
 
-def main():
+def main() -> None:
+    """Execute the complex multi-environment configuration example."""
     print("=" * 70)
     print("CONFIGURACION COMPLEJA MULTIENTORNO")
     print("=" * 70)
@@ -92,7 +123,7 @@ def main():
     pipeline_config = config["pipeline"]
     api_config = entorno_config
 
-    print(f"\nConfiguracion del pipeline:")
+    print("\nConfiguracion del pipeline:")
     print(f"  Timeout: {pipeline_config['timeout']}")
     print(f"  Reintentos: {pipeline_config['reintentos']}")
     print(f"  Pasos: {pipeline_config['pasos']}")
@@ -123,7 +154,7 @@ def main():
 
     resultado = pipeline.run(datos)
 
-    print(f"\nResultado:")
+    print("\nResultado:")
     for clave, valor in resultado.items():
         print(f"  {clave}: {valor}")
 
@@ -142,18 +173,18 @@ def main():
     db_oracle = config["conexiones"]["oracle"]
     db_pg = config["conexiones"]["postgresql"]
 
-    print(f"\nOracle:")
+    print("\nOracle:")
     print(f"  Host: {db_oracle['host']}")
     print(f"  Puerto: {db_oracle['puerto']}")
     print(f"  SID: {db_oracle['sid']}")
 
-    print(f"\nPostgreSQL:")
+    print("\nPostgreSQL:")
     print(f"  Host: {db_pg['host']}")
     print(f"  Puerto: {db_pg['puerto']}")
     print(f"  Base de datos: {db_pg['base_datos']}")
 
     os.unlink(config_path)
-    print(f"\n[OK] Archivo temporal eliminado")
+    print("\n[OK] Archivo temporal eliminado")
 
     print("\n" + "=" * 70)
     print("BENEFICIOS DE CONFIGURACION COMPLEJA")

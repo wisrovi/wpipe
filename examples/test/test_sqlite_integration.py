@@ -2,8 +2,6 @@
 Tests for SQLite integration functionality.
 """
 
-import os
-import pytest
 from wpipe.sqlite import Wsqlite
 from wpipe.sqlite.Sqlite import SQLite
 

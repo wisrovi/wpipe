@@ -2,9 +2,8 @@
 Tests for error handling functionality.
 """
 
-import pytest
+from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.pipe import Pipeline
-from wpipe.exception import TaskError, ProcessError, ApiError, Codes
 
 
 class TestExceptionClasses:
@@ -48,7 +47,7 @@ class TestPipelineErrors:
 
         try:
             pipeline.run({"x": 1})
-            assert False, "Should have raised an error"
+            raise AssertionError("Should have raised an error")
         except (TaskError, ProcessError):
             pass
 

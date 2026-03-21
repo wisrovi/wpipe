@@ -4,18 +4,37 @@
 Shows retrying only specific exception types.
 """
 
+from typing import Any
+
 from wpipe import Pipeline
 
 
-def network_error_step(data):
+def network_error_step(data: dict[str, Any]) -> None:
+    """Simulates a step that fails with a network error.
+
+    Args:
+        data: Pipeline data dictionary.
+
+    Raises:
+        ConnectionError: Always raised to simulate network timeout.
+    """
     raise ConnectionError("Network timeout")
 
 
-def validation_error_step(data):
+def validation_error_step(data: dict[str, Any]) -> None:
+    """Simulates a step that fails with a validation error.
+
+    Args:
+        data: Pipeline data dictionary.
+
+    Raises:
+        ValueError: Always raised to simulate invalid input.
+    """
     raise ValueError("Invalid input")
 
 
-def main():
+def main() -> None:
+    """Runs the exception filtering example demonstrating selective retries."""
     pipeline = Pipeline(
         max_retries=2,
         retry_delay=0.1,

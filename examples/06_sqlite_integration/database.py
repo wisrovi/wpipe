@@ -5,8 +5,8 @@ This example demonstrates how to use SQLite with wpipe for
 persistent storage of pipeline execution results.
 """
 
-from wpipe.sqlite import Wsqlite
 from wpipe.pipe import Pipeline
+from wpipe.sqlite import Wsqlite
 
 
 def step1(data: dict) -> dict:

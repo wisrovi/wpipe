@@ -1,19 +1,30 @@
 """
-Ejemplo 01: Estructura Basica de Microservicio
+Example 01: Basic Microservice Structure
 
-Este ejemplo demuestra la estructura basica de un microservicio
-usando wpipe, sin necesidad de Kafka para pruebas locales.
+Demonstrates the basic structure of a microservice using wpipe,
+without requiring Kafka for local testing.
 """
 
-import time
-import threading
 from datetime import datetime
+
 from wpipe import Pipeline
 from wpipe.log import new_logger
 
 
 def paso_validacion(data: dict) -> dict:
-    """Paso de validacion de mensajes."""
+    """Validates incoming messages.
+
+    Args:
+        data: Dictionary containing the message to validate.
+
+    Returns:
+        Dictionary with validation result and message.
+
+    Example:
+        >>> result = paso_validacion({"mensaje": "test"})
+        >>> print(result["validado"])
+        True
+    """
     print("  [PASO] Validando mensaje...")
     if "mensaje" not in data:
         raise ValueError("Campo 'mensaje' requerido")
@@ -21,7 +32,19 @@ def paso_validacion(data: dict) -> dict:
 
 
 def paso_procesamiento(data: dict) -> dict:
-    """Paso de procesamiento de datos."""
+    """Processes message data.
+
+    Args:
+        data: Dictionary containing the message to process.
+
+    Returns:
+        Dictionary with processing result and metadata.
+
+    Example:
+        >>> result = paso_procesamiento({"mensaje": "hello"})
+        >>> print(result["procesado"])
+        True
+    """
     print("  [PASO] Procesando datos...")
     mensaje = data.get("mensaje", "")
     return {
@@ -32,7 +55,19 @@ def paso_procesamiento(data: dict) -> dict:
 
 
 def paso_enriquecimiento(data: dict) -> dict:
-    """Paso de enriquecimiento con metadatos."""
+    """Enriches data with metadata.
+
+    Args:
+        data: Dictionary containing data to enrich.
+
+    Returns:
+        Dictionary with enriched data and metadata.
+
+    Example:
+        >>> result = paso_enriquecimiento({"origen": "test"})
+        >>> print(result["enriquecido"])
+        True
+    """
     print("  [PASO] Enriqueciendo datos...")
     return {
         "enriquecido": True,
@@ -42,9 +77,20 @@ def paso_enriquecimiento(data: dict) -> dict:
 
 
 class MicroservicioBasico:
-    """Microservicio basico con pipeline integrado."""
+    """Basic microservice with integrated pipeline.
 
-    def __init__(self, nombre: str = "microservicio_basico"):
+    Attributes:
+        nombre: Service name identifier.
+        ejecutando: Whether the service is running.
+        contador_mensajes: Number of messages processed.
+    """
+
+    def __init__(self, nombre: str = "microservicio_basico") -> None:
+        """Initializes the basic microservice.
+
+        Args:
+            nombre: Service name identifier. Defaults to "microservicio_basico".
+        """
         self.nombre = nombre
         self.ejecutando = False
         self.contador_mensajes = 0
@@ -65,7 +111,20 @@ class MicroservicioBasico:
         self.logger.info(f"[INIT] {self.nombre} inicializado")
 
     def procesar_mensaje(self, mensaje: dict) -> dict:
-        """Procesa un mensaje con el pipeline."""
+        """Processes a message through the pipeline.
+
+        Args:
+            mensaje: Dictionary containing the message to process.
+
+        Returns:
+            Dictionary with processing result or error.
+
+        Example:
+            >>> servicio = MicroservicioBasico("test")
+            >>> result = servicio.procesar_mensaje({"mensaje": "test"})
+            >>> print("error" in result or result.get("validado"))
+            True
+        """
         self.contador_mensajes += 1
         mensaje_id = self.contador_mensajes
 
@@ -80,22 +139,33 @@ class MicroservicioBasico:
             self.logger.error(f"[MSG-{mensaje_id}] Error: {e}")
             return {"error": str(e)}
 
-    def iniciar(self):
-        """Inicia el microservicio."""
+    def iniciar(self) -> None:
+        """Starts the microservice.
+
+        Example:
+            >>> servicio = MicroservicioBasico("test")
+            >>> servicio.iniciar()  # doctest: +SKIP
+        """
         self.ejecutando = True
         self.logger.info(f"[START] {self.nombre} iniciado")
         print(f"\n[MICROSERVICIO] {self.nombre} iniciado")
         print(f"  Mensajes procesados: {self.contador_mensajes}")
 
-    def detener(self):
-        """Detiene el microservicio."""
+    def detener(self) -> None:
+        """Stops the microservice.
+
+        Example:
+            >>> servicio = MicroservicioBasico("test")
+            >>> servicio.detener()  # doctest: +SKIP
+        """
         self.ejecutando = False
         self.logger.info(f"[STOP] {self.nombre} detenido")
         print(f"\n[MICROSERVICIO] {self.nombre} detenido")
         print(f"  Total mensajes procesados: {self.contador_mensajes}")
 
 
-def main():
+def main() -> None:
+    """Runs the basic microservice example."""
     print("=" * 70)
     print("MICROSERVICIO BASICO")
     print("=" * 70)
@@ -124,7 +194,8 @@ def main():
     print("\n" + "=" * 70)
     print("RESUMEN DE ESTRUCTURA")
     print("=" * 70)
-    print("""
+    print(
+        """
 Estructura de un Microservicio Basico:
 
 1. Inicializacion:
@@ -146,7 +217,8 @@ Esta estructura puede extenderse con:
 - Kafka para recibir mensajes
 - SQLite para persistencia
 - API para health checks
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

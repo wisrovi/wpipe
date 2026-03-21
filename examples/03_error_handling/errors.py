@@ -5,8 +5,8 @@ This example demonstrates how to handle errors in pipelines.
 The pipeline captures exceptions and stores them in the result data.
 """
 
-from wpipe.pipe import Pipeline
 from wpipe.exception import TaskError
+from wpipe.pipe import Pipeline
 
 
 def step_1(data):

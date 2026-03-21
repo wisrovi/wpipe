@@ -4,16 +4,22 @@
 Shows exporting database contents to CSV.
 """
 
-from wpipe.sqlite import SQLite
 import os
 
+from wpipe.sqlite import SQLite
 
-def main():
-    db_path = "test_export.db"
+
+def main() -> None:
+    """Run the export to CSV example.
+
+    Creates multiple records in a SQLite database, exports all records
+    to a pandas DataFrame, and saves the data to a CSV file.
+    """
+    db_path: str = "test_export.db"
     if os.path.exists(db_path):
         os.remove(db_path)
 
-    db = SQLite(db_name=db_path)
+    db: SQLite = SQLite(db_name=db_path)
 
     for i in range(5):
         db.write(input={"index": i}, output={"value": i * 10})

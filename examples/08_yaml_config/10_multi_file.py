@@ -4,9 +4,10 @@
 Shows loading configuration from multiple YAML files.
 """
 
-from wpipe.util import leer_yaml
-import tempfile
 import os
+import tempfile
+
+from wpipe.util import leer_yaml
 
 
 def main():

@@ -1,17 +1,22 @@
 """
-Ejemplo 01: Leer Archivos de Configuracion YAML
+Example 01: Reading YAML Configuration Files
 
-Este ejemplo demonstra como leer archivos de configuracion
-almacenados en formato YAML.
+This example demonstrates how to read configuration files
+stored in YAML format.
 """
 
 import os
 import tempfile
-from wpipe.util import leer_yaml, escribir_yaml
+
+from wpipe.util import escribir_yaml, leer_yaml
 
 
-def crear_config_ejemplo():
-    """Crea un archivo de configuracion de ejemplo."""
+def crear_config_ejemplo() -> str:
+    """Create an example configuration file.
+
+    Returns:
+        str: Path to the created temporary YAML configuration file.
+    """
     config = {
         "servicio": "pipeline_procesamiento",
         "version": "1.0.0",
@@ -26,7 +31,8 @@ def crear_config_ejemplo():
         return f.name
 
 
-def main():
+def main() -> None:
+    """Execute the YAML reading example workflow."""
     print("=" * 70)
     print("LECTURA DE ARCHIVOS YAML")
     print("=" * 70)
@@ -66,7 +72,7 @@ def main():
     timeout = configuracion.get("timeout", 60)
     verbose = configuracion.get("verbose", False)
 
-    print(f"\nUsando configuracion:")
+    print("\nUsando configuracion:")
     print(f"  Timeout configurado: {timeout} segundos")
     print(f"  Modo verbose: {verbose}")
 
@@ -80,7 +86,7 @@ def main():
     print(f"\nConfig sin timeout, usando valor por defecto: {timeout_def}")
 
     os.unlink(config_path)
-    print(f"\n[OK] Archivo temporal eliminado")
+    print("\n[OK] Archivo temporal eliminado")
 
     print("\n" + "=" * 70)
     print("RESUMEN")

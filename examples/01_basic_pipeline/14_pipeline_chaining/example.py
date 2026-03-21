@@ -7,25 +7,44 @@ Chaining multiple pipelines together.
 from wpipe import Pipeline
 
 
-def pipeline_a():
+def pipeline_a() -> Pipeline:
+    """Create pipeline A that adds 1 to value.
+
+    Returns:
+        Configured Pipeline instance.
+    """
     p = Pipeline(verbose=False)
     p.set_steps([(lambda d: {"a": d.get("value", 0) + 1}, "A", "v1.0")])
     return p
 
 
-def pipeline_b():
+def pipeline_b() -> Pipeline:
+    """Create pipeline B that multiplies a by 2.
+
+    Returns:
+        Configured Pipeline instance.
+    """
     p = Pipeline(verbose=False)
     p.set_steps([(lambda d: {"b": d.get("a", 0) * 2}, "B", "v1.0")])
     return p
 
 
-def main():
+def main() -> None:
+    """Run the pipeline chaining example.
+
+    Demonstrates:
+        - Creating reusable pipelines
+        - Chaining pipelines together
+        - Running pipelines within pipelines
+    """
     main_pipeline = Pipeline(verbose=True)
-    main_pipeline.set_steps([
-        (pipeline_a().run, "Pipeline A", "v1.0"),
-        (pipeline_b().run, "Pipeline B", "v1.0"),
-    ])
-    
+    main_pipeline.set_steps(
+        [
+            (pipeline_a().run, "Pipeline A", "v1.0"),
+            (pipeline_b().run, "Pipeline B", "v1.0"),
+        ]
+    )
+
     result = main_pipeline.run({"value": 10})
     print(f"Result: {result}")
 

@@ -4,8 +4,9 @@
 Shows transaction handling in SQLite.
 """
 
-from wpipe.sqlite import SQLite
 import os
+
+from wpipe.sqlite import SQLite
 
 
 def main():

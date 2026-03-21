@@ -6,8 +6,10 @@ Shows accessing error context information.
 
 from wpipe import Pipeline
 
+
 def failing_step(data):
     raise RuntimeError("Contextual error")
+
 
 def main():
     pipeline = Pipeline(verbose=True)
@@ -16,6 +18,7 @@ def main():
     print(f"Error in result: {'error' in result}")
     if "error" in result:
         print(f"Error message: {result['error']}")
+
 
 if __name__ == "__main__":
     main()

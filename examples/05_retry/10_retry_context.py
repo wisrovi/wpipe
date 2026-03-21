@@ -6,6 +6,7 @@ Shows accessing retry context in step.
 
 from wpipe import Pipeline
 
+
 def step_with_context(data):
     return {"retry_info": "success"}
 
@@ -15,9 +16,9 @@ def main():
         retry_delay=0.1,
         verbose=True
     )
-    
+
     pipeline.set_steps([(step_with_context, "Context Step", "v1.0")])
-    
+
     result = pipeline.run({})
     print(f"Result: {result}")
 

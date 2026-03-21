@@ -6,11 +6,13 @@ Shows loading pipeline step definitions from a YAML file.
 
 import os
 import tempfile
-from wpipe.util import leer_yaml, escribir_yaml
+
 from wpipe import Pipeline
+from wpipe.util import escribir_yaml, leer_yaml
 
 
-def main():
+def main() -> None:
+    """Execute the loading pipeline steps from YAML example."""
     steps_config = {
         "steps": [
             {"name": "Step 1", "function": "step1", "version": "v1.0"},
@@ -24,16 +26,32 @@ def main():
 
     config = leer_yaml(temp_path)
 
-    def step1(data):
+    def step1(data: dict) -> dict:
+        """First pipeline step.
+
+        Args:
+            data: Input data dictionary.
+
+        Returns:
+            dict: Step result.
+        """
         return {"step1": "done"}
 
-    def step2(data):
+    def step2(data: dict) -> dict:
+        """Second pipeline step.
+
+        Args:
+            data: Input data dictionary.
+
+        Returns:
+            dict: Step result.
+        """
         return {"step2": "done"}
 
-    functions = {"step1": step1, "step2": step2}
+    functions: dict[str, callable] = {"step1": step1, "step2": step2}
 
     pipeline = Pipeline(verbose=True)
-    steps = []
+    steps: list[tuple[callable, str, str]] = []
 
     for step_config in config["steps"]:
         func = functions[step_config["function"]]

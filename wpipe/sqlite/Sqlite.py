@@ -7,7 +7,7 @@ import os
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import pandas as pd
 

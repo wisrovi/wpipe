@@ -6,10 +6,12 @@ Shows working with deeply nested YAML configurations.
 
 import os
 import tempfile
-from wpipe.util import leer_yaml, escribir_yaml
+
+from wpipe.util import escribir_yaml, leer_yaml
 
 
-def main():
+def main() -> None:
+    """Execute the nested configuration example."""
     config = {
         "app": {
             "name": "MyApp",

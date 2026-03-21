@@ -2,7 +2,7 @@
 SQLite wrapper module for simplified database operations.
 """
 
-from typing import Any, Optional
+from typing import Optional
 
 from wpipe.sqlite.Sqlite import SQLite
 

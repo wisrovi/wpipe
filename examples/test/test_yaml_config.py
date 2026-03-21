@@ -2,9 +2,7 @@
 Tests for YAML configuration functionality.
 """
 
-import os
-import pytest
-from wpipe.util import leer_yaml, escribir_yaml
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 class TestYamlUtilities:
@@ -44,7 +42,7 @@ class TestYamlUtilities:
         """Test writing YAML with verbose mode."""
         yaml_file = tmp_path / "output_verbose.yaml"
         data = {"test": True}
-        result = escribir_yaml(str(yaml_file), data, verbose=True)
+        escribir_yaml(str(yaml_file), data, verbose=True)
         assert yaml_file.exists()
 
     def test_yaml_with_nested_data(self, tmp_path):

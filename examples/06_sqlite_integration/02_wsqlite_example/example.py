@@ -4,12 +4,18 @@
 Shows using Wsqlite for convenient context manager usage.
 """
 
-from wpipe.sqlite import Wsqlite
 import os
 
+from wpipe.sqlite import Wsqlite
 
-def main():
-    db_path = "test_wsqlite.db"
+
+def main() -> None:
+    """Run the Wsqlite context manager example.
+
+    Uses Wsqlite as a context manager to set input and output data
+    on records with automatic cleanup on exit.
+    """
+    db_path: str = "test_wsqlite.db"
     if os.path.exists(db_path):
         os.remove(db_path)
 

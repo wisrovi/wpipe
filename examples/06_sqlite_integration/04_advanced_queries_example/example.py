@@ -1,20 +1,29 @@
 """
-Ejemplo 04: Consultas Avanzadas
+04 SQLite - Advanced Queries
 
-Este ejemplo demonstra consultas avanzadas usando SQLite
-y analisis de datos con Pandas.
+Demonstrates advanced queries using SQLite and data analysis with Pandas.
 """
 
-import os
 import json
+import os
+from typing import Any
+
 import pandas as pd
+
 from wpipe import Pipeline
 from wpipe.sqlite import Wsqlite
 from wpipe.sqlite.Sqlite import SQLite
 
 
-def paso_basico(data: dict) -> dict:
-    """Paso basico."""
+def paso_basico(data: dict[str, Any]) -> dict[str, Any]:
+    """Process basic data step.
+
+    Args:
+        data: Input data dictionary.
+
+    Returns:
+        Processed data dictionary with status.
+    """
     return {
         "procesado": True,
         "categoria": data.get("categoria", "general"),
@@ -23,17 +32,21 @@ def paso_basico(data: dict) -> dict:
     }
 
 
-def crear_dataset_completo():
-    """Crea un dataset con diferentes categorias y valores."""
-    db_nombre = "ejemplo_avanzado.db"
+def crear_dataset_completo() -> str:
+    """Create a dataset with different categories and values.
+
+    Returns:
+        Path to the created database file.
+    """
+    db_nombre: str = "ejemplo_avanzado.db"
 
     if os.path.exists(db_nombre):
         os.remove(db_nombre)
 
-    pipeline = Pipeline(verbose=False)
+    pipeline: Pipeline = Pipeline(verbose=False)
     pipeline.set_steps([(paso_basico, "Basico", "v1.0")])
 
-    datos = [
+    datos: list[dict[str, Any]] = [
         {"categoria": "A", "valor": 100, "region": "norte"},
         {"categoria": "B", "valor": 200, "region": "sur"},
         {"categoria": "A", "valor": 150, "region": "norte"},
@@ -47,32 +60,37 @@ def crear_dataset_completo():
     for datos_entrada in datos:
         with Wsqlite(db_name=db_nombre) as db:
             db.input = datos_entrada
-            resultado = pipeline.run(datos_entrada)
+            resultado: dict[str, Any] = pipeline.run(datos_entrada)
             db.output = resultado
             db.details = {"timestamp": pd.Timestamp.now().isoformat()}
 
     return db_nombre
 
 
-def main():
+def main() -> None:
+    """Run the advanced queries example.
+
+    Creates a dataset, performs advanced analysis with Pandas including
+    grouping, filtering, aggregation, and exports analysis results.
+    """
     print("=" * 70)
     print("CONSULTAS AVANZADAS")
     print("=" * 70)
 
     print("\n--- Paso 1: Crear Dataset Completo ---")
-    db_nombre = crear_dataset_completo()
+    db_nombre: str = crear_dataset_completo()
     print("[OK] Dataset creado")
 
     print("\n--- Paso 2: Leer Todos los Datos como DataFrame ---")
 
     with SQLite(db_nombre) as db:
-        df = db.export_to_dataframe()
+        df: pd.DataFrame = db.export_to_dataframe()
         print(f"\nTotal de registros: {len(df)}")
 
-        df_input = pd.DataFrame()
-        df_output = pd.DataFrame()
+        df_input: pd.DataFrame = pd.DataFrame()
+        df_output: pd.DataFrame = pd.DataFrame()
 
-        for idx, row in df.iterrows():
+        for _idx, row in df.iterrows():
             if row["input"]:
                 df_input = pd.concat(
                     [df_input, pd.DataFrame([json.loads(row["input"])])],
@@ -95,7 +113,7 @@ def main():
     df_input["output_valor"] = df_output["valor"]
 
     print("\nEstadisticas por categoria:")
-    estadisticas = df_input.groupby("categoria")["output_valor"].agg(
+    estadisticas: pd.DataFrame = df_input.groupby("categoria")["output_valor"].agg(
         ["count", "sum", "mean"]
     )
     print(estadisticas)
@@ -103,7 +121,7 @@ def main():
     print("\n--- Paso 4: Analisis por Region ---")
 
     print("\nEstadisticas por region:")
-    por_region = df_input.groupby("region")["output_valor"].agg(
+    por_region: pd.DataFrame = df_input.groupby("region")["output_valor"].agg(
         ["count", "sum", "mean"]
     )
     print(por_region)
@@ -111,17 +129,19 @@ def main():
     print("\n--- Paso 5: Filtrado de Registros ---")
 
     print("\nRegistros con valor > 200:")
-    filtrado = df_input[df_input["output_valor"] > 200]
+    filtrado: pd.DataFrame = df_input[df_input["output_valor"] > 200]
     print(filtrado)
 
     print("\nRegistros de categoria 'A':")
-    categoria_a = df_input[df_input["categoria"] == "A"]
+    categoria_a: pd.DataFrame = df_input[df_input["categoria"] == "A"]
     print(categoria_a)
 
     print("\n--- Paso 6: Agregacion Multiple ---")
 
     print("\nResumen completo:")
-    resumen = df_input.groupby(["categoria", "region"])["output_valor"].agg(
+    resumen: pd.DataFrame = df_input.groupby(["categoria", "region"])[
+        "output_valor"
+    ].agg(
         [
             ("count", "count"),
             ("sum", "sum"),

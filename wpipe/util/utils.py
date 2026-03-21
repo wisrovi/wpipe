@@ -20,7 +20,7 @@ def leer_yaml(archivo: Union[str, Path], verbose: bool = False) -> dict:
         Dictionary with YAML contents, or empty dict on error.
     """
     try:
-        with open(archivo, "r", encoding="utf-8") as file:
+        with open(archivo, encoding="utf-8") as file:
             contenido = yaml.safe_load(file)
             return contenido or {}
     except FileNotFoundError:
@@ -50,6 +50,6 @@ def escribir_yaml(
             yaml.dump(datos, file, default_flow_style=False, allow_unicode=True)
             if verbose:
                 print(f"Archivo YAML creado exitosamente en {archivo}")
-    except IOError as e:
+    except OSError as e:
         if verbose:
             print(f"Error al escribir el archivo YAML: {e}")

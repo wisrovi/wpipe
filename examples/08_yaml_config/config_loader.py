@@ -6,7 +6,7 @@ and use them with the Pipeline.
 """
 
 from wpipe.pipe import Pipeline
-from wpipe.util import leer_yaml, escribir_yaml
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 def load_config(data: dict) -> dict:
@@ -36,8 +36,8 @@ def validate_setup(data: dict) -> dict:
 
 def main():
     """Demonstrate YAML configuration loading."""
-    import tempfile
     import os
+    import tempfile
 
     with tempfile.TemporaryDirectory() as tmpdir:
         config_path = os.path.join(tmpdir, "config.yaml")

@@ -2,10 +2,12 @@
 Tests for API pipeline functionality.
 """
 
-import pytest
 from unittest.mock import Mock, patch
-from wpipe.pipe import Pipeline
+
+import pytest
+
 from wpipe.api_client.api_client import APIClient
+from wpipe.pipe import Pipeline
 
 
 class TestAPIClient:
@@ -45,13 +47,13 @@ class TestAPIClientHTTPMethods:
     def test_send_post_without_base_url(self):
         """Test send_post raises error without base_url."""
         client = APIClient()
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, TypeError)):
             client.send_post("/endpoint", {"data": "test"})
 
     def test_send_get_without_base_url(self):
         """Test send_get raises error without base_url."""
         client = APIClient()
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, TypeError)):
             client.send_get("/endpoint")
 
     @patch("requests.post")

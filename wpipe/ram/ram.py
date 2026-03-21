@@ -33,7 +33,7 @@ def get_memory() -> int:
     Returns:
         Available memory in kilobytes.
     """
-    with open("/proc/meminfo", "r", encoding="utf-8") as mem:
+    with open("/proc/meminfo", encoding="utf-8") as mem:
         free_memory = 0
         for line in mem:
             sline = line.split()

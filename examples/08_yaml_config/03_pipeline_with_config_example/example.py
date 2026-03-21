@@ -1,34 +1,60 @@
 """
-Ejemplo 03: Pipeline con Configuracion YAML
+Example 03: Pipeline with YAML Configuration
 
-Este ejemplo demonstra como usar archivos de configuracion YAML
-para configurar y ejecutar un pipeline.
+This example demonstrates how to use YAML configuration files
+to configure and execute a pipeline.
 """
 
 import os
 import tempfile
+
 from wpipe import Pipeline
-from wpipe.util import leer_yaml, escribir_yaml
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 def paso_validacion(data: dict) -> dict:
-    """Paso de validacion de datos."""
+    """Validation step for input data.
+
+    Args:
+        data: Input data dictionary containing validation parameters.
+
+    Returns:
+        dict: Validation result with validado and datos_validos flags.
+    """
     return {"validado": True, "datos_validos": "datos" in data}
 
 
 def paso_procesamiento(data: dict) -> dict:
-    """Paso de procesamiento."""
+    """Data processing step.
+
+    Args:
+        data: Input data dictionary with valor and multiplicador.
+
+    Returns:
+        dict: Processing result with procesado flag and calculated resultado.
+    """
     multiplicador = data.get("multiplicador", 1)
     return {"procesado": True, "resultado": data.get("valor", 0) * multiplicador}
 
 
 def paso_formateo(data: dict) -> dict:
-    """Paso de formateo de salida."""
+    """Output formatting step.
+
+    Args:
+        data: Input data dictionary with resultado.
+
+    Returns:
+        dict: Formatted output with formateado flag and salida string.
+    """
     return {"formateado": True, "salida": f"Resultado: {data.get('resultado', 0)}"}
 
 
-def crear_config_pipeline():
-    """Crea archivo de configuracion para pipeline."""
+def crear_config_pipeline() -> str:
+    """Create a pipeline configuration YAML file.
+
+    Returns:
+        str: Path to the created temporary configuration file.
+    """
     config = {
         "pipeline": {
             "nombre": "pipeline_ejemplo",
@@ -47,7 +73,8 @@ def crear_config_pipeline():
         return f.name
 
 
-def main():
+def main() -> None:
+    """Execute the pipeline with YAML configuration example."""
     print("=" * 70)
     print("PIPELINE CON CONFIGURACION YAML")
     print("=" * 70)
@@ -58,7 +85,7 @@ def main():
 
     print("\n--- Paso 2: Leer Configuracion ---")
     config = leer_yaml(config_path)
-    print(f"\nConfiguracion cargada:")
+    print("\nConfiguracion cargada:")
     print(f"  Nombre: {config['pipeline']['nombre']}")
     print(f"  Valor: {config['parametros']['valor']}")
     print(f"  Multiplicador: {config['parametros']['multiplicador']}")
@@ -93,7 +120,7 @@ def main():
     resultado = pipeline.run(datos_ejecucion)
 
     print("\n--- Paso 5: Resultado ---")
-    print(f"\nResultado del pipeline:")
+    print("\nResultado del pipeline:")
     print(f"  Validado: {resultado.get('validado', False)}")
     print(f"  Procesado: {resultado.get('procesado', False)}")
     print(f"  Resultado: {resultado.get('resultado', 'N/A')}")
@@ -101,7 +128,7 @@ def main():
     print(f"  Salida: {resultado.get('salida', 'N/A')}")
 
     os.unlink(config_path)
-    print(f"\n[OK] Archivo temporal eliminado")
+    print("\n[OK] Archivo temporal eliminado")
 
     print("\n" + "=" * 70)
     print("FLUJO DE TRABAJO")

@@ -1,21 +1,36 @@
 """
-Ejemplo 03: Microservicio con Pipeline Integrado
+Example 03: Microservice with Integrated Pipeline
 
-Este ejemplo demuestra un microservicio completo con pipeline,
-configuracion YAML, y registro de worker.
+Demonstrates a complete microservice with pipeline,
+YAML configuration, and worker registration.
 """
 
-import time
 import os
+import tempfile
 from datetime import datetime
+
 from wpipe import Pipeline
-from wpipe.util import leer_yaml, escribir_yaml
 from wpipe.log import new_logger
-from wpipe.sqlite import Wsqlite
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 def paso_validar(data: dict) -> dict:
-    """Valida el mensaje de entrada."""
+    """Validates the input message.
+
+    Args:
+        data: Dictionary containing the message to validate.
+
+    Returns:
+        Dictionary with validation result.
+
+    Raises:
+        ValueError: If required 'tipo' field is missing.
+
+    Example:
+        >>> result = paso_validar({"tipo": "user"})
+        >>> print(result["validado"])
+        True
+    """
     print("    [STEP] Validando mensaje...")
     if "tipo" not in data:
         raise ValueError("Campo 'tipo' requerido")
@@ -23,7 +38,19 @@ def paso_validar(data: dict) -> dict:
 
 
 def paso_procesar(data: dict) -> dict:
-    """Procesa los datos."""
+    """Processes the data.
+
+    Args:
+        data: Dictionary containing data to process.
+
+    Returns:
+        Dictionary with processing result.
+
+    Example:
+        >>> result = paso_procesar({"tipo": "product"})
+        >>> print(result["procesado"])
+        True
+    """
     print("    [STEP] Procesando datos...")
     tipo = data.get("tipo", "desconocido")
     return {
@@ -34,15 +61,40 @@ def paso_procesar(data: dict) -> dict:
 
 
 def paso_guardar(data: dict) -> dict:
-    """Guarda el resultado en SQLite."""
+    """Saves the result.
+
+    Args:
+        data: Dictionary containing data to save.
+
+    Returns:
+        Dictionary with save confirmation.
+
+    Example:
+        >>> result = paso_guardar({})
+        >>> print(result["guardado"])
+        True
+    """
     print("    [STEP] Guardando resultado...")
     return {"guardado": True, "db_name": data.get("db_name", "default.db")}
 
 
 class MicroservicioConPipeline:
-    """Microservicio completo con pipeline."""
+    """Complete microservice with integrated pipeline.
 
-    def __init__(self, config_path: str = None):
+    Attributes:
+        config: Configuration dictionary loaded from YAML.
+        config_path: Path to the configuration file.
+        nombre: Service name identifier.
+        version: Service version string.
+        mensajes_procesados: Count of processed messages.
+    """
+
+    def __init__(self, config_path: str | None = None) -> None:
+        """Initializes the microservice with pipeline.
+
+        Args:
+            config_path: Path to YAML config file. If None, creates default config.
+        """
         if config_path is None:
             config_path = self._crear_config_default()
 
@@ -75,7 +127,11 @@ class MicroservicioConPipeline:
         self.logger.info(f"Microservicio {self.nombre} v{self.version} iniciado")
 
     def _crear_config_default(self) -> str:
-        """Crea configuracion por defecto."""
+        """Creates default configuration.
+
+        Returns:
+            Path to the temporary configuration file.
+        """
         config = {
             "nombre": "microservicio_ejemplo",
             "version": "1.0.0",
@@ -85,14 +141,17 @@ class MicroservicioConPipeline:
             "sqlite_db_name": "microservicio.db",
             "worker_id_file": "worker_id.yaml",
         }
-        import tempfile
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             escribir_yaml(f.name, config)
             return f.name
 
-    def _crear_api_config(self):
-        """Crea configuracion de API."""
+    def _crear_api_config(self) -> dict | None:
+        """Creates API configuration from config.
+
+        Returns:
+            Dictionary with API config or None if pipeline_use is False.
+        """
         if self.config.get("pipeline_use"):
             return {
                 "base_url": self.config.get("pipeline_server"),
@@ -100,8 +159,17 @@ class MicroservicioConPipeline:
             }
         return None
 
-    def registrar_worker(self):
-        """Registra el worker con la API."""
+    def registrar_worker(self) -> dict | None:
+        """Registers the worker with the API.
+
+        Returns:
+            Dictionary with worker registration info or None if registration fails.
+
+        Example:
+            >>> servicio = MicroservicioConPipeline()
+            >>> registro = servicio.registrar_worker()
+            >>> # registro is None if API is unavailable  # doctest: +SKIP
+        """
         try:
             worker_info = self.pipeline.worker_register(
                 name=self.nombre, version=self.version
@@ -117,7 +185,19 @@ class MicroservicioConPipeline:
         return None
 
     def ejecutar(self, mensaje: dict) -> dict:
-        """Ejecuta el pipeline con un mensaje."""
+        """Executes the pipeline with a message.
+
+        Args:
+            mensaje: Dictionary containing the message to process.
+
+        Returns:
+            Dictionary with execution result or error.
+
+        Example:
+            >>> servicio = MicroservicioConPipeline()
+            >>> result = servicio.ejecutar({"tipo": "test"})
+            >>> # result contains processed data or error  # doctest: +SKIP
+        """
         self.mensajes_procesados += 1
         self.logger.info(f"Procesando mensaje {self.mensajes_procesados}")
 
@@ -131,7 +211,17 @@ class MicroservicioConPipeline:
             return {"error": str(e)}
 
     def obtener_estado(self) -> dict:
-        """Obtiene el estado del microservicio."""
+        """Gets the microservice state.
+
+        Returns:
+            Dictionary with service state information.
+
+        Example:
+            >>> servicio = MicroservicioConPipeline()
+            >>> estado = servicio.obtener_estado()
+            >>> print(estado["nombre"])
+            microservicio_ejemplo
+        """
         return {
             "nombre": self.nombre,
             "version": self.version,
@@ -141,7 +231,8 @@ class MicroservicioConPipeline:
         }
 
 
-def main():
+def main() -> None:
+    """Runs the microservice with pipeline example."""
     print("=" * 70)
     print("MICROSERVICIO CON PIPELINE INTEGRADO")
     print("=" * 70)
@@ -149,7 +240,7 @@ def main():
     print("\n--- Creando Microservicio ---")
     servicio = MicroservicioConPipeline()
 
-    print(f"\nConfiguracion:")
+    print("\nConfiguracion:")
     print(f"  Nombre: {servicio.nombre}")
     print(f"  Version: {servicio.version}")
     print(f"  Archivo config: {servicio.config_path}")
@@ -178,17 +269,18 @@ def main():
 
     print("\n--- Estado del Microservicio ---")
     estado = servicio.obtener_estado()
-    print(f"\nEstado actual:")
+    print("\nEstado actual:")
     for clave, valor in estado.items():
         print(f"  {clave}: {valor}")
 
     os.unlink(servicio.config_path)
-    print(f"\n[OK] Archivo temporal eliminado")
+    print("\n[OK] Archivo temporal eliminado")
 
     print("\n" + "=" * 70)
     print("COMPONENTES DEL MICROSERVICIO")
     print("=" * 70)
-    print("""
+    print(
+        """
 Componentes integrados:
 
 1. CONFIGURACION (YAML)
@@ -210,7 +302,8 @@ Componentes integrados:
 5. LOGGING
    - Registro de eventos
    - Diagnosticos
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

@@ -6,7 +6,6 @@ The nested pipelines don't work correctly due to a bug in Pipeline.run().
 Tests are marked as skipped until the bug is fixed.
 """
 
-import pytest
 from wpipe.pipe import Pipeline
 
 

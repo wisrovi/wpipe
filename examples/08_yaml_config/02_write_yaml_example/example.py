@@ -1,16 +1,18 @@
 """
-Ejemplo 02: Escribir Archivos de Configuracion YAML
+Example 02: Writing YAML Configuration Files
 
-Este ejemplo demonstra como crear y escribir configuraciones
-en archivos YAML.
+This example demonstrates how to create and write configurations
+to YAML files.
 """
 
 import os
 import tempfile
-from wpipe.util import leer_yaml, escribir_yaml
+
+from wpipe.util import escribir_yaml, leer_yaml
 
 
-def main():
+def main() -> None:
+    """Execute the YAML writing example workflow."""
     print("=" * 70)
     print("ESCRITURA DE ARCHIVOS YAML")
     print("=" * 70)
@@ -34,7 +36,7 @@ def main():
         "servicio": "procesamiento_datos",
         "version": "2.0.0",
         "ambiente": "produccion",
-        "parametros": {"timeout": 60, "reintentos": 5, " workers": 4},
+        "parametros": {"timeout": 60, "reintentos": 5, "workers": 4},
         "conexiones": {
             "api": {"url": "https://api.ejemplo.com", "key": "clave_secreta"},
             "base_datos": {"host": "localhost", "puerto": 5432, "nombre": "mydb"},
