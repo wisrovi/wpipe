@@ -13,83 +13,63 @@ When enabled, API errors will raise exceptions instead of being silently ignored
 
 ```mermaid
 graph LR
-    A[SHOW_API_ERRORS=True] --> B[Pipeline Setup]
-    B --> C[API Call]
-    C --> D{Success?}
-    D -->|Yes| E[Continue]
-    D -->|No| F[Raise Exception]
+    A[Flag Enabled] --> B[API Call]
+    B --> C{Success?}
+    C -->|Yes| D[Continue]
+    C -->|No| E[Raise Exception]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant Pipeline
-    participant API
+    participant C as Client
+    participant P as Pipeline
     
-    Client->>Pipeline: Create pipeline
-    Client->>Pipeline: SHOW_API_ERRORS = True
-    Client->>Pipeline: run()
-    Pipeline->>API: API call
+    C->>P: SET SHOW_API_ERRORS=true
+    C->>P: run
+    P->>P: Check flag
     alt API Error
-        API-->>Pipeline: Error response
-        Pipeline-->>Client: Raise exception
+        P-->>C: Raise Exception
     else Success
-        Pipeline->>Pipeline: Continue
+        P-->>C: Result
     end
 ```
 
 ```mermaid
 graph TB
-    subgraph CONFIG
-        C1[api_config: base_url, token]
-        C2[worker_id: worker_test12345]
+    subgraph Config
+        A[SHOW_API_ERRORS]
+        B[True]
     end
     
-    subgraph FLAG
-        F1[SHOW_API_ERRORS = True]
-        F2[Exceptions raised]
+    subgraph Call
+        C[API Request]
     end
     
-    subgraph PIPELINE
-        P1[process function]
-        P2[data["value"] * 2]
+    subgraph Result
+        D[Success or Error]
     end
     
-    subgraph RESULT
-        R1[{result: 20}]
-    end
-    
-    C1 --> F1 --> P1 --> R1
+    A --> B
+    B --> C
+    C --> D
 ```
 
 ```mermaid
 stateDiagram-v2
     [*] --> Setup
-    Setup --> FlagSet: SHOW_API_ERRORS = True
-    FlagSet --> Execute: run()
-    Execute --> Success: API OK
-    Success --> [*]: Return result
-    Execute --> Exception: API fails
-    Exception --> [*]: Error raised
+    Setup --> Execute
+    Execute --> Success
+    Execute --> Error
+    Success --> [*]
+    Error --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph DEFAULT
-        D1[SHOW_API_ERRORS = False]
-        D2[API errors ignored]
-    end
+    F[Flag] --> C[API Call]
+    C --> R[Result]
+    C --> X[Exception]
     
-    subgraph ENABLED
-        E1[SHOW_API_ERRORS = True]
-        E2[API errors raise]
-    end
-    
-    subgraph EFFECT
-        G1[Fail fast on issues]
-        G2[Explicit error handling]
-    end
-    
-    E1 --> G1
-    E1 --> G2
+    style F fill:#fff9c4
+    style X fill:#ffcdd2
 ```

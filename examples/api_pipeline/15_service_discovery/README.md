@@ -21,91 +21,58 @@ graph LR
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant Discovery
-    participant Registry
-    participant Services
+    participant P as Pipeline
+    participant R as Registry
     
-    Pipeline->>Discovery: Discover services
-    Discovery->>Registry: Query available services
-    Registry-->>Discovery: Service endpoints
-    Discovery-->>Pipeline: Discovered services
-    Pipeline->>Pipeline: Configure connections
-    Pipeline->>Services: Test connections
-    Services-->>Pipeline: Test results
-    Pipeline-->>Pipeline: Final status
+    P->>R: Discover services
+    R-->>P: Endpoints
+    P->>P: Configure
+    P->>P: Test
 ```
 
 ```mermaid
 graph TB
-    subgraph DISCOVERY
-        D1[Discover services]
-        D2[Service registry]
-        D3[Service endpoints]
+    subgraph Discovery
+        A[Query registry]
     end
     
-    subgraph SERVICES
-        S1[api]
-        S2[database]
-        S3[cache]
+    subgraph Services
+        B[API]
+        C[Database]
+        D[Cache]
     end
     
-    subgraph CONFIG
-        C1[Configure URLs]
-        C2[Connection pools]
+    subgraph Config
+        E[Configure]
     end
     
-    subgraph TEST
-        T1[Test connections]
-        T2[Report status]
+    subgraph Test
+        F[Test]
     end
     
-    D1 --> D2
-    D2 --> D3
-    D3 --> S1
-    D3 --> S2
-    D3 --> S3
-    S1 --> C1
-    S2 --> C1
-    S3 --> C1
-    C1 --> C2
-    C2 --> T1
-    T1 --> T2
+    A --> B
+    A --> C
+    A --> D
+    B --> E
+    C --> E
+    D --> E
+    E --> F
 ```
 
 ```mermaid
 stateDiagram-v2
     [*] --> Discover
-    Discover --> Configure: Services found
-    Discover --> [*]: No services
-    Configure --> Test: Connections configured
-    Test --> Success: All pass
-    Test --> Warning: Some fail
-    Success --> [*]: Ready
-    Warning --> [*]: Degraded
+    Discover --> Configure
+    Configure --> Test
+    Test --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph STEP_1_DISCOVER
-        S1[Query service registry]
-        S2[Return service_map]
-        S3[api, database, cache]
-    end
+flowchart LR
+    D([Discover]) --> S([Services])
+    S --> C([Configure])
+    C --> T([Test])
     
-    subgraph STEP_2_CONFIGURE
-        S4[Build config from services]
-        S5[Create connection URLs]
-        S6[Return configured object]
-    end
-    
-    subgraph STEP_3_TEST
-        S7[Test each connection]
-        S8[Collect test results]
-        S9[Return all_passed status]
-    end
-    
-    S1 --> S2 --> S3
-    S3 --> S4 --> S5 --> S6
-    S6 --> S7 --> S8 --> S9
+    style D fill:#e1f5fe
+    style T fill:#c8e6c9
 ```

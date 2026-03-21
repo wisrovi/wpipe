@@ -13,81 +13,58 @@ Protects external services from being overwhelmed.
 
 ```mermaid
 graph LR
-    A[Request] --> B[Rate Limit Check]
+    A[Request] --> B[Check Limit]
     B --> C{Allowed?}
-    C -->|Yes| D[Process Request]
-    C -->|No| E[Reject/Delay]
-    D --> F[Log Request]
-    F --> G[Response]
+    C -->|Yes| D[Process]
+    C -->|No| E[Reject]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant RateLimiter
-    participant Pipeline
+    participant C as Client
+    participant R as RateLimiter
     
-    Client->>RateLimiter: Check rate limit
-    RateLimiter->>RateLimiter: Count requests in window
-    RateLimiter-->>Client: Allowed/Denied
-    alt Allowed
-        Client->>Pipeline: Process request
-        Pipeline-->>Client: Result
-    end
+    C->>R: Check rate limit
+    R-->>C: Allowed
+    C->>R: Request
 ```
 
 ```mermaid
 graph TB
-    subgraph RATE_LIMIT_CONFIG
-        R1[Rate Limit: 5]
-        R2[Window Size: 2s]
+    subgraph Check
+        C[Count requests]
     end
     
-    subgraph REQUEST_TRACKING
-        T1[Request Times List]
-        T2[Filter by Window]
+    subgraph Decision
+        D{Allowed?}
     end
     
-    subgraph DECISION
-        D1{Count <= Limit?}
-        D1 -->|Yes| D2[Allow]
-        D1 -->|No| D3[Reject]
+    subgraph Result
+        A[Allow]
+        R[Reject]
     end
     
-    R1 --> D1
-    R2 --> T2
+    C --> D
+    D --> A
+    D --> R
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Idle
-    Idle --> Checking: New request
-    Checking --> Allowed: Under limit
-    Checking --> Rejected: Over limit
-    Allowed --> Processing: Execute pipeline
-    Rejected --> Idle: Wait for window
-    Processing --> Idle: Complete
+    [*] --> Check
+    Check --> Allow
+    Check --> Reject
+    Allow --> [*]
+    Reject --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph INPUT
-        I1[request_id]
-        I2[current_time]
-    end
+flowchart LR
+    L([Rate Limit]) --> D{{Decision}}
+    D --> A([Allow])
+    D --> R([Reject])
     
-    subgraph RATE_CHECK
-        R1[Get request_times]
-        R2[Filter by WINDOW_SIZE]
-        R3[Count requests]
-        R4[Check <= RATE_LIMIT]
-    end
-    
-    subgraph OUTPUT
-        O1[allowed: boolean]
-        O2[requests_in_window: count]
-    end
-    
-    I2 --> R1 --> R2 --> R3 --> R4 --> O1
-    R2 --> O2
+    style L fill:#e1f5fe
+    style A fill:#c8e6c9
+    style R fill:#ffcdd2
 ```

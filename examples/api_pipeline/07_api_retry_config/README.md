@@ -18,82 +18,56 @@ graph LR
     C --> D{Failed?}
     D -->|Yes| E[Retry 2]
     E --> F{Failed?}
-    F -->|Yes| G[Retry 3]
-    G --> H{Failed?}
-    B -->|No| I[Success]
-    H -->|No| I
-    H -->|Yes| J[Final Failure]
+    B -->|No| G[Success]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant API
+    participant P as Pipeline
+    participant A as API
     
-    Pipeline->>API: Attempt 1
-    API-->>Pipeline: Failed
-    Pipeline->>API: Attempt 2
-    API-->>Pipeline: Failed
-    Pipeline->>API: Attempt 3
-    API-->>Pipeline: Success
-    Pipeline-->>Pipeline: Continue pipeline
+    P->>A: Attempt 1
+    A-->>P: Failed
+    P->>A: Attempt 2
+    A-->>P: Failed
+    P->>A: Attempt 3
+    A-->>P: Success
 ```
 
 ```mermaid
 graph TB
-    subgraph CONFIG
-        C1[max_retries: 3]
-        C2[base_url: localhost:8418]
-        C3[token: test_token]
+    subgraph Attempts
+        A1[Attempt 1]
+        A2[Attempt 2]
+        A3[Attempt 3]
     end
     
-    subgraph ATTEMPTS
-        A1[Attempt 1: API call]
-        A2[Attempt 2: API call]
-        A3[Attempt 3: API call]
+    subgraph Result
+        B[Success or Fail]
     end
     
-    subgraph PIPELINE
-        P1[process function]
-        P2[Return result]
-    end
-    
-    C1 --> A1 --> A2 --> A3 --> P1 --> P2
+    A1 --> A2
+    A2 --> A3
+    A3 --> B
 ```
 
 ```mermaid
 stateDiagram-v2
     [*] --> Call
-    Call --> Failed: API error
-    Call --> Success: Response OK
-    Failed --> Retry: attempt < max_retries
-    Failed --> [*]: Max retries reached
+    Call --> Fail
+    Call --> Success
+    Fail --> Retry
     Retry --> Call
-    Success --> [*]: Continue
+    Retry --> [*]
+    Success --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph CONFIGURATION
-        C1[max_retries = 3]
-        C2[Retry policy]
-    end
+flowchart LR
+    R1([Retry 1]) --> R2([Retry 2])
+    R2 --> R3([Retry 3])
+    R3 --> O([Result])
     
-    subgraph RETRY_FLOW
-        R1[Call API]
-        R2{Failed?}
-        R3[Increment retry]
-        R4{max reached?}
-    end
-    
-    subgraph RESULT
-        S1[Continue pipeline]
-        F1[Raise error]
-    end
-    
-    C1 --> R1 --> R2
-    R2 -->|Yes| R3 --> R4
-    R4 -->|No| R1
-    R4 -->|Yes| F1
-    R2 -->|No| S1
+    style R1 fill:#fff9c4
+    style O fill:#c8e6c9
 ```

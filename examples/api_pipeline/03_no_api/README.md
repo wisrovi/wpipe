@@ -14,72 +14,54 @@ Useful for testing or when API server is not available.
 
 ```mermaid
 graph LR
-    A[Input: items] --> B[Process Items]
+    A[Input items] --> B[Process]
     B --> C[Calculate Stats]
-    C --> D[Result with count, total, average]
+    C --> D[Result]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Input
-    participant Pipeline
+    participant I as Input
+    participant P as Pipeline
     
-    Input->>Pipeline: run({items: [10,20,30,40,50]})
-    
-    Pipeline->>Pipeline: Step 1: process_items
-    Note over Pipeline: Count items: 5
-    
-    Pipeline->>Pipeline: Step 2: calculate_stats
-    Note over Pipeline: Sum: 150, Avg: 30
-    
-    Pipeline-->>Input: {count: 5, total: 150, average: 30}
+    I->>P: run with items
+    P->>P: Step 1
+    P->>P: Step 2
+    P-->>I: Result
 ```
 
 ```mermaid
 graph TB
-    subgraph INPUT
-        I1[{items: [10,20,30,40,50]}]
+    subgraph Input
+        A[items list]
     end
     
-    subgraph STEP_1_PROCESS
-        S1[process_items function]
-        S2[Filter items]
-        S3[{processed: 5, items: [...]}]
+    subgraph Steps
+        B[process_items]
+        C[calculate_stats]
     end
     
-    subgraph STEP_2_STATS
-        T1[calculate_stats function]
-        T2[Compute sum and average]
-        T3[{count: 5, total: 150, average: 30}]
+    subgraph Output
+        D[results]
     end
     
-    I1 --> S1 --> S2 --> S3 --> T1 --> T2 --> T3
+    A --> B
+    B --> C
+    C --> D
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> InputReady
-    InputReady --> ProcessItems: Run step 1
-    ProcessItems --> CalculateStats: Run step 2
-    CalculateStats --> [*]: Complete
+    [*] --> Start
+    Start --> Step1
+    Step1 --> Step2
+    Step2 --> End
+    End --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph DATA_FLOW
-        D1[Input items list]
-        D2[Process step adds "processed"]
-        D3[Stats step computes aggregates]
-    end
-    
-    subgraph AGGREGATION
-        A1[count: len(items)]
-        A2[total: sum(items)]
-        A3[average: sum/len]
-    end
-    
-    D1 --> D2 --> D3
-    D3 --> A1
-    D3 --> A2
-    D3 --> A3
+flowchart LR
+    I([Input]) --> P1([Step 1])
+    P1 --> P2([Step 2])
+    P2 --> O([Output])
 ```

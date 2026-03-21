@@ -13,63 +13,59 @@ Metadata can include version info, environment, tags, etc.
 
 ```mermaid
 graph LR
-    A[Input Data] --> B[Process Step]
-    B --> C[Result with Worker Info]
+    A[Metadata Config] --> B[Pipeline]
+    B --> C[Register Worker]
+    C --> D[Execute Steps]
+    D --> E[Result]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant Pipeline
-    participant API
+    participant P as Pipeline
+    participant A as API
     
-    Client->>Pipeline: Run with metadata
-    Pipeline->>API: Register worker with metadata
-    API-->>Pipeline: Worker ID
-    Pipeline->>Pipeline: Execute steps
-    Pipeline-->>Client: Result
+    P->>A: Register with metadata
+    A-->>P: Worker ID
+    P->>P: Execute steps
+    P-->>P: Complete
 ```
 
 ```mermaid
 graph TB
-    subgraph API_CONFIG
-        M1[base_url]
-        M2[token]
-        M3[worker_metadata]
+    subgraph Metadata
+        M1[version]
+        M2[environment]
+        M3[tags]
     end
     
-    subgraph METADATA_FIELDS
-        V1[version]
-        V2[environment]
-        V3[tags]
+    subgraph Execution
+        E[Steps]
     end
     
-    M3 --> V1
-    M3 --> V2
-    M3 --> V3
+    subgraph Result
+        R[Output]
+    end
+    
+    M1 --> E
+    M2 --> E
+    M3 --> E
+    E --> R
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Registering
-    Registering --> Registered: with metadata
-    Registered --> Executing: run()
-    Executing --> [*]: Complete
+    [*] --> Register
+    Register --> Execute
+    Execute --> Complete
+    Complete --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph SETUP
-        A1[api_config] --> A2[worker_metadata]
-    end
+    M([Metadata]) --> P([Pipeline])
+    P --> E([Execute])
+    E --> O([Result])
     
-    subgraph REGISTRATION
-        A2 --> B1[Worker Register]
-        B1 --> B2[Worker ID]
-    end
-    
-    subgraph EXECUTION
-        B2 --> C1[Process Step]
-        C1 --> C2[Return Result]
-    end
+    style M fill:#e1f5fe
+    style O fill:#c8e6c9
 ```

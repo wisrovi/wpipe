@@ -22,73 +22,49 @@ graph LR
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant AuthService
-    participant API
-    participant Pipeline
+    participant C as Client
+    participant P as Pipeline
+    participant A as API
     
-    Client->>AuthService: Login credentials
-    AuthService-->>Client: Bearer token
-    Client->>Pipeline: Run with auth header
-    Pipeline->>API: Request with Authorization
-    API-->>Pipeline: Protected resource
-    Pipeline->>Pipeline: Process data
-    Pipeline-->>Client: Result
+    C->>P: Request with auth
+    P->>A: Bearer token
+    A-->>P: Protected data
+    P-->>C: Result
 ```
 
 ```mermaid
 graph TB
-    subgraph AUTH_CONFIG
-        A1[base_url]
-        A2[token]
-        A3[headers.Authorization]
+    subgraph Auth
+        A[Token]
+        B[Bearer]
     end
     
-    subgraph TOKEN_TYPES
-        T1[Bearer Token]
-        T2[API Key]
-        T3[JWT]
+    subgraph Request
+        C[API Call]
     end
     
-    subgraph PIPELINE_STEPS
-        P1[Authenticate User]
-        P2[Fetch Protected]
-        P3[Process Resource]
+    subgraph Response
+        D[Protected data]
     end
     
-    A1 --> P1 --> P2 --> P3
-    A2 --> A3
+    A --> B
+    B --> C
+    C --> D
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Authenticate
-    Authenticate --> FetchResource: Token valid
-    Authenticate --> [*]: Token invalid
-    FetchResource --> ProcessData: Resource received
-    ProcessData --> [*]: Complete
+    [*] --> Auth
+    Auth --> Fetch
+    Fetch --> Process
+    Process --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph AUTH_HEADER
-        H1[Authorization: Bearer]
-        H2[JWT Token]
-    end
+    T([Token]) --> R([Request])
+    R --> D([Protected Data])
     
-    subgraph API_CONFIG
-        C1[base_url]
-        C2[token]
-        C3[headers]
-    end
-    
-    subgraph PIPELINE
-        P1[authenticate_user]
-        P2[fetch_protected_resource]
-        P3[process_protected]
-    end
-    
-    H1 --> H2 --> C3
-    C1 --> C2 --> C3
-    C3 --> P1 --> P2 --> P3
+    style T fill:#e1f5fe
+    style D fill:#c8e6c9
 ```

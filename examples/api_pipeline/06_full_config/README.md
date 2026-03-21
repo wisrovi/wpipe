@@ -14,84 +14,67 @@ Shows how to use timeout and retry settings together.
 
 ```mermaid
 graph LR
-    A[Full API Config] --> B[Pipeline Setup]
-    B --> C[API Call with Timeout]
-    C --> D{Success?}
-    D -->|No| E[Retry up to 3 times]
+    A[Config] --> B[Pipeline]
+    B --> C[API Call]
+    C --> D{Retry?}
+    D -->|Fail| E[Retry]
     E --> C
-    D -->|Yes| F[Result]
+    D -->|Success| F[Result]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant API
-    participant Retry
+    participant P as Pipeline
+    participant A as API
     
-    Pipeline->>API: API call with timeout=30s
-    API-->>Pipeline: Request timeout
-    Pipeline->>Retry: Increment retry count
-    Retry->>API: Retry #1
-    API-->>Pipeline: Success
-    Pipeline->>Pipeline: Continue
+    P->>A: Request with timeout
+    A-->>P: Timeout
+    P->>A: Retry 1
+    A-->>P: Timeout
+    P->>A: Retry 2
+    A-->>P: Success
 ```
 
 ```mermaid
 graph TB
-    subgraph API_CONFIG
-        A1[base_url: http://localhost:8418]
-        A2[token: test_token]
-        A3[timeout: 30 seconds]
-        A4[retry: 3 attempts]
+    subgraph Config
+        A[base_url]
+        B[timeout]
+        C[retry]
     end
     
-    subgraph RETRY_LOOP
-        R1[Attempt 1: Fail]
-        R2[Attempt 2: Fail]
-        R3[Attempt 3: Success]
+    subgraph Request
+        D[Send]
     end
     
-    subgraph PIPELINE
-        P1[process function]
-        P2[Multiply value by 2]
+    subgraph Result
+        E[Output]
     end
     
-    A1 --> A2 --> A3 --> A4
-    A4 --> R1 --> R2 --> R3 --> P1 --> P2
+    A --> B
+    B --> C
+    C --> D
+    D --> E
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Configure
-    Configure --> Call: Execute API call
-    Call --> Success: Response OK
-    Call --> Retry: Request failed
-    Retry --> Call: Retry attempt
-    Retry --> Failed: Max retries exceeded
-    Success --> [*]: Continue
-    Failed --> [*]: Error
+    [*] --> Config
+    Config --> Call
+    Call --> Retry
+    Call --> Success
+    Retry --> Call
+    Retry --> Fail
+    Success --> [*]
+    Fail --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph CONFIGURATION
-        C1[base_url]
-        C2[token]
-        C3[timeout: 30]
-        C4[retry: 3]
-    end
+flowchart LR
+    C([Config]) --> P([Pipeline])
+    P --> R([Retry Loop])
+    R --> O([Result])
     
-    subgraph EXECUTION
-        E1[Call API]
-        E2{Success?}
-        E3[Retry loop]
-    end
-    
-    subgraph RESULT
-        R1[{result: value * 2}]
-    end
-    
-    C1 --> C2 --> C3 --> C4 --> E1 --> E2
-    E2 -->|No| E3 --> E1
-    E2 -->|Yes| R1
+    style C fill:#e1f5fe
+    style O fill:#c8e6c9
 ```

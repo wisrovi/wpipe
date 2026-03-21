@@ -21,65 +21,58 @@ graph LR
 
 ```mermaid
 sequenceDiagram
-    participant Pool
-    participant W1[Worker 1]
-    participant W2[Worker 2]
-    participant W3[Worker 3]
+    participant P as Pool
+    participant W1 as Worker 1
+    participant W2 as Worker 2
+    participant W3 as Worker 3
     
-    Pool->>W1: Execute concurrently
-    Pool->>W2: Execute concurrently
-    Pool->>W3: Execute concurrently
-    W1-->>Pool: Result 1
-    W2-->>Pool: Result 2
-    W3-->>Pool: Result 3
+    P->>W1: Execute
+    P->>W2: Execute
+    P->>W3: Execute
+    W1-->>P: Result
+    W2-->>P: Result
+    W3-->>P: Result
 ```
 
 ```mermaid
 graph TB
-    subgraph THREADS
-        T1[Worker 1: task_a]
-        T2[Worker 2: task_b]
-        T3[Worker 3: task_c]
+    subgraph Pool
+        P[ThreadPool]
     end
     
-    subgraph TASKS
-        P1[Process 10 -> 20]
-        P2[Process 20 -> 40]
-        P3[Process 30 -> 60]
+    subgraph Workers
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker 3]
     end
     
-    T1 --> P1
-    T2 --> P2
-    T3 --> P3
+    subgraph Results
+        R1[Result 1]
+        R2[Result 2]
+        R3[Result 3]
+    end
+    
+    P --> W1
+    P --> W2
+    P --> W3
+    W1 --> R1
+    W2 --> R2
+    W3 --> R3
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> SubmitTasks
-    SubmitTasks --> Running
-    Running --> Complete1
-    Running --> Complete2
-    Running --> Complete3
-    Complete1 --> [*]
-    Complete2 --> [*]
-    Complete3 --> [*]
+    [*] --> Submit
+    Submit --> Running
+    Running --> Complete
+    Complete --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph INDEPENDENT
-        I1[Pipeline 1]
-        I2[Pipeline 2]
-        I3[Pipeline 3]
-    end
+    P([Pool]) --> W1([Worker 1])
+    P --> W2([Worker 2])
+    P --> W3([Worker 3])
     
-    subgraph COORDINATION
-        C1[ThreadPoolExecutor]
-        C2[concurrent.futures]
-    end
-    
-    I1 --> C1
-    I2 --> C1
-    I3 --> C1
-    C1 --> C2
+    style P fill:#e1f5fe
 ```

@@ -13,80 +13,58 @@ Custom headers can be used for authentication, tracking, etc.
 
 ```mermaid
 graph LR
-    A[API Config] --> B[Headers Defined]
-    B --> C[Pipeline Setup]
-    C --> D[API Call]
-    D --> E[Headers Sent]
-    E --> F[Response]
+    A[Config Headers] --> B[Pipeline]
+    B --> C[API Call]
+    C --> D[Headers Sent]
+    D --> E[Response]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant API
+    participant P as Pipeline
+    participant A as API
     
-    Pipeline->>API: API request
-    Note right of API: Headers:
-    Note right of API: X-Custom-Header: value
-    Note right of API: Authorization: Bearer ...
-    API-->>Pipeline: Response
+    P->>A: Request with headers
+    Note right of A: Custom headers
+    A-->>P: Response
 ```
 
 ```mermaid
 graph TB
-    subgraph API_CONFIG
-        A1[base_url]
-        A2[token]
-        A3[headers: X-Custom-Header]
-    end
-    
-    subgraph HEADER_TYPES
-        H1[Custom headers]
+    subgraph Headers
+        H1[X-Custom]
         H2[Authorization]
         H3[Content-Type]
-        H4[X-Request-ID]
     end
     
-    subgraph REQUEST
-        R1[Build request]
-        R2[Add headers]
-        R3[Send to API]
+    subgraph Request
+        R[Send]
     end
     
-    A3 --> H1 --> R1 --> R2 --> R3
+    subgraph Response
+        O[Output]
+    end
+    
+    H1 --> R
+    H2 --> R
+    H3 --> R
+    R --> O
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Configure
-    Configure --> BuildRequest: Setup headers
-    BuildRequest --> SendRequest: Execute call
-    SendRequest --> Success: Response OK
-    SendRequest --> Error: API error
-    Success --> [*]: Continue
-    Error --> [*]: Handle error
+    [*] --> Config
+    Config --> Build
+    Build --> Send
+    Send --> Response
+    Response --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph CONFIGURATION
-        C1[headers: X-Custom-Header]
-    end
+flowchart LR
+    H([Headers]) --> R([Request])
+    R --> O([Response])
     
-    subgraph HEADER_EXAMPLE
-        H1[X-Custom-Header]
-        H2[Authorization]
-        H3[Content-Type]
-    end
-    
-    subgraph API_CALL
-        A1[Send request]
-    end
-    
-    C1 --> H1
-    C1 --> H2
-    C1 --> H3
-    H1 --> A1
-    H2 --> A1
-    H3 --> A1
+    style H fill:#e1f5fe
+    style O fill:#c8e6c9
 ```

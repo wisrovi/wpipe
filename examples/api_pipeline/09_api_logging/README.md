@@ -14,95 +14,62 @@ Shows how logging helps debug API interactions.
 
 ```mermaid
 graph LR
-    A[Pipeline with logging] --> B[Execute Steps]
-    B --> C[Log each step]
+    A[Pipeline] --> B[Execute Steps]
+    B --> C[Log Each Step]
     C --> D[Send to API]
-    D --> E[Log API call]
-    E --> F[Log response]
+    D --> E[Log Response]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant API
-    participant Logger
+    participant P as Pipeline
+    participant L as Logger
     
-    Pipeline->>Logger: Log: Pipeline starting
-    Pipeline->>Pipeline: Execute step 1
-    Pipeline->>Logger: Log: Step 1 complete
-    Pipeline->>API: API call
-    API-->>Pipeline: Response
-    Pipeline->>Logger: Log: API response
-    Pipeline->>Logger: Log: Pipeline complete
+    P->>L: Log start
+    P->>P: Execute step
+    P->>L: Log step
+    P->>L: Log response
 ```
 
 ```mermaid
 graph TB
-    subgraph PIPELINE
-        P1[Pipeline with verbose=True]
+    subgraph Pipeline
+        P[Pipeline]
     end
     
-    subgraph LOGGING
-        L1[Pipeline start log]
-        L2[Step execution logs]
-        L3[API call logs]
-        L4[Response logs]
-        L5[Completion log]
+    subgraph Logs
+        L1[Start log]
+        L2[Step log]
+        L3[API log]
+        L4[End log]
     end
     
-    subgraph OUTPUT
-        O1[Result returned]
-        O2[Logs saved]
+    subgraph Output
+        O[Result]
     end
     
-    P1 --> L1
+    P --> L1
     L1 --> L2
     L2 --> L3
     L3 --> L4
-    L4 --> L5
-    L5 --> O1
-    L5 --> O2
+    L4 --> O
 ```
 
 ```mermaid
 stateDiagram-v2
     [*] --> Start
-    Start --> LogStart: Pipeline initialized
-    LogStart --> Execute: Run step
-    Execute --> LogStep: Step complete
-    LogStep --> APICall: Send to API
-    APICall --> LogResponse: Response received
-    LogResponse --> Complete: Pipeline done
-    Complete --> [*]: Logs available
+    Start --> Execute
+    Execute --> Log
+    Log --> Complete
+    Complete --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph LOG_LEVELS
-        L1[DEBUG]
-        L2[INFO]
-        L3[WARNING]
-        L4[ERROR]
-    end
+flowchart LR
+    P([Pipeline]) --> L([Logs])
+    L --> O([Output])
     
-    subgraph LOG_TYPES
-        T1[Pipeline initialization]
-        T2[Step execution]
-        T3[API requests]
-        T4[Errors]
-    end
-    
-    subgraph STORAGE
-        S1[Console output]
-        S2[Log files]
-    end
-    
-    L1 --> T1
-    L2 --> T2
-    L3 --> T3
-    L4 --> T4
-    T1 --> S1
-    T2 --> S1
-    T3 --> S2
-    T4 --> S2
+    style P fill:#e1f5fe
+    style L fill:#fff9c4
+    style O fill:#c8e6c9
 ```

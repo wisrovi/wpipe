@@ -1,6 +1,6 @@
 # 18 Invalid URL
 
-Demonstrates handling of invalid/malformed URLs in API configuration.
+Demonstrates handling of invalid or malformed URLs in API configuration.
 Pipeline should handle URL validation errors gracefully.
 
 ## What it evaluates
@@ -22,60 +22,46 @@ graph LR
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant Network
+    participant P as Pipeline
+    participant N as Network
     
-    Pipeline->>Network: Invalid URL
-    Network-->>Pipeline: URL error
-    Note over Pipeline: Handle error
-    Pipeline->>Pipeline: Continue locally
+    P->>N: Invalid URL
+    N-->>P: URL error
+    Note over P: Handle error
+    P->>P: Continue locally
 ```
 
 ```mermaid
 graph TB
-    subgraph INVALID_URLS
-        U1[not-a-url]
-        U2[http://]
-        U3[://missing]
+    subgraph Invalid
+        A[Bad URL]
     end
     
-    subgraph ERROR_HANDLING
-        E1[URL parse error]
-        E2[Connection fail]
-        E3[Continue locally]
+    subgraph Error
+        B[Connection fail]
     end
     
-    U1 --> E1
-    U2 --> E1
-    U3 --> E1
-    E1 --> E2
-    E2 --> E3
+    subgraph Recovery
+        C[Local mode]
+    end
+    
+    A --> B
+    B --> C
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> ValidateURL
-    ValidateURL --> Invalid
-    Invalid --> Handle
-    Handle --> Continue
+    [*] --> Validate
+    Validate --> Error
+    Error --> Continue
     Continue --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph MALFORMED
-        M1[Missing protocol]
-        M2[Invalid format]
-        M3[Empty host]
-    end
+    U([Invalid URL]) --> E([Error])
+    E --> C([Continue])
     
-    subgraph OUTCOME
-        O1[Connection fails]
-        O2[Local execution]
-    end
-    
-    M1 --> O1
-    M2 --> O1
-    M3 --> O1
-    O1 --> O2
+    style U fill:#ffcdd2
+    style C fill:#c8e6c9
 ```

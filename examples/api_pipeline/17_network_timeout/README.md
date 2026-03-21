@@ -18,65 +18,48 @@ graph LR
     B --> C{Response?}
     C -->|Yes| D[Continue]
     C -->|No| E[Timeout]
-    E --> F[Handle Error]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant Network
-    participant Timeout
+    participant P as Pipeline
+    participant T as Timer
     
-    Pipeline->>Network: Send request
-    Pipeline->>Timeout: Start timer (1s)
-    Note over Network: Processing...
-    Timeout->>Pipeline: Time exceeded
-    Pipeline->>Pipeline: Handle timeout
+    P->>T: Start timer
+    T-->>P: Timeout
+    Note over P: Handle timeout
 ```
 
 ```mermaid
 graph TB
-    subgraph TIMEOUT_CONFIG
-        T1[timeout: 1 second]
-        T2[Wait for response]
+    subgraph Wait
+        A[Send request]
     end
     
-    subgraph TIMEOUT_TRIGGER
-        TT1[Timer exceeded]
-        TT2[Cancel request]
+    subgraph Outcome
+        B[Success]
+        C[Timeout]
     end
     
-    subgraph RECOVERY
-        R1[Log timeout]
-        R2[Continue pipeline]
-    end
-    
-    T1 --> T2 --> TT1 --> TT2 --> R1 --> R2
+    A --> B
+    A --> C
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> SendRequest
-    SendRequest --> Waiting: Timer starts
-    Waiting --> Success: Response received
-    Waiting --> Timeout: Time exceeded
-    Timeout --> [*]: Handle error
-    Success --> [*]: Continue
+    [*] --> Wait
+    Wait --> Success
+    Wait --> Timeout
+    Timeout --> [*]
+    Success --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph SLOW_OPERATIONS
-        S1[API calls]
-        S2[Network requests]
-        S3[External services]
-    end
+flowchart LR
+    R([Request]) --> T{{Timer}}
+    T --> S([Success])
+    T --> X([Timeout])
     
-    subgraph TIMEOUT_HANDLING
-        T1[Wait for timeout]
-        T2[Cancel request]
-        T3[Log error]
-    end
-    
-    S1 --> T1 --> T2 --> T3
+    style S fill:#c8e6c9
+    style X fill:#ffcdd2
 ```

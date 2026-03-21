@@ -18,71 +18,56 @@ graph LR
     B -->|No| C[Fail]
     C --> D[Continue]
     B -->|Yes| E[Success]
-    D --> A
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant API
+    participant P as Pipeline
+    participant A as API
     
-    Pipeline->>API: Attempt 1
-    API-->>Pipeline: Unavailable
-    Pipeline->>Pipeline: Continue locally
-    Pipeline->>API: Attempt 2
-    API-->>Pipeline: Available!
-    Pipeline->>Pipeline: Update status
+    P->>A: Attempt 1
+    A-->>P: Unavailable
+    P->>A: Attempt 2
+    A-->>P: Available
 ```
 
 ```mermaid
 graph TB
-    subgraph CONNECTION
-        C1[Call API]
-        C2[Success?]
+    subgraph Connection
+        A[Call API]
     end
     
-    subgraph FAILURE
-        F1[Mark unavailable]
-        F2[Continue locally]
-        F3[Schedule retry]
+    subgraph States
+        B[Fail]
+        C[Success]
     end
     
-    subgraph SUCCESS
-        S1[Mark available]
-        S2[Normal operation]
+    subgraph Recovery
+        D[Retry]
     end
     
-    C1 --> C2
-    C2 -->|No| F1 --> F2 --> F3
-    C2 -->|Yes| S1 --> S2
+    A --> B
+    A --> C
+    B --> D
+    D --> A
 ```
 
 ```mermaid
 stateDiagram-v2
     [*] --> Connected
-    Connected --> Disconnected: API fails
-    Disconnected --> Retrying: Wait
-    Retrying --> Connected: Success
-    Retrying --> Disconnected: Still down
-    Disconnected --> [*]: Give up
+    Connected --> Disconnected
+    Disconnected --> Retrying
+    Retrying --> Connected
+    Disconnected --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph INITIAL
-        I1[API available]
-    end
+    C([Call]) --> D{{Available?}}
+    D -->|Yes| S([Success])
+    D -->|No| R([Retry])
+    R --> C
     
-    subgraph TRANSIENT_FAILURE
-        TF1[Temp outage]
-        TF2[Local fallback]
-        TF3[Retry scheduled]
-    end
-    
-    subgraph RECOVERY
-        R1[API returns]
-        R2[Resume tracking]
-    end
-    
-    I1 --> TF1 --> TF2 --> TF3 --> R1 --> R2
+    style S fill:#c8e6c9
+    style R fill:#fff9c4
 ```

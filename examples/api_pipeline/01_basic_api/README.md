@@ -14,84 +14,64 @@ Shows how to set up a pipeline with API server connection.
 
 ```mermaid
 graph LR
-    A[Input: value=42] --> B[Create Pipeline]
-    B --> C[Worker Register]
-    C --> D{API Available?}
+    A[Input] --> B[Pipeline]
+    B --> C[Register Worker]
+    C --> D{Check API}
     D -->|Yes| E[Run with API]
     D -->|No| F[Run Local]
-    E --> G[Result: 84]
+    E --> G[Result]
     F --> G
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant Pipeline
-    participant APIServer
+    participant C as Client
+    participant P as Pipeline
+    participant A as API Server
     
-    Client->>Pipeline: Create with api_config
-    Pipeline->>APIServer: worker_register()
-    APIServer-->>Pipeline: worker_id
-    alt API Available
-        Pipeline->>Pipeline: Execute steps
-        Pipeline->>APIServer: Send result
-    else API Unavailable
-        Pipeline->>Pipeline: Execute locally
-    end
-    Pipeline-->>Client: Final result
+    C->>P: Create pipeline
+    P->>A: worker_register
+    A-->>P: worker_id
+    P->>P: Execute steps
+    P-->>C: Result
 ```
 
 ```mermaid
 graph TB
-    subgraph API_CONFIG
-        C1[base_url: http://localhost:8418]
-        C2[token: test_token_123]
+    subgraph Setup
+        A[api_config]
+        B[Pipeline]
     end
     
-    subgraph PIPELINE_SETUP
-        P1[Pipeline worker_name=demo_worker]
-        P2[Steps: process function]
+    subgraph Execution
+        C[Step 1]
+        D[Step 2]
     end
     
-    subgraph EXECUTION
-        E1[worker_register]
-        E2[run with {value: 42}]
-        E3[result: {result: 84}]
+    subgraph Result
+        E[Output]
     end
     
-    C1 --> P1 --> E1 --> E2 --> E3
+    A --> B
+    B --> C
+    C --> D
+    D --> E
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Initialize
-    Initialize --> Registering: Create Pipeline
-    Registering --> Registered: Success
-    Registering --> LocalMode: API Unavailable
-    Registered --> Executing: run()
-    LocalMode --> Executing: run()
-    Executing --> [*]: Complete
+    [*] --> Ready
+    Ready --> Running
+    Running --> Complete
+    Complete --> [*]
 ```
 
 ```mermaid
-flowchart TB
-    subgraph INPUT
-        I1[{value: 42}]
-    end
+flowchart LR
+    I[Input] --> P[Process]
+    P --> O[Output]
     
-    subgraph API_CONFIG
-        A1[base_url]
-        A2[token]
-    end
-    
-    subgraph STEPS
-        S1[process: data["value"] * 2]
-    end
-    
-    subgraph OUTPUT
-        O1[{result: 84, status: success}]
-    end
-    
-    I1 --> S1 --> O1
-    A1 --> A2
+    style I fill:#e1f5fe
+    style P fill:#b3e5fc
+    style O fill:#81d4fa
 ```

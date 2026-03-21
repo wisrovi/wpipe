@@ -1,6 +1,6 @@
 # 16 Expired Token
 
-Demonstrates handling of expired/invalid authentication tokens.
+Demonstrates handling of expired or invalid authentication tokens.
 Pipeline should gracefully handle 401 Unauthorized responses.
 
 ## What it evaluates
@@ -18,68 +18,53 @@ graph LR
     B --> C[401 Unauthorized]
     C --> D[Handle Error]
     D --> E[Continue Pipeline]
-    E --> F[Local Execution]
 ```
 
 ```mermaid
 sequenceDiagram
-    participant Pipeline
-    participant API
-    participant Client
+    participant P as Pipeline
+    participant A as API
     
-    Pipeline->>API: Request with expired token
-    API-->>Pipeline: 401 Unauthorized
-    Note over Pipeline: Token expired
-    Pipeline->>Pipeline: Continue locally
-    Pipeline-->>Client: Result
+    P->>A: Request
+    A-->>P: 401 Unauthorized
+    Note over P: Handle error
+    P->>P: Continue locally
 ```
 
 ```mermaid
 graph TB
-    subgraph AUTH_FAILURE
-        A1[Expired token in header]
-        A2[401 Response]
-        A3[Token validation]
+    subgraph Error
+        A[401 Response]
     end
     
-    subgraph HANDLING
-        H1[Log error]
-        H2[Continue pipeline]
-        H3[Local execution]
+    subgraph Recovery
+        B[Log error]
+        C[Continue]
     end
     
-    A1 --> A2 --> A3 --> H1 --> H2 --> H3
+    subgraph Result
+        D[Output]
+    end
+    
+    A --> B
+    B --> C
+    C --> D
 ```
 
 ```mermaid
 stateDiagram-v2
-    [*] --> SendRequest
-    SendRequest --> AuthFailed: 401 Unauthorized
-    AuthFailed --> LogError: Record issue
-    LogError --> ContinueLocal: Continue pipeline
-    ContinueLocal --> [*]: Complete
+    [*] --> Request
+    Request --> Error
+    Error --> Continue
+    Continue --> [*]
 ```
 
 ```mermaid
 flowchart LR
-    subgraph TOKEN_ISSUES
-        T1[Expired]
-        T2[Invalid format]
-        T3[Revoked]
-    end
+    T([Token Expired]) --> E([Error])
+    E --> C([Continue])
+    C --> O([Output])
     
-    subgraph RESPONSE
-        R1[401 Unauthorized]
-    end
-    
-    subgraph RECOVERY
-        RC1[Log warning]
-        RC2[Continue locally]
-    end
-    
-    T1 --> R1
-    T2 --> R1
-    T3 --> R1
-    R1 --> RC1
-    RC1 --> RC2
+    style T fill:#ffcdd2
+    style O fill:#c8e6c9
 ```
