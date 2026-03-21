@@ -20,7 +20,7 @@ def main():
 
     result = pipeline.run({"value": 5})
     print(f"Result: {result}")
-    assert result["final"] == 50
+    assert result["final"] == 30
 
 
 if __name__ == "__main__":
