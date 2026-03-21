@@ -13,7 +13,6 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinx_design",
-    "sphinx_sitemap",
 ]
 
 templates_path = ["_templates"]
