@@ -1,5 +1,13 @@
 # wpipe - Pipeline Library
 
+[![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
+[![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![LTS](https://img.shields.io/badge/LTS-1.0.0-green.svg)](CHANGELOG.md)
+[![Tests](https://github.com/wisrovi/wpipe/actions/workflows/python-publish.yml/badge.svg)](https://github.com/wisrovi/wpipe/actions)
+
+> **Long Term Support (LTS)**: Version 1.0.0 is the first LTS release with comprehensive examples, type hints, and documentation.
+
 A Python library for creating and executing **sequential** data processing pipelines with task orchestration and API integration.
 
 **Purpose**: Process data through a chain of steps where each step receives output from the previous one. NOT designed for streaming/chunking large datasets - data should fit in memory.
@@ -164,7 +172,9 @@ wpipe/
 
 ## Documentation
 
-Full documentation available at: https://wpipe.readthedocs.io/
+- [Documentation](https://wpipe.readthedocs.io/) - Full API reference
+- [Changelog](CHANGELOG.md) - Release notes and version history
+- [Examples](examples/) - 100+ examples organized by functionality
 
 ## License
 
