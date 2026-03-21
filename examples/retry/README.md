@@ -17,16 +17,26 @@ This directory contains examples demonstrating retry functionality in pipelines.
 ```python
 from wpipe import Pipeline
 
+def unreliable_step(data):
+    if not hasattr(unreliable_step, 'attempt'):
+        unreliable_step.attempt = 0
+    unreliable_step.attempt += 1
+    if unreliable_step.attempt < 3:
+        raise ConnectionError("Network error")
+    return {"success": True}
+
 pipeline = Pipeline(
     max_retries=3,
     retry_delay=0.5,
     retry_on_exceptions=(ConnectionError, TimeoutError),
     verbose=True
 )
+pipeline.set_steps([(unreliable_step, "Unreliable", "v1.0")])
+result = pipeline.run({})
 ```
 
 ## Parameters
 
 - `max_retries`: Maximum retry attempts (0 = no retry)
 - `retry_delay`: Delay between retries in seconds
-- `retry_on_exceptions`: Tuple of exception types to retry on
+- `retry_on_exceptions`: Tuple of exception types to retry on (default: all exceptions)

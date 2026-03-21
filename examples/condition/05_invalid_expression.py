@@ -2,10 +2,15 @@
 05 Condition - Invalid Expression Handling
 
 Shows how invalid condition expressions are handled.
+IMPORTANT: Condition must come AFTER a step that provides the data.
 """
 
 from wpipe import Pipeline
 from wpipe.pipe import Condition
+
+
+def get_data(data):
+    return {"value": 5}
 
 
 def valid_step(data):
@@ -20,11 +25,16 @@ def main():
     )
 
     pipeline = Pipeline(verbose=True)
-    pipeline.set_condition(condition)
+    pipeline.set_steps(
+        [
+            (get_data, "Get Data", "v1.0"),
+            condition,
+        ]
+    )
 
     print("Testing with missing field in data:")
     try:
-        result = pipeline.run({"value": 5})
+        result = pipeline.run({})
         print(f"Result: {result}")
     except ValueError as e:
         print(f"Error: {e}")

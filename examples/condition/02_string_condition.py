@@ -2,18 +2,23 @@
 02 Condition - String Based Condition
 
 Shows using string conditions like 'status == "active"'.
+IMPORTANT: Condition must come AFTER a step that provides the data.
 """
 
 from wpipe import Pipeline
 from wpipe.pipe import Condition
 
 
+def get_status(data):
+    return {"status": "active", "user": "john"}
+
+
 def activate_user(data):
-    return {"status": "active", "message": "User activated"}
+    return {"message": "User activated"}
 
 
 def deactivate_user(data):
-    return {"status": "inactive", "message": "User deactivated"}
+    return {"message": "User deactivated"}
 
 
 def main():
@@ -24,15 +29,16 @@ def main():
     )
 
     pipeline = Pipeline(verbose=True)
-    pipeline.set_condition(condition)
+    pipeline.set_steps(
+        [
+            (get_status, "Get Status", "v1.0"),
+            condition,
+        ]
+    )
 
     print("Test 1: status = active")
-    result1 = pipeline.run({"status": "active"})
+    result1 = pipeline.run({})
     print(f"Result: {result1}")
-
-    print("\nTest 2: status = pending")
-    result2 = pipeline.run({"status": "pending"})
-    print(f"Result: {result2}")
 
 
 if __name__ == "__main__":

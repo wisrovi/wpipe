@@ -2,10 +2,15 @@
 03 Condition - Multiple Steps in Branch
 
 Shows running multiple steps in each branch.
+IMPORTANT: Condition must come AFTER a step that provides the data.
 """
 
 from wpipe import Pipeline
 from wpipe.pipe import Condition
+
+
+def get_value(data):
+    return {"value": 10}
 
 
 def step1(data):
@@ -38,15 +43,16 @@ def main():
     )
 
     pipeline = Pipeline(verbose=True)
-    pipeline.set_condition(condition)
+    pipeline.set_steps(
+        [
+            (get_value, "Get Value", "v1.0"),
+            condition,
+        ]
+    )
 
     print("Test 1: value = 10 (> 0)")
-    result1 = pipeline.run({"value": 10})
+    result1 = pipeline.run({})
     print(f"Result keys: {list(result1.keys())}")
-
-    print("\nTest 2: value = -5 (< 0)")
-    result2 = pipeline.run({"value": -5})
-    print(f"Result keys: {list(result2.keys())}")
 
 
 if __name__ == "__main__":

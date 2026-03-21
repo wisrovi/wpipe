@@ -2,6 +2,10 @@
 
 This directory contains examples demonstrating conditional branching in pipelines.
 
+## Important
+
+**Condition must come AFTER a step that provides the data.** The condition evaluates data that was added by previous steps.
+
 ## Examples
 
 | File | Description |
@@ -18,20 +22,28 @@ This directory contains examples demonstrating conditional branching in pipeline
 from wpipe import Pipeline
 from wpipe.pipe import Condition
 
+def fetch_data(data):
+    return {"value": 50, "type": "A"}
+
+def process_a(data):
+    return {"processed": "A"}
+
 condition = Condition(
     expression="value > 50",
-    branch_true=[(step_a, "Step A", "v1.0")],
-    branch_false=[(step_b, "Step B", "v1.0")],
+    branch_true=[(process_a, "Process A", "v1.0")],
 )
 
 pipeline = Pipeline(verbose=True)
-pipeline.set_condition(condition)
-result = pipeline.run({"value": 30})
+pipeline.set_steps([
+    (fetch_data, "Fetch", "v1.0"),
+    condition,
+])
+result = pipeline.run({})
 ```
 
 ## Expression Syntax
 
-The condition expression is evaluated using Python's `eval()`. Available variables are the keys from the input data:
+The condition expression is evaluated using Python's `eval()`. Available variables are the keys from the data (added by previous steps):
 
 - Numeric: `value > 50`, `count >= 10`
 - String: `status == "active"`, `name == "admin"`
