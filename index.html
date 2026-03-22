@@ -1629,6 +1629,184 @@
                         </svg>
                     </a>
                 </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Type Hints</h3>
+                    <p>Full type annotations for IDE support and better developer experience.</p>
+                    <a href="https://wpipe.readthedocs.io/en/latest/api_reference.html" class="feature-link" target="_blank">
+                        API Reference
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Memory Control</h3>
+                    <p>Built-in memory limit utilities for controlling resource usage on Linux.</p>
+                    <a href="https://wpipe.readthedocs.io/en/latest/api_reference.html" class="feature-link" target="_blank">
+                        API Reference
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Flow Section -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">How It Works</span>
+                <h2 class="section-title">Data <span class="gradient-text">Flow</span></h2>
+                <p class="section-description">
+                    Each step receives accumulated results from previous steps. Data flows seamlessly through the pipeline.
+                </p>
+            </div>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="hero-code" style="background: rgba(13, 17, 23, 0.9); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #e6edf3;">
+<div style="margin-bottom: 1rem;">Input: {'x': 5}</div>
+<div style="color: var(--text-muted); margin-bottom: 1rem;">↓</div>
+<div style="margin-bottom: 0.5rem;"><span style="color: #d2a8ff;">Step 1:</span> {'a': 10} → <span style="color: #79c0ff;">Data:</span> {'x': 5, 'a': 10}</div>
+<div style="color: var(--text-muted); margin-bottom: 1rem;">↓</div>
+<div style="margin-bottom: 0.5rem;"><span style="color: #d2a8ff;">Step 2:</span> {'b': 20} → <span style="color: #79c0ff;">Data:</span> {'x': 5, 'a': 10, 'b': 20}</div>
+<div style="color: var(--text-muted); margin-bottom: 1rem;">↓</div>
+<div><span style="color: #10b981;">Output:</span> {'x': 5, 'a': 10, 'b': 20}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Error Codes Section -->
+    <section class="section" style="background: var(--bg-primary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Error Handling</span>
+                <h2 class="section-title">Error <span class="gradient-text">Codes</span></h2>
+                <p class="section-description">
+                    Comprehensive error handling with custom exceptions and detailed error codes.
+                </p>
+            </div>
+            <div style="max-width: 700px; margin: 0 auto;">
+                <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: var(--bg-secondary);">
+                            <tr>
+                                <th style="padding: 1rem; text-align: left; color: var(--text-secondary); font-size: 0.875rem;">Code</th>
+                                <th style="padding: 1rem; text-align: left; color: var(--text-secondary); font-size: 0.875rem;">Name</th>
+                                <th style="padding: 1rem; text-align: left; color: var(--text-secondary); font-size: 0.875rem;">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 1rem; color: #ff7b72; font-family: 'JetBrains Mono', monospace;">502</td>
+                                <td style="padding: 1rem;">TASK_FAILED</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Task execution failed</td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 1rem; color: #ff7b72; font-family: 'JetBrains Mono', monospace;">501</td>
+                                <td style="padding: 1rem;">API_ERROR</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">API communication error</td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 1rem; color: #ff7b72; font-family: 'JetBrains Mono', monospace;">504</td>
+                                <td style="padding: 1rem;">UPDATE_PROCESS_ERROR</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Process update failed</td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 1rem; color: #ff7b72; font-family: 'JetBrains Mono', monospace;">505</td>
+                                <td style="padding: 1rem;">UPDATE_TASK</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Task update failed</td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 1rem; color: #79c0ff; font-family: 'JetBrains Mono', monospace;">503</td>
+                                <td style="padding: 1rem;">UPDATE_PROCESS_OK</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Process completed successfully</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Architecture</span>
+                <h2 class="section-title">Module <span class="gradient-text">Structure</span></h2>
+                <p class="section-description">
+                    Clean, modular architecture designed for flexibility and maintainability.
+                </p>
+            </div>
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #e6edf3; overflow-x: auto;">
+<pre style="margin: 0; line-height: 2;">wpipe/
+├── <span style="color: #d2a8ff;">pipe/</span>               <span style="color: #8b949e;"># Pipeline and Condition implementation</span>
+│   └── <span style="color: #79c0ff;">pipe.py</span>         <span style="color: #8b949e;"># Main Pipeline class</span>
+├── <span style="color: #d2a8ff;">api_client/</span>         <span style="color: #8b949e;"># API communication</span>
+│   └── <span style="color: #79c0ff;">api_client.py</span>   <span style="color: #8b949e;"># APIClient class</span>
+├── <span style="color: #d2a8ff;">sqlite/</span>             <span style="color: #8b949e;"># Database operations</span>
+│   ├── <span style="color: #79c0ff;">Sqlite.py</span>       <span style="color: #8b949e;"># SQLite class</span>
+│   └── <span style="color: #79c0ff;">Wsqlite.py</span>      <span style="color: #8b949e;"># Simplified wrapper</span>
+├── <span style="color: #d2a8ff;">log/</span>                <span style="color: #8b949e;"># Logging utilities (loguru)</span>
+├── <span style="color: #d2a8ff;">ram/</span>                <span style="color: #8b949e;"># Memory utilities</span>
+├── <span style="color: #d2a8ff;">util/</span>               <span style="color: #8b949e;"># YAML utilities</span>
+└── <span style="color: #d2a8ff;">exception/</span>          <span style="color: #8b949e;"># Custom exceptions</span>
+    └── <span style="color: #79c0ff;">api_error.py</span>    <span style="color: #8b949e;"># TaskError, ProcessError, ApiError</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testing Section -->
+    <section class="section" style="background: var(--bg-primary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Quality Assurance</span>
+                <h2 class="section-title">Testing & <span class="gradient-text">Lint</span></h2>
+                <p class="section-description">
+                    Comprehensive test suite with 106 tests and full type checking.
+                </p>
+            </div>
+            <div class="install-grid" style="max-width: 900px; margin: 0 auto;">
+                <div class="install-card">
+                    <div class="install-header">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3>Run Tests</h3>
+                    </div>
+                    <div class="install-body">
+                        <div class="install-code">
+<span class="comment"># Run all tests</span><br>
+pytest<br><br>
+<span class="comment"># With coverage</span><br>
+pytest --cov=wpipe --cov-report=html
+                        </div>
+                    </div>
+                </div>
+                <div class="install-card">
+                    <div class="install-header">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                        <h3>Lint & Type Check</h3>
+                    </div>
+                    <div class="install-body">
+                        <div class="install-code">
+<span class="comment"># Lint</span><br>
+ruff check wpipe/<br><br>
+<span class="comment"># Type check</span><br>
+mypy wpipe/
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1819,12 +1997,20 @@
                     <div class="stat-label">Examples</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">9</div>
-                    <div class="stat-label">Feature Categories</div>
+                    <div class="stat-value">11</div>
+                    <div class="stat-label">Features</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">3.9+</div>
                     <div class="stat-label">Python 3.9+</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Type Hints</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">MIT</div>
+                    <div class="stat-label">License</div>
                 </div>
             </div>
         </div>
