@@ -15,33 +15,34 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.graphviz",
-    "myst_parser",
-    "sphinx_copybutton",
     "sphinx_design",
+    "sphinx_copybutton",
+    "myst_parser",
+    "sphinx.ext.imgconverter",
 ]
 
-templates_path = ["docs/source/_templates"]
+templates_path = ["_templates"]
 exclude_patterns = []
 
-html_theme = "sphinx_rtd_theme"
-html_static_path = ["docs/source/_static"]
-html_css_files = ["docs/source/_static/css/custom.css"]
+html_theme = "pydata_sphinx_theme"
+html_static_path = ["_static"]
 
-html_theme_options = {
-    "logo_only": False,
-    "display_version": True,
-    "prev_next_buttons_location": "bottom",
-    "style_external_links": False,
-    "style_nav_header_force": True,
-    "collapse_navigation": False,
-    "sticky_navigation": True,
-    "navigation_depth": 4,
-    "includehidden": True,
-    "titles_only": False,
+html_css_files = ["css/custom.css"]
+
+html_context = {
+    "github_user": "wisrovi",
+    "github_repo": "wpipe",
+    "github_version": "main",
+    "doc_path": ".",
 }
 
-html_scaled_image_link = False
-html_permalinks_icon = "¶"
+html_theme_options = {
+    "github_url": "https://github.com/wisrovi/wpipe",
+    "show_toc_level": 2,
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    "footer_start": ["copyright", "sphinx-version"],
+    "footer_end": [],
+}
 
 autodoc_default_options = {
     "members": True,
@@ -49,6 +50,7 @@ autodoc_default_options = {
     "special-members": "__init__",
     "undoc-members": True,
     "exclude-members": "__weakref__",
+    "show-inheritance": True,
 }
 
 autodoc_typehints = "description"
@@ -59,9 +61,9 @@ napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
-napoleon_use_admonition_for_examples = False
-napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = False
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
 napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = True
@@ -75,7 +77,7 @@ intersphinx_mapping = {
 
 graphviz_output_format = "svg"
 
-copybutton_prompt_text = r">>> |\.\.\. "
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In |\Out "
 copybutton_prompt_is_regexp = True
 copybutton_copy_empty_lines = False
 copybutton_here_doc_delimiter = "<<<<"
@@ -84,7 +86,11 @@ myst_enable_extensions = [
     "colon_fence",
     "deflist",
     "tasklist",
+    "fieldlist",
+    "吹_table",
 ]
+
+myst_heading_anchors = 3
 
 source_suffix = {
     ".rst": "restructuredtext",
@@ -92,4 +98,3 @@ source_suffix = {
 }
 
 master_doc = "index"
-docs_path = "docs/source"

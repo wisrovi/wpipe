@@ -1,96 +1,293 @@
-Getting Started
-===============
+Getting Started with wpipe
+==========================
 
-This guide will help you get started with wpipe.
+Welcome to wpipe! This guide will help you get up and running with your first pipeline in minutes.
 
-Prerequisites
-------------
+What You'll Learn
+-----------------
 
-- Python 3.9 or higher
-- pip package manager
+- Installing wpipe
+- Creating your first pipeline
+- Understanding the data flow
+- Running pipelines with different inputs
+- Working with step functions and classes
+
+Let's get started! 🚀
 
 Installation
 ------------
 
-Install wpipe using pip:
-
-.. code-block:: bash
-
-   pip install wpipe
-
-Or install from source:
-
-.. code-block:: bash
-
-   git clone https://github.com/wisrovi/wpipe
-   cd wpipe
-   pip install .
-
-Quick Start
------------
-
-Basic Pipeline
+Prerequisites
 ~~~~~~~~~~~~~
 
-Here's a simple example of using wpipe:
+- Python 3.9 or higher
+- pip package manager
 
-.. code-block:: python
-
-   from wpipe.pipe import Pipeline
-
-   def step1(data):
-       return {"value": data["x"] * 2}
-
-   def step2(data):
-       return {"result": data["value"] + 10}
-
-   pipeline = Pipeline(verbose=True)
-   pipeline.set_steps([
-       (step1, "Double Value", "v1.0"),
-       (step2, "Add Ten", "v1.0"),
-   ])
-
-   result = pipeline.run({"x": 5})
-   print(result)
-
-Pipeline with API
+Install from PyPI
 ~~~~~~~~~~~~~~~~~
 
-Connect your pipeline to an external API for tracking:
+The easiest way to install wpipe is via pip:
+
+.. code-block:: bash
+
+    pip install wpipe
+
+Install from Source
+~~~~~~~~~~~~~~~~~~~
+
+For the latest development version:
+
+.. code-block:: bash
+
+    git clone https://github.com/wisrovi/wpipe.git
+    cd wpipe
+    pip install -e .
+
+Verify Installation
+~~~~~~~~~~~~~~~~~~~~
+
+Verify wpipe is installed correctly:
 
 .. code-block:: python
 
-   from wpipe.pipe import Pipeline
+    import wpipe
+    print(wpipe.__version__)  # Should print 1.0.0
 
-   def process(data):
-       return {"processed": True, "value": data["x"]}
+Your First Pipeline
+------------------
 
-   api_config = {
-       "base_url": "http://localhost:8418",
-       "token": "mysecrettoken"
-   }
+Basic Concepts
+~~~~~~~~~~~~~~
 
-   pipeline = Pipeline(
-       worker_name="my_worker",
-       api_config=api_config,
-       verbose=True
-   )
+A **Pipeline** is a sequence of **Steps** that process data. Each step receives output from the previous step.
 
-   pipeline.set_steps([
-       (process, "Process Data", "v1.0"),
-   ])
+::::{mermaid}
+graph LR
+    A[Input] --> B[Step 1]
+    B --> C[Step 2]
+    C --> D[Step 3]
+    D --> E[Output]
+::::
 
-   worker_id = pipeline.worker_register(
-       name="my_pipeline",
-       version="v1.0.0"
-   )
+Step Structure
+~~~~~~~~~~~~~~
 
-   pipeline.set_worker_id(worker_id.get("id"))
-   result = pipeline.run({"x": 42})
+Each step is defined as a tuple containing:
+
+1. **Function/Callable**: The logic to execute
+2. **Name**: A descriptive name (string)
+3. **Version**: Version string (e.g., "v1.0")
+
+Example:
+
+.. code-block:: python
+
+    (my_function, "Step Name", "v1.0")
+
+Simple Pipeline
+~~~~~~~~~~~~~~
+
+Here's your first pipeline:
+
+.. code-block:: python
+
+    from wpipe import Pipeline
+
+    def step1(data):
+        """Multiply input by 2"""
+        return {"result": data["x"] * 2}
+
+    def step2(data):
+        """Add 10 to the result"""
+        return {"final": data["result"] + 10}
+
+    pipeline = Pipeline(verbose=True)
+    pipeline.set_steps([
+        (step1, "Double Value", "v1.0"),
+        (step2, "Add Ten", "v1.0"),
+    ])
+
+    result = pipeline.run({"x": 5})
+    print(result)
+    # Output: {'x': 5, 'result': 10, 'final': 20}
+
+Expected Output
+~~~~~~~~~~~~~~~
+
+When you run this, you should see:
+
+.. code-block:: text
+
+    🚀 Pipeline started: 2 steps
+    ✅ Step 1: Double Value (v1.0) - 0.001s
+    ✅ Step 2: Add Ten (v1.0) - 0.001s
+    🎉 Pipeline completed: 2 steps in 0.002s
+
+Understanding Data Flow
+-----------------------
+
+Data Accumulation
+~~~~~~~~~~~~~~~~~~
+
+Each step's output is **merged** with existing data:
+
+::::{mermaid}
+graph LR
+    A["Input: {'x': 5}"] --> B["Step 1: {'result': 10}"]
+    B --> C["Merged: {'x': 5, 'result': 10}"]
+    C --> D["Step 2: {'final': 20}"]
+    D --> E["Output: {'x': 5, 'result': 10, 'final': 20}"]
+::::
+
+Key Insight
+~~~~~~~~~~~
+
+**Previous step outputs are available to all subsequent steps:**
+
+.. code-block:: python
+
+    def step1(data):
+        return {"step1_data": "first"}
+
+    def step2(data):
+        # Can access step1's output
+        return {"step2_data": data["step1_data"] + "_second"}
+
+    def step3(data):
+        # Can access BOTH step1 and step2 outputs
+        return {"step3_data": data["step1_data"] + "_" + data["step2_data"]}
+
+Step Functions
+--------------
+
+Functions as Steps
+~~~~~~~~~~~~~~~~~~
+
+The simplest way to define a step:
+
+.. code-block:: python
+
+    def validate(data):
+        """Validate input data"""
+        if "x" not in data:
+            raise ValueError("Missing 'x' in data")
+        return {"validated": True}
+
+    pipeline.set_steps([(validate, "Validate", "v1.0")])
+
+Lambda Functions
+~~~~~~~~~~~~~~~
+
+For simple transformations:
+
+.. code-block:: python
+
+    pipeline.set_steps([
+        ((lambda d: {**d, "doubled": d["x"] * 2}), "Double", "v1.0"),
+    ])
+
+Classes as Steps
+~~~~~~~~~~~~~~~~
+
+For complex stateful logic:
+
+.. code-block:: python
+
+    class DataProcessor:
+        def __init__(self, multiplier):
+            self.multiplier = multiplier
+
+        def __call__(self, data):
+            return {"processed": data["x"] * self.multiplier}
+
+    processor = DataProcessor(3)
+    pipeline.set_steps([(processor, "Process", "v1.0")])
+
+Running the Pipeline
+--------------------
+
+Basic Execution
+~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    result = pipeline.run({"x": 10})
+    print(result)
+
+With Error Handling
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from wpipe.exception import TaskError, ProcessError
+
+    try:
+        result = pipeline.run({"x": 10})
+    except (TaskError, ProcessError) as e:
+        print(f"Pipeline failed: {e}")
+
+Async Execution
+~~~~~~~~~~~~~~~
+
+For async pipelines:
+
+.. code-block:: python
+
+    import asyncio
+
+    async def main():
+        result = await pipeline.run({"x": 10})
+        print(result)
+
+    asyncio.run(main())
+
+Advanced Examples
+-----------------
+
+To learn more, explore:
+
+- **100+ Examples**: Visit the :doc:`examples/index` section
+- **User Guide**: Deep dive into features in :doc:`user_guide/index`
+- **API Reference**: Complete documentation in :doc:`api_reference`
 
 Next Steps
-----------
+---------
 
-- Learn more about :doc:`usage` patterns
-- Explore :doc:`tutorials` for detailed examples
-- Check the :doc:`api_reference` for complete API documentation
+Now that you've created your first pipeline, explore these topics:
+
+::::{grid} 1 1 2 3
+:gutter: 3
+
+:::{grid-item-card}
+:link: user_guide/index.html
+:link-type: doc
+
+### 📖 User Guide
+
+Learn about conditions, retries, and more advanced features.
+
+→ Continue learning
+:::
+
+:::{grid-item-card}
+:link: examples/index.html
+:link-type: doc
+
+### 💡 Examples
+
+Browse 100+ examples organized by functionality.
+
+→ See examples
+:::
+
+:::{grid-item-card}
+:link: api_reference.html
+:link-type: doc
+
+### 🔧 API Reference
+
+Complete API documentation for all classes and methods.
+
+→ View reference
+:::
+::::
