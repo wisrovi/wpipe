@@ -1,276 +1,144 @@
----
-html_theme:
-  navigation_depth: 4
----
+wpipe - Python Pipeline Library
+==============================
 
-# wpipe - Python Pipeline Library
+**wpipe** is a powerful Python library for creating and executing sequential data 
+processing pipelines with task orchestration, API integration, and execution tracking.
 
-**wpipe** is a powerful Python library for creating and executing sequential data processing pipelines with task orchestration, API integration, and execution tracking.
+.. image:: https://img.shields.io/pypi/v/wpipe.svg
+   :target: https://pypi.org/project/wpipe/
 
-```{image} https://img.shields.io/pypi/v/wpipe.svg
-:target: https://pypi.org/project/wpipe/
-:alt: PyPI Version
-```
+.. image:: https://img.shields.io/pypi/pyversions/wpipe.svg
+   :target: https://pypi.org/project/wpipe/
 
-```{image} https://img.shields.io/pypi/pyversions/wpipe.svg
-:target: https://pypi.org/project/wpipe/
-:alt: Python Versions
-```
+.. image:: https://img.shields.io/github/license/wisrovi/wpipe.svg
+   :target: https://github.com/wisrovi/wpipe/blob/main/LICENSE
 
-```{image} https://img.shields.io/github/license/wisrovi/wpipe.svg
-:target: https://github.com/wisrovi/wpipe/blob/main/LICENSE
-:alt: License
-```
+Why wpipe?
+----------
 
----
+.. list-table::
+   :header-rows: 1
+   :class: stripe
 
-## Why wpipe?
+   * - Feature
+     - Description
+   * - 🚀 Simple & Intuitive
+     - Create pipelines with just a few lines of code
+   * - 📊 Progress Tracking
+     - Real-time progress visualization with rich terminal output
+   * - ☁️ API Integration
+     - Connect to external APIs for worker registration and tracking
+   * - 💾 Data Persistence
+     - Built-in SQLite integration for storing results
+   * - 🌿 Conditional Logic
+     - Execute different paths based on data conditions
+   * - 🔄 Retry Mechanism
+     - Automatic retries for failed steps
 
-::::{grid} 1 2 3
-:gutter: 3
+Quick Start
+----------
 
-:::{grid-item-card} 🚀 Simple & Intuitive
----
-class-header: sd-text-success
----
-Create pipelines with just a few lines of code. No complex configuration needed.
-:::
+Installation
+~~~~~~~~~~~
 
-:::{grid-item-card} 📊 Progress Tracking
----
-class-header: sd-text-primary
----
-Real-time progress visualization with rich terminal output.
-:::
+.. code-block:: bash
 
-:::{grid-item-card} ☁️ API Integration
----
-class-header: sd-text-info
----
-Connect to external APIs for worker registration and process tracking.
-:::
-
-:::{grid-item-card} 💾 Data Persistence
----
-class-header: sd-text-warning
----
-Built-in SQLite integration for storing pipeline execution results.
-:::
-
-:::{grid-item-card} 🌿 Conditional Logic
----
-class-header: sd-text-danger
----
-Execute different paths based on data conditions.
-:::
-
-:::{grid-item-card} 🔄 Retry Mechanism
----
-class-header: sd-text-muted
----
-Automatic retries for failed steps with configurable parameters.
-:::
-::::
-
-
-
-## Quick Start
-
-::::{tab-set}
-:::{tab-item} Installation
-:sync: installation
-
-```bash
-pip install wpipe
-```
+   pip install wpipe
 
 Or install from source:
 
-```bash
-git clone https://github.com/wisrovi/wpipe.git
-cd wpipe
-pip install -e .
-```
-:::
+.. code-block:: bash
 
-:::{tab-item} Basic Usage
-:sync: basic
+   git clone https://github.com/wisrovi/wpipe.git
+   cd wpipe
+   pip install -e .
 
-```python
-from wpipe import Pipeline
+Basic Usage
+~~~~~~~~~~~
 
-def step1(data):
-    return {"result": data["x"] * 2}
+.. code-block:: python
 
-def step2(data):
-    return {"final": data["result"] + 10}
+   from wpipe import Pipeline
 
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([
-    (step1, "Step 1", "v1.0"),
-    (step2, "Step 2", "v1.0"),
-])
+   def step1(data):
+       return {"result": data["x"] * 2}
 
-result = pipeline.run({"x": 5})
-# {'result': 10, 'final': 20}
-```
-:::
-::::
+   def step2(data):
+       return {"final": data["result"] + 10}
 
+   pipeline = Pipeline(verbose=True)
+   pipeline.set_steps([
+       (step1, "Step 1", "v1.0"),
+       (step2, "Step 2", "v1.0"),
+   ])
 
+   result = pipeline.run({"x": 5})
+   # {'result': 10, 'final': 20}
 
-## Key Features
+Key Features
+------------
 
-::::{grid} 1 1 2
-:gutter: 3
+* **Getting Started** - Learn how to install and use wpipe: :doc:`getting_started`
+* **User Guide** - Deep dive into all features: :doc:`user_guide/index`
+* **API Reference** - Complete API documentation: :doc:`api_reference`
+* **Examples** - 100+ examples organized by functionality: :doc:`examples/index`
 
-:::{grid-item-card}
-:link: getting_started.html
-:link-type: doc
+Architecture Overview
+--------------------
 
-### 📚 Getting Started
+Each step receives output from the previous step for chained processing:
 
-Learn how to install and use wpipe in your projects.
+.. code-block:: text
 
-→ Learn more
-:::
+   Input → Step 1 → Step 2 → Step 3 → Output
+   
+   {'x': 5} → {'result': 10} → {'final': 20}
 
-:::{grid-item-card}
-:link: user_guide/index.html
-:link-type: doc
+Code Quality
+-----------
 
-### 📖 User Guide
+* Tests: 206 passing
+* Type Hints: 100% coverage
+* Docstrings: Google-style
+* Examples: 100+
+* Python Support: 3.9 - 3.13
 
-Deep dive into all features with detailed explanations.
+Community & Support
+------------------
 
-→ Learn more
-:::
+* `Report a Bug <https://github.com/wisrovi/wpipe/issues>`_ - Open an issue on GitHub
+* `Join Discussion <https://github.com/wisrovi/wpipe/discussions>`_ - Ask questions and share ideas
+* `View on GitHub <https://github.com/wisrovi/wpipe>`_ - Star and contribute
 
-:::{grid-item-card}
-:link: api_reference.html
-:link-type: doc
+Documentation
+-------------
 
-### 🔧 API Reference
+.. toctree::
+   :maxdepth: 2
+   :caption: Documentation
 
-Complete API documentation with examples.
+   getting_started
+   installation
+   user_guide/index
+   examples/index
+   api_reference
+   tutorials
+   faq
+   changelog
 
-→ Learn more
-:::
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
 
-:::{grid-item-card}
-:link: examples/index.html
-:link-type: doc
+   Glossary <glossary>
+   architecture
 
-### 💡 Examples
+Indices and tables
+==================
 
-100+ examples organized by functionality.
-
-→ Learn more
-:::
-::::
-
-
-
-## Architecture Overview
-
-```{mermaid}
-graph TB
-    subgraph Input["📥 Input"]
-        D["data = {'x': 5}"]
-    end
-    
-    subgraph Pipeline["🔄 Pipeline"]
-        S1["Step 1<br/>Multiply by 2"]
-        S2["Step 2<br/>Add 10"]
-    end
-    
-    subgraph Output["📤 Output"]
-        R["{'x': 5<br/>'result': 10<br/>'final': 20}"]
-    end
-    
-    D --> S1
-    S1 --> S2
-    S2 --> R
-    
-    style Input fill:#e1f5fe
-    style Pipeline fill:#f3e5f5
-    style Output fill:#e8f5e9
-```
-
-Each step receives output from the previous step for chained processing.
-
-
-
-## Code Quality
-
-| Metric | Value |
-|--------|-------|
-| Tests | 206 passing |
-| Type Hints | 100% coverage |
-| Docstrings | Google-style |
-| Examples | 100+ |
-| Python Support | 3.9 - 3.13 |
-
-
-
-## Community & Support
-
-::::{grid} 1 1 2 3
-:gutter: 3
-
-:::{grid-item-card}
-:link: https://github.com/wisrovi/wpipe/issues
-:link-type: url
-
-🐛 Report a Bug
-
-Open an issue on GitHub.
-:::
-
-:::{grid-item-card}
-:link: https://github.com/wisrovi/wpipe/discussions
-:link-type: url
-
-💬 Join Discussion
-
-Ask questions and share ideas.
-:::
-
-:::{grid-item-card}
-:link: https://github.com/wisrovi/wpipe
-:link-type: url
-
-⭐ View on GitHub
-
-Contribute to the project.
-:::
-::::
-
-
-
-## Documentation
-
-```{toctree}
-:maxdepth: 2
-:caption: 📖 Documentation
-
-getting_started
-installation
-user_guide/index
-examples/index
-api_reference
-tutorials
-faq
-```
-
-```{toctree}
-:maxdepth: 2
-:caption: 🔗 Reference
-
-Glossary <glossary>
-architecture
-changelog
-```
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 ---
 

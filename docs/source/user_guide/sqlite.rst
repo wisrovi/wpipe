@@ -8,67 +8,55 @@ Overview
 
 wpipe provides SQLite integration for storing pipeline results locally.
 
-::::{mermaid}
-graph LR
-    A[Pipeline] --> B[Wsqlite]
-    B --> C[(SQLite DB)]
-::::
-
 Basic Usage
 -----------
 
-Write Results
-~~~~~~~~~~~~~
+**Write Results:**
 
 .. code-block:: python
 
-    from wpipe.sqlite import Wsqlite
+   from wpipe.sqlite import Wsqlite
 
-    db = Wsqlite("pipeline_results.db")
+   db = Wsqlite("pipeline_results.db")
 
-    pipeline = Pipeline(verbose=True)
-    pipeline.set_steps([
-        (step1, "Step 1", "v1.0"),
-        (step2, "Step 2", "v1.0"),
-    ])
+   pipeline = Pipeline(verbose=True)
+   pipeline.set_steps([
+       (step1, "Step 1", "v1.0"),
+       (step2, "Step 2", "v1.0"),
+   ])
 
-    db.write(input_data={"x": 10}, output_data=pipeline.run({"x": 10}))
+   db.write(input_data={"x": 10}, output_data=pipeline.run({"x": 10}))
 
-Read Results
-~~~~~~~~~~~~
-
-.. code-block:: python
-
-    results = db.read()
-    for row in results:
-        print(row)
-
-Query Results
-~~~~~~~~~~~~~
+**Read Results:**
 
 .. code-block:: python
 
-    results = db.query("SELECT * FROM results WHERE input_x > ?", (5,))
+   results = db.read()
+   for row in results:
+       print(row)
+
+**Query Results:**
+
+.. code-block:: python
+
+   results = db.query("SELECT * FROM results WHERE input_x > ?", (5,))
 
 Class-Based Access
 ------------------
-
-SQLite Class
-~~~~~~~~~~~~
 
 For more control:
 
 .. code-block:: python
 
-    from wpipe.sqlite import SQLite
+   from wpipe.sqlite import SQLite
 
-    db = SQLite("custom_results.db")
-    db.create_table()
+   db = SQLite("custom_results.db")
+   db.create_table()
 
-    db.insert(input_data={"test": True}, output_data={"result": 42})
+   db.insert(input_data={"test": True}, output_data={"result": 42})
 
-    results = db.select_all()
-    db.close()
+   results = db.select_all()
+   db.close()
 
 Methods
 -------
@@ -99,28 +87,28 @@ Complete Example
 
 .. code-block:: python
 
-    from wpipe import Pipeline
-    from wpipe.sqlite import Wsqlite
+   from wpipe import Pipeline
+   from wpipe.sqlite import Wsqlite
 
-    db = Wsqlite("analytics.db")
+   db = Wsqlite("analytics.db")
 
-    def collect_metrics(data):
-        return {"requests": 100, "errors": 2}
+   def collect_metrics(data):
+       return {"requests": 100, "errors": 2}
 
-    def calculate_rate(data):
-        rate = (data["errors"] / data["requests"]) * 100
-        return {"error_rate": rate}
+   def calculate_rate(data):
+       rate = (data["errors"] / data["requests"]) * 100
+       return {"error_rate": rate}
 
-    pipeline = Pipeline()
-    pipeline.set_steps([
-        (collect_metrics, "Collect", "v1.0"),
-        (calculate_rate, "Calculate", "v1.0"),
-    ])
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       (collect_metrics, "Collect", "v1.0"),
+       (calculate_rate, "Calculate", "v1.0"),
+   ])
 
-    result = pipeline.run({})
-    db.write(input_data={"service": "api"}, output_data=result)
+   result = pipeline.run({})
+   db.write(input_data={"service": "api"}, output_data=result)
 
-    print(f"Error rate: {result['error_rate']}%")
+   print(f"Error rate: {result['error_rate']}%")
 
 Best Practices
 --------------
@@ -133,5 +121,5 @@ Best Practices
 Next Steps
 ---------
 
-- Learn about :doc:`yaml_config` for configuration management
-- Explore :doc:`nested_pipelines` for complex workflows
+* Learn about :doc:`yaml_config` for configuration management
+* Explore :doc:`nested_pipelines` for complex workflows

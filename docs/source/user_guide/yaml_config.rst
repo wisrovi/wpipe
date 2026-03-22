@@ -1,139 +1,101 @@
 YAML Configuration
-===================
+==================
 
 Load and manage pipeline configuration from YAML files.
 
 Overview
 --------
 
-YAML configuration allows you to define pipeline settings externally, making it easy to modify configuration without changing code.
-
-::::{mermaid}
-graph LR
-    A[YAML File] --> B[leer_yaml]
-    B --> C[Pipeline Config]
-::::
+YAML configuration allows you to define pipeline settings externally, making it 
+easy to modify configuration without changing code.
 
 Reading YAML
 ------------
 
 .. code-block:: python
 
-    from wpipe.util import leer_yaml
+   from wpipe.util import leer_yaml
 
-    config = leer_yaml("config.yaml")
-    print(config)
+   config = leer_yaml("config.yaml")
+   print(config)
 
 Writing YAML
 ------------
 
 .. code-block:: python
 
-    from wpipe.util import escribir_yaml
+   from wpipe.util import escribir_yaml
 
-    config = {
-        "name": "my_pipeline",
-        "version": "v1.0",
-        "steps": [
-            {"name": "step1", "version": "v1.0"},
-            {"name": "step2", "version": "v1.0"},
-        ]
-    }
+   config = {
+       "name": "my_pipeline",
+       "version": "v1.0",
+       "steps": [
+           {"name": "step1", "version": "v1.0"},
+           {"name": "step2", "version": "v1.0"},
+       ]
+   }
 
-    escribir_yaml("config.yaml", config)
+   escribir_yaml("config.yaml", config)
 
 YAML File Structure
 -------------------
 
 .. code-block:: yaml
 
-    # config.yaml
-    name: data_processing
-    version: 1.0.0
-    
-    pipeline:
-      verbose: true
-    
-    api:
-      base_url: http://localhost:8418
-      token: my_secret_token
-    
-    steps:
-      - name: fetch
-        version: v1.0
-      - name: process
-        version: v1.0
+   # config.yaml
+   name: data_processing
+   version: 1.0.0
+   
+   pipeline:
+     verbose: true
+   
+   api:
+     base_url: http://localhost:8418
+     token: my_secret_token
+   
+   steps:
+     - name: fetch
+       version: v1.0
+     - name: process
+       version: v1.0
 
 Loading Configuration
 ----------------------
 
 .. code-block:: python
 
-    from wpipe import Pipeline
-    from wpipe.util import leer_yaml
+   from wpipe import Pipeline
+   from wpipe.util import leer_yaml
 
-    config = leer_yaml("config.yaml")
+   config = leer_yaml("pipeline_config.yaml")
 
-    api_config = {
-        "base_url": config["api"]["base_url"],
-        "token": config["api"]["token"]
-    }
+   api_config = {
+       "base_url": config["api"]["base_url"],
+       "token": config["api"]["token"]
+   }
 
-    pipeline = Pipeline(
-        worker_name=config["name"],
-        api_config=api_config,
-        verbose=config["pipeline"]["verbose"]
-    )
+   pipeline = Pipeline(
+       worker_name=config["name"],
+       api_config=api_config,
+       verbose=config["pipeline"]["verbose"]
+   )
 
 Saving Results
 --------------
 
 .. code-block:: python
 
-    from wpipe.util import escribir_yaml
+   from wpipe.util import escribir_yaml
 
-    result = pipeline.run({"x": 10})
+   result = pipeline.run({"x": 10})
 
-    output = {
-        "input": {"x": 10},
-        "output": result,
-        "timestamp": "2026-03-22"
-    }
+   output = {
+       "input": {"x": 10},
+       "output": result,
+       "timestamp": "2026-03-22"
+   }
 
-    escribir_yaml("results.yaml", output)
-
-Complete Example
-----------------
-
-.. code-block:: python
-
-    from wpipe import Pipeline
-    from wpipe.util import leer_yaml, escribir_yaml
-
-    # Load configuration
-    config = leer_yaml("pipeline_config.yaml")
-
-    # Define steps based on config
-    def fetch(data):
-        return {"fetched": True}
-
-    def process(data):
-        return {"processed": True}
-
-    # Create pipeline
-    pipeline = Pipeline(
-        worker_name=config["name"],
-        verbose=config["verbose"]
-    )
-
-    pipeline.set_steps([
-        (fetch, "Fetch", config["version"]),
-        (process, "Process", config["version"]),
-    ])
-
-    # Run and save results
-    result = pipeline.run({})
-    escribir_yaml("output.yaml", {"result": result})
+   escribir_yaml("output.yaml", {"result": result})
 
 Best Practices
 --------------
@@ -146,5 +108,5 @@ Best Practices
 Next Steps
 ---------
 
-- Learn about :doc:`nested_pipelines` for complex workflows
-- Explore :doc:`error_handling` for error recovery
+* Learn about :doc:`nested_pipelines` for complex workflows
+* Explore :doc:`error_handling` for error recovery

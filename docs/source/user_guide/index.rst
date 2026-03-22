@@ -3,83 +3,64 @@ User Guide
 
 This guide provides in-depth documentation on all wpipe features and capabilities.
 
-::::{grid} 1 1 2 3
-:gutter: 3
+Pipeline Basics
+--------------
 
-:::{grid-item-card}
-:link: user_guide/pipeline_basics.html
-:link-type: doc
+Learn the core concepts, data flow, and step execution.
 
-### 🔄 Pipeline Basics
+* :doc:`pipeline_basics` - Core concepts and data flow
 
-Core concepts, data flow, and step execution.
-:::
+Features
+--------
 
-:::{grid-item-card}
-:link: user_guide/conditions.html
-:link-type: doc
-
-### 🌿 Conditions
+Conditions
+~~~~~~~~~~
 
 Conditional branching based on data values.
-:::
 
-:::{grid-item-card}
-:link: user_guide/retry.html
-:link-type: doc
+:doc:`conditions`
 
-### 🔄 Retry Logic
+Retry Logic
+~~~~~~~~~~~
 
 Automatic retries for failed steps.
-:::
 
-:::{grid-item-card}
-:link: user_guide/api_integration.html
-:link-type: doc
+:doc:`retry`
 
-### ☁️ API Integration
+API Integration
+~~~~~~~~~~~~~~~
 
 Connect to external APIs for tracking.
-:::
 
-:::{grid-item-card}
-:link: user_guide/sqlite.html
-:link-type: doc
+:doc:`api_integration`
 
-### 💾 SQLite Storage
+SQLite Storage
+~~~~~~~~~~~~~~
 
 Persist pipeline results to database.
-:::
 
-:::{grid-item-card}
-:link: user_guide/yaml_config.html
-:link-type: doc
+:doc:`sqlite`
 
-### 📝 YAML Configuration
+YAML Configuration
+~~~~~~~~~~~~~~~~~~
 
 Load pipeline config from YAML files.
-:::
 
-:::{grid-item-card}
-:link: user_guide/nested_pipelines.html
-:link-type: doc
+:doc:`yaml_config`
 
-### 🔀 Nested Pipelines
+Nested Pipelines
+~~~~~~~~~~~~~~~~
 
 Compose complex workflows.
-:::
 
-:::{grid-item-card}
-:link: user_guide/error_handling.html
-:link-type: doc
+:doc:`nested_pipelines`
 
-### ⚠️ Error Handling
+Error Handling
+~~~~~~~~~~~~~~
 
 Robust error handling and recovery.
-:::
-::::
 
----
+:doc:`error_handling`
 
 .. toctree::
    :maxdepth: 1
