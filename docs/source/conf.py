@@ -27,8 +27,6 @@ html_theme_options = {
     "logo_only": False,
     "display_version": True,
     "prev_next_buttons_location": "bottom",
-    "style_external_links": False,
-    "style_nav_header_force": True,
     "collapse_navigation": False,
     "sticky_navigation": True,
     "navigation_depth": 4,

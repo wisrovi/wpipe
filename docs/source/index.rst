@@ -1,8 +1,7 @@
-wpipe - Python Pipeline Library
-==============================
+Overview
+========
 
-**wpipe** is a powerful Python library for creating and executing sequential data 
-processing pipelines with task orchestration, API integration, and execution tracking.
+**wpipe** is a powerful Python library for creating and executing sequential data processing pipelines with task orchestration, API integration, and execution tracking.
 
 .. image:: https://img.shields.io/pypi/v/wpipe.svg
    :target: https://pypi.org/project/wpipe/
@@ -13,48 +12,29 @@ processing pipelines with task orchestration, API integration, and execution tra
 .. image:: https://img.shields.io/github/license/wisrovi/wpipe.svg
    :target: https://github.com/wisrovi/wpipe/blob/main/LICENSE
 
-Why wpipe?
-----------
+.. image:: https://img.shields.io/badge/tests-206%20passing-blue
 
-.. list-table::
-   :header-rows: 1
-   :class: stripe
+Purpose
+-------
 
-   * - Feature
-     - Description
-   * - 🚀 Simple & Intuitive
-     - Create pipelines with just a few lines of code
-   * - 📊 Progress Tracking
-     - Real-time progress visualization with rich terminal output
-   * - ☁️ API Integration
-     - Connect to external APIs for worker registration and tracking
-   * - 💾 Data Persistence
-     - Built-in SQLite integration for storing results
-   * - 🌿 Conditional Logic
-     - Execute different paths based on data conditions
-   * - 🔄 Retry Mechanism
-     - Automatic retries for failed steps
+**wpipe** facilitates the execution of a pipeline of tasks and the interaction with an external API. The library provides the ability to register workers, processes, and tasks, allowing you to report the status of each step in real-time.
 
-Quick Start
-----------
+Key Features
+-------------
 
-Installation
-~~~~~~~~~~~
+* **Pipeline Orchestration**: Create pipelines with step functions and classes
+* **Conditional Branches**: Execute different paths based on data conditions
+* **Retry Logic**: Automatic retries for failed steps with configurable parameters
+* **API Integration**: Connect to external APIs for tracking and monitoring
+* **Worker Management**: Register workers and perform health checks
+* **SQLite Storage**: Persist pipeline execution results
+* **YAML Configuration**: Load and manage configurations
+* **Error Handling**: Robust error handling with custom exceptions
+* **Progress Tracking**: Visual progress with rich terminal output
+* **Nested Pipelines**: Compose complex workflows
 
-.. code-block:: bash
-
-   pip install wpipe
-
-Or install from source:
-
-.. code-block:: bash
-
-   git clone https://github.com/wisrovi/wpipe.git
-   cd wpipe
-   pip install -e .
-
-Basic Usage
-~~~~~~~~~~~
+Quick Example
+-------------
 
 .. code-block:: python
 
@@ -73,65 +53,27 @@ Basic Usage
    ])
 
    result = pipeline.run({"x": 5})
-   # {'result': 10, 'final': 20}
+   # {'x': 5, 'result': 10, 'final': 20}
 
-Key Features
-------------
-
-* **Getting Started** - Learn how to install and use wpipe: :doc:`getting_started`
-* **User Guide** - Deep dive into all features: :doc:`user_guide/index`
-* **API Reference** - Complete API documentation: :doc:`api_reference`
-* **Examples** - 100+ examples organized by functionality: :doc:`examples/index`
-
-Architecture Overview
---------------------
-
-Each step receives output from the previous step for chained processing:
-
-.. code-block:: text
-
-   Input → Step 1 → Step 2 → Step 3 → Output
-   
-   {'x': 5} → {'result': 10} → {'final': 20}
-
-Code Quality
------------
-
-* Tests: 206 passing
-* Type Hints: 100% coverage
-* Docstrings: Google-style
-* Examples: 100+
-* Python Support: 3.9 - 3.13
-
-Community & Support
-------------------
-
-* `Report a Bug <https://github.com/wisrovi/wpipe/issues>`_ - Open an issue on GitHub
-* `Join Discussion <https://github.com/wisrovi/wpipe/discussions>`_ - Ask questions and share ideas
-* `View on GitHub <https://github.com/wisrovi/wpipe>`_ - Star and contribute
-
-Documentation
--------------
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Documentation
+   :numbered: 5
+   :caption: Contents
 
-   getting_started
-   installation
-   user_guide/index
-   examples/index
-   api_reference
-   tutorials
-   faq
-   changelog
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Reference
-
-   Glossary <glossary>
-   architecture
+   1. Getting Started <getting_started>
+   2. Installation <installation>
+   3. Usage Examples <usage>
+   4. User Guide <user_guide/index>
+   5. Tutorials <tutorials>
+   6. API Reference <api_reference>
+   7. FAQ <faq>
+   8. Architecture <architecture>
+   9. Glossary <glossary>
+   10. Contributing <contributing>
+   11. Changelog <changelog>
 
 Indices and tables
 ==================
@@ -140,6 +82,12 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
----
+License
+-------
 
-*wpipe is maintained by William Steve Rodriguez Villamizar and distributed under the MIT License.*
+MIT License - See LICENSE file
+
+Author
+------
+
+William Steve Rodriguez Villamizar
