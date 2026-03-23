@@ -1,0 +1,22 @@
+# Architecture diagram placeholder
+# This is a simple text-based representation
+
++-------------------+
+|                   |
+|   wpipe Core      |
+|   Pipeline Layer  |
+|                   |
++--------+----------+
+         |
+    +----+----+
+    |         |
+    v         v
++-------+ +-------+
+| API   | | SQLite|
+|Client | |       |
++-------+ +-------+
+    |         |
+    v         v
++-------+ +-------+
+|Logger | | RAM   |
++-------+ +-------+
