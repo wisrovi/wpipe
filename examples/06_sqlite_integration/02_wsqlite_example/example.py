@@ -26,7 +26,7 @@ def main() -> None:
         db.output = {"result": "completed", "value": 42}
         print(f"Output set, record ID: {db.id}")
 
-        print(f"Total records: {db.count()}")
+        print(f"Total records: {db.count_records()}")
 
     if os.path.exists(db_path):
         os.remove(db_path)

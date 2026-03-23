@@ -503,8 +503,34 @@ class Pipeline(APIClient):
             if isinstance(item, Condition):
                 branch = item.get_branch(data)
                 data = self._run_branch(branch, data, **kwargs)
+            elif callable(item):
+                func, name, version = item
+                step_id = None
+                self.task_name = name
+                self.task_id = step_id
+
+                data["progress_rich"] = self.progress_rich
+                result = self._task_invoke(func, name, *(data,), **kwargs)
+
+                assert isinstance(result, dict), (
+                    f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                )
+
+                data.update(result)
+
+                if "error" in data:
+                    break
             else:
-                func, name, _, step_id = item
+                try:
+                    func, name, version, step_id = item
+                except ValueError:
+                    try:
+                        func, name, version = item
+                        step_id = None
+                    except ValueError:
+                        raise ValueError(
+                            f"Invalid step format: {item}. Expected (func, name, version) or (func, name, version, step_id)"
+                        )
                 self.task_name = name
                 self.task_id = step_id
 

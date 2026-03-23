@@ -19,10 +19,12 @@ def transform_data(data: dict, multiplier: int = 1, offset: int = 0) -> dict:
         Dictionary with 'transformed' key containing result.
 
     Example:
-        >>> transform_data({"value": 10}, multiplier=2, offset=5)
+        >>> transform_data({"value": 10, "multiplier": 2, "offset": 5})
         {"transformed": 25}
     """
     value = data.get("value", 0)
+    multiplier = data.get("multiplier", multiplier)
+    offset = data.get("offset", offset)
     return {"transformed": (value * multiplier) + offset}
 
 
@@ -38,10 +40,12 @@ def validate_data(data: dict, min_val: int = 0, max_val: int = 100) -> dict:
         Dictionary with 'valid' and 'value' keys.
 
     Example:
-        >>> validate_data({"transformed": 25}, min_val=0, max_val=100)
+        >>> validate_data({"transformed": 25, "min_val": 0, "max_val": 100})
         {"valid": True, "value": 25}
     """
     value = data.get("transformed", 0)
+    min_val = data.get("min_val", min_val)
+    max_val = data.get("max_val", max_val)
     in_range = min_val <= value <= max_val
     return {"valid": in_range, "value": value}
 
@@ -63,7 +67,7 @@ def main() -> None:
         ]
     )
 
-    result = pipeline.run({"value": 10}, multiplier=2, offset=5)
+    result = pipeline.run({"value": 10, "multiplier": 2, "offset": 5})
 
     print(f"Result: {result}")
     assert result["transformed"] == 25

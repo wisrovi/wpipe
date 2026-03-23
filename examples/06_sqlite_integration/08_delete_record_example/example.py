@@ -18,7 +18,7 @@ def main() -> None:
     db.write(input_data={"name": "keep"}, output={"value": 1})
     id2: int = db.write(input_data={"name": "delete"}, output={"value": 2})
 
-    db.delete_record(id2)
+    db.delete_by_id(id2)
 
     count: int = db.count_records()
     print(f"Remaining records: {count}")

@@ -10,13 +10,16 @@ from wpipe import Pipeline
 class FileProcessor:
     """Process values using context manager pattern."""
 
+    def __init__(self) -> None:
+        """Initialize processor."""
+        self.data: list = []
+
     def __enter__(self) -> "FileProcessor":
         """Initialize processor.
 
         Returns:
             Self reference.
         """
-        self.data: list = []
         return self
 
     def __call__(self, data: dict) -> dict:
@@ -29,12 +32,12 @@ class FileProcessor:
             Dictionary with 'processed' count.
 
         Example:
-            >>> with FileProcessor() as fp:
-            ...     fp({"value": 100})
+            >>> fp = FileProcessor()
+            >>> fp({"value": 100})
             {"processed": 1}
         """
         self.data.append(data.get("value", 0))
-        return {"processed": len(self.data)}
+        return {"processed": len(self.data), "values": list(self.data)}
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Cleanup on exit."""
@@ -61,6 +64,9 @@ def main() -> None:
 
     result = pipeline.run({"value": 100})
     print(f"Result: {result}")
+
+    result2 = pipeline.run({"value": 200})
+    print(f"Result2: {result2}")
 
 
 if __name__ == "__main__":

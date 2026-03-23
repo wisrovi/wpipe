@@ -190,18 +190,35 @@ class SQLite:
 
         return df
 
-    def get_records_by_date_range(self, start_date: str, end_date: str) -> list:
+    def get_records_by_date_range(
+        self,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        days: Optional[int] = None,
+    ) -> list:
         """
         Get records within a date range.
 
         Args:
             start_date: Start date in ISO format.
             end_date: End date in ISO format.
+            days: If provided, get records from the last N days.
 
         Returns:
             List of records within the date range.
         """
         if not self.check_table_exists():
+            return []
+
+        from datetime import datetime, timedelta
+
+        if days is not None:
+            end_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            start_date = (datetime.now() - timedelta(days=days)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+        if start_date is None or end_date is None:
             return []
 
         with sqlite3.connect(self.db_name) as conn:
@@ -214,10 +231,10 @@ class SQLite:
 
     def count_records(self) -> int:
         """
-        Count total records in the database.
+        Count the total number of records.
 
         Returns:
-            Number of records.
+            Total number of records.
         """
         if not self.check_table_exists():
             return 0
@@ -226,6 +243,45 @@ class SQLite:
             cursor = conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM records")
             return cursor.fetchone()[0]
+
+    def update_record(
+        self,
+        record_id: int,
+        output: Optional[Union[str, dict]] = None,
+        details: Optional[Union[str, dict]] = None,
+    ) -> None:
+        """
+        Update a record by ID.
+
+        Args:
+            record_id: The record ID to update.
+            output: Output data to update.
+            details: Details data to update.
+        """
+        if not self.check_table_exists():
+            return
+
+        output_json = json.dumps(output) if output else None
+        details_json = json.dumps(details) if details else None
+
+        with sqlite3.connect(self.db_name) as conn:
+            cursor = conn.cursor()
+            if output_json and details_json:
+                cursor.execute(
+                    "UPDATE records SET output = ?, details = ? WHERE id = ?",
+                    (output_json, details_json, record_id),
+                )
+            elif output_json:
+                cursor.execute(
+                    "UPDATE records SET output = ? WHERE id = ?",
+                    (output_json, record_id),
+                )
+            elif details_json:
+                cursor.execute(
+                    "UPDATE records SET details = ? WHERE id = ?",
+                    (details_json, record_id),
+                )
+            conn.commit()
 
     def delete_by_id(self, record_id: int) -> None:
         """

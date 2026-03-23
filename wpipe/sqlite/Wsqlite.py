@@ -23,6 +23,7 @@ class Wsqlite:
         self._output_db: dict = {}
         self._details_db: dict = {}
         self._input_db: dict = {}
+        self._sqlite = SQLite(db_name)
 
     @property
     def input(self) -> dict:
@@ -71,6 +72,10 @@ class Wsqlite:
                 connection_db.async_write(
                     output=output, details=details, record_id=int(self.id)
                 )
+
+    def count_records(self) -> int:
+        """Return the number of records in the database."""
+        return self._sqlite.count_records()
 
     def __enter__(self) -> "Wsqlite":
         """Enter context manager."""

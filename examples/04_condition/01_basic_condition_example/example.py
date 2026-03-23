@@ -25,7 +25,10 @@ def fetch_data(data: dict[str, Any]) -> dict[str, Any]:
         >>> print(result)
         {'value': 80, 'type': 'A'}
     """
-    return {"value": 80, "type": "A"}
+
+    # using random int create a value between 0 and 100
+    import random
+    return {"value": random.randint(20, 80), "type": "A"}
 
 
 def step_a(data: dict[str, Any]) -> dict[str, Any]:
@@ -96,7 +99,7 @@ def main() -> None:
         branch_false=[(step_b, "Step B", "v1.0")],
     )
 
-    pipeline = Pipeline(verbose=True)
+    pipeline = Pipeline(verbose=False)
     pipeline.set_steps(
         [
             (fetch_data, "Fetch Data", "v1.0"),
@@ -105,21 +108,12 @@ def main() -> None:
         ]
     )
 
-    print("Test 1: value = 80 (> 50, goes to A)")
+    print("Test 1: value equals to random number between 20 and 80")
+    print("if value > 50, goes to A, else goes to B")
     result1 = pipeline.run({})
-    print(f"Result: {result1}")
 
-    print("\nTest 2: value = 30 (< 50, goes to B)")
-    pipeline2 = Pipeline(verbose=True)
-    pipeline2.set_steps(
-        [
-            (fetch_data, "Fetch Data", "v1.0"),
-            condition,
-            (final_step, "Final", "v1.0"),
-        ]
-    )
-    result2 = pipeline2.run({})
-    print(f"Result: {result2}")
+    filtered_result = {k: result1[k] for k in ['value', 'branch', 'final']}
+    print(f"Result: {filtered_result}")
 
 
 if __name__ == "__main__":

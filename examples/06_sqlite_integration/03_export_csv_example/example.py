@@ -22,7 +22,7 @@ def main() -> None:
     db: SQLite = SQLite(db_name=db_path)
 
     for i in range(5):
-        db.write(input={"index": i}, output={"value": i * 10})
+        db.write(input_data={"index": i}, output={"value": i * 10})
 
     df = db.export_to_dataframe(save_csv=True, csv_name="export.csv")
 
