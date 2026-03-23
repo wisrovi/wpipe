@@ -1,765 +1,512 @@
 API Reference
 =============
 
-This section contains the complete API documentation for wpipe v1.0.0.
+Complete reference for all wpipe classes, methods, and functions.
 
-1. Main Classes
+.. contents::
+   :local:
+   :depth: 3
+
+1. Core Classes
 ---------------
 
 1.1 Pipeline
 ~~~~~~~~~~~~
 
-The main class for creating and executing sequential data processing pipelines.
+The main pipeline orchestration class.
 
-.. autoclass:: wpipe.pipe.Pipeline
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. class:: Pipeline
 
-**Constructor Parameters:**
+    **Usage:**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+    .. code-block:: python
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``worker_name``
-     - ``str``
-     - Name identifier for the worker process
-   * - ``api_config``
-     - ``dict``, optional
-     - API configuration with keys: ``base_url``, ``token``, ``timeout``
-   * - ``max_retries``
-     - ``int``
-     - Maximum retry attempts for failed steps (default: 3)
-   * - ``verbose``
-     - ``bool``
-     - Enable verbose logging to console (default: False)
-   * - ``log_level``
-     - ``str``
-     - Logging level: DEBUG, INFO, WARNING, ERROR (default: INFO)
+        from wpipe import Pipeline
 
-**Returns:** ``Pipeline`` instance
+        pipeline = Pipeline(
+            worker_id=None,
+            worker_name="worker",
+            api_config=None,
+            verbose=False,
+            max_retries=0,
+            retry_delay=1.0,
+            retry_on_exceptions=(Exception,)
+        )
 
-**Raises:** ``TypeError`` if parameters are invalid
+    **Parameters:**
 
-**Example:**
+    .. py:attribute:: worker_id : Optional[str]
 
-.. code-block:: python
+        Unique identifier for this worker. If provided and longer than 5 characters, enables API tracking.
 
-    from wpipe import Pipeline
+        **Default:** ``None``
 
-    # Basic pipeline
-    pipeline = Pipeline()
+    .. py:attribute:: worker_name : str
 
-    # Verbose pipeline
-    pipeline = Pipeline(verbose=True)
+        Human-readable name for the worker.
 
-    # Pipeline with API integration
-    api_config = {
-        "base_url": "http://localhost:8418",
-        "token": "my-token",
-        "timeout": 30
-    }
-    pipeline = Pipeline(
-        worker_name="processor_1",
-        api_config=api_config,
-        max_retries=5,
-        verbose=True
-    )
+        **Default:** ``"worker"``
 
-**Core Methods:**
+    .. py:attribute:: api_config : Optional[dict]
 
-.. list-table::
-   :header-rows: 1
-   :widths: 35 65
+        Configuration for API integration. Should contain:
 
-   * - Method
-     - Description
-   * - ``set_steps(steps)``
-     - Set the list of pipeline steps with metadata
-   * - ``run(input_data)``
-     - Execute the pipeline with input data
-   * - ``worker_register(name, version)``
-     - Register worker with API server
-   * - ``set_worker_id(worker_id)``
-     - Set the worker ID for tracking
-   * - ``process_register(process_name, process_description)``
-     - Register a process with the API
-   * - ``task_register(task_name, process_id)``
-     - Register a task with the API
-   * - ``process_update(process_id, status, result)``
-     - Update process status with API
+        - ``base_url``: Base URL for the API server
+        - ``token``: Authentication token
 
-**Pipeline.set_steps()**
+        **Default:** ``None``
 
-Set the list of pipeline steps with name and version metadata.
+    .. py:attribute:: verbose : bool
 
-.. code-block:: python
+        Enable verbose output with progress information.
 
-    def step1(data):
-        return {"result": data["x"] * 2}
+        **Default:** ``False``
 
-    def step2(data):
-        return {"final": data["result"] + 10}
+    .. py:attribute:: max_retries : int
 
-    pipeline.set_steps([
-        (step1, "Double Value", "v1.0"),
-        (step2, "Add Ten", "v1.0"),
-    ])
+        Maximum number of retry attempts for failed steps.
 
-**Pipeline.run()**
+        **Default:** ``0`` (no retries)
 
-Execute the pipeline with input data.
+    .. py:attribute:: retry_delay : float
 
-.. code-block:: python
+        Delay in seconds between retry attempts.
 
-    result = pipeline.run({"x": 5})
-    # Returns: {'x': 5, 'result': 10, 'final': 20}
+        **Default:** ``1.0``
 
-**Parameters:**
+    .. py:attribute:: retry_on_exceptions : tuple
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+        Tuple of exception types that should trigger retries.
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``input_data``
-     - ``dict``
-     - Initial data dictionary passed to first step
-   * - ``verbose``
-     - ``bool``, optional
-     - Override verbose setting for this run
+        **Default:** ``(Exception,)``
 
-**Returns:** ``dict`` - Accumulated results from all steps
+    .. method:: set_steps(steps: list) -> None
 
-**Raises:** ``TaskError`` if any step fails
+        Configure the pipeline steps.
 
-1.2 APIClient
+        :param steps: List of step tuples (function, name, version) or Condition objects
+        :type steps: list
+        :raises ValueError: If step format is invalid
+
+        **Example:**
+
+        .. code-block:: python
+
+            pipeline.set_steps([
+                (fetch_data, "Fetch Data", "v1.0"),
+                (process_data, "Process Data", "v1.0"),
+                (save_data, "Save Data", "v1.0"),
+            ])
+
+    .. method:: run(*args: Any, **kwargs: Any) -> dict
+
+        Execute the pipeline.
+
+        :param args: Initial data dictionary
+        :param kwargs: Additional keyword arguments
+        :return: Dictionary containing all accumulated results from steps
+        :rtype: dict
+        :raises TaskError: If a step fails
+
+        **Example:**
+
+        .. code-block:: python
+
+            result = pipeline.run({"initial": "data"})
+            print(result)
+
+    .. method:: set_worker_id(worker_id: str) -> None
+
+        Set the worker ID.
+
+        :param worker_id: Unique identifier for the worker
+        :type worker_id: str
+        :raises TypeError: If worker_id is not a string
+        :raises ValueError: If worker_id is too short (must be > 5 chars)
+
+    .. method:: worker_register(name: str, version: str) -> Optional[dict]
+
+        Register the worker with the API server.
+
+        :param name: Worker name
+        :type name: str
+        :param version: Worker version
+        :type version: str
+        :return: Worker registration data if successful, None otherwise
+        :rtype: Optional[dict]
+
+        **Example:**
+
+        .. code-block:: python
+
+            worker_data = pipeline.worker_register(
+                name="data_processor",
+                version="1.0.0"
+            )
+
+1.2 Condition
 ~~~~~~~~~~~~~
 
-Client for API communication with external services.
+Represents a conditional branch in the pipeline.
 
-.. autoclass:: wpipe.api_client.APIClient
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. class:: Condition
 
-**Constructor Parameters:**
+    **Usage:**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+    .. code-block:: python
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``base_url``
-     - ``str``
-     - Base URL of the API server
-   * - ``token``
-     - ``str``
-     - Authentication token for API access
-   * - ``timeout``
-     - ``int``, optional
-     - Request timeout in seconds (default: 30)
+        from wpipe import Pipeline, Condition
 
-**Example:**
+        condition = Condition(
+            expression="status == 'success'",
+            branch_true=[(handle_success, "Handle Success", "v1.0")],
+            branch_false=[(handle_failure, "Handle Failure", "v1.0")]
+        )
 
-.. code-block:: python
+    **Parameters:**
 
-    from wpipe.api_client import APIClient
+    .. py:attribute:: expression : str
 
-    client = APIClient(
-        base_url="http://localhost:8418",
-        token="my-auth-token",
-        timeout=60
-    )
+        Python expression to evaluate. The expression has access to all data in the pipeline.
 
-    # Register worker
-    worker = client.worker_register(
-        name="processor",
-        version="1.0.0"
-    )
+    .. py:attribute:: branch_true : list
 
-    # Health check
-    is_healthy = client.health_check(worker["id"])
+        List of steps to execute if the condition is True.
 
-2. SQLite Classes
-----------------
+    .. py:attribute:: branch_false : Optional[list]
 
-2.1 Wsqlite
+        List of steps to execute if the condition is False.
+
+    .. method:: evaluate(data: dict) -> bool
+
+        Evaluate the condition against the data.
+
+    .. method:: get_branch(data: dict) -> list
+
+        Get the appropriate branch based on evaluation.
+
+2. API Client
+-------------
+
+2.1 APIClient
+~~~~~~~~~~~~~
+
+Client for communicating with the pipeline API server.
+
+.. class:: APIClient
+
+    **Usage:**
+
+    .. code-block:: python
+
+        from wpipe import APIClient
+
+        client = APIClient(
+            base_url="http://localhost:8418",
+            token="your-auth-token"
+        )
+
+    **Parameters:**
+
+    .. py:attribute:: base_url : Optional[str]
+
+        Base URL for the API server.
+
+    .. py:attribute:: headers : dict
+
+        HTTP headers for API requests.
+
+    .. method:: send_post(endpoint: str, data: dict) -> Optional[dict]
+
+        Send a POST request to an endpoint.
+
+    .. method:: send_get(endpoint: str) -> Optional[dict]
+
+        Send a GET request to an endpoint.
+
+    .. method:: register_worker(data: dict) -> Optional[dict]
+
+        Register a worker with the API server.
+
+    .. method:: healthcheck_worker(data: dict) -> Optional[dict]
+
+        Perform worker health check.
+
+    .. method:: register_process(data: dict) -> Optional[dict]
+
+        Register a new process with the API server.
+
+    .. method:: end_process(data: dict) -> Optional[dict]
+
+        End a process on the API server.
+
+    .. method:: update_task(data: dict) -> Optional[dict]
+
+        Update task status on the API server.
+
+    .. method:: get_dashboard_workers() -> Optional[dict]
+
+        Get workers dashboard information.
+
+3. Database
+------------
+
+3.1 Wsqlite
+~~~~~~~~~~~
+
+Simplified SQLite wrapper for pipeline records.
+
+.. class:: Wsqlite
+
+    **Usage:**
+
+    .. code-block:: python
+
+        from wpipe.sqlite import Wsqlite
+
+        with Wsqlite(db_name="results.db") as db:
+            db.input = {"key": "value"}
+            result = pipeline.run({"key": "value"})
+            db.output = result
+
+    **Parameters:**
+
+    .. py:attribute:: db_name : str
+
+        Path to the SQLite database file.
+
+        **Default:** ``"register.db"``
+
+    .. py:attribute:: id : Optional[str]
+
+        ID of the current record.
+
+    .. py:attribute:: input : dict
+
+        Property to set input data.
+
+    .. py:attribute:: output : dict
+
+        Property to get/set output data.
+
+    .. py:attribute:: details : dict
+
+        Property to get/set details data.
+
+3.2 SQLite
 ~~~~~~~~~~
 
-High-level SQLite wrapper for pipeline results persistence.
+Core SQLite database operations.
 
-.. autoclass:: wpipe.sqlite.Wsqlite
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. class:: SQLite
 
-**Constructor Parameters:**
+    **Usage:**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+    .. code-block:: python
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``db_name``
-     - ``str``
-     - Database file name (e.g., "results.db")
-   * - ``table_name``
-     - ``str``, optional
-     - Table name for storing results (default: "pipeline_executions")
+        from wpipe.sqlite import Sqlite
 
-**Example:**
+        db = Sqlite(db_name="results.db")
 
-.. code-block:: python
+    **Parameters:**
 
-    from wpipe import Pipeline
-    from wpipe.sqlite import Wsqlite
+    .. py:attribute:: db_name : str
 
-    pipeline = Pipeline()
-    pipeline.set_steps([
-        (lambda d: {"result": d["x"] * 2}, "Double", "v1.0"),
-    ])
+        Path to the SQLite database file.
 
-    with Wsqlite(db_name="results.db") as db:
-        # Store input
-        db.input = {"x": 10}
+    .. method:: write(input_data, output, details, record_id)
 
-        # Execute pipeline
-        result = pipeline.run({"x": 10})
+        Write a record to the database.
 
-        # Store output
-        db.output = result
+    .. method:: async_write(input_data, output, details, record_id)
 
-**Attributes:**
+        Asynchronously write a record to the database.
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 75
+    .. method:: read_by_id(record_id: int) -> list
 
-   * - Attribute
-     - Description
-   * - ``input``
-     - Set the input data before running pipeline
-   * - ``output``
-     - Get the output data after running pipeline
+        Read a record by ID.
 
-**Properties:**
+    .. method:: export_to_dataframe(save_csv=False, csv_name="records.csv")
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 75
+        Export records to a pandas DataFrame.
 
-   * - Property
-     - Description
-   * - ``input``
-     - Get/set the input data dictionary
-   * - ``output``
-     - Get/set the output data dictionary
+    .. method:: get_records_by_date_range(start_date: str, end_date: str) -> list
 
-2.2 Sqlite
-~~~~~~~~~~
+        Get records within a date range.
 
-Lower-level SQLite interface for direct database operations.
+    .. method:: count_records() -> int
 
-.. autoclass:: wpipe.sqlite.Sqlite
-   :members:
-   :undoc-members:
-   :show-inheritance:
+        Count total records in the database.
 
-**Constructor Parameters:**
+    .. method:: delete_by_id(record_id: int) -> None
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+        Delete a record by ID.
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``db_name``
-     - ``str``
-     - Database file name
-   * - ``table_name``
-     - ``str``, optional
-     - Table name (default: "pipeline_executions")
-   * - ``create``
-     - ``bool``, optional
-     - Create table if not exists (default: True)
+4. Exceptions
+-------------
 
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.sqlite import Sqlite
-
-    db = Sqlite(db_name="data.db")
-
-    # Insert data
-    db.insert({
-        "input": '{"x": 10}',
-        "output": '{"result": 20}',
-        "status": "completed"
-    })
-
-    # Query data
-    cursor = db.execute("SELECT * FROM pipeline_executions")
-    results = cursor.fetchall()
-
-    db.close()
-
-3. Security Services
---------------------
-
-3.1 Condition
+4.1 TaskError
 ~~~~~~~~~~~~~
 
-Conditional branching in pipelines based on data evaluation.
+Exception for task-related errors.
 
-.. autoclass:: wpipe.pipe.Condition
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. class:: TaskError
 
-**Constructor Parameters:**
+    **Usage:**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+    .. code-block:: python
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``data_key``
-     - ``str``
-     - Key in data dictionary to evaluate
-   * - ``operator``
-     - ``str``
-     - Comparison operator: ``==``, ``!=``, ``>``, ``<``, ``>=``, ``<=``
-   * - ``value``
-     - ``Any``
-     - Value to compare against
+        from wpipe.exception import TaskError, Codes
 
-**Example:**
+        try:
+            result = pipeline.run(data)
+        except TaskError as e:
+            print(f"Error: {e}")
+            print(f"Code: {e.error_code}")
 
-.. code-block:: python
+    **Attributes:**
 
-    from wpipe import Pipeline, Condition
+    .. py:attribute:: error_code : int
 
-    pipeline = Pipeline()
-    pipeline.set_steps([
-        (lambda d: {"mode": "production"}, "Detect Mode", "v1.0"),
-    ])
+        Error code from the Codes class.
 
-    # Add conditional branching
-    prod_steps = [(lambda d: {"env": "prod"}, "Production Task", "v1.0")]
-    dev_steps = [(lambda d: {"env": "dev"}, "Dev Task", "v1.0")]
+4.2 ApiError
+~~~~~~~~~~~~
 
-    pipeline.add_condition(
-        condition=Condition(data_key="mode", operator="==", value="production"),
-        then_steps=prod_steps,
-        else_steps=dev_steps,
-    )
+Exception for API-related errors.
 
-4. Exception Classes
---------------------
-
-.. automodule:: wpipe.exception
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-4.1 wpipeException
-~~~~~~~~~~~~~~~~~~
-
-Base exception class for all wpipe exceptions.
-
-.. code-block:: python
-
-    from wpipe.exception import wpipeException
-
-    try:
-        # Your code here
-        pass
-    except wpipeException as e:
-        print(f"wpipe error: {e}")
-
-4.2 TaskError
-~~~~~~~~~~~~~
-
-Exception raised when a pipeline step fails.
-
-**Constructor Parameters:**
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
-
-   * - Parameter
-     - Type
-     - Description
-   * - ``message``
-     - ``str``
-     - Error message describing the failure
-   * - ``step_name``
-     - ``str``, optional
-     - Name of the step that failed
-   * - ``code``
-     - ``Codes``, optional
-     - Error code for categorization
-   * - ``original_error``
-     - ``Exception``, optional
-     - The original exception that caused the failure
-
-**Attributes:**
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 75
-
-   * - Attribute
-     - Description
-   * - ``step_name``
-     - Name of the failed step
-   * - ``code``
-     - Error code enum value
-   * - ``original_error``
-     - Original exception object
-
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.exception import TaskError, Codes
-
-    try:
-        result = pipeline.run({"x": 5})
-    except TaskError as e:
-        print(f"Failed at step: {e.step_name}")
-        print(f"Error code: {e.code}")
-        print(f"Original error: {e.original_error}")
+.. class:: ApiError
 
 4.3 ProcessError
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 Exception for process-related errors.
 
-.. code-block:: python
+.. class:: ProcessError
 
-    from wpipe.exception import ProcessError
+4.4 Codes
+~~~~~~~~~
 
-    raise ProcessError("Process execution failed")
+Error codes for pipeline exceptions.
 
-4.4 ApiError
-~~~~~~~~~~~~
+.. class:: Codes
 
-Exception for API communication errors.
+    **Error Codes:**
 
-.. code-block:: python
+    .. py:attribute:: TASK_FAILED : int = 502
 
-    from wpipe.exception import ApiError
+        Task execution failed.
 
-    raise ApiError("Failed to connect to API server")
+    .. py:attribute:: API_ERROR : int = 501
 
-4.5 Exception Hierarchy
-~~~~~~~~~~~~~~~~~~~~~~~
+        API communication error.
 
-::
+    .. py:attribute:: UPDATE_PROCESS_ERROR : int = 504
 
-    BaseException
-    └── Exception
-        └── wpipeException
-            ├── TaskError
-            │   └── Args: message, step_name, code, original_error
-            ├── ProcessError
-            │   └── Args: message
-            └── ApiError
-                └── Args: message, status_code, response
+        Process update failed.
 
-4.6 Error Codes
-~~~~~~~~~~~~~~~
+    .. py:attribute:: UPDATE_TASK : int = 505
 
-Standardized error codes for categorization:
+        Task update failed.
 
-.. list-table::
-   :header-rows: 1
-   :widths: 20 30 50
+    .. py:attribute:: UPDATE_PROCESS_OK : int = 503
 
-   * - Code
-     - Value
-     - Description
-   * - ``UNKNOWN_ERROR``
-     - 500
-     - Generic/unknown error
-   * - ``VALIDATION_ERROR``
-     - 400
-     - Input validation failed
-   * - ``API_ERROR``
-     - 501
-     - API communication error
-   * - ``RETRYABLE_ERROR``
-     - 503
-     - Error that may succeed on retry
-   * - ``TIMEOUT_ERROR``
-     - 504
-     - Operation timed out
-   * - ``TASK_FAILED``
-     - 502
-     - Task execution failed
-   * - ``UPDATE_PROCESS_OK``
-     - 503
-     - Process update succeeded
-   * - ``UPDATE_PROCESS_ERROR``
-     - 504
-     - Process update failed
+        Process completed successfully.
 
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.exception import Codes
-
-    # Using error codes
-    raise TaskError(
-        "Invalid input",
-        code=Codes.VALIDATION_ERROR
-    )
-
-5. Utility Functions
---------------------
+5. Utilities
+------------
 
 5.1 leer_yaml
 ~~~~~~~~~~~~~
 
-Read and parse a YAML configuration file.
+Read a YAML file.
 
-.. autofunction:: wpipe.util.leer_yaml
+.. function:: leer_yaml(archivo, verbose=False)
 
-**Parameters:**
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
-
-   * - Parameter
-     - Type
-     - Description
-   * - ``archivo``
-     - ``str``
-     - Path to the YAML file
-   * - ``verbose``
-     - ``bool``, optional
-     - Print errors if True (default: False)
-
-**Returns:** ``dict`` - Parsed YAML content, or empty dict on error
-
-**Raises:** ``FileNotFoundError`` if file doesn't exist
-
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.util import leer_yaml
-
-    # Load configuration
-    config = leer_yaml("config.yaml")
-
-    # Access configuration values
-    base_url = config.get("api", {}).get("base_url")
-    token = config.get("api", {}).get("token")
+    :param archivo: Path to the YAML file
+    :param verbose: Enable verbose output
+    :return: Dictionary with YAML contents
 
 5.2 escribir_yaml
 ~~~~~~~~~~~~~~~~~
 
 Write data to a YAML file.
 
-.. autofunction:: wpipe.util.escribir_yaml
+.. function:: escribir_yaml(archivo, datos, verbose=False)
 
-**Parameters:**
+    :param archivo: Path to the output file
+    :param datos: Dictionary to write
+    :param verbose: Enable verbose output
 
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
+5.3 new_logger
+~~~~~~~~~~~~~~
 
-   * - Parameter
-     - Type
-     - Description
-   * - ``archivo``
-     - ``str``
-     - Path to the output YAML file
-   * - ``contenido``
-     - ``dict``
-     - Dictionary to write as YAML
-   * - ``verbose``
-     - ``bool``, optional
-     - Print success message if True
+Create and configure a new logger instance.
 
-**Returns:** ``bool`` - True on success, None on error
+.. function:: new_logger(process_name="wpipe", path_file=None, filename_format="{time:YYYY-MM-DD}")
 
-**Example:**
+    :param process_name: Name for the logger process
+    :param path_file: Directory path for log files
+    :param filename_format: Format string for log filename
+    :return: Configured logger instance
 
-.. code-block:: python
-
-    from wpipe.util import escribir_yaml
-
-    config = {
-        "pipeline": {"verbose": True},
-        "api": {"base_url": "http://localhost:8418"}
-    }
-
-    escribir_yaml("config.yaml", config, verbose=True)
-
-5.3 load_config
-~~~~~~~~~~~~~~~
-
-Load configuration with environment variable substitution.
-
-.. code-block:: python
-
-    from wpipe.util import load_config
-
-    # Supports ${VAR} and ${VAR:-default} syntax
-    config = load_config("config.yaml")
-
-    # Environment variables are automatically substituted
-    # ${API_TOKEN} -> value from os.environ["API_TOKEN"]
-
-6. Logging
-----------
-
-6.1 new_logger
-~~~~~~~~~~~~~
-
-Create a configured logger instance.
-
-.. autofunction:: wpipe.log.new_logger
-
-**Parameters:**
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 20 55
-
-   * - Parameter
-     - Type
-     - Description
-   * - ``name``
-     - ``str``
-     - Logger name (usually module name)
-   * - ``level``
-     - ``str``, optional
-     - Log level: DEBUG, INFO, WARNING, ERROR (default: INFO)
-   * - ``log_file``
-     - ``str``, optional
-     - Optional file path for log output
-
-**Returns:** ``logging.Logger`` - Configured logger instance
-
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.log import new_logger
-
-    logger = new_logger(__name__, level="DEBUG")
-
-    logger.info("Pipeline started")
-    logger.debug("Processing data: %s", data)
-    logger.warning("Retrying step")
-    logger.error("Step failed: %s", error)
-
-7. RAM Utilities
-----------------
-
-7.1 memory
-~~~~~~~~~
-
-Get current memory usage in MB.
-
-.. autofunction:: wpipe.ram.memory
-
-**Returns:** ``float`` - Current memory usage in megabytes
-
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.ram import memory
-
-    initial_memory = memory()
-    print(f"Initial memory: {initial_memory:.2f} MB")
-
-    # Process data
-    large_data = [i for i in range(1000000)]
-
-    final_memory = memory()
-    print(f"Final memory: {final_memory:.2f} MB")
-    print(f"Memory used: {final_memory - initial_memory:.2f} MB")
-
-7.2 get_memory
-~~~~~~~~~~~~~
-
-Get detailed memory information.
-
-.. autofunction:: wpipe.ram.ram.get_memory
-
-**Returns:** ``dict`` - Dictionary with memory statistics
-
-**Example:**
-
-.. code-block:: python
-
-    from wpipe.ram import get_memory
-
-    stats = get_memory()
-    print(f"RSS: {stats['rss']} bytes")
-    print(f"VMS: {stats['vms']} bytes")
-
-8. Module Structure
+6. Memory Utilities
 -------------------
 
-The wpipe package is organized into the following modules:
+6.1 memory
+~~~~~~~~~~
 
-::
+Decorator to limit memory usage of a function.
 
-    wpipe/
-    ├── __init__.py           # Package exports
-    ├── pipe/                 # Pipeline implementation
-    │   ├── __init__.py
-    │   ├── pipe.py          # Pipeline class
-    │   ├── progress.py       # Progress tracking
-    │   └── step.py          # Step utilities
-    ├── api_client/          # API integration
-    │   ├── __init__.py
-    │   └── api_client.py    # APIClient class
-    ├── sqlite/              # Database operations
-    │   ├── __init__.py
-    │   └── sqlite.py        # Sqlite and Wsqlite classes
-    ├── log/                 # Logging utilities
-    │   ├── __init__.py
-    │   └── logger.py        # Logger configuration
-    ├── ram/                 # Memory utilities
-    │   ├── __init__.py
-    │   └── ram.py           # Memory functions
-    ├── util/                # Utility functions
-    │   ├── __init__.py
-    │   └── utils.py         # YAML utilities
-    └── exception/           # Exception classes
-        ├── __init__.py
-        ├── exception.py     # Exception definitions
-        └── codes.py         # Error codes
+.. function:: memory(percentage=0.8)
 
-9. Indices and tables
----------------------
+    :param percentage: Memory limit percentage
+    :return: Decorated function
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    **Example:**
+
+    .. code-block:: python
+
+        from wpipe.ram import memory
+
+        @memory(percentage=0.8)
+        def main():
+            print('Memory limited to 80%')
+
+6.2 memory_limit
+~~~~~~~~~~~~~~~~
+
+Set memory limit for the current process.
+
+.. function:: memory_limit(percentage)
+
+    :param percentage: Percentage of available memory (0.0 to 1.0)
+
+    **Note:** Only works on Linux.
+
+6.3 get_memory
+~~~~~~~~~~~~~~
+
+Get available memory in KB.
+
+.. function:: get_memory() -> int
+
+    :return: Available memory in kilobytes
+
+7. Import Reference
+-------------------
+
+All public classes and functions can be imported from the main wpipe package:
+
+.. code-block:: python
+
+    # Main classes
+    from wpipe import Pipeline, Condition, APIClient, Wsqlite
+
+    # Exceptions
+    from wpipe.exception import TaskError, ApiError, ProcessError, Codes
+
+    # Utilities
+    from wpipe.log import new_logger
+    from wpipe.ram import memory
+    from wpipe.util import leer_yaml, escribir_yaml

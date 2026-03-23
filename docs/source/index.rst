@@ -1,88 +1,345 @@
 .. wpipe documentation master file
 
-Welcome to wpipe |version|
-======================================
+.. include:: <isonum.txt>
 
-**wpipe** is a powerful Python library for creating and executing sequential data processing pipelines with task orchestration, API integration, and execution tracking.
+.. raw:: html
+
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        .hero-section h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: white;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+        .hero-section h1 .logo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-section p.lead {
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            color: #a0aec0;
+            position: relative;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            position: relative;
+        }
+        .hero-buttons a {
+            padding: 16px 36px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .hero-buttons a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.4);
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        .feature-card {
+            padding: 30px;
+            border-radius: 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        .feature-card h3 {
+            color: #2d3748;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .feature-card h3 span {
+            font-size: 1.4em;
+        }
+        .feature-card p {
+            color: #718096;
+            line-height: 1.7;
+        }
+        .code-block {
+            background: #1a1a2e;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+        .stat-box .value {
+            font-size: 3em;
+            font-weight: 800;
+        }
+        .stat-box .label {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .quick-start {
+            background: #f0f4f8;
+            border-radius: 12px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        .quick-start h2 {
+            margin-bottom: 30px;
+        }
+        .example-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .example-tab {
+            padding: 10px 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .example-tab.active {
+            background: #667eea;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-section { padding: 40px 20px; }
+            .hero-section h1 { font-size: 2.5em; }
+            .hero-buttons { flex-direction: column; }
+        }
+    </style>
+
+.. raw:: html
+
+    <div class="hero-section">
+        <h1><span class="logo">wpipe</span></h1>
+        <p class="lead">Python Pipeline Library for Sequential Data Processing</p>
+        <p style="font-size: 1.15em; color: #cbd5e0; max-width: 800px; margin: 0 auto; position: relative;">
+            Build powerful, production-ready data processing pipelines with a simple, elegant API.<br>
+            <strong>No web UI</strong> | <strong>No complex setup</strong> | <strong>Just Python code</strong>
+        </p>
+        <div class="hero-buttons">
+            <a href="getting_started.html" class="btn-primary">🚀 Get Started</a>
+            <a href="https://github.com/wisrovi/wpipe" class="btn-secondary" target="_blank">⭐ GitHub</a>
+            <a href="installation.html" class="btn-secondary">📦 Install</a>
+            <a href="https://pypi.org/project/wpipe/" class="btn-secondary" target="_blank">PyPI</a>
+        </div>
+    </div>
 
 .. image:: https://img.shields.io/pypi/v/wpipe.svg
    :target: https://pypi.org/project/wpipe/
+   :alt: PyPI Version
 
 .. image:: https://img.shields.io/pypi/pyversions/wpipe.svg
    :target: https://pypi.org/project/wpipe/
+   :alt: Python Versions
 
 .. image:: https://img.shields.io/github/license/wisrovi/wpipe.svg
    :target: https://github.com/wisrovi/wpipe/blob/main/LICENSE
+   :alt: License
 
-.. image:: https://img.shields.io/badge/tests-206%20passing-blue
+.. image:: https://img.shields.io/badge/tests-106%20passing-10b981
+   :alt: Tests
 
-|
+.. image:: https://img.shields.io/badge/LTS-1.0.0-green
+   :alt: LTS
 
-1. About wpipe
+wpipe |version| Documentation
+=============================
+
+**wpipe** is a powerful, lightweight Python library for creating and executing sequential data processing pipelines without the complexity of web-based workflow tools.
+
+.. toctree::
+   :maxdepth: 2
+   :numbered:
+   :caption: 📚 Documentation
+
+   getting_started
+   installation
+   usage
+   user_guide/index
+   tutorials
+   api_reference
+   examples/index
+   architecture
+   best_practices
+   faq
+   glossary
+   contributing
+   changelog
+
+🎯 Why wpipe?
 --------------
 
-wpipe facilitates the execution of a pipeline of tasks and the interaction with external APIs. The library provides the ability to register workers, processes, and tasks, allowing you to report the status of each step in real-time.
+Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellent but often introduce **significant complexity**:
 
-**Why wpipe?**
+- ❌ Complex setup requiring web servers, databases, and multiple services
+- ❌ Heavy dependencies that impact deployment and maintenance
+- ❌ YAML/JSON configuration that separates logic from code
+- ❌ Overkill for simple tasks when you just need sequential processing
 
-- **Simple API**: Get started in minutes with an intuitive interface
-- **Flexible**: Use functions or classes as pipeline steps
-- **Extensible**: Add custom decorators and error handling
-- **Production-Ready**: Comprehensive error handling and logging
-- **Well-Documented**: Extensive documentation and examples
-- **LTS Release**: Stable API with guaranteed backward compatibility
+**wpipe** provides a refreshing alternative:
 
-2. Key Features
+.. raw:: html
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3><span>⚡</span> Quick Start</h3>
+            <p>Just <code>pip install wpipe</code> and you're ready. No web servers, no databases required.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🐍</span> Pure Python</h3>
+            <p>Define your pipelines entirely in Python code. No YAML, no JSON configuration files.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>📦</span> Minimal Dependencies</h3>
+            <p>Only requires <code>requests</code> and <code>pyyaml</code>. Lightweight and easy to maintain.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🛡️</span> Production Ready</h3>
+            <p>Comprehensive error handling, retry logic, logging, and progress tracking built-in.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>💾</span> SQLite Integration</h3>
+            <p>Persist pipeline execution results with built-in database support and CSV export.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🌐</span> API Integration</h3>
+            <p>Connect pipelines to external APIs for tracking and monitoring workers and processes.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🔄</span> Retry Logic</h3>
+            <p>Automatic retries with configurable backoff strategies for failed operations.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🌳</span> Conditional Branching</h3>
+            <p>Execute different paths based on data conditions with the Condition class.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>📊</span> 100% Type Hints</h3>
+            <p>Full type annotations for excellent IDE support and better developer experience.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>📚</span> 100+ Examples</h3>
+            <p>Comprehensive docs and examples for every feature and skill level.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🔀</span> Nested Pipelines</h3>
+            <p>Compose complex workflows from smaller, reusable pipelines.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>✅</span> LTS Release</h3>
+            <p>Version 1.0.0 with guaranteed backward compatibility and long-term support.</p>
+        </div>
+    </div>
+
+🚀 Quick Start
 --------------
 
-.. list-table::
-   :header-rows: 1
-   :widths: 30 70
+Get up and running in under 2 minutes:
 
-   * - Feature
-     - Description
-   * - **Pipeline Orchestration**
-     - Create pipelines with step functions and classes
-   * - **Conditional Branches**
-     - Execute different paths based on data conditions
-   * - **Retry Logic**
-     - Automatic retries for failed steps with configurable parameters
-   * - **API Integration**
-     - Connect to external APIs for tracking and monitoring
-   * - **Worker Management**
-     - Register workers and perform health checks
-   * - **SQLite Storage**
-     - Persist pipeline execution results to database
-   * - **YAML Configuration**
-     - Load and manage configurations from YAML files
-   * - **Error Handling**
-     - Robust error handling with custom exceptions and error codes
-   * - **Progress Tracking**
-     - Visual progress with rich terminal output
-   * - **Nested Pipelines**
-     - Compose complex workflows from smaller pipelines
+Installation
+~~~~~~~~~~~~
 
-3. Quick Start
---------------
+.. code-block:: bash
 
-Get started with wpipe in minutes:
+    # Install wpipe from PyPI
+    pip install wpipe
+
+    # Or install with development dependencies
+    pip install -e ".[dev]"
+
+Your First Pipeline
+~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
     from wpipe import Pipeline
 
+    # Define your processing steps
     def fetch_data(data):
         """Fetch data from a source."""
-        return {"users": [{"name": "Alice"}, {"name": "Bob"}]}
+        return {"users": [{"name": "Alice"}, {"name": "Bob"}, {"name": "Charlie"}]}
 
     def process_data(data):
         """Process the fetched data."""
-        return {"count": len(data["users"])}
+        users = data["users"]
+        return {"count": len(users), "names": [u["name"] for u in users]}
 
     def save_data(data):
         """Save results."""
-        return {"status": "saved"}
+        return {"status": "saved", "processed": data["count"]}
 
+    # Create and configure your pipeline
     pipeline = Pipeline(verbose=True)
     pipeline.set_steps([
         (fetch_data, "Fetch Data", "v1.0"),
@@ -90,154 +347,139 @@ Get started with wpipe in minutes:
         (save_data, "Save Data", "v1.0"),
     ])
 
+    # Run the pipeline
     result = pipeline.run({})
-    print(result)
-    # {'users': [...], 'count': 2, 'status': 'saved'}
 
-4. Documentation Structure
---------------------------
+    # Output: {'users': [...], 'count': 3, 'names': [...], 'status': 'saved', 'processed': 3}
 
-.. toctree::
-   :maxdepth: 2
-   :numbered: 5
-   :caption: Contents
+Data Flow Visualization
+~~~~~~~~~~~~~~~~~~~~~~
 
-   1. Getting Started <getting_started>
-   2. Installation <installation>
-   3. Usage Examples <usage>
-   4. User Guide <user_guide/index>
-   5. Tutorials <tutorials>
-   6. API Reference <api_reference>
-   7. FAQ <faq>
-   8. Architecture <architecture>
-   9. Glossary <glossary>
-   10. Contributing <contributing>
-   11. Changelog <changelog>
+::
 
-5. Installation
---------------
+    ┌───────────────────────────────────────────────────────────────────────────┐
+    │                        PIPELINE EXECUTION FLOW                            │
+    └───────────────────────────────────────────────────────────────────────────┘
+    
+    Input          Step 1            Step 2            Step 3            Output
+    ─────          ──────            ──────            ──────            ──────
+    ┌─────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐
+    │  {}  │────▶│  Fetch  │────▶│ Process │────▶│  Save   │────▶│ Result  │
+    └─────┘      │  Data   │      │  Data   │      │  Data   │      └─────────┘
+                 └─────────┘      └─────────┘      └─────────┘
+                 {users: [...]}   {users, count}   {count, status}
 
-Install wpipe with pip:
+📊 Key Statistics
+-----------------
 
-.. code-block:: bash
+.. raw:: html
 
-    pip install wpipe
+    <div class="stat-grid">
+        <div class="stat-box">
+            <div class="value">106</div>
+            <div class="label">Tests Passing</div>
+        </div>
+        <div class="stat-box">
+            <div class="value">100+</div>
+            <div class="label">Examples</div>
+        </div>
+        <div class="stat-box">
+            <div class="value">100%</div>
+            <div class="label">Type Hints</div>
+        </div>
+        <div class="stat-box">
+            <div class="value">LTS</div>
+            <div class="label">1.0.0</div>
+        </div>
+    </div>
 
-Or install from source:
+🔧 Use Cases
+------------
 
-.. code-block:: bash
+ETL Pipelines
+~~~~~~~~~~~~~
 
-    git clone https://github.com/wisrovi/wpipe
-    cd wpipe
-    pip install -e .
-
-**Requirements:**
-
-- Python 3.9 or higher
-- requests (for API integration)
-- pyyaml (for YAML configuration)
-
-6. Use Cases
------------
-
-wpipe is ideal for:
-
-6.1 Data Processing Pipelines
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-ETL (Extract, Transform, Load) workflows:
+Extract, Transform, Load workflows:
 
 .. code-block:: python
 
     def extract(data):
-        return {"raw": fetch_from_api()}
+        return {"raw_data": fetch_from_api()}
 
     def transform(data):
-        return {"cleaned": clean_data(data["raw"])}
+        cleaned = clean_data(data["raw_data"])
+        enriched = enrich_data(cleaned)
+        return {"transformed": enriched}
 
     def load(data):
-        save_to_database(data["cleaned"])
-        return {"loaded": True}
+        save_to_database(data["transformed"])
+        return {"status": "loaded", "records": len(data["transformed"])}
 
-6.2 Task Automation
-~~~~~~~~~~~~~~~~~~
+Data Validation
+~~~~~~~~~~~~~~
 
-Automate complex multi-step workflows:
-
-.. code-block:: python
-
-    def validate(data):
-        return {"valid": check_input(data)}
-
-    def process(data):
-        return {"processed": run_processing(data)}
-
-    def notify(data):
-        return {"notified": send_notification(data)}
-
-6.3 API Integration
-~~~~~~~~~~~~~~~~~~
-
-Track and monitor external API calls:
-
-.. code-block:: python
-
-    api_config = {
-        "base_url": "http://api.example.com",
-        "token": "your-token"
-    }
-
-    pipeline = Pipeline(api_config=api_config)
-    pipeline.worker_register(name="processor", version="1.0.0")
-
-7. Architecture Overview
------------------------
-
-::
-
-    ┌─────────────────────────────────────────────────────────────────────┐
-    │                         Pipeline Layer                              │
-    │  ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐          │
-    │  │ Step 1  │ -> │ Step 2  │ -> │ Step 3  │ -> │ Step N  │          │
-    │  └─────────┘    └─────────┘    └─────────┘    └─────────┘          │
-    └─────────────────────────────────────────────────────────────────────┘
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    │                 │                 │
-                    ▼                 ▼                 ▼
-            ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-            │ API Client   │  │   SQLite     │  │   Logger     │
-            │ (Optional)   │  │  (Optional)  │  │              │
-            └──────────────┘  └──────────────┘  └──────────────┘
-
-8. Error Handling
-----------------
-
-wpipe provides robust error handling with custom exceptions:
+Input validation with error handling:
 
 .. code-block:: python
 
     from wpipe.exception import TaskError, Codes
 
-    try:
-        result = pipeline.run(data)
-    except TaskError as e:
-        print(f"Step: {e.step_name}")
-        print(f"Code: {e.code}")
-        print(f"Error: {e.original_error}")
+    def validate_input(data):
+        required_fields = ["email", "name", "age"]
+        for field in required_fields:
+            if field not in data:
+                raise TaskError(f"Missing required field: {field}", Codes.TASK_FAILED)
+        return {"validated": True}
 
-**Error Codes:**
+API Workflows
+~~~~~~~~~~~~
 
-- ``UNKNOWN_ERROR`` (500) - Generic error
-- ``VALIDATION_ERROR`` (400) - Input validation failed
-- ``API_ERROR`` (501) - API communication error
-- ``RETRYABLE_ERROR`` (503) - Error that may succeed on retry
-- ``TIMEOUT_ERROR`` (504) - Operation timed out
+Multi-step API processing:
 
-9. Testing
----------
+.. code-block:: python
 
-wpipe includes a comprehensive test suite:
+    api_config = {
+        "base_url": "https://api.example.com",
+        "token": os.environ["API_TOKEN"]
+    }
+
+    pipeline = Pipeline(api_config=api_config)
+    pipeline.worker_register(name="processor", version="1.0.0")
+
+📁 Project Structure
+-------------------
+
+::
+
+    wpipe/
+    ├── __init__.py           # Main exports (Pipeline, Condition, APIClient, Wsqlite)
+    ├── pipe/
+    │   └── pipe.py           # Pipeline, Condition, ProgressManager
+    ├── api_client/
+    │   └── api_client.py     # APIClient for API integration
+    ├── sqlite/
+    │   ├── Sqlite.py         # Core SQLite operations
+    │   └── Wsqlite.py        # Simplified context manager wrapper
+    ├── log/
+    │   └── log.py            # Logging utilities (loguru)
+    ├── ram/
+    │   └── ram.py            # Memory control utilities
+    ├── util/
+    │   └── utils.py          # YAML utilities (leer_yaml, escribir_yaml)
+    └── exception/
+        └── api_error.py      # TaskError, ApiError, ProcessError, Codes
+
+🔗 Resources
+-------------
+
+- **Documentation**: https://wpipe.readthedocs.io/
+- **GitHub**: https://github.com/wisrovi/wpipe
+- **PyPI**: https://pypi.org/project/wpipe/
+- **Live Demo**: https://wisrovi.github.io/wpipe/
+- **Issues**: https://github.com/wisrovi/wpipe/issues
+
+🧪 Testing & Quality
+--------------------
 
 .. code-block:: bash
 
@@ -247,48 +489,24 @@ wpipe includes a comprehensive test suite:
     # Run with coverage
     pytest --cov=wpipe --cov-report=html
 
-    # Run specific test file
-    pytest test/test_pipeline.py
+    # Lint with ruff
+    ruff check wpipe/
 
-**Test Results:** 106 tests passing (100% core + examples)
+    # Type check with mypy
+    mypy wpipe/
 
-10. Community and Support
--------------------------
+📝 License & Author
+-------------------
 
-10.1 Resources
-~~~~~~~~~~~~~~
+**License**: MIT License
 
-- **Documentation**: https://wpipe.readthedocs.io/
-- **GitHub**: https://github.com/wisrovi/wpipe
-- **PyPI**: https://pypi.org/project/wpipe/
-- **Issues**: https://github.com/wisrovi/wpipe/issues
-
-10.2 Contributing
-~~~~~~~~~~~~~~~~
-
-We welcome contributions! See :doc:`contributing` for guidelines.
-
-.. code-block:: bash
-
-    git clone https://github.com/wisrovi/wpipe
-    cd wpipe
-    pip install -e ".[dev]"
-    pytest
-
-11. License
-----------
-
-wpipe is released under the **MIT License**.
-
-See the `LICENSE <https://github.com/wisrovi/wpipe/blob/main/LICENSE>`_ file for details.
-
-12. Author
----------
-
-**William Steve Rodriguez Villamizar**
+**Author**: William Steve Rodriguez Villamizar
 
 - GitHub: https://github.com/wisrovi
-- Email: will contact via GitHub
+- LinkedIn: https://linkedin.com/in/wisrovi-rodriguez
+- Portfolio: https://wisrovi.github.io
+
+If you find wpipe useful, please ⭐ star the repository on GitHub!
 
 Indices and tables
 ==================
