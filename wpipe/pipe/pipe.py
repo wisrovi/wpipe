@@ -3,7 +3,7 @@ Pipeline module for orchestrating task execution.
 
 This module provides the Pipeline class for managing and executing
 a sequence of tasks, with support for conditional branching,
-retry logic, and API tracking.
+retry logic, API tracking, and execution history tracking.
 """
 
 import json
@@ -18,6 +18,7 @@ from tqdm import tqdm
 from wpipe.api_client.api_client import APIClient
 from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import logger
+from wpipe.tracking import PipelineTracker
 
 
 class Condition:
@@ -121,6 +122,13 @@ class Pipeline(APIClient):
     retry_delay: float = 1.0
     retry_on_exceptions: tuple = (Exception,)
 
+    # Tracking
+    tracker: Optional[PipelineTracker] = None
+    pipeline_name: str = "Pipeline"
+    pipeline_id: Optional[str] = None
+    _step_order: int = 0
+    _step_ids: dict = {}
+
     def __init__(
         self,
         worker_id: Optional[str] = None,
@@ -130,6 +138,9 @@ class Pipeline(APIClient):
         max_retries: int = 0,
         retry_delay: float = 1.0,
         retry_on_exceptions: tuple = (Exception,),
+        tracking_db: Optional[str] = None,
+        pipeline_name: Optional[str] = None,
+        config_dir: Optional[str] = None,
     ) -> None:
         """
         Initialize the Pipeline.
@@ -142,6 +153,9 @@ class Pipeline(APIClient):
             max_retries: Maximum retry attempts for failed tasks.
             retry_delay: Delay between retries in seconds.
             retry_on_exceptions: Tuple of exception types to retry on.
+            tracking_db: Path to SQLite database for execution tracking.
+            pipeline_name: Name for the pipeline (used in tracking).
+            config_dir: Directory to store YAML configuration files.
         """
         if api_config:
             super().__init__(
@@ -160,6 +174,12 @@ class Pipeline(APIClient):
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         self.retry_on_exceptions = retry_on_exceptions
+
+        # Initialize tracking if database path provided
+        if tracking_db:
+            self.tracker = PipelineTracker(tracking_db, config_dir)
+
+        self.pipeline_name = pipeline_name or "Pipeline"
 
     def set_worker_id(self, worker_id: str) -> None:
         """
@@ -476,6 +496,9 @@ class Pipeline(APIClient):
             TaskError: If the task raises an exception.
         """
         try:
+            if self.send_to_api:
+                return self._task_invoke_with_report(func, *args, **kwargs)
+
             if self.max_retries > 0:
                 return self._execute_with_retry(func, name, *args, **kwargs)
 
@@ -509,14 +532,30 @@ class Pipeline(APIClient):
                 self.task_name = name
                 self.task_id = step_id
 
-                data["progress_rich"] = self.progress_rich
-                result = self._task_invoke(func, name, *(data,), **kwargs)
-
-                assert isinstance(result, dict), (
-                    f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                # Start step tracking
+                tracked_step_id = self._start_step_tracking(
+                    name, version, "condition", data
                 )
 
-                data.update(result)
+                data["progress_rich"] = self.progress_rich
+                error_msg = None
+                error_trace = None
+                try:
+                    result = self._task_invoke(func, name, *(data,), **kwargs)
+
+                    assert isinstance(result, dict), (
+                        f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                    )
+
+                    data.update(result)
+                except Exception as e:
+                    error_msg = str(e)
+                    error_trace = traceback.format_exc()
+                    raise
+                finally:
+                    self._end_step_tracking(
+                        tracked_step_id, data, error_msg, error_trace
+                    )
 
                 if "error" in data:
                     break
@@ -534,19 +573,90 @@ class Pipeline(APIClient):
                 self.task_name = name
                 self.task_id = step_id
 
+                # Start step tracking
+                tracked_step_id = self._start_step_tracking(name, version, "task", data)
+
                 data["progress_rich"] = self.progress_rich
-                result = self._task_invoke(func, name, *(data,), **kwargs)
+                error_msg = None
+                error_trace = None
+                try:
+                    result = self._task_invoke(func, name, *(data,), **kwargs)
 
-                assert isinstance(result, dict), (
-                    f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                )
+                    assert isinstance(result, dict), (
+                        f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                    )
 
-                data.update(result)
+                    data.update(result)
+                except Exception as e:
+                    error_msg = str(e)
+                    error_trace = traceback.format_exc()
+                    raise
+                finally:
+                    self._end_step_tracking(
+                        tracked_step_id, data, error_msg, error_trace
+                    )
 
                 if "error" in data:
                     break
 
         return data
+
+    def _start_step_tracking(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        step_type: str = "task",
+        input_data: Optional[dict] = None,
+    ) -> Optional[int]:
+        """Start tracking a step execution."""
+        if not self.tracker or not self.pipeline_id:
+            return None
+
+        self._step_order += 1
+
+        # Filter out internal keys from input data
+        filtered_input = {
+            k: v
+            for k, v in (input_data or {}).items()
+            if k not in ("progress_rich",) and not callable(v)
+        }
+
+        step_id = self.tracker.start_step(
+            pipeline_id=self.pipeline_id,
+            step_order=self._step_order,
+            step_name=name,
+            step_version=version,
+            step_type=step_type,
+            input_data=filtered_input,
+        )
+        return step_id
+
+    def _end_step_tracking(
+        self,
+        step_id: Optional[int],
+        output_data: Optional[dict] = None,
+        error_message: Optional[str] = None,
+        error_traceback: Optional[str] = None,
+    ):
+        """End tracking a step execution."""
+        if not self.tracker or not step_id:
+            return
+
+        # Filter out internal keys from output data
+        filtered_output = None
+        if output_data:
+            filtered_output = {
+                k: v
+                for k, v in output_data.items()
+                if k not in ("progress_rich", "error") and not callable(v)
+            }
+
+        self.tracker.complete_step(
+            step_id=step_id,
+            output_data=filtered_output,
+            error_message=error_message,
+            error_traceback=error_traceback,
+        )
 
     def _pipeline_run(self, *args: Any, **kwargs: Any) -> dict:
         """
@@ -561,6 +671,26 @@ class Pipeline(APIClient):
         """
         result_data = {}
         data = {}
+        error_message = None
+        error_step = None
+
+        # Register pipeline with tracking system (matrícula)
+        if self.tracker:
+            registration = self.tracker.register_pipeline(
+                name=self.pipeline_name,
+                steps=self.tasks_list,
+                input_data=args[0] if args else None,
+                worker_id=self.worker_id,
+                worker_name=self.worker_name,
+            )
+            self.pipeline_id = registration["pipeline_id"]
+            self._step_order = 0
+            self._step_ids = {}
+
+            if self.verbose:
+                print(f"\n[MATRÍCULA] Pipeline registered: {self.pipeline_id}")
+                print(f"[MATRÍCULA] Config YAML: {registration['yaml_path']}")
+
         total_steps = sum(
             1
             for item in self.tasks_list
@@ -593,39 +723,82 @@ class Pipeline(APIClient):
                 ):
                     yield advance_id, None
 
-        for advance_id, progress in progress_bar_generator(size=total_steps):
-            if advance_id >= len(self.tasks_list):
-                return data
-
-            item = self.tasks_list[advance_id]
-
-            if isinstance(item, Condition):
-                if self.verbose:
-                    print(f"\n[CONDITION] Evaluating: {item.expression}")
-                data = self._run_branch([item], data, **kwargs)
-            else:
-                func, name, _, step_id = item
-
-                self.task_name = name
-                self.task_id = step_id
-                self.progress_rich = progress
-
-                data.update(args[0] if args else {})
-                data["progress_rich"] = progress
-
-                result_data = self._task_invoke(func, name, *(data,), **kwargs)
-
-                assert isinstance(result_data, dict), (
-                    f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                )
-
-                data.update(result_data)
-
-                if self.verbose:
-                    print()
-
-                if "error" in data:
+        try:
+            for advance_id, progress in progress_bar_generator(size=total_steps):
+                if advance_id >= len(self.tasks_list):
                     break
+
+                item = self.tasks_list[advance_id]
+
+                if isinstance(item, Condition):
+                    if self.verbose:
+                        print(f"\n[CONDITION] Evaluating: {item.expression}")
+                    data = self._run_branch([item], data, **kwargs)
+                else:
+                    func, name, version, step_id = item
+
+                    self.task_name = name
+                    self.task_id = step_id
+                    self.progress_rich = progress
+
+                    data.update(args[0] if args else {})
+                    data["progress_rich"] = progress
+
+                    # Start step tracking
+                    tracked_step_id = self._start_step_tracking(
+                        name, version, "task", data
+                    )
+
+                    step_error = None
+                    step_error_traceback = None
+                    try:
+                        result_data = self._task_invoke(func, name, *(data,), **kwargs)
+
+                        assert isinstance(result_data, dict), (
+                            f"[ERROR] The result of state ({self.task_name}) must be a dict"
+                        )
+
+                        data.update(result_data)
+                    except Exception as e:
+                        step_error = str(e)
+                        step_error_traceback = traceback.format_exc()
+                        raise
+                    finally:
+                        # Complete step tracking with output
+                        self._end_step_tracking(
+                            tracked_step_id,
+                            data if not step_error else None,
+                            step_error,
+                            step_error_traceback,
+                        )
+
+                    if self.verbose:
+                        print()
+
+                    if "error" in data:
+                        error_message = data.get("error")
+                        error_step = name
+                        break
+        except Exception as e:
+            error_message = str(e)
+            error_step = self.task_name
+            raise
+        finally:
+            # Complete pipeline tracking
+            if self.tracker and self.pipeline_id:
+                try:
+                    self.tracker.complete_pipeline(
+                        pipeline_id=self.pipeline_id,
+                        output_data=data if not error_message else None,
+                        error_message=error_message,
+                        error_step=error_step,
+                    )
+
+                    if self.verbose:
+                        status = "ERROR" if error_message else "COMPLETED"
+                        print(f"\n[MATRÍCULA] Pipeline {self.pipeline_id}: {status}")
+                except Exception:
+                    pass  # Don't fail pipeline due to tracking errors
 
         if "error" in data:
             raise TaskError(

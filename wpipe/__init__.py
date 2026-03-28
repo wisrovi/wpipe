@@ -7,5 +7,16 @@ from .log import new_logger
 from .pipe import Condition, Pipeline
 from .ram import memory
 from .sqlite import Wsqlite
+from .dashboard import start_dashboard
+from .tracking import PipelineTracker
 
-__all__ = ["APIClient", "Condition", "Pipeline", "Wsqlite", "memory", "new_logger"]
+__all__ = [
+    "APIClient",
+    "Condition",
+    "Pipeline",
+    "Wsqlite",
+    "memory",
+    "new_logger",
+    "start_dashboard",
+    "PipelineTracker",
+]
