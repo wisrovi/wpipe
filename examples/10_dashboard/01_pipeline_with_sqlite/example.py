@@ -8,7 +8,7 @@ Run this example first to generate data, then start the dashboard to view it.
 """
 
 import os
-from wpipe import Pipeline, Wsqlite
+from wpipe import Pipeline
 
 
 def fetch_data(data: dict) -> dict:
@@ -66,12 +66,17 @@ def calculate_stats(data: dict) -> dict:
 
 def main() -> None:
     """Run the pipeline with SQLite integration."""
-    db_path = "pipeline_data.db"
+    db_path = "../wpipe_dashboard.db"
+    config_dir = "../configs"
 
     if os.path.exists(db_path):
         os.remove(db_path)
 
-    pipeline = Pipeline(verbose=True)
+    pipeline = Pipeline(
+        verbose=True,
+        tracking_db=db_path,
+        config_dir=config_dir,
+    )
     pipeline.set_steps(
         [
             (fetch_data, "Fetch Data", "v1.0"),
@@ -84,22 +89,15 @@ def main() -> None:
     print("Running pipeline with SQLite integration...")
     print("=" * 50 + "\n")
 
-    with Wsqlite(db_name=db_path) as db:
-        db.input = {"user_id": 123, "batch": "batch_001"}
-
-        result = pipeline.run({})
-
-        db.output = result
-        db.details = {
-            "pipeline_version": "1.0.0",
-            "steps_executed": 3,
-        }
+    result = pipeline.run({"user_id": 123, "batch": "batch_001"})
 
     print("\n" + "=" * 50)
     print("Pipeline completed successfully!")
     print(f"Data saved to: {db_path}")
     print("\nTo view the dashboard, run:")
-    print(f"  python -m wpipe.dashboard --db {db_path} --open")
+    print(
+        f"  cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+    )
     print("=" * 50)
 
 

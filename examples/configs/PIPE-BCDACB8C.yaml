@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:22:18.725295'
+  id: PIPE-BCDACB8C
+  name: data_generation
+  version: 1.0.0
+steps:
+- name: generate_numbers
+  type: task
+  version: v1.0
+- name: double_values
+  type: task
+  version: v1.0
+- name: calculate_sum
+  type: task
+  version: v1.0

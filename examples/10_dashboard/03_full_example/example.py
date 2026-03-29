@@ -15,7 +15,7 @@ The pipeline simulates a data processing workflow with:
 
 import os
 import random
-from wpipe import Pipeline, Wsqlite, Condition
+from wpipe import Pipeline, Condition
 
 
 def validate_input(data: dict) -> dict:
@@ -75,7 +75,7 @@ def calculate_metrics(data: dict) -> dict:
     return {"metrics": metrics, "status": "completed"}
 
 
-def run_pipeline_batch(db_path: str, batch_id: int) -> None:
+def run_pipeline_batch(db_path: str, config_dir: str, batch_id: int) -> None:
     """Run a single pipeline execution."""
     data_types = ["numbers", "text", "records"]
     data_type = random.choice(data_types)
@@ -99,7 +99,11 @@ def run_pipeline_batch(db_path: str, batch_id: int) -> None:
             ],
         }
 
-    pipeline = Pipeline(verbose=False)
+    pipeline = Pipeline(
+        verbose=False,
+        tracking_db=db_path,
+        config_dir=config_dir,
+    )
 
     if data_type == "numbers":
         pipeline.set_steps(
@@ -126,28 +130,16 @@ def run_pipeline_batch(db_path: str, batch_id: int) -> None:
             ]
         )
 
-    with Wsqlite(db_name=db_path) as db:
-        db.input = input_data
-
-        try:
-            result = pipeline.run(input_data)
-            db.output = result
-            db.details = {
-                "batch_id": batch_id,
-                "status": "success",
-            }
-        except Exception as e:
-            db.output = {"error": str(e)}
-            db.details = {
-                "batch_id": batch_id,
-                "status": "error",
-                "error_type": type(e).__name__,
-            }
+    try:
+        result = pipeline.run(input_data)
+    except Exception as e:
+        pass
 
 
 def main():
     """Run the full example."""
-    db_path = "full_example.db"
+    db_path = "../wpipe_dashboard.db"
+    config_dir = "../configs"
 
     if os.path.exists(db_path):
         os.remove(db_path)
@@ -160,25 +152,18 @@ def main():
     num_runs = 10
     for i in range(num_runs):
         print(f"  Running pipeline {i + 1}/{num_runs}...", end=" ")
-        run_pipeline_batch(db_path, i + 1)
+        run_pipeline_batch(db_path, config_dir, i + 1)
         print("✓")
 
     print(f"\nGenerated {num_runs} pipeline executions")
     print(f"Database: {db_path}")
 
     print("\n" + "=" * 60)
-    print("STARTING DASHBOARD")
-    print("=" * 60)
-    print("\nThe dashboard will open at: http://127.0.0.1:8000\n")
-
-    from wpipe import start_dashboard
-
-    start_dashboard(
-        db_path=db_path,
-        host="127.0.0.1",
-        port=8034,
-        open_browser=True,
+    print("To view the dashboard, run:")
+    print(
+        "  cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
+    print("=" * 60)
 
 
 if __name__ == "__main__":

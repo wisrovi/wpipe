@@ -7,6 +7,7 @@ retry logic, API tracking, and execution history tracking.
 """
 
 import json
+import os
 import time
 import traceback
 from typing import Any, Callable, Optional
@@ -19,6 +20,65 @@ from wpipe.api_client.api_client import APIClient
 from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import logger
 from wpipe.tracking import PipelineTracker
+
+
+def get_system_metrics() -> dict:
+    """Get current system metrics."""
+    try:
+        import psutil
+
+        process = psutil.Process(os.getpid())
+        memory = psutil.virtual_memory()
+        disk_io = psutil.disk_io_counters()
+
+        return {
+            "cpu_percent": process.cpu_percent(),
+            "memory_percent": memory.percent,
+            "memory_used_mb": memory.used / 1024 / 1024,
+            "memory_available_mb": memory.available / 1024 / 1024,
+            "disk_io_read_mb": (disk_io.read_bytes / 1024 / 1024) if disk_io else 0,
+            "disk_io_write_mb": (disk_io.write_bytes / 1024 / 1024) if disk_io else 0,
+        }
+    except ImportError:
+        return {}
+
+
+class SystemMetricsCollector:
+    """Collects system metrics during pipeline execution."""
+
+    def __init__(
+        self, tracker: PipelineTracker, pipeline_id: str, interval_seconds: float = 5.0
+    ):
+        self.tracker = tracker
+        self.pipeline_id = pipeline_id
+        self.interval = interval_seconds
+        self._running = False
+        self._thread = None
+
+    def start(self):
+        """Start collecting metrics."""
+        import threading
+
+        self._running = True
+        self._thread = threading.Thread(target=self._collect_loop, daemon=True)
+        self._thread.start()
+
+    def stop(self):
+        """Stop collecting metrics."""
+        self._running = False
+        if self._thread:
+            self._thread.join(timeout=2)
+
+    def _collect_loop(self):
+        """Collection loop."""
+        while self._running:
+            try:
+                metrics = get_system_metrics()
+                if metrics:
+                    self.tracker.record_system_metrics(self.pipeline_id, metrics)
+            except Exception:
+                pass
+            time.sleep(self.interval)
 
 
 class Condition:
@@ -128,6 +188,8 @@ class Pipeline(APIClient):
     pipeline_id: Optional[str] = None
     _step_order: int = 0
     _step_ids: dict = {}
+    _metrics_collector: Optional[SystemMetricsCollector] = None
+    parent_pipeline_id: Optional[str] = None
 
     def __init__(
         self,
@@ -141,6 +203,8 @@ class Pipeline(APIClient):
         tracking_db: Optional[str] = None,
         pipeline_name: Optional[str] = None,
         config_dir: Optional[str] = None,
+        parent_pipeline_id: Optional[str] = None,
+        collect_system_metrics: bool = False,
     ) -> None:
         """
         Initialize the Pipeline.
@@ -156,6 +220,8 @@ class Pipeline(APIClient):
             tracking_db: Path to SQLite database for execution tracking.
             pipeline_name: Name for the pipeline (used in tracking).
             config_dir: Directory to store YAML configuration files.
+            parent_pipeline_id: Parent pipeline ID for relationship tracking.
+            collect_system_metrics: Enable system metrics collection during execution.
         """
         if api_config:
             super().__init__(
@@ -174,12 +240,42 @@ class Pipeline(APIClient):
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         self.retry_on_exceptions = retry_on_exceptions
+        self.parent_pipeline_id = parent_pipeline_id
+        self._collect_system_metrics = collect_system_metrics
 
         # Initialize tracking if database path provided
         if tracking_db:
             self.tracker = PipelineTracker(tracking_db, config_dir)
 
         self.pipeline_name = pipeline_name or "Pipeline"
+
+    def add_event(
+        self,
+        event_type: str,
+        event_name: str,
+        message: Optional[str] = None,
+        data: Optional[dict] = None,
+        tags: Optional[list] = None,
+    ):
+        """Add an event/annotation to the current pipeline."""
+        if self.tracker and self.pipeline_id:
+            self.tracker.add_event(
+                pipeline_id=self.pipeline_id,
+                event_type=event_type,
+                event_name=event_name,
+                message=message,
+                data=data,
+                tags=tags,
+            )
+
+    def link_to_pipeline(self, other_pipeline_id: str, relation_type: str = "related"):
+        """Create a relationship to another pipeline."""
+        if self.tracker and self.pipeline_id:
+            self.tracker.link_pipelines(
+                parent_id=self.pipeline_id,
+                child_id=other_pipeline_id,
+                relation_type=relation_type,
+            )
 
     def set_worker_id(self, worker_id: str) -> None:
         """
@@ -510,7 +606,7 @@ class Pipeline(APIClient):
         except Exception as e:
             raise TaskError(str(e), Codes.TASK_FAILED) from e
 
-    def _run_branch(self, steps: list, data: dict, **kwargs: Any) -> dict:
+    def _run_branch(self, steps: list, data: dict, **kwargs: Any) -> tuple[dict, list]:
         """
         Execute a branch of steps.
 
@@ -520,12 +616,84 @@ class Pipeline(APIClient):
             **kwargs: Additional keyword arguments.
 
         Returns:
-            Updated data dictionary.
+            Tuple of (updated data dictionary, list of executed step IDs).
         """
+        executed_step_ids = []
+
         for item in steps:
             if isinstance(item, Condition):
-                branch = item.get_branch(data)
-                data = self._run_branch(branch, data, **kwargs)
+                cond_name = getattr(item, "name", "condition") or "condition"
+                cond_expr = getattr(item, "expression", "unknown")
+                true_branch = item.branch_true or []
+                false_branch = item.branch_false or []
+
+                branch_taken = "true" if item.evaluate(data) else "false"
+                branch_executed = (
+                    true_branch if branch_taken == "true" else false_branch
+                )
+                branch_skipped = false_branch if branch_taken == "true" else true_branch
+
+                true_branch_ids = []
+                false_branch_ids = []
+                skipped_branch_ids = []
+
+                if self.tracker and self.pipeline_id:
+                    self._step_order += 1
+                    cond_step_id = self.tracker.start_step(
+                        pipeline_id=self.pipeline_id,
+                        step_order=self._step_order,
+                        step_name=cond_name,
+                        step_version="1.0.0",
+                        step_type="condition",
+                        input_data={
+                            "expression": cond_expr,
+                            "true_branch": [
+                                s[1] if isinstance(s, tuple) else str(s)
+                                for s in true_branch
+                                if not isinstance(s, Condition)
+                            ],
+                            "false_branch": [
+                                s[1] if isinstance(s, tuple) else str(s)
+                                for s in false_branch
+                                if not isinstance(s, Condition)
+                            ],
+                        },
+                    )
+
+                data, branch_ids = self._run_branch(branch_executed, data, **kwargs)
+
+                if branch_taken == "true":
+                    true_branch_ids = branch_ids
+                    false_branch_ids = []
+                    skipped_branch_ids = [
+                        self._get_step_name_id(s)
+                        for s in branch_skipped
+                        if not isinstance(s, Condition)
+                    ]
+                else:
+                    false_branch_ids = branch_ids
+                    true_branch_ids = []
+                    skipped_branch_ids = [
+                        self._get_step_name_id(s)
+                        for s in branch_skipped
+                        if not isinstance(s, Condition)
+                    ]
+
+                executed_step_ids.append(cond_step_id)
+                executed_step_ids.extend(branch_ids)
+
+                if cond_step_id and self.tracker:
+                    self.tracker.complete_step(
+                        cond_step_id,
+                        output_data={
+                            "branch_taken": branch_taken,
+                            "expression": cond_expr,
+                            "true_branch_ids": true_branch_ids,
+                            "false_branch_ids": false_branch_ids,
+                            "skipped_branch_ids": skipped_branch_ids,
+                        },
+                    )
+
             elif callable(item):
                 func, name, version = item
                 step_id = None
@@ -533,9 +701,7 @@ class Pipeline(APIClient):
                 self.task_id = step_id
 
                 # Start step tracking
-                tracked_step_id = self._start_step_tracking(
-                    name, version, "condition", data
-                )
+                tracked_step_id = self._start_step_tracking(name, version, "task", data)
 
                 data["progress_rich"] = self.progress_rich
                 error_msg = None
@@ -556,6 +722,9 @@ class Pipeline(APIClient):
                     self._end_step_tracking(
                         tracked_step_id, data, error_msg, error_trace
                     )
+
+                if tracked_step_id:
+                    executed_step_ids.append(tracked_step_id)
 
                 if "error" in data:
                     break
@@ -596,10 +765,19 @@ class Pipeline(APIClient):
                         tracked_step_id, data, error_msg, error_trace
                     )
 
+                if tracked_step_id:
+                    executed_step_ids.append(tracked_step_id)
+
                 if "error" in data:
                     break
 
-        return data
+        return data, executed_step_ids
+
+    def _get_step_name_id(self, step) -> Optional[int]:
+        """Get step name from step tuple or callable."""
+        if isinstance(step, tuple) and len(step) >= 2:
+            return step[1]
+        return None
 
     def _start_step_tracking(
         self,
@@ -673,6 +851,7 @@ class Pipeline(APIClient):
         data = {}
         error_message = None
         error_step = None
+        metrics_collector = None
 
         # Register pipeline with tracking system (matrícula)
         if self.tracker:
@@ -682,6 +861,7 @@ class Pipeline(APIClient):
                 input_data=args[0] if args else None,
                 worker_id=self.worker_id,
                 worker_name=self.worker_name,
+                parent_pipeline_id=self.parent_pipeline_id,
             )
             self.pipeline_id = registration["pipeline_id"]
             self._step_order = 0
@@ -690,6 +870,17 @@ class Pipeline(APIClient):
             if self.verbose:
                 print(f"\n[MATRÍCULA] Pipeline registered: {self.pipeline_id}")
                 print(f"[MATRÍCULA] Config YAML: {registration['yaml_path']}")
+                if self.parent_pipeline_id:
+                    print(f"[MATRÍCULA] Parent pipeline: {self.parent_pipeline_id}")
+
+            # Start system metrics collection
+            if self._collect_system_metrics:
+                metrics_collector = SystemMetricsCollector(
+                    self.tracker, self.pipeline_id
+                )
+                metrics_collector.start()
+                if self.verbose:
+                    print("[METRICS] System metrics collection started")
 
         total_steps = sum(
             1
@@ -733,7 +924,7 @@ class Pipeline(APIClient):
                 if isinstance(item, Condition):
                     if self.verbose:
                         print(f"\n[CONDITION] Evaluating: {item.expression}")
-                    data = self._run_branch([item], data, **kwargs)
+                    data, _ = self._run_branch([item], data, **kwargs)
                 else:
                     func, name, version, step_id = item
 
@@ -784,6 +975,12 @@ class Pipeline(APIClient):
             error_step = self.task_name
             raise
         finally:
+            # Stop metrics collection
+            if metrics_collector:
+                metrics_collector.stop()
+                if self.verbose:
+                    print("[METRICS] System metrics collection stopped")
+
             # Complete pipeline tracking
             if self.tracker and self.pipeline_id:
                 try:

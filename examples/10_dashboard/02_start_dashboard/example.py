@@ -19,7 +19,10 @@ def example_cli():
     print("Example 1: Using CLI command")
     print("=" * 60)
     print("Run in terminal:")
-    print("  wpipe --dashboard --db pipeline_data.db --port 8000 --open")
+    print("  cd ..")
+    print(
+        "  python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+    )
     print()
 
 
@@ -29,7 +32,10 @@ def example_module():
     print("Example 2: Using Python module")
     print("=" * 60)
     print("Run in terminal:")
-    print("  python -m wpipe.dashboard --db pipeline_data.db --port 8000 --open")
+    print("  cd ..")
+    print(
+        "  python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+    )
     print()
 
 

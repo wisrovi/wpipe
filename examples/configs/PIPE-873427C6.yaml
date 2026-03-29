@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:30:03.737872'
+  id: PIPE-873427C6
+  name: weather_normal
+  version: 1.0.0
+steps:
+- name: read_temp
+  type: task
+  version: v1.0
+- expression: temp > 30
+  name: <wpipe.pipe.pipe.Condition object at 0x7f85f3abbbf0>
+  type: condition
+- name: log_action
+  type: task
+  version: v1.0
