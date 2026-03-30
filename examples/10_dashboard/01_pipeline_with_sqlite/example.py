@@ -8,60 +8,12 @@ Run this example first to generate data, then start the dashboard to view it.
 """
 
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from wpipe import Pipeline
-
-
-def fetch_data(data: dict) -> dict:
-    """Simulate fetching data from an external source."""
-    return {
-        "source": "api",
-        "records": [
-            {"id": 1, "name": "Alice", "score": 95},
-            {"id": 2, "name": "Bob", "score": 87},
-            {"id": 3, "name": "Charlie", "score": 72},
-        ],
-    }
-
-
-def process_records(data: dict) -> dict:
-    """Process the fetched records."""
-    records = data.get("records", [])
-    processed = []
-
-    for record in records:
-        processed.append(
-            {
-                "id": record["id"],
-                "name": record["name"],
-                "score": record["score"],
-                "grade": "A"
-                if record["score"] >= 90
-                else "B"
-                if record["score"] >= 80
-                else "C"
-                if record["score"] >= 70
-                else "F",
-                "passed": record["score"] >= 70,
-            }
-        )
-
-    return {"processed_records": processed, "total": len(processed)}
-
-
-def calculate_stats(data: dict) -> dict:
-    """Calculate statistics from processed records."""
-    records = data.get("processed_records", [])
-    scores = [r["score"] for r in records]
-
-    return {
-        "statistics": {
-            "average": sum(scores) / len(scores) if scores else 0,
-            "max": max(scores) if scores else 0,
-            "min": min(scores) if scores else 0,
-            "count": len(scores),
-        },
-        "passed_count": sum(1 for r in records if r["passed"]),
-    }
+from states import fetch_data, process_records, calculate_stats
 
 
 def main() -> None:
@@ -69,8 +21,9 @@ def main() -> None:
     db_path = "../wpipe_dashboard.db"
     config_dir = "../configs"
 
-    if os.path.exists(db_path):
-        os.remove(db_path)
+    # Remove old database to start fresh (optional)
+    # if os.path.exists(db_path):
+    #     os.remove(db_path)
 
     pipeline = Pipeline(
         verbose=True,

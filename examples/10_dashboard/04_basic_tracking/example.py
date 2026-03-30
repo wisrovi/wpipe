@@ -1,15 +1,12 @@
 """
-Example 01: Basic Pipeline Tracking
+Example 04: Basic Pipeline Tracking
 
 Simple example showing how to track a basic pipeline execution.
 The pipeline generates data, processes it, and outputs results.
 All execution data is stored in SQLite for the dashboard.
 """
 
-import tempfile
-from pathlib import Path
-
-from wpipe import Pipeline, PipelineTracker
+from wpipe import Pipeline
 
 
 def main():
@@ -27,7 +24,6 @@ def main():
         verbose=True,
     )
 
-    # Define simple steps
     pipeline.set_steps(
         [
             (generate_numbers, "generate_numbers", "v1.0"),
@@ -36,7 +32,6 @@ def main():
         ]
     )
 
-    # Run pipeline
     print("\n[Running Pipeline...]\n")
     result = pipeline.run({"count": 5})
 
@@ -46,7 +41,6 @@ def main():
     )
 
 
-# Step functions
 def generate_numbers(d):
     """Generate a list of numbers."""
     count = d.get("count", 5)

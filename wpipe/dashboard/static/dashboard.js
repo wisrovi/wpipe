@@ -245,19 +245,19 @@ function renderStepDetails(step) {
         html += `</div>`;
     }
     
-    if (step.input) {
+    if (step.input_data) {
         html += `<div style="margin-bottom:0.5rem"><strong>Input:</strong></div>`;
-        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto">${formatJSON(step.input)}</pre>`;
+        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto">${formatJSON(step.input_data)}</pre>`;
     }
     
-    if (step.output) {
+    if (step.output_data) {
         html += `<div style="margin-bottom:0.5rem;margin-top:0.5rem"><strong>Output:</strong></div>`;
-        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto">${formatJSON(step.output)}</pre>`;
+        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto">${formatJSON(step.output_data)}</pre>`;
     }
     
-    if (step.error) {
+    if (step.error_message) {
         html += `<div style="margin-top:0.5rem"><strong>Error:</strong></div>`;
-        html += `<pre style="background:rgba(239,68,68,0.1);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;color:#ef4444">${step.error}</pre>`;
+        html += `<pre style="background:rgba(239,68,68,0.1);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;color:#ef4444">${step.error_message}</pre>`;
     }
     
     return html || '<div style="color:var(--text-muted);font-size:0.85rem">No details available</div>';

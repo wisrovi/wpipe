@@ -6,7 +6,14 @@ Different code paths are taken based on data values, all tracked.
 Shows both branches in the dashboard graph.
 """
 
+import os
+import sys
+
+# Add parent directory to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from wpipe import Pipeline, Condition
+from states import read_temp, cooling_on, heating_on, fan_high, log_action
 
 
 def main():
@@ -101,26 +108,6 @@ def main():
     print(
         f"\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
-
-
-def read_temp(d):
-    return {"temp": d.get("temp", 20), "action": "read"}
-
-
-def cooling_on(d):
-    return {"action": "cooling"}
-
-
-def fan_high(d):
-    return {"action": "fan_high_speed"}
-
-
-def heating_on(d):
-    return {"action": "heating"}
-
-
-def log_action(d):
-    return {"logged": True, "action": d.get("action", "none")}
 
 
 if __name__ == "__main__":

@@ -1,0 +1,22 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:46:38.680316'
+  id: PIPE-30794AB2
+  name: etl_master_workflow
+  version: 1.0.0
+steps:
+- name: ingest
+  type: task
+  version: v1.0
+- name: quality_check
+  type: task
+  version: v1.0
+- expression: data_quality_score > 80
+  name: <wpipe.pipe.pipe.Condition object at 0x7f1e1544f750>
+  type: condition
+- name: export
+  type: task
+  version: v1.0
+- name: notification
+  type: task
+  version: v1.0

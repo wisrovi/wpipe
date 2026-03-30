@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T19:15:16.062447'
+  id: PIPE-AE020E9C
+  name: algorithm_v2
+  version: 1.0.0
+steps:
+- name: load
+  type: task
+  version: v2.0
+- name: process
+  type: task
+  version: v2.0
+- name: output
+  type: task
+  version: v2.0

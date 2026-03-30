@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T04:11:54.059805'
+  id: PIPE-3369873C
+  name: load_data
+  version: 1.0.0
+steps:
+- name: prepare_target
+  type: task
+  version: v1.0
+- name: insert_records
+  type: task
+  version: v1.0
+- name: verify_load
+  type: task
+  version: v1.0

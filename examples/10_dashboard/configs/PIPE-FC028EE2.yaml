@@ -1,0 +1,19 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T04:12:00.541110'
+  id: PIPE-FC028EE2
+  name: data_workflow
+  version: 1.0.0
+steps:
+- name: collect_phase
+  type: task
+  version: v1.0
+- name: process_phase
+  type: task
+  version: v1.0
+- name: export_phase
+  type: task
+  version: v1.0
+- name: notification
+  type: task
+  version: v1.0

@@ -135,7 +135,7 @@ class TestPipelineErrorHandling:
         def failing_task(data):
             raise ValueError("Task failed")
 
-        pipeline = Pipeline()
+        pipeline = Pipeline(continue_on_error=False)
         pipeline.set_steps([(failing_task, "FailingTask", "v1.0")])
         try:
             pipeline.run({"x": 1})

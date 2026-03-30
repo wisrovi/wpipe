@@ -1,0 +1,10 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T04:13:34.101540'
+  id: PIPE-6C146F42
+  name: error_pipeline
+  version: 1.0.0
+steps:
+- name: fail
+  type: task
+  version: v1.0

@@ -1,0 +1,19 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T04:03:56.807450'
+  id: PIPE-0886C842
+  name: etl_orchestration
+  version: 1.0.0
+steps:
+- name: extract_phase
+  type: task
+  version: v1.0
+- name: transform_phase
+  type: task
+  version: v1.0
+- name: load_phase
+  type: task
+  version: v1.0
+- name: generate_report
+  type: task
+  version: v1.0
