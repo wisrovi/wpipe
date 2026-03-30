@@ -12,6 +12,28 @@ let graphState = {
     startY: 0
 };
 
+// ==================== SIDEBAR ====================
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (!sidebar || !overlay) return;
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+};
+
+// Close sidebar when clicking outside on mobile
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (window.innerWidth > 768) {
+        sidebar?.classList.remove('active');
+        overlay?.classList.remove('active');
+    }
+});
+
 // ==================== INITIALIZATION ====================
 function init() {
     loadPipelines();

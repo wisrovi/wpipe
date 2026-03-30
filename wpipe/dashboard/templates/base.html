@@ -78,6 +78,67 @@
         </div>
     </nav>
 
+    <!-- Sidebar Menu -->
+    <aside class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="close-btn" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">
+                <div class="sidebar-label">Views</div>
+                <button class="sidebar-item" onclick="switchTab('dashboard'); toggleSidebar()">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="sidebar-item" onclick="switchTab('graph'); toggleSidebar()">
+                    <i class="fas fa-diagram-project"></i> Pipeline Detail
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Analytics</div>
+                <button class="sidebar-item" onclick="switchTab('timeline'); toggleSidebar()">
+                    <i class="fas fa-chart-gantt"></i> Timeline
+                </button>
+                <button class="sidebar-item" onclick="switchTab('analytics'); toggleSidebar()">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </button>
+                <button class="sidebar-item" onclick="switchTab('states'); toggleSidebar()">
+                    <i class="fas fa-cubes"></i> States
+                </button>
+                <button class="sidebar-item" onclick="switchTab('pipelines'); toggleSidebar()">
+                    <i class="fas fa-project-diagram"></i> Pipelines
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Monitoring</div>
+                <button class="sidebar-item" onclick="switchTab('alerts'); toggleSidebar()">
+                    <i class="fas fa-bell"></i> Alerts
+                </button>
+                <button class="sidebar-item" onclick="switchTab('events'); toggleSidebar()">
+                    <i class="fas fa-bookmark"></i> Events
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Help</div>
+                <button class="sidebar-item" onclick="showTutorial(); toggleSidebar()">
+                    <i class="fas fa-rocket"></i> Tutorial
+                </button>
+                <button class="sidebar-item" onclick="window.open('https://wpipe.readthedocs.io/', '_blank')">
+                    <i class="fas fa-book"></i> Documentation
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <main class="container-new">
         <!-- Stats Row -->
         <div class="stats-grid">
