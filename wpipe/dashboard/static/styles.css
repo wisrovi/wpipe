@@ -375,7 +375,7 @@ body::before {
 /* Main Grid */
 .main-grid {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 420px;
     gap: 1.5rem;
 }
 
@@ -428,6 +428,36 @@ body::before {
     border-radius: var(--radius-full);
     font-size: 0.7rem;
     margin-left: 0.25rem;
+}
+
+.tab-description {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.tab-description i {
+    color: #3b82f6;
+    margin-right: 0.5rem;
+}
+
+.tab-group-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0.5rem 0.75rem 0.25rem;
+    font-weight: 600;
+}
+
+.tab-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 0.5rem 0;
 }
 
 /* Cards */

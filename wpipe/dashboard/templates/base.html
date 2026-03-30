@@ -90,9 +90,17 @@
             <div class="left-panel">
                 <!-- Tab Navigation -->
                 <div class="tabs">
+                    <div class="tab-group-label">Pipeline</div>
                     <button class="tab active" data-tab="graph" onclick="switchTab('graph')">
                         <i class="fas fa-diagram-project"></i> <span data-i18n="graph">Graph</span>
                     </button>
+                    <button class="tab" data-tab="data" onclick="switchTab('data')">
+                        <i class="fas fa-database"></i> <span data-i18n="data">Data</span>
+                    </button>
+                    
+                    <div class="tab-separator"></div>
+                    
+                    <div class="tab-group-label">Global</div>
                     <button class="tab" data-tab="timeline" onclick="switchTab('timeline')">
                         <i class="fas fa-chart-gantt"></i> <span data-i18n="timeline">Timeline</span>
                     </button>
@@ -105,9 +113,6 @@
                     </button>
                     <button class="tab" data-tab="events" onclick="switchTab('events')">
                         <i class="fas fa-bookmark"></i> <span data-i18n="events">Events</span>
-                    </button>
-                    <button class="tab" data-tab="data" onclick="switchTab('data')">
-                        <i class="fas fa-database"></i> <span data-i18n="data">Data</span>
                     </button>
                     <button class="tab" data-tab="states" onclick="switchTab('states')">
                         <i class="fas fa-cubes"></i> <span>States</span>

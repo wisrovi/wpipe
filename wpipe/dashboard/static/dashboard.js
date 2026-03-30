@@ -44,6 +44,238 @@ window.refreshData = function() {
     loadStats();
 };
 
+// ==================== MISSING FUNCTIONS ====================
+let currentLang = 'en';
+
+const translations = {
+    en: {
+        tutorialTitle: 'Dashboard Tutorial',
+        tutorialIntro: 'Welcome to wpipe Dashboard! This guide will help you understand each view.',
+        pipelineTabs: 'Pipeline Tabs (require selection)',
+        graph: 'Graph - Visualizes the execution flow of a selected pipeline. Each node is a step.',
+        graphHelp: '🔍 Zoom: Mouse wheel | ✋ Pan: Drag | 📜 History: Click clock button',
+        data: 'Data - Shows input/output of each step in the selected pipeline.',
+        globalTabs: 'Global Views (independent of selection)',
+        timeline: 'Timeline - Shows execution trends over days (last 7/14/30 days).',
+        analytics: 'Analytics - Overview: pie chart of statuses, slowest steps, total stats.',
+        alerts: 'Alerts - Pipeline errors and warnings. Filter by severity.',
+        events: 'Events - Log of all pipeline/step events (created, started, completed, failed).',
+        states: 'States - Reusable step functions: most used, slowest, with most errors.',
+        pipelines: 'Pipelines - Which pipelines are slowest, have most errors, recent runs.',
+        history: 'To see past executions:',
+        historySteps: '1. Select any pipeline from the right list\n2. Click the History button (🕐) in graph controls\n3. Click any previous execution to view it',
+        close: 'Got it!'
+    },
+    es: {
+        tutorialTitle: 'Tutorial del Dashboard',
+        tutorialIntro: '¡Bienvenido a wpipe Dashboard! Esta guía te ayudará a entender cada vista.',
+        pipelineTabs: 'Pestañas de Pipeline (requieren selección)',
+        graph: 'Graph - Visualiza el flujo de ejecución del pipeline seleccionado. Cada nodo es un paso.',
+        graphHelp: '🔍 Zoom: Rueda ratón | ✋ Mover: Arrastrar | 📜 Historial: Botón reloj',
+        data: 'Data - Muestra entrada/salida de cada paso del pipeline seleccionado.',
+        globalTabs: 'Vistas Globales (independientes de selección)',
+        timeline: 'Timeline - Muestra tendencias de ejecución por días (últimos 7/14/30 días).',
+        analytics: 'Analytics - Resumen: gráfico de estados, pasos más lentos, estadísticas.',
+        alerts: 'Alerts - Errores y warnings de pipelines. Filtra por severidad.',
+        events: 'Events - Registro de eventos de pipelines/pasos (creado, iniciado, completado, error).',
+        states: 'States - Funciones de paso reutilizables: más usadas, lentas, con errores.',
+        pipelines: 'Pipelines - Cuáles son más lentos, con más errores, ejecuciones recientes.',
+        history: 'Para ver ejecuciones anteriores:',
+        historySteps: '1. Selecciona un pipeline de la lista derecha\n2. Haz click en el botón History (🕐) en controles del graph\n3. Haz click en cualquier ejecución anterior para verla',
+        close: '¡Entendido!'
+    }
+};
+
+window.changeLanguage = function(lang) {
+    currentLang = lang;
+    console.log('Language changed to:', lang);
+    updateI18n();
+};
+
+function updateI18n() {
+    const t = translations[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+    });
+}
+
+window.showTutorial = function() {
+    const modal = document.getElementById('tutorial-modal');
+    if (!modal) return;
+    
+    const t = translations[currentLang];
+    
+    modal.style.display = 'flex';
+    document.getElementById('tutorial-content').innerHTML = `
+        <h2 style="margin-bottom:0.5rem"><i class="fas fa-rocket"></i> ${t.tutorialTitle}</h2>
+        <p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.9rem">${t.tutorialIntro}</p>
+        
+        <div style="text-align:left;line-height:1.8">
+            <div style="background:var(--bg-tertiary);padding:0.75rem;border-radius:8px;margin-bottom:1rem">
+                <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">${t.pipelineTabs}</div>
+                <p style="margin:0.25rem 0"><i class="fas fa-diagram-project" style="width:20px;color:#3b82f6"></i> <strong>${t.graph}</strong></p>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-left:20px;margin-bottom:0.5rem">${t.graphHelp}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-database" style="width:20px;color:#10b981"></i> <strong>${t.data}</strong></p>
+            </div>
+            
+            <div style="background:var(--bg-tertiary);padding:0.75rem;border-radius:8px;margin-bottom:1rem">
+                <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">${t.globalTabs}</div>
+                <p style="margin:0.25rem 0"><i class="fas fa-chart-gantt" style="width:20px;color:#8b5cf6"></i> ${t.timeline}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-chart-line" style="width:20px;color:#ec4899"></i> ${t.analytics}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-bell" style="width:20px;color:#f59e0b"></i> ${t.alerts}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-bookmark" style="width:20px;color:#06b6d4"></i> ${t.events}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-cubes" style="width:20px;color:#ef4444"></i> ${t.states}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-project-diagram" style="width:20px;color:#14b8a6"></i> ${t.pipelines}</p>
+            </div>
+            
+            <div style="background:rgba(59,130,246,0.1);padding:0.75rem;border-radius:8px;border-left:3px solid #3b82f6">
+                <div style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem">${t.history}</div>
+                <pre style="font-size:0.8rem;white-space:pre-wrap;margin:0;color:var(--text-secondary)">${t.historySteps}</pre>
+            </div>
+        </div>
+        
+        <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-primary" style="margin-top:1.5rem">${t.close}</button>
+    `;
+};
+
+window.filterPipelinesBySearch = function(query) {
+    const items = document.querySelectorAll('.pipeline-item');
+    items.forEach(item => {
+        const name = item.querySelector('.pipeline-name')?.textContent.toLowerCase() || '';
+        item.style.display = name.includes(query.toLowerCase()) ? '' : 'none';
+    });
+};
+
+window.filterPipelines = function(status) {
+    const items = document.querySelectorAll('.pipeline-item');
+    items.forEach(item => {
+        const itemStatus = item.querySelector('.pipeline-status')?.className || '';
+        if (!status || itemStatus.includes(status)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+};
+
+// ==================== PIPELINE HISTORY ====================
+let currentPipelineId = null;
+let currentPipelineName = null;
+
+window.showCurrentPipelineHistory = function() {
+    if (currentPipelineName) {
+        showPipelineHistoryModal(currentPipelineName, currentPipelineId);
+    } else {
+        showAllPipelinesHistory();
+    }
+};
+
+window.showAllPipelinesHistory = function() {
+    const modal = document.getElementById('tutorial-modal');
+    if (!modal) return;
+    
+    const title = currentLang === 'es' ? 'Todas las Ejecuciones' : 'All Pipeline Executions';
+    const selectMsg = currentLang === 'es' ? 'Selecciona un pipeline:' : 'Select a pipeline:';
+    
+    modal.style.display = 'flex';
+    document.getElementById('tutorial-content').innerHTML = `
+        <h2 style="margin-bottom:1rem"><i class="fas fa-history"></i> ${title}</h2>
+        <p style="color:var(--text-muted);margin-bottom:1rem;font-size:0.9rem">${selectMsg}</p>
+        <div id="all-pipelines-list" style="max-height:400px;overflow-y:auto">
+            <div class="loading"><div class="spinner"></div></div>
+        </div>
+        <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
+    `;
+    
+    fetch('/api/pipelines')
+        .then(r => r.json())
+        .then(pipelines => {
+            if (!pipelines || pipelines.length === 0) {
+                document.getElementById('all-pipelines-list').innerHTML = '<p style="color:var(--text-muted)">No pipelines found</p>';
+                return;
+            }
+            
+            // Group by pipeline name
+            const grouped = {};
+            pipelines.forEach(p => {
+                const name = p.name || p.id;
+                if (!grouped[name]) grouped[name] = [];
+                grouped[name].push(p);
+            });
+            
+            let html = '';
+            Object.keys(grouped).sort().forEach(name => {
+                const runs = grouped[name].slice(0, 5); // Show max 5 recent
+                html += `
+                    <div style="margin-bottom:1rem">
+                        <div style="font-weight:600;margin-bottom:0.5rem">${name}</div>
+                        ${runs.map(p => `
+                            <div class="pipeline-item" onclick="selectPipeline('${p.id}');document.getElementById('tutorial-modal').style.display='none'" 
+                                 style="margin:0.25rem 0;padding:0.5rem;font-size:0.85rem">
+                                <div class="pipeline-status ${p.status}" style="width:8px;height:8px"></div>
+                                <span style="color:var(--text-muted)">${fmtTime(p.created_at)}</span>
+                                <span class="status-badge ${p.status}" style="font-size:0.7rem">${p.status}</span>
+                                ${p.total_duration_ms ? '<span style="color:var(--text-muted)">'+fmtDuration(p.total_duration_ms)+'</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            document.getElementById('all-pipelines-list').innerHTML = html;
+        });
+};
+
+async function loadPipelineHistory(pipelineName) {
+    try {
+        const res = await fetch(`/api/pipelines?search=${pipelineName}`);
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        console.error('Error loading pipeline history:', e);
+        return [];
+    }
+}
+
+function showPipelineHistoryModal(pipelineName, currentId) {
+    const modal = document.getElementById('tutorial-modal');
+    if (!modal) return;
+    
+    modal.style.display = 'flex';
+    document.getElementById('tutorial-content').innerHTML = `
+        <h2 style="margin-bottom:1rem"><i class="fas fa-history"></i> Pipeline History: ${pipelineName}</h2>
+        <div id="history-list" style="max-height:400px;overflow-y:auto">
+            <div class="loading"><div class="spinner"></div> Loading...</div>
+        </div>
+        <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
+    `;
+    
+    fetch(`/api/pipelines?search=${pipelineName}`)
+        .then(r => r.json())
+        .then(pipelines => {
+            const list = document.getElementById('history-list');
+            if (!pipelines || pipelines.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted)">No history found</p>';
+                return;
+            }
+            
+            list.innerHTML = pipelines.map(p => `
+                <div class="pipeline-item" onclick="selectPipeline('${p.id}');document.getElementById('tutorial-modal').style.display='none'" 
+                     style="margin:0.5rem 0;padding:0.75rem;cursor:pointer;${p.id === currentId ? 'border:2px solid #3b82f6' : ''}">
+                    <div class="pipeline-status ${p.status}"></div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">${p.name || p.id}</div>
+                        <div class="pipeline-meta">
+                            <span>${p.status}</span>
+                            <span>${fmtTime(p.created_at)}</span>
+                            ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
+
 // ==================== PIPELINES ====================
 async function loadPipelines() {
     try {
@@ -78,14 +310,29 @@ function renderPipelineList(pipelines) {
 
 async function selectPipeline(id) {
     try {
+        const pRes = await fetch('/api/pipelines/' + id);
+        const pipeline = await pRes.json();
+        
+        currentPipelineId = id;
+        currentPipelineName = pipeline.name;
+        
         const res = await fetch('/api/pipelines/' + id + '/graph');
         const graph = await res.json();
         graphState.currentGraph = graph;
         renderGraph(graph);
         
-        const pRes = await fetch('/api/pipelines/' + id);
-        const pipeline = await pRes.json();
         renderSteps(pipeline);
+        
+        // Update pipeline info in header
+        const info = document.getElementById('graph-pipeline-info');
+        if (info) {
+            info.innerHTML = `
+                <span style="font-size:0.8rem;color:var(--text-muted)">${pipeline.name}</span>
+                <button onclick="showCurrentPipelineHistory()" style="margin-left:0.5rem;padding:2px 8px;font-size:0.7rem" class="btn btn-ghost">
+                    <i class="fas fa-history"></i> History
+                </button>
+            `;
+        }
     } catch (e) {
         console.error('Error selecting pipeline:', e);
     }
@@ -451,7 +698,18 @@ function setupEventListeners() {
 }
 
 // ==================== TAB SWITCHING ====================
+const pipelineTabs = ['graph', 'data'];
+
 window.switchTab = function(tabName) {
+    // Check if pipeline-specific tab requires selection
+    if (pipelineTabs.includes(tabName) && !currentPipelineId) {
+        const msg = currentLang === 'es' 
+            ? 'Selecciona un pipeline de la lista derecha primero'
+            : 'Select a pipeline from the right list first';
+        alert(msg);
+        return;
+    }
+    
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
     
