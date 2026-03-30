@@ -473,11 +473,11 @@ body::before {
     min-height: 500px;
     position: relative;
     border: 1px solid var(--border-subtle);
-    overflow: visible;
+    overflow: auto;
 }
 
 .graph-svg {
-    width: 100%;
+    min-width: 100%;
     height: 500px;
 }
 

@@ -15,8 +15,34 @@ let graphState = {
 // ==================== INITIALIZATION ====================
 function init() {
     loadPipelines();
+    loadStats();
     setupEventListeners();
 }
+
+// ==================== STATS ====================
+async function loadStats() {
+    try {
+        const res = await fetch('/api/stats');
+        const stats = await res.json();
+        renderStats(stats);
+    } catch (e) {
+        console.error('Error loading stats:', e);
+    }
+}
+
+function renderStats(stats) {
+    document.getElementById('s-total').textContent = stats.total_pipelines || 0;
+    document.getElementById('s-success').textContent = (stats.success_rate || 0) + '%';
+    document.getElementById('s-avg-time').textContent = fmtDuration(stats.avg_duration_ms);
+    document.getElementById('s-steps').textContent = stats.total_steps || 0;
+    document.getElementById('s-alerts').textContent = stats.unacknowledged_alerts || 0;
+    document.getElementById('s-errors').textContent = stats.errors || 0;
+}
+
+window.refreshData = function() {
+    loadPipelines();
+    loadStats();
+};
 
 // ==================== PIPELINES ====================
 async function loadPipelines() {
@@ -71,6 +97,7 @@ function renderGraph(graph) {
     const edgesG = document.getElementById('graph-edges');
     const nodesG = document.getElementById('graph-nodes');
     const empty = document.getElementById('graph-empty');
+    const container = document.getElementById('graph-container');
     
     if (!graph.nodes || graph.nodes.length === 0) {
         svg.style.display = 'none';
@@ -83,10 +110,11 @@ function renderGraph(graph) {
     edgesG.innerHTML = '';
     nodesG.innerHTML = '';
     
-    // Layout: horizontal line
-    const svgW = 1200;
-    const svgH = 500;
+    // Calculate dimensions based on node count
+    const nodeCount = graph.nodes.length;
     const spacing = 150;
+    const svgW = Math.max(1200, 80 + nodeCount * spacing + 100);
+    const svgH = 500;
     const centerY = svgH / 2;
     
     svg.setAttribute('width', svgW);
@@ -97,6 +125,14 @@ function renderGraph(graph) {
         nd.x = 80 + idx * spacing;
         nd.y = centerY;
     });
+    
+    // Reset transform state
+    graphState.scale = 1;
+    graphState.translateX = 0;
+    graphState.translateY = 0;
+    
+    // Add zoom/pan handlers to container
+    setupGraphPanZoom(container, svg);
     
     // Draw edges first (so they appear behind nodes)
     const statusColors = {
@@ -162,6 +198,106 @@ function renderGraph(graph) {
     
     document.getElementById('steps-section').style.display = 'block';
 }
+
+// ==================== GRAPH ZOOM/PAN ====================
+function setupGraphPanZoom(container, svg) {
+    if (!container) return;
+    
+    const contentGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    contentGroup.id = 'graph-content';
+    
+    // Move existing elements into content group
+    const edgesG = document.getElementById('graph-edges');
+    const nodesG = document.getElementById('graph-nodes');
+    if (edgesG) contentGroup.appendChild(edgesG);
+    if (nodesG) contentGroup.appendChild(nodesG);
+    
+    const svgEl = document.getElementById('graph-svg');
+    if (svg) {
+        // Re-append content group after defs
+        const defs = svg.querySelector('defs');
+        if (defs && contentGroup.parentNode !== svg) {
+            svg.insertBefore(contentGroup, defs.nextSibling);
+        }
+    }
+    
+    // Mouse wheel zoom
+    container.onwheel = function(e) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        graphState.scale = Math.max(0.3, Math.min(3, graphState.scale * delta));
+        updateGraphTransform();
+    };
+    
+    // Mouse drag pan
+    container.onmousedown = function(e) {
+        if (e.target.tagName === 'button') return;
+        graphState.isDragging = true;
+        graphState.startX = e.clientX - graphState.translateX;
+        graphState.startY = e.clientY - graphState.translateY;
+        container.style.cursor = 'grabbing';
+    };
+    
+    container.onmousemove = function(e) {
+        if (!graphState.isDragging) return;
+        graphState.translateX = e.clientX - graphState.startX;
+        graphState.translateY = e.clientY - graphState.startY;
+        updateGraphTransform();
+    };
+    
+    container.onmouseup = function() {
+        graphState.isDragging = false;
+        container.style.cursor = 'grab';
+    };
+    
+    container.onmouseleave = function() {
+        graphState.isDragging = false;
+        container.style.cursor = 'grab';
+    };
+    
+    container.style.cursor = 'grab';
+}
+
+function updateGraphTransform() {
+    const content = document.getElementById('graph-content');
+    if (content) {
+        content.setAttribute('transform', `translate(${graphState.translateX}, ${graphState.translateY}) scale(${graphState.scale})`);
+    }
+}
+
+window.graphZoomIn = function() {
+    graphState.scale = Math.min(3, graphState.scale * 1.2);
+    updateGraphTransform();
+};
+
+window.graphZoomOut = function() {
+    graphState.scale = Math.max(0.3, graphState.scale / 1.2);
+    updateGraphTransform();
+};
+
+window.graphReset = function() {
+    graphState.scale = 1;
+    graphState.translateX = 0;
+    graphState.translateY = 0;
+    updateGraphTransform();
+};
+
+window.graphFit = function() {
+    const container = document.getElementById('graph-container');
+    const svg = document.getElementById('graph-svg');
+    if (!container || !svg) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const svgW = parseFloat(svg.getAttribute('width')) || 1200;
+    const svgH = parseFloat(svg.getAttribute('height')) || 500;
+    
+    const scaleX = (containerRect.width - 40) / svgW;
+    const scaleY = (containerRect.height - 40) / svgH;
+    graphState.scale = Math.min(scaleX, scaleY, 1);
+    graphState.translateX = 0;
+    graphState.translateY = 0;
+    updateGraphTransform();
+};
 
 // ==================== NODE HOVER TOOLTIP ====================
 function showNodeTooltip(e, node) {
@@ -648,19 +784,23 @@ function renderDataTable(data, table) {
     const tbody = document.getElementById('data-tbody');
     if (!thead || !tbody) return;
     
-    if (!data.data || data.data.length === 0) {
+    const items = data.items || data.data || [];
+    if (!items || items.length === 0) {
         tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-muted)">No data</td></tr>';
         return;
     }
     
-    const columns = Object.keys(data.data[0]);
+    const columns = Object.keys(items[0]);
     thead.innerHTML = `<tr>${columns.map(c => `<th>${c}</th>`).join('')}</tr>`;
     
-    tbody.innerHTML = data.data.map(row => `
+    tbody.innerHTML = items.map(row => `
         <tr>${columns.map(c => `<td>${row[c] !== null ? row[c] : ''}</td>`).join('')}</tr>
     `).join('');
     
     dataTotal = data.total || 0;
+    if (data.total_pages) {
+        dataPage = data.page || 1;
+    }
     updateDataPagination();
 }
 
