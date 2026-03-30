@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T11:11:47.347649'
+  id: PIPE-39785C13
+  name: honey_pot_inference
+  version: 1.0.0
+steps:
+- name: states.yaml_read
+  type: task
+  version: 1.0.1
+- name: states.image_inference
+  type: task
+  version: 1.2.1
+- name: choice_random_result
+  type: task
+  version: v1.0
