@@ -1548,3 +1548,143 @@ class PipelineTracker:
                 yaml_path = self.config_dir / f"{pid}.yaml"
                 if yaml_path.exists():
                     yaml_path.unlink()
+
+    def get_states_analysis(self) -> dict:
+        """Get analysis of states used across all pipelines."""
+        with self._get_connection() as conn:
+            most_used = conn.execute("""
+                SELECT step_name, COUNT(*) as count, 
+                       AVG(duration_ms) as avg_duration,
+                       SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) as error_count
+                FROM steps 
+                GROUP BY step_name 
+                ORDER BY count DESC
+                LIMIT 20
+            """).fetchall()
+
+            slowest = conn.execute("""
+                SELECT step_name, AVG(duration_ms) as avg_duration,
+                       COUNT(*) as count, MAX(duration_ms) as max_duration
+                FROM steps 
+                WHERE status = 'completed' AND duration_ms IS NOT NULL
+                GROUP BY step_name
+                ORDER BY avg_duration DESC
+                LIMIT 15
+            """).fetchall()
+
+            most_errors = conn.execute("""
+                SELECT step_name, COUNT(*) as error_count,
+                       COUNT(*) as total_count,
+                       AVG(duration_ms) as avg_duration
+                FROM steps 
+                WHERE status = 'error'
+                GROUP BY step_name
+                ORDER BY error_count DESC
+                LIMIT 15
+            """).fetchall()
+
+            unique_states = conn.execute(
+                "SELECT COUNT(DISTINCT step_name) as cnt FROM steps"
+            ).fetchone()["cnt"]
+
+            return {
+                "unique_states": unique_states,
+                "most_used": [dict(r) for r in most_used],
+                "slowest": [dict(r) for r in slowest],
+                "most_errors": [dict(r) for r in most_errors],
+            }
+
+    def get_pipelines_analysis(self) -> dict:
+        """Get analysis of pipelines."""
+        with self._get_connection() as conn:
+            unique = conn.execute("""
+                SELECT name, COUNT(*) as run_count,
+                       AVG(total_duration_ms) as avg_duration,
+                       SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                       SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) as errors
+                FROM pipelines 
+                GROUP BY name
+                ORDER BY run_count DESC
+            """).fetchall()
+
+            slowest = conn.execute("""
+                SELECT name, AVG(total_duration_ms) as avg_duration,
+                       COUNT(*) as run_count
+                FROM pipelines 
+                WHERE status = 'completed' AND total_duration_ms IS NOT NULL
+                GROUP BY name
+                ORDER BY avg_duration DESC
+                LIMIT 10
+            """).fetchall()
+
+            error_pipelines = conn.execute("""
+                SELECT name, COUNT(*) as error_count
+                FROM pipelines 
+                WHERE status = 'error'
+                GROUP BY name
+                ORDER BY error_count DESC
+                LIMIT 10
+            """).fetchall()
+
+            unique_count = conn.execute(
+                "SELECT COUNT(DISTINCT name) as cnt FROM pipelines"
+            ).fetchone()["cnt"]
+
+            return {
+                "unique_count": unique_count,
+                "unique_pipelines": [dict(r) for r in unique],
+                "slowest": [dict(r) for r in slowest],
+                "most_errors": [dict(r) for r in error_pipelines],
+            }
+
+    def get_table_data(
+        self,
+        table: str,
+        page: int = 1,
+        page_size: int = 20,
+        search: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> dict:
+        """Get data from any table with pagination and filtering."""
+        valid_tables = ["pipelines", "steps", "alerts_fired", "events"]
+        if table not in valid_tables:
+            return {"items": [], "total": 0, "page": page, "page_size": page_size}
+
+        with self._get_connection() as conn:
+            offset = (page - 1) * page_size
+
+            where = ""
+            params = []
+            if search and table == "pipelines":
+                where = "WHERE (name LIKE ? OR id LIKE ?)"
+                params = [f"%{search}%", f"%{search}%"]
+            elif search and table == "steps":
+                where = "WHERE step_name LIKE ?"
+                params = [f"%{search}%"]
+            elif status and table == "pipelines":
+                where = "WHERE status = ?"
+                params = [status]
+
+            total = conn.execute(
+                f"SELECT COUNT(*) as cnt FROM {table} {where}", params
+            ).fetchone()["cnt"]
+            rows = conn.execute(
+                f"SELECT * FROM {table} {where} ORDER BY rowid DESC LIMIT ? OFFSET ?",
+                params + [page_size, offset],
+            ).fetchall()
+
+            items = []
+            for row in rows:
+                item = dict(row)
+                for k, v in item.items():
+                    if isinstance(v, str) and len(v) > 200:
+                        item[k] = v[:200] + "..."
+                items.append(item)
+
+            return {
+                "items": items,
+                "total": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": (total + page_size - 1) // page_size,
+            }

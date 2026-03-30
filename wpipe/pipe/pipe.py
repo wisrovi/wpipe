@@ -205,6 +205,7 @@ class Pipeline(APIClient):
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
+        continue_on_error: bool = True,
     ) -> None:
         """
         Initialize the Pipeline.
@@ -222,6 +223,7 @@ class Pipeline(APIClient):
             config_dir: Directory to store YAML configuration files.
             parent_pipeline_id: Parent pipeline ID for relationship tracking.
             collect_system_metrics: Enable system metrics collection during execution.
+            continue_on_error: Continue pipeline execution after errors (captures error in result).
         """
         if api_config:
             super().__init__(
@@ -242,6 +244,7 @@ class Pipeline(APIClient):
         self.retry_on_exceptions = retry_on_exceptions
         self.parent_pipeline_id = parent_pipeline_id
         self._collect_system_metrics = collect_system_metrics
+        self.continue_on_error = continue_on_error
 
         # Initialize tracking if database path provided
         if tracking_db:
@@ -477,6 +480,11 @@ class Pipeline(APIClient):
             self._api_process_update(
                 {"id": self.process_id, "details": json.dumps(error)}
             )
+
+            if self.continue_on_error:
+                result["error"] = error
+                return result
+
             raise ProcessError(str(te), Codes.TASK_FAILED) from te
         except ApiError as ae:
             raise ApiError(str(ae), Codes.API_ERROR) from ae
@@ -636,6 +644,7 @@ class Pipeline(APIClient):
                 true_branch_ids = []
                 false_branch_ids = []
                 skipped_branch_ids = []
+                cond_step_id = None
 
                 if self.tracker and self.pipeline_id:
                     self._step_order += 1
@@ -665,16 +674,16 @@ class Pipeline(APIClient):
                 if branch_taken == "true":
                     true_branch_ids = branch_ids
                     false_branch_ids = []
-                    skipped_branch_ids = [
-                        self._get_step_name_id(s)
+                    skipped_branch_names = [
+                        self._get_step_name(s)
                         for s in branch_skipped
                         if not isinstance(s, Condition)
                     ]
                 else:
                     false_branch_ids = branch_ids
                     true_branch_ids = []
-                    skipped_branch_ids = [
-                        self._get_step_name_id(s)
+                    skipped_branch_names = [
+                        self._get_step_name(s)
                         for s in branch_skipped
                         if not isinstance(s, Condition)
                     ]
@@ -690,7 +699,7 @@ class Pipeline(APIClient):
                             "expression": cond_expr,
                             "true_branch_ids": true_branch_ids,
                             "false_branch_ids": false_branch_ids,
-                            "skipped_branch_ids": skipped_branch_ids,
+                            "skipped_branch_names": skipped_branch_names,
                         },
                     )
 
@@ -773,10 +782,12 @@ class Pipeline(APIClient):
 
         return data, executed_step_ids
 
-    def _get_step_name_id(self, step) -> Optional[int]:
+    def _get_step_name(self, step) -> Optional[str]:
         """Get step name from step tuple or callable."""
         if isinstance(step, tuple) and len(step) >= 2:
-            return step[1]
+            return step[1] if isinstance(step[1], str) else None
+        elif callable(step):
+            return step.__name__ if hasattr(step, "__name__") else None
         return None
 
     def _start_step_tracking(
@@ -953,6 +964,11 @@ class Pipeline(APIClient):
                     except Exception as e:
                         step_error = str(e)
                         step_error_traceback = traceback.format_exc()
+                        if self.continue_on_error:
+                            data["error"] = step_error
+                            data["_step_error"] = step_error
+                            data["_step_error_traceback"] = step_error_traceback
+                            continue
                         raise
                     finally:
                         # Complete step tracking with output
@@ -969,11 +985,18 @@ class Pipeline(APIClient):
                     if "error" in data:
                         error_message = data.get("error")
                         error_step = name
-                        break
+                        if not self.continue_on_error:
+                            break
         except Exception as e:
             error_message = str(e)
             error_step = self.task_name
-            raise
+            if not self.continue_on_error:
+                raise
+            if self.verbose:
+                print(f"\n[ERROR] {error_step}: {error_message}")
+                print(
+                    "[CONTINUING] Pipeline will continue due to continue_on_error=True"
+                )
         finally:
             # Stop metrics collection
             if metrics_collector:
@@ -997,7 +1020,7 @@ class Pipeline(APIClient):
                 except Exception:
                     pass  # Don't fail pipeline due to tracking errors
 
-        if "error" in data:
+        if "error" in data and not self.continue_on_error:
             raise TaskError(
                 f"[{self.task_name}] Fail the pipeline:{data['error']}",
                 Codes.TASK_FAILED,
