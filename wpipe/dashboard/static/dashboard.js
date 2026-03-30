@@ -228,7 +228,7 @@ window.showAllPipelinesHistory = function() {
 
 async function loadPipelineHistory(pipelineName) {
     try {
-        const res = await fetch(`/api/pipelines?search=${pipelineName}`);
+        const res = await fetch(`/api/pipelines/by-name/${encodeURIComponent(pipelineName)}`);
         const data = await res.json();
         return data;
     } catch (e) {
@@ -250,7 +250,7 @@ function showPipelineHistoryModal(pipelineName, currentId) {
         <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
     `;
     
-    fetch(`/api/pipelines?search=${pipelineName}`)
+    fetch(`/api/pipelines/by-name/${encodeURIComponent(pipelineName)}`)
         .then(r => r.json())
         .then(pipelines => {
             const list = document.getElementById('history-list');
@@ -267,7 +267,7 @@ function showPipelineHistoryModal(pipelineName, currentId) {
                         <div class="pipeline-name">${p.name || p.id}</div>
                         <div class="pipeline-meta">
                             <span>${p.status}</span>
-                            <span>${fmtTime(p.created_at)}</span>
+                            <span>${fmtTime(p.started_at)}</span>
                             ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
                         </div>
                     </div>
@@ -294,18 +294,95 @@ function renderPipelineList(pipelines) {
         return;
     }
     
-    list.innerHTML = pipelines.map(p => `
-        <div class="pipeline-item" onclick="selectPipeline('${p.id}')">
-            <div class="pipeline-status ${p.status}"></div>
-            <div class="pipeline-info">
-                <div class="pipeline-name">${p.name || p.id}</div>
-                <div class="pipeline-meta">
-                    <span>${p.status}</span>
-                    ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
+    // Group pipelines by name
+    const grouped = {};
+    pipelines.forEach(p => {
+        const name = p.name || 'Unnamed';
+        if (!grouped[name]) {
+            grouped[name] = [];
+        }
+        grouped[name].push(p);
+    });
+    
+    // Sort executions by date (most recent first) within each group
+    Object.keys(grouped).forEach(name => {
+        grouped[name].sort((a, b) => new Date(b.started_at) - new Date(a.started_at));
+    });
+    
+    // Render grouped pipelines with collapsible sections
+    let html = '';
+    Object.keys(grouped).sort().forEach(name => {
+        const executions = grouped[name];
+        const latestStatus = executions[0].status;
+        const latestDuration = executions[0].total_duration_ms;
+        const count = executions.length;
+        
+        // Escape quotes in name for onclick
+        const safeName = name.replace(/'/g, "\\'");
+        
+        html += `
+            <div class="pipeline-group">
+                <div class="pipeline-group-header" onclick="togglePipelineGroup('${safeName}', event)">
+                    <i class="fas fa-chevron-right expand-icon"></i>
+                    <div class="pipeline-status ${latestStatus}"></div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">${name}</div>
+                        <div class="pipeline-meta">
+                            <span>${count} execution${count !== 1 ? 's' : ''}</span>
+                            <span>${latestStatus}</span>
+                            ${latestDuration ? '<span>' + fmtDuration(latestDuration) + '</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pipeline-group-content" style="display:none;">
+                    ${executions.map(p => `
+                        <div class="pipeline-execution" onclick="selectPipeline('${p.id}')">
+                            <div class="pipeline-status ${p.status}"></div>
+                            <div class="pipeline-info">
+                                <div class="pipeline-id">${p.id}</div>
+                                <div class="pipeline-meta">
+                                    <span>${p.status}</span>
+                                    <span>${fmtTime(p.started_at)}</span>
+                                    ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    });
+    
+    list.innerHTML = html;
+}
+
+// Toggle pipeline group expansion
+window.togglePipelineGroup = function(name, evt) {
+    if (evt) evt.stopPropagation();
+    
+    // Find the group by looking for the header that contains this name
+    const headers = document.querySelectorAll('.pipeline-group-header');
+    let targetGroup = null;
+    
+    for (let header of headers) {
+        const nameEl = header.querySelector('.pipeline-name');
+        if (nameEl && nameEl.textContent.trim() === name) {
+            targetGroup = header.closest('.pipeline-group');
+            break;
+        }
+    }
+    
+    if (!targetGroup) return;
+    
+    const content = targetGroup.querySelector('.pipeline-group-content');
+    const icon = targetGroup.querySelector('.expand-icon');
+    
+    if (!content || !icon) return;
+    
+    const isExpanded = content.style.display !== 'none';
+    content.style.display = isExpanded ? 'none' : 'block';
+    icon.classList.toggle('expanded', !isExpanded);
 }
 
 async function selectPipeline(id) {
@@ -315,6 +392,12 @@ async function selectPipeline(id) {
         
         currentPipelineId = id;
         currentPipelineName = pipeline.name;
+        
+        // Mark execution as active in the list
+        document.querySelectorAll('.pipeline-execution').forEach(el => {
+            el.classList.remove('active');
+        });
+        document.querySelector(`.pipeline-execution[onclick="selectPipeline('${id}')"]`)?.classList.add('active');
         
         const res = await fetch('/api/pipelines/' + id + '/graph');
         const graph = await res.json();
@@ -710,8 +793,20 @@ window.switchTab = function(tabName) {
         return;
     }
     
+    // Update all tabs (old layout)
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+    const oldTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+    if (oldTab) oldTab.classList.add('active');
+    
+    // Update new layout nav buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    const navBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
+    if (navBtn) navBtn.classList.add('active');
+    
+    // Update pipeline-specific tabs
+    document.querySelectorAll('.pipeline-tabs .tab').forEach(t => t.classList.remove('active'));
+    const pipelineTab = document.querySelector(`.pipeline-tabs .tab[data-tab="${tabName}"]`);
+    if (pipelineTab) pipelineTab.classList.add('active');
     
     document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
     document.getElementById(`tab-${tabName}`).style.display = 'block';
@@ -730,6 +825,14 @@ window.switchTab = function(tabName) {
         loadDataTable();
     } else if (tabName === 'timeline') {
         loadTimeline();
+    }
+};
+
+// Scroll to nav button when switching tab
+window.scrollToNav = function(tabName) {
+    const navBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
+    if (navBtn) {
+        navBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }
 };
 

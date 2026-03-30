@@ -104,6 +104,12 @@ def create_app(
         tracker = PipelineTracker(db_path, config_dir)
         return tracker.get_pipeline(pipeline_id)
 
+    @app.get("/api/pipelines/by-name/{pipeline_name}")
+    async def get_pipeline_executions(pipeline_name: str, limit: int = 100, offset: int = 0):
+        """Get all executions of a pipeline by name."""
+        tracker = PipelineTracker(db_path, config_dir)
+        return tracker.get_pipeline_executions(pipeline_name, limit=limit, offset=offset)
+
     @app.get("/api/pipelines/{pipeline_id}/graph")
     async def get_pipeline_graph(pipeline_id: str):
         tracker = PipelineTracker(db_path, config_dir)

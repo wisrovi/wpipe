@@ -49,7 +49,32 @@
         </div>
     </header>
 
-    <main class="container">
+    <!-- Global Navigation Bar -->
+    <nav class="global-nav">
+        <div class="global-nav-inner">
+            <button class="nav-btn" data-tab="timeline" onclick="switchTab('timeline'); scrollToNav('timeline')">
+                <i class="fas fa-chart-gantt"></i> <span data-i18n="timeline">Timeline</span>
+            </button>
+            <button class="nav-btn" data-tab="analytics" onclick="switchTab('analytics'); scrollToNav('analytics')">
+                <i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span>
+            </button>
+            <button class="nav-btn" data-tab="alerts" onclick="switchTab('alerts'); scrollToNav('alerts')">
+                <i class="fas fa-bell"></i> <span data-i18n="alerts">Alerts</span>
+                <span class="badge" id="alert-badge-nav" style="display:none"></span>
+            </button>
+            <button class="nav-btn" data-tab="events" onclick="switchTab('events'); scrollToNav('events')">
+                <i class="fas fa-bookmark"></i> <span data-i18n="events">Events</span>
+            </button>
+            <button class="nav-btn" data-tab="states" onclick="switchTab('states'); scrollToNav('states')">
+                <i class="fas fa-cubes"></i> <span>States</span>
+            </button>
+            <button class="nav-btn" data-tab="pipelines" onclick="switchTab('pipelines'); scrollToNav('pipelines')">
+                <i class="fas fa-project-diagram"></i> <span>Pipelines</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="container-new">
         <!-- Stats Row -->
         <div class="stats-grid">
             <div class="stat-card blue animate-in animate-delay-1">
@@ -85,56 +110,9 @@
         </div>
 
         <!-- Main Grid -->
-        <div class="main-grid">
-            <!-- Left Panel: Tabs -->
-            <div class="left-panel">
-                <!-- Tab Navigation -->
-                <div class="tabs">
-                    <div class="tab-group-label">Pipeline</div>
-                    <button class="tab active" data-tab="graph" onclick="switchTab('graph')">
-                        <i class="fas fa-diagram-project"></i> <span data-i18n="graph">Graph</span>
-                    </button>
-                    <button class="tab" data-tab="data" onclick="switchTab('data')">
-                        <i class="fas fa-database"></i> <span data-i18n="data">Data</span>
-                    </button>
-                    
-                    <div class="tab-separator"></div>
-                    
-                    <div class="tab-group-label">Global</div>
-                    <button class="tab" data-tab="timeline" onclick="switchTab('timeline')">
-                        <i class="fas fa-chart-gantt"></i> <span data-i18n="timeline">Timeline</span>
-                    </button>
-                    <button class="tab" data-tab="analytics" onclick="switchTab('analytics')">
-                        <i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span>
-                    </button>
-                    <button class="tab" data-tab="alerts" onclick="switchTab('alerts')">
-                        <i class="fas fa-bell"></i> <span data-i18n="alerts">Alerts</span>
-                        <span class="badge" id="alert-badge" style="display:none"></span>
-                    </button>
-                    <button class="tab" data-tab="events" onclick="switchTab('events')">
-                        <i class="fas fa-bookmark"></i> <span data-i18n="events">Events</span>
-                    </button>
-                    <button class="tab" data-tab="states" onclick="switchTab('states')">
-                        <i class="fas fa-cubes"></i> <span>States</span>
-                    </button>
-                    <button class="tab" data-tab="pipelines" onclick="switchTab('pipelines')">
-                        <i class="fas fa-project-diagram"></i> <span>Pipelines</span>
-                    </button>
-                </div>
-
-                <!-- Tab Contents -->
-                {% include 'tabs/graph.html' %}
-                {% include 'tabs/timeline.html' %}
-                {% include 'tabs/analytics.html' %}
-                {% include 'tabs/alerts.html' %}
-                {% include 'tabs/events.html' %}
-                {% include 'tabs/data.html' %}
-                {% include 'tabs/states.html' %}
-                {% include 'tabs/pipelines.html' %}
-            </div>
-
-            <!-- Right Panel: Pipeline List -->
-            <div class="right-panel">
+        <div class="main-grid-new">
+            <!-- Right Panel: Pipeline List (First to appear left) -->
+            <div class="right-panel-new">
                 <div class="filter-bar">
                     <div class="filter-chips">
                         <span class="chip active" data-status="" onclick="filterPipelines('')"><span data-i18n="all">All</span></span>
@@ -154,6 +132,29 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Left Panel: Tabs (Pipeline-related + Content) -->
+            <div class="left-panel-new">
+                <!-- Pipeline-Specific Tabs -->
+                <div class="pipeline-tabs">
+                    <button class="tab active" data-tab="graph" onclick="switchTab('graph')">
+                        <i class="fas fa-diagram-project"></i> <span data-i18n="graph">Graph</span>
+                    </button>
+                    <button class="tab" data-tab="data" onclick="switchTab('data')">
+                        <i class="fas fa-database"></i> <span data-i18n="data">Data</span>
+                    </button>
+                </div>
+
+                <!-- Tab Contents -->
+                {% include 'tabs/graph.html' %}
+                {% include 'tabs/timeline.html' %}
+                {% include 'tabs/analytics.html' %}
+                {% include 'tabs/alerts.html' %}
+                {% include 'tabs/events.html' %}
+                {% include 'tabs/data.html' %}
+                {% include 'tabs/states.html' %}
+                {% include 'tabs/pipelines.html' %}
             </div>
         </div>
     </main>
