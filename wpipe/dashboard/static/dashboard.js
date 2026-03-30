@@ -499,6 +499,9 @@ function renderGraph(graph) {
         
         const color = statusColors[nd.status] || '#64748b';
         
+        // Detect if node is a pipeline (nested pipeline call)
+        const isPipeline = nd.type === 'pipeline' || nd.name?.includes('Pipeline') || nd.step_type === 'pipeline';
+        
         if (nd.type === 'condition') {
             g.innerHTML = `
                 <polygon points="0,-30 30,0 0,30 -30,0" fill="#8b5cf6" stroke="${color}" stroke-width="3"/>
@@ -512,6 +515,16 @@ function renderGraph(graph) {
                 <text text-anchor="middle" dominant-baseline="central" fill="#9ca3af" font-size="16">⊘</text>
                 <rect x="-45" y="30" width="90" height="18" rx="4" fill="rgba(30,41,59,0.9)"/>
                 <text y="43" text-anchor="middle" fill="#9ca3af" font-size="10">${nd.name.substring(0,10)}</text>
+            `;
+        } else if (isPipeline) {
+            // Render pipeline nodes with double circle and special styling
+            const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
+            g.innerHTML = `
+                <circle r="28" fill="${color}" stroke="${color}" stroke-width="2"/>
+                <circle r="22" fill="none" stroke="${color}" stroke-width="2" opacity="0.6"/>
+                <text text-anchor="middle" dominant-baseline="central" fill="white" font-size="18" font-weight="bold">⊕</text>
+                <rect x="-55" y="35" width="110" height="22" rx="5" fill="rgba(15,23,42,0.95)"/>
+                <text y="51" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">${nd.name.substring(0,12)}</text>
             `;
         } else {
             const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
@@ -636,16 +649,37 @@ function showNodeTooltip(e, node) {
     
     let content = `<strong>${node.name}</strong><br>`;
     content += `<span>Type: ${node.type || 'task'}</span><br>`;
-    content += `<span>Status: ${node.status}</span>`;
+    content += `<span>Status: <strong style="color: ${node.status === 'completed' ? '#10b981' : node.status === 'error' ? '#f43f5e' : node.status === 'running' ? '#3b82f6' : '#f59e0b'}">${node.status}</strong></span>`;
     
     if (node.duration_ms) {
-        content += `<br><span>Duration: ${fmtDuration(node.duration_ms)}</span>`;
+        content += `<br><span>Duration: <strong>${fmtDuration(node.duration_ms)}</strong></span>`;
     }
     if (node.start_time) {
         content += `<br><span>Started: ${fmtTime(node.start_time)}</span>`;
     }
     if (node.end_time) {
         content += `<br><span>Ended: ${fmtTime(node.end_time)}</span>`;
+    }
+    
+    // Show condition info if applicable
+    if (node.type === 'condition') {
+        content += `<br><span style="border-top: 1px solid rgba(148, 163, 184, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;">`;
+        content += `<strong>Condition:</strong><br>`;
+        if (node.expression) {
+            content += `${node.expression}<br>`;
+        }
+        if (node.branch_taken) {
+            content += `<strong>Branch: ${node.branch_taken === 'true' ? '✓ TRUE' : '✗ FALSE'}</strong>`;
+        }
+        if (node.error_message) {
+            content += `<br><span style="color: #f43f5e;"><strong>Error:</strong><br>${node.error_message}</span>`;
+        }
+        content += `</span>`;
+    }
+    
+    // Show error message if present
+    if (node.error_message && node.type !== 'condition') {
+        content += `<br><span style="color: #f43f5e; border-top: 1px solid rgba(148, 163, 184, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;"><strong>Error:</strong><br>${node.error_message}</span>`;
     }
     
     tooltip.innerHTML = content;

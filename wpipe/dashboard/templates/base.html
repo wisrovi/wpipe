@@ -14,6 +14,10 @@
     <!-- Header -->
     <header class="header">
         <div class="header-inner">
+            <button class="hamburger-btn" id="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            
             <div class="brand">
                 <div class="brand-logo"><i class="fas fa-bolt"></i></div>
                 <div class="brand-text">
@@ -166,6 +170,32 @@
 
     <!-- Tooltip -->
     <div id="tooltip"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <span class="footer-brand">wpipe</span>
+                <span class="footer-version">v0.0.354</span>
+            </div>
+            
+            <div class="footer-center">
+                <span>Enterprise Pipeline Intelligence Platform</span>
+            </div>
+            
+            <div class="footer-right">
+                <a href="https://wpipe.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="footer-link" title="ReadTheDocs Documentation">
+                    <i class="fas fa-book"></i> Docs
+                </a>
+                <a href="https://github.com/wisrovi/wpipe" target="_blank" rel="noopener noreferrer" class="footer-link" title="GitHub Repository">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/wisrovi-rodriguez/" target="_blank" rel="noopener noreferrer" class="footer-link" title="wisrovi Profile">
+                    <i class="fab fa-linkedin"></i> wisrovi
+                </a>
+            </div>
+        </div>
+    </footer>
 
     <script src="/static/dashboard.js"></script>
 </body>
