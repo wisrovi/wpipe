@@ -1552,30 +1552,38 @@ class PipelineTracker:
     def get_states_analysis(self) -> dict:
         """Get analysis of states used across all pipelines."""
         with self._get_connection() as conn:
+            total_states = conn.execute(
+                "SELECT COUNT(DISTINCT step_name) as cnt FROM steps"
+            ).fetchone()["cnt"]
+            total_executions = conn.execute(
+                "SELECT COUNT(*) as cnt FROM steps"
+            ).fetchone()["cnt"]
+            total_errors = conn.execute(
+                "SELECT COUNT(*) as cnt FROM steps WHERE status = 'error'"
+            ).fetchone()["cnt"]
+
             most_used = conn.execute("""
-                SELECT step_name, COUNT(*) as count, 
-                       AVG(duration_ms) as avg_duration,
-                       SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) as error_count
+                SELECT step_name as state_name, COUNT(*) as execution_count, 
+                       AVG(duration_ms) as avg_duration_ms
                 FROM steps 
                 GROUP BY step_name 
-                ORDER BY count DESC
+                ORDER BY execution_count DESC
                 LIMIT 20
             """).fetchall()
 
             slowest = conn.execute("""
-                SELECT step_name, AVG(duration_ms) as avg_duration,
-                       COUNT(*) as count, MAX(duration_ms) as max_duration
+                SELECT step_name as state_name, COUNT(*) as execution_count,
+                       AVG(duration_ms) as avg_duration_ms
                 FROM steps 
                 WHERE status = 'completed' AND duration_ms IS NOT NULL
                 GROUP BY step_name
-                ORDER BY avg_duration DESC
+                ORDER BY avg_duration_ms DESC
                 LIMIT 15
             """).fetchall()
 
             most_errors = conn.execute("""
-                SELECT step_name, COUNT(*) as error_count,
-                       COUNT(*) as total_count,
-                       AVG(duration_ms) as avg_duration
+                SELECT step_name as state_name, COUNT(*) as error_count,
+                       COUNT(*) * 1.0 / NULLIF((SELECT COUNT(*) FROM steps s2 WHERE s2.step_name = steps.step_name), 0) as error_rate
                 FROM steps 
                 WHERE status = 'error'
                 GROUP BY step_name
@@ -1583,12 +1591,10 @@ class PipelineTracker:
                 LIMIT 15
             """).fetchall()
 
-            unique_states = conn.execute(
-                "SELECT COUNT(DISTINCT step_name) as cnt FROM steps"
-            ).fetchone()["cnt"]
-
             return {
-                "unique_states": unique_states,
+                "total_states": total_states,
+                "total_executions": total_executions,
+                "total_errors": total_errors,
                 "most_used": [dict(r) for r in most_used],
                 "slowest": [dict(r) for r in slowest],
                 "most_errors": [dict(r) for r in most_errors],
@@ -1597,28 +1603,35 @@ class PipelineTracker:
     def get_pipelines_analysis(self) -> dict:
         """Get analysis of pipelines."""
         with self._get_connection() as conn:
-            unique = conn.execute("""
-                SELECT name, COUNT(*) as run_count,
-                       AVG(total_duration_ms) as avg_duration,
-                       SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                       SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) as errors
-                FROM pipelines 
-                GROUP BY name
-                ORDER BY run_count DESC
-            """).fetchall()
+            total_pipelines = conn.execute(
+                "SELECT COUNT(*) as cnt FROM pipelines"
+            ).fetchone()["cnt"]
+            total_runs = conn.execute(
+                "SELECT COUNT(*) as cnt FROM pipelines WHERE status IS NOT NULL"
+            ).fetchone()["cnt"]
+            avg_duration = (
+                conn.execute(
+                    "SELECT AVG(total_duration_ms) as avg FROM pipelines WHERE status = 'completed'"
+                ).fetchone()["avg"]
+                or 0
+            )
+            total_errors = conn.execute(
+                "SELECT COUNT(*) as cnt FROM pipelines WHERE status = 'error'"
+            ).fetchone()["cnt"]
 
             slowest = conn.execute("""
-                SELECT name, AVG(total_duration_ms) as avg_duration,
-                       COUNT(*) as run_count
+                SELECT name, AVG(total_duration_ms) as avg_duration_ms,
+                       COUNT(*) as execution_count
                 FROM pipelines 
                 WHERE status = 'completed' AND total_duration_ms IS NOT NULL
                 GROUP BY name
-                ORDER BY avg_duration DESC
+                ORDER BY avg_duration_ms DESC
                 LIMIT 10
             """).fetchall()
 
-            error_pipelines = conn.execute("""
-                SELECT name, COUNT(*) as error_count
+            most_errors = conn.execute("""
+                SELECT name, COUNT(*) as error_count,
+                       COUNT(*) * 1.0 / COUNT(*) OVER() as error_rate
                 FROM pipelines 
                 WHERE status = 'error'
                 GROUP BY name
@@ -1626,15 +1639,21 @@ class PipelineTracker:
                 LIMIT 10
             """).fetchall()
 
-            unique_count = conn.execute(
-                "SELECT COUNT(DISTINCT name) as cnt FROM pipelines"
-            ).fetchone()["cnt"]
+            recent = conn.execute("""
+                SELECT id, name, status, created_at, total_duration_ms
+                FROM pipelines 
+                ORDER BY created_at DESC
+                LIMIT 10
+            """).fetchall()
 
             return {
-                "unique_count": unique_count,
-                "unique_pipelines": [dict(r) for r in unique],
+                "total_pipelines": total_pipelines,
+                "total_runs": total_runs,
+                "avg_duration_ms": avg_duration,
+                "total_errors": total_errors,
                 "slowest": [dict(r) for r in slowest],
-                "most_errors": [dict(r) for r in error_pipelines],
+                "most_errors": [dict(r) for r in most_errors],
+                "recent": [dict(r) for r in recent],
             }
 
     def get_table_data(

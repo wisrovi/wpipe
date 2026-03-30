@@ -238,10 +238,13 @@ function renderStepDetails(step) {
         html += `<div style="margin-bottom:0.5rem"><strong>Status:</strong> <span class="status-badge ${step.status}">${step.status}</span></div>`;
     }
     
-    if (step.start_time || step.end_time) {
+    const startTime = step.started_at || step.start_time;
+    const endTime = step.completed_at || step.end_time;
+    if (startTime || endTime) {
         html += `<div style="margin-bottom:0.5rem;font-size:0.85rem;color:var(--text-muted)">`;
-        if (step.start_time) html += `<div>Started: ${fmtTime(step.start_time)}</div>`;
-        if (step.end_time) html += `<div>Ended: ${fmtTime(step.end_time)}</div>`;
+        if (startTime) html += `<div>Started: ${fmtTime(startTime)}</div>`;
+        if (endTime) html += `<div>Ended: ${fmtTime(endTime)}</div>`;
+        if (step.duration_ms) html += `<div>Duration: ${fmtDuration(step.duration_ms)}</div>`;
         html += `</div>`;
     }
     
@@ -271,23 +274,23 @@ function formatJSON(obj) {
     try { return JSON.stringify(obj, null, 2); } catch { return String(obj); }
 }
 
-function toggleStepDetails(idx) {
+window.toggleStepDetails = function(idx) {
     const details = document.getElementById(`step-details-${idx}`);
     const chevron = document.querySelectorAll('.step-chevron')[idx];
     if (details) {
         details.style.display = details.style.display === 'none' ? 'block' : 'none';
         if (chevron) chevron.style.transform = details.style.display === 'block' ? 'rotate(180deg)' : '';
     }
-}
+};
 
-function toggleAllSteps() {
+window.toggleAllSteps = function() {
     const allDetails = document.querySelectorAll('[id^="step-details-"]');
     const allChevrons = document.querySelectorAll('.step-chevron');
     const isExpanded = allDetails[0]?.style.display === 'block';
     
     allDetails.forEach(d => d.style.display = isExpanded ? 'none' : 'block');
     allChevrons.forEach(c => c.style.transform = isExpanded ? '' : 'rotate(180deg)');
-}
+};
 
 // ==================== UTILITIES ====================
 function fmtDuration(ms) {
@@ -323,6 +326,16 @@ window.switchTab = function(tabName) {
         loadStatesAnalysis();
     } else if (tabName === 'pipelines') {
         loadPipelinesAnalysis();
+    } else if (tabName === 'analytics') {
+        loadAnalytics();
+    } else if (tabName === 'alerts') {
+        loadAlerts();
+    } else if (tabName === 'events') {
+        loadEvents();
+    } else if (tabName === 'data') {
+        loadDataTable();
+    } else if (tabName === 'timeline') {
+        loadTimeline();
     }
 };
 
@@ -440,6 +453,274 @@ function renderTable(containerId, rows, columns) {
             </tbody>
         </table>
     `;
+}
+
+// ==================== ANALYTICS ====================
+let analyticsChart = null;
+async function loadAnalytics() {
+    try {
+        const [statsRes, trendsRes, slowRes] = await Promise.all([
+            fetch('/api/stats'),
+            fetch('/api/trends'),
+            fetch('/api/slow-steps')
+        ]);
+        
+        const stats = await statsRes.json();
+        const trends = await trendsRes.json();
+        const slowSteps = await slowRes.json();
+        
+        renderAnalyticsCharts(stats, trends);
+        renderSlowSteps(slowSteps);
+        renderPipelineAnalysis(stats);
+    } catch (e) {
+        console.error('Error loading analytics:', e);
+    }
+}
+
+function renderAnalyticsCharts(stats, trends) {
+    const ctx = document.getElementById('pie-chart');
+    if (!ctx) return;
+    
+    if (analyticsChart) analyticsChart.destroy();
+    
+    const data = {
+        labels: ['Completed', 'Running', 'Error', 'Pending'],
+        datasets: [{
+            data: [
+                stats.completed || 0,
+                stats.running || 0,
+                stats.error || 0,
+                stats.pending || 0
+            ],
+            backgroundColor: ['#10b981', '#3b82f6', '#ef4444', '#f59e0b']
+        }]
+    };
+    
+    analyticsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+}
+
+function renderSlowSteps(steps) {
+    const container = document.getElementById('slow-steps-list');
+    if (!container) return;
+    
+    if (!steps || steps.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted)">No data</p>';
+        return;
+    }
+    
+    container.innerHTML = steps.slice(0, 5).map(s => `
+        <div style="display:flex;justify-content:space-between;padding:0.5rem;border-bottom:1px solid var(--border)">
+            <span>${s.step_name}</span>
+            <span style="color:var(--text-muted)">${fmtDuration(s.avg_duration)}</span>
+        </div>
+    `).join('');
+}
+
+function renderPipelineAnalysis(stats) {
+    const container = document.getElementById('pipeline-analysis');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
+            <div class="stat-card blue">
+                <div class="stat-value">${stats.total || 0}</div>
+                <div class="stat-label">Total Pipelines</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-value">${stats.completed || 0}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-value">${stats.avg_duration ? fmtDuration(stats.avg_duration) : '0ms'}</div>
+                <div class="stat-label">Avg Duration</div>
+            </div>
+            <div class="stat-card rose">
+                <div class="stat-value">${stats.error || 0}</div>
+                <div class="stat-label">Errors</div>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== ALERTS ====================
+let currentAlerts = [];
+async function loadAlerts() {
+    try {
+        const res = await fetch('/api/alerts');
+        const alerts = await res.json();
+        currentAlerts = alerts;
+        renderAlerts(alerts);
+    } catch (e) {
+        console.error('Error loading alerts:', e);
+    }
+}
+
+function renderAlerts(alerts) {
+    const container = document.getElementById('alerts-list');
+    if (!container) return;
+    
+    if (!alerts || alerts.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No alerts</p></div>';
+        return;
+    }
+    
+    container.innerHTML = alerts.map(a => `
+        <div class="alert-card ${a.severity}" style="margin-bottom:0.75rem;padding:1rem;border-radius:8px;background:var(--bg-secondary);border-left:4px solid ${a.severity === 'critical' ? '#ef4444' : '#f59e0b'}">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                    <strong>${a.alert_name}</strong>
+                    <div style="font-size:0.85rem;color:var(--text-muted)">${a.message}</div>
+                </div>
+                <span class="badge ${a.severity}">${a.severity}</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">
+                ${fmtTime(a.created_at)}
+                ${a.pipeline_id ? ` • Pipeline: ${a.pipeline_id}` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+window.filterAlerts = function(severity) {
+    document.querySelectorAll('#tab-alerts .chip').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active');
+    const filtered = severity ? currentAlerts.filter(a => a.severity === severity) : currentAlerts;
+    renderAlerts(filtered);
+};
+
+// ==================== EVENTS ====================
+async function loadEvents() {
+    try {
+        const res = await fetch('/api/events');
+        const events = await res.json();
+        renderEvents(events);
+    } catch (e) {
+        console.error('Error loading events:', e);
+    }
+}
+
+function renderEvents(events) {
+    const container = document.getElementById('events-list');
+    if (!container) return;
+    
+    if (!events || events.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No events</p></div>';
+        return;
+    }
+    
+    container.innerHTML = events.slice(0, 50).map(e => `
+        <div class="event-item" style="display:flex;gap:1rem;padding:0.75rem;border-bottom:1px solid var(--border)">
+            <div style="color:var(--text-muted);font-size:0.8rem;min-width:80px">${fmtTime(e.created_at)}</div>
+            <div>
+                <span class="event-type" style="background:var(--bg-tertiary);padding:2px 8px;border-radius:4px;font-size:0.75rem">${e.event_type}</span>
+                <span>${e.pipeline_id || e.step_id || ''}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== DATA ====================
+let dataPage = 1;
+let dataTotal = 0;
+async function loadDataTable() {
+    const table = document.getElementById('data-table-select')?.value || 'pipelines';
+    const search = document.getElementById('data-search')?.value || '';
+    const status = document.getElementById('data-status-filter')?.value || '';
+    
+    try {
+        const res = await fetch(`/api/data/${table}?page=${dataPage}&page_size=20&search=${search}&status=${status}`);
+        const data = await res.json();
+        renderDataTable(data, table);
+    } catch (e) {
+        console.error('Error loading data:', e);
+    }
+}
+
+function renderDataTable(data, table) {
+    const thead = document.getElementById('data-thead');
+    const tbody = document.getElementById('data-tbody');
+    if (!thead || !tbody) return;
+    
+    if (!data.data || data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-muted)">No data</td></tr>';
+        return;
+    }
+    
+    const columns = Object.keys(data.data[0]);
+    thead.innerHTML = `<tr>${columns.map(c => `<th>${c}</th>`).join('')}</tr>`;
+    
+    tbody.innerHTML = data.data.map(row => `
+        <tr>${columns.map(c => `<td>${row[c] !== null ? row[c] : ''}</td>`).join('')}</tr>
+    `).join('');
+    
+    dataTotal = data.total || 0;
+    updateDataPagination();
+}
+
+function updateDataPagination() {
+    const info = document.getElementById('data-pagination-info');
+    const prev = document.getElementById('data-btn-prev');
+    const next = document.getElementById('data-btn-next');
+    
+    if (info) info.textContent = `Page ${dataPage} of ${Math.ceil(dataTotal / 20)} (${dataTotal} total)`;
+    if (prev) prev.disabled = dataPage <= 1;
+    if (next) next.disabled = dataPage >= Math.ceil(dataTotal / 20);
+}
+
+window.dataPrevPage = function() {
+    if (dataPage > 1) { dataPage--; loadDataTable(); }
+};
+window.dataNextPage = function() {
+    dataPage++; loadDataTable();
+};
+
+// ==================== TIMELINE ====================
+let timelineChart = null;
+async function loadTimeline() {
+    const days = document.getElementById('timeline-filter')?.value || 7;
+    
+    try {
+        const res = await fetch(`/api/trends?days=${days}`);
+        const data = await res.json();
+        renderTimelineChart(data);
+    } catch (e) {
+        console.error('Error loading timeline:', e);
+    }
+}
+
+function renderTimelineChart(data) {
+    const ctx = document.getElementById('timeline-chart');
+    if (!ctx) return;
+    
+    if (timelineChart) timelineChart.destroy();
+    
+    const labels = data.map(d => d.date || d.day);
+    const completed = data.map(d => d.completed || 0);
+    const errors = data.map(d => d.errors || 0);
+    
+    timelineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Completed', data: completed, borderColor: '#10b981', tension: 0.3 },
+                { label: 'Errors', data: errors, borderColor: '#ef4444', tension: 0.3 }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
 }
 
 // Initialize on load
