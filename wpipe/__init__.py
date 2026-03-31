@@ -5,7 +5,7 @@ wpipe - A Python library for creating and executing pipelines with task orchestr
 from .api_client import APIClient
 from .dashboard import start_dashboard
 from .log import new_logger
-from .pipe import Condition, Pipeline
+from .pipe import Condition, Pipeline, PipelineAsync
 from .ram import memory
 from .sqlite import Wsqlite
 from .tracking import PipelineTracker
@@ -14,6 +14,7 @@ __all__ = [
     "APIClient",
     "Condition",
     "Pipeline",
+    "PipelineAsync",
     "Wsqlite",
     "memory",
     "new_logger",
