@@ -294,7 +294,7 @@ class PipelineTracker:
     def _generate_yaml_config(
         self, pipeline_id: str, name: str, steps: list, metadata: Optional[dict] = None
     ) -> str:
-        """Generate YAML configuration file."""
+        """Generate YAML configuration file. Uses pipeline name as filename."""
         config = {
             "pipeline": {
                 "id": pipeline_id,
@@ -324,7 +324,7 @@ class PipelineTracker:
         }
 
         yaml_content = yaml.dump(config, default_flow_style=False, allow_unicode=True)
-        yaml_path = self.config_dir / f"{pipeline_id}.yaml"
+        yaml_path = self.config_dir / f"{name}.yaml"
         yaml_path.write_text(yaml_content, encoding="utf-8")
         return str(yaml_path)
 
@@ -345,9 +345,10 @@ class PipelineTracker:
     ) -> dict:
         """
         Register a new pipeline execution (matrícula).
+        Uses pipeline name as config identifier - reuses configs for same pipeline names.
 
         Args:
-            name: Pipeline name.
+            name: Pipeline name (used as config file identifier).
             steps: List of step configurations.
             input_data: Initial input data.
             worker_id: Worker identifier.
@@ -361,7 +362,14 @@ class PipelineTracker:
         """
         pipeline_id = self._generate_id()
 
-        yaml_path = self._generate_yaml_config(pipeline_id, name, steps, metadata)
+        # Check if config already exists for this pipeline name
+        yaml_path_candidate = self.config_dir / f"{name}.yaml"
+        if yaml_path_candidate.exists():
+            # Config exists - reuse it
+            yaml_path = str(yaml_path_candidate)
+        else:
+            # Config doesn't exist - create it
+            yaml_path = self._generate_yaml_config(pipeline_id, name, steps, metadata)
 
         with self._transaction() as conn:
             conn.execute(
@@ -1260,6 +1268,38 @@ class PipelineTracker:
                     "SELECT * FROM pipelines ORDER BY started_at DESC LIMIT ? OFFSET ?",
                     (limit, offset),
                 ).fetchall()
+
+            result = []
+            for row in rows:
+                pipeline = dict(row)
+                for field in ["input_data", "output_data", "tags", "metadata"]:
+                    if pipeline.get(field):
+                        try:
+                            pipeline[field] = json.loads(pipeline[field])
+                        except:
+                            pass
+                result.append(pipeline)
+            return result
+
+    def get_pipeline_executions(
+        self, pipeline_name: str, limit: int = 100, offset: int = 0
+    ) -> list:
+        """
+        Get all executions of a pipeline by name, ordered by most recent first.
+        
+        Args:
+            pipeline_name: Name of the pipeline to retrieve executions for.
+            limit: Maximum number of executions to return.
+            offset: Offset for pagination.
+        
+        Returns:
+            List of pipeline execution records.
+        """
+        with self._get_connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM pipelines WHERE name = ? ORDER BY started_at DESC LIMIT ? OFFSET ?",
+                (pipeline_name, limit, offset),
+            ).fetchall()
 
             result = []
             for row in rows:

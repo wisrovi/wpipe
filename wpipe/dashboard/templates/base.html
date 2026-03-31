@@ -14,6 +14,10 @@
     <!-- Header -->
     <header class="header">
         <div class="header-inner">
+            <button class="hamburger-btn" id="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            
             <div class="brand">
                 <div class="brand-logo"><i class="fas fa-bolt"></i></div>
                 <div class="brand-text">
@@ -49,7 +53,93 @@
         </div>
     </header>
 
-    <main class="container">
+    <!-- Global Navigation Bar -->
+    <nav class="global-nav">
+        <div class="global-nav-inner">
+            <button class="nav-btn" data-tab="timeline" onclick="switchTab('timeline'); scrollToNav('timeline')">
+                <i class="fas fa-chart-gantt"></i> <span data-i18n="timeline">Timeline</span>
+            </button>
+            <button class="nav-btn" data-tab="analytics" onclick="switchTab('analytics'); scrollToNav('analytics')">
+                <i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span>
+            </button>
+            <button class="nav-btn" data-tab="alerts" onclick="switchTab('alerts'); scrollToNav('alerts')">
+                <i class="fas fa-bell"></i> <span data-i18n="alerts">Alerts</span>
+                <span class="badge" id="alert-badge-nav" style="display:none"></span>
+            </button>
+            <button class="nav-btn" data-tab="events" onclick="switchTab('events'); scrollToNav('events')">
+                <i class="fas fa-bookmark"></i> <span data-i18n="events">Events</span>
+            </button>
+            <button class="nav-btn" data-tab="states" onclick="switchTab('states'); scrollToNav('states')">
+                <i class="fas fa-cubes"></i> <span>States</span>
+            </button>
+            <button class="nav-btn" data-tab="pipelines" onclick="switchTab('pipelines'); scrollToNav('pipelines')">
+                <i class="fas fa-project-diagram"></i> <span>Pipelines</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <aside class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="close-btn" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">
+                <div class="sidebar-label">Views</div>
+                <button class="sidebar-item" onclick="switchTab('dashboard'); toggleSidebar()">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="sidebar-item" onclick="switchTab('graph'); toggleSidebar()">
+                    <i class="fas fa-diagram-project"></i> Pipeline Detail
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Analytics</div>
+                <button class="sidebar-item" onclick="switchTab('timeline'); toggleSidebar()">
+                    <i class="fas fa-chart-gantt"></i> Timeline
+                </button>
+                <button class="sidebar-item" onclick="switchTab('analytics'); toggleSidebar()">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </button>
+                <button class="sidebar-item" onclick="switchTab('states'); toggleSidebar()">
+                    <i class="fas fa-cubes"></i> States
+                </button>
+                <button class="sidebar-item" onclick="switchTab('pipelines'); toggleSidebar()">
+                    <i class="fas fa-project-diagram"></i> Pipelines
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Monitoring</div>
+                <button class="sidebar-item" onclick="switchTab('alerts'); toggleSidebar()">
+                    <i class="fas fa-bell"></i> Alerts
+                </button>
+                <button class="sidebar-item" onclick="switchTab('events'); toggleSidebar()">
+                    <i class="fas fa-bookmark"></i> Events
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Help</div>
+                <button class="sidebar-item" onclick="showTutorial(); toggleSidebar()">
+                    <i class="fas fa-rocket"></i> Tutorial
+                </button>
+                <button class="sidebar-item" onclick="window.open('https://wpipe.readthedocs.io/', '_blank')">
+                    <i class="fas fa-book"></i> Documentation
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <main class="container-new">
         <!-- Stats Row -->
         <div class="stats-grid">
             <div class="stat-card blue animate-in animate-delay-1">
@@ -85,51 +175,9 @@
         </div>
 
         <!-- Main Grid -->
-        <div class="main-grid">
-            <!-- Left Panel: Tabs -->
-            <div class="left-panel">
-                <!-- Tab Navigation -->
-                <div class="tabs">
-                    <button class="tab active" data-tab="graph" onclick="switchTab('graph')">
-                        <i class="fas fa-diagram-project"></i> <span data-i18n="graph">Graph</span>
-                    </button>
-                    <button class="tab" data-tab="timeline" onclick="switchTab('timeline')">
-                        <i class="fas fa-chart-gantt"></i> <span data-i18n="timeline">Timeline</span>
-                    </button>
-                    <button class="tab" data-tab="analytics" onclick="switchTab('analytics')">
-                        <i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span>
-                    </button>
-                    <button class="tab" data-tab="alerts" onclick="switchTab('alerts')">
-                        <i class="fas fa-bell"></i> <span data-i18n="alerts">Alerts</span>
-                        <span class="badge" id="alert-badge" style="display:none"></span>
-                    </button>
-                    <button class="tab" data-tab="events" onclick="switchTab('events')">
-                        <i class="fas fa-bookmark"></i> <span data-i18n="events">Events</span>
-                    </button>
-                    <button class="tab" data-tab="data" onclick="switchTab('data')">
-                        <i class="fas fa-database"></i> <span data-i18n="data">Data</span>
-                    </button>
-                    <button class="tab" data-tab="states" onclick="switchTab('states')">
-                        <i class="fas fa-cubes"></i> <span>States</span>
-                    </button>
-                    <button class="tab" data-tab="pipelines" onclick="switchTab('pipelines')">
-                        <i class="fas fa-project-diagram"></i> <span>Pipelines</span>
-                    </button>
-                </div>
-
-                <!-- Tab Contents -->
-                {% include 'tabs/graph.html' %}
-                {% include 'tabs/timeline.html' %}
-                {% include 'tabs/analytics.html' %}
-                {% include 'tabs/alerts.html' %}
-                {% include 'tabs/events.html' %}
-                {% include 'tabs/data.html' %}
-                {% include 'tabs/states.html' %}
-                {% include 'tabs/pipelines.html' %}
-            </div>
-
-            <!-- Right Panel: Pipeline List -->
-            <div class="right-panel">
+        <div class="main-grid-new">
+            <!-- Right Panel: Pipeline List (First to appear left) -->
+            <div class="right-panel-new">
                 <div class="filter-bar">
                     <div class="filter-chips">
                         <span class="chip active" data-status="" onclick="filterPipelines('')"><span data-i18n="all">All</span></span>
@@ -150,6 +198,29 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Left Panel: Tabs (Pipeline-related + Content) -->
+            <div class="left-panel-new">
+                <!-- Pipeline-Specific Tabs -->
+                <div class="pipeline-tabs">
+                    <button class="tab active" data-tab="graph" onclick="switchTab('graph')">
+                        <i class="fas fa-diagram-project"></i> <span data-i18n="graph">Graph</span>
+                    </button>
+                    <button class="tab" data-tab="data" onclick="switchTab('data')">
+                        <i class="fas fa-database"></i> <span data-i18n="data">Data</span>
+                    </button>
+                </div>
+
+                <!-- Tab Contents -->
+                {% include 'tabs/graph.html' %}
+                {% include 'tabs/timeline.html' %}
+                {% include 'tabs/analytics.html' %}
+                {% include 'tabs/alerts.html' %}
+                {% include 'tabs/events.html' %}
+                {% include 'tabs/data.html' %}
+                {% include 'tabs/states.html' %}
+                {% include 'tabs/pipelines.html' %}
+            </div>
         </div>
     </main>
 
@@ -160,6 +231,32 @@
 
     <!-- Tooltip -->
     <div id="tooltip"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <span class="footer-brand">wpipe</span>
+                <span class="footer-version">v0.0.354</span>
+            </div>
+            
+            <div class="footer-center">
+                <span>Enterprise Pipeline Intelligence Platform</span>
+            </div>
+            
+            <div class="footer-right">
+                <a href="https://wpipe.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="footer-link" title="ReadTheDocs Documentation">
+                    <i class="fas fa-book"></i> Docs
+                </a>
+                <a href="https://github.com/wisrovi/wpipe" target="_blank" rel="noopener noreferrer" class="footer-link" title="GitHub Repository">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/wisrovi-rodriguez/" target="_blank" rel="noopener noreferrer" class="footer-link" title="wisrovi Profile">
+                    <i class="fab fa-linkedin"></i> wisrovi
+                </a>
+            </div>
+        </div>
+    </footer>
 
     <script src="/static/dashboard.js"></script>
 </body>
