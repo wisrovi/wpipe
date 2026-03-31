@@ -5,6 +5,11 @@
 **Phase 2 Status**: 📋 PLANNED  
 **Phase 3 Status**: 🎯 ROADMAP  
 
+**Branch Strategy**: 
+- Phase 1: `DEV-WSRV/phase-1-core-features` ✅
+- Phase 2: `DEV-WSRV/phase-2-parallelism` 📋 (to be created)
+- Phase 3: `DEV-WSRV/phase-3-distributed` 🎯 (to be created)
+
 ---
 
 ## Phase 2: Parallelism & Composition (Medium Priority)
@@ -120,6 +125,73 @@ pipeline.auto_register()  # Auto-add decorated steps
 
 ---
 
+## Implementation Details for Phase 2
+
+### 2.1 Parallel Execution Architecture
+
+**Components**:
+```
+ParallelExecutor (main coordinator)
+├── ThreadPoolExecutor (I/O tasks)
+├── ProcessPoolExecutor (CPU tasks)
+├── DAGScheduler (dependency resolution)
+├── ContextMerger (result aggregation)
+└── ErrorHandler (exception management)
+```
+
+**Execution Flow**:
+1. Build dependency graph from steps
+2. Identify parallelizable groups
+3. Launch workers (threads/processes)
+4. Wait for dependencies
+5. Merge contexts
+6. Handle timeouts/errors
+
+**Key Metrics**:
+- Expected 3-5x speedup for I/O heavy
+- 2-3x speedup for CPU heavy (multicore)
+- Minimal memory overhead
+
+### 2.2 Composition System
+
+**PipelineStep Wrapper**:
+```python
+class PipelineStep:
+    def __init__(self, pipeline: 'Pipeline', name: str)
+    def run(self, context: Dict) -> Dict
+    def get_dependencies(self) -> List[str]
+    def get_timeout(self) -> Optional[float]
+```
+
+**Context Propagation**:
+- Parent → Child: Full context passed
+- Child → Parent: Only modified keys returned
+- Conflict resolution: Child overwrites parent
+- Type validation: Enforced at boundaries
+
+### 2.3 Decorator Implementation
+
+**Features**:
+- Auto-discovery of decorated functions
+- Optional type hints validation
+- Timeout specification
+- Dependency declaration
+- Metadata attachment
+
+**Registry System**:
+```python
+@wpipe.step(timeout=30, depends_on=["fetch"])
+def process(context):
+    pass
+
+# Auto-register on Pipeline init
+pipeline = Pipeline.from_decorated()
+```
+
+---
+
+## Implementation Details for Phase 3
+
 ## Phase 3: Advanced Features (Low Priority)
 
 **Estimated Timeline**: 3-4 sprints  
@@ -137,6 +209,26 @@ pipeline.auto_register()  # Auto-add decorated steps
 - Result aggregation
 - Failure recovery
 
+**Architecture**:
+```
+Master Node
+├── Task Queue (Redis/RabbitMQ)
+├── State Store (SQLite + Cache)
+└── Result Aggregator
+
+Worker Nodes (N)
+├── Task Receiver
+├── Executor
+└── Result Reporter
+```
+
+**Features**:
+- Auto-discovery of workers
+- Load balancing (round-robin, least-loaded)
+- Heartbeat monitoring
+- Automatic retry on failure
+- Distributed tracing
+
 #### 2. Advanced Scheduling
 **Goal**: Schedule and trigger pipelines intelligently
 
@@ -145,6 +237,22 @@ pipeline.auto_register()  # Auto-add decorated steps
 - Event-based triggers
 - Conditional execution
 - Pipeline orchestration
+
+**Trigger Types**:
+- Time-based: CRON expressions
+- Event-based: Webhook callbacks
+- Condition-based: External API checks
+- Chain-based: Pipeline A triggers Pipeline B
+- Manual: UI/API triggers
+
+**Scheduler Components**:
+```
+SchedulerManager
+├── CRONScheduler
+├── EventListener
+├── ConditionChecker
+└── TriggerDispatcher
+```
 
 #### 3. Performance Optimization
 **Goal**: Optimize for speed and resource efficiency
@@ -155,6 +263,18 @@ pipeline.auto_register()  # Auto-add decorated steps
 - Lazy evaluation
 - Resource pooling
 
+**Optimization Techniques**:
+- **Caching Layer**: LRU cache for step outputs
+- **Memoization**: Cache results by input signature
+- **Lazy Evaluation**: Skip unnecessary steps
+- **Resource Pooling**: Reuse connections/workers
+- **Batch Processing**: Group similar tasks
+
+**Expected Improvements**:
+- 30%+ overall performance improvement
+- 50%+ reduction in redundant computation
+- 40% reduction in resource usage
+
 #### 4. Dashboard v2
 **Goal**: Real-time pipeline monitoring
 
@@ -164,16 +284,69 @@ pipeline.auto_register()  # Auto-add decorated steps
 - Resource graphs
 - Historical analysis
 
+**Features**:
+- Live pipeline execution view
+- Per-step metrics (time, RAM, CPU)
+- Historical trends and patterns
+- Alert configuration
+- Performance recommendations
+- Cost analysis (for cloud)
+
+**Technology Stack**:
+- Backend: FastAPI + WebSockets
+- Frontend: React + D3.js
+- Storage: TimescaleDB or InfluxDB
+
 ---
+
+### Phase 3 Implementation Architecture
+
+**Distributed System Overview**:
+```
+┌─────────────────────────────────────────────────────┐
+│ Master Node (Orchestration)                         │
+│  ├── Scheduler (CRON + Events)                      │
+│  ├── Task Queue Manager                             │
+│  ├── State Manager (Distributed)                    │
+│  └── API Server (FastAPI)                           │
+└─────────────────────────────────────────────────────┘
+         │              │              │
+    ┌────▼──┐      ┌────▼──┐      ┌────▼──┐
+    │Worker 1│      │Worker 2│      │Worker N│
+    │(Thread)│      │(Thread)│      │(Thread)│
+    └────────┘      └────────┘      └────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Supporting Services                                  │
+│  ├── Redis/RabbitMQ (Task Queue)                    │
+│  ├── TimescaleDB (Metrics)                          │
+│  ├── Cache (Distributed)                            │
+│  └── WebSocket Server (Real-time)                   │
+└─────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Frontend (Dashboard v2)                             │
+│  ├── React App                                      │
+│  ├── D3.js Visualizations                           │
+│  └── Real-time WebSocket Updates                    │
+└─────────────────────────────────────────────────────┘
+```
+
+**State Replication**:
+- Master stores authoritative state
+- Workers have read-only cache
+- Changes flow: Workers → Master → All Workers
+- Conflict resolution: Master wins
+- Backup: Multiple replicas
 
 ### Phase 3 Deliverables
 
-| Feature | Complexity | Timeline | Notes |
-|---------|-----------|----------|-------|
-| Distributed Execution | High | 2-3 sprints | Requires infrastructure |
-| Advanced Scheduling | Medium | 1-2 sprints | Standalone tool |
-| Performance Optimization | Medium | 2-3 sprints | Profiling required |
-| Dashboard v2 | Medium | 2 sprints | Frontend needed |
+| Feature | Complexity | Timeline | Status | Notes |
+|---------|-----------|----------|--------|-------|
+| Distributed Execution | High | 2-3 sprints | 📋 | Requires infrastructure |
+| Advanced Scheduling | Medium | 1-2 sprints | 📋 | Standalone tool |
+| Performance Optimization | Medium | 2-3 sprints | 📋 | Profiling required |
+| Dashboard v2 | Medium | 2 sprints | 📋 | Frontend needed |
 
 ---
 
