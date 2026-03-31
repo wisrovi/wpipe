@@ -168,31 +168,52 @@ class PipelineExporter:
         """Calculate pipeline statistics."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-
-            query_prefix = "SELECT " if not pipeline_id else f"SELECT "
             
-            # Total executions
-            exec_query = "SELECT COUNT(*) FROM executions"
-            if pipeline_id:
-                exec_query += f" WHERE pipeline_id = '{pipeline_id}'"
-            cursor.execute(exec_query)
-            total_executions = cursor.fetchone()[0]
+            try:
+                # Check if table exists
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='executions'")
+                if not cursor.fetchone():
+                    # Table doesn't exist, return empty stats
+                    return {
+                        "total_executions": 0,
+                        "successful_executions": 0,
+                        "success_rate_percent": 0.0,
+                        "average_execution_time_seconds": 0.0,
+                        "exported_at": datetime.now().isoformat(),
+                    }
+                
+                # Total executions
+                exec_query = "SELECT COUNT(*) FROM executions"
+                if pipeline_id:
+                    exec_query += f" WHERE pipeline_id = '{pipeline_id}'"
+                cursor.execute(exec_query)
+                total_executions = cursor.fetchone()[0]
 
-            # Average execution time
-            time_query = "SELECT AVG(execution_time) FROM executions WHERE execution_time IS NOT NULL"
-            if pipeline_id:
-                time_query += f" AND pipeline_id = '{pipeline_id}'"
-            cursor.execute(time_query)
-            avg_time = cursor.fetchone()[0] or 0
+                # Average execution time
+                time_query = "SELECT AVG(execution_time) FROM executions WHERE execution_time IS NOT NULL"
+                if pipeline_id:
+                    time_query += f" AND pipeline_id = '{pipeline_id}'"
+                cursor.execute(time_query)
+                avg_time = cursor.fetchone()[0] or 0
 
-            # Success rate
-            success_query = "SELECT COUNT(*) FROM executions WHERE status = 'completed'"
-            if pipeline_id:
-                success_query += f" AND pipeline_id = '{pipeline_id}'"
-            cursor.execute(success_query)
-            successful = cursor.fetchone()[0]
+                # Success rate
+                success_query = "SELECT COUNT(*) FROM executions WHERE status = 'completed'"
+                if pipeline_id:
+                    success_query += f" AND pipeline_id = '{pipeline_id}'"
+                cursor.execute(success_query)
+                successful = cursor.fetchone()[0]
 
-            success_rate = (successful / total_executions * 100) if total_executions > 0 else 0
+                success_rate = (successful / total_executions * 100) if total_executions > 0 else 0
+
+            except sqlite3.OperationalError:
+                # Table doesn't exist or other error
+                return {
+                    "total_executions": 0,
+                    "successful_executions": 0,
+                    "success_rate_percent": 0.0,
+                    "average_execution_time_seconds": 0.0,
+                    "exported_at": datetime.now().isoformat(),
+                }
 
         return {
             "total_executions": total_executions,
