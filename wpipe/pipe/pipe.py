@@ -536,6 +536,57 @@ class Pipeline(APIClient):
 
         self.tasks_list = new_list
 
+    def add_state(self, name: str, func: Callable = None, version: str = "", 
+                  state: Callable = None, depends_on=None, timeout=None, **kwargs) -> None:
+        """
+        Add a single step to the pipeline (Phase 2 compatibility method).
+        
+        This is a convenience wrapper around set_steps() for adding steps
+        one at a time. Maintains backward compatibility with Phase 2 code.
+
+        Args:
+            name: Step name identifier.
+            func: Callable function for the step (alternative: use 'state' parameter).
+            version: Optional version string (default: "").
+            state: Alternative parameter name for the function (for compatibility).
+            depends_on: Optional list of dependencies (note: currently ignored).
+            timeout: Optional timeout (note: currently ignored).
+            **kwargs: Additional keyword arguments (for future compatibility).
+        """
+        # Support both 'func' and 'state' parameter names
+        step_func = func or state
+        if step_func is None:
+            raise ValueError("Either 'func' or 'state' parameter must be provided")
+        
+        current_steps = list(self.tasks_list) if hasattr(self, 'tasks_list') else []
+        
+        # Convert 4-tuple elements to 3-tuple (strip the 4th empty string added by set_steps)
+        current_steps = [(s[0], s[1], s[2]) if len(s) == 4 else s for s in current_steps]
+        
+        # Convert to 3-tuple format (function, name, version)
+        new_step = (step_func, name, version)
+        current_steps.append(new_step)
+        self.set_steps(current_steps)
+
+    @property
+    def steps(self):
+        """Property to access steps for Phase 2 compatibility."""
+        # Create step objects for compatibility
+        class Step:
+            def __init__(self, func, name, version=""):
+                self.func = func
+                self.name = name
+                self.version = version
+            
+            def run(self, context):
+                return self.func(context)
+        
+        result = []
+        for item in self.tasks_list:
+            if isinstance(item, tuple) and len(item) >= 2:
+                result.append(Step(item[0], item[1], item[2] if len(item) > 2 else ""))
+        return result
+
     def _execute_with_retry(
         self, func: Callable, name: str, *args: Any, **kwargs: Any
     ) -> Any:
