@@ -1,0 +1,7 @@
+metadata:
+  name: "honey_pot"
+  version: "1.0.0"
+
+inference:
+  source: "src/Personas_en_el_parque.jpg"
+  conf: 0.5

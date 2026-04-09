@@ -1,0 +1,13 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T10:59:12.956602'
+  id: PIPE-88BBB522
+  name: honey_pot_reporter
+  version: 1.0.0
+steps:
+- name: Inference
+  type: task
+  version: v1.0
+- expression: score > 80
+  name: <wpipe.pipe.pipe.Condition object at 0x79e518e47fb0>
+  type: condition

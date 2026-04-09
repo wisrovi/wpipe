@@ -138,6 +138,36 @@ class Condition:
         return []
 
 
+class For:
+    """Represents a loop in the pipeline (conditional or count-based)."""
+
+    def __init__(
+        self,
+        validation_expression: Optional[str] = None,
+        steps: Optional[list] = None,
+        iterations: Optional[int] = None,
+    ) -> None:
+        if not validation_expression and iterations is None:
+            raise ValueError(
+                "Must provide either 'validation_expression' or 'iterations'"
+            )
+        self.validation_expression = validation_expression
+        self.iterations = iterations
+        self.steps = steps or []
+
+    def _evaluate_condition(self, data: dict) -> bool:
+        if not self.validation_expression:
+            return True
+        safe_globals = {"True": True, "False": False, "None": None, "len": len}
+        safe_locals = data.copy()
+        try:
+            return eval(self.validation_expression, safe_globals, safe_locals)
+        except Exception as e:
+            raise ValueError(
+                f"Invalid loop expression: {self.validation_expression}. Error: {e}"
+            ) from e
+
+
 class ProgressManager:
     """Singleton manager for Rich Progress bars."""
 
@@ -521,6 +551,21 @@ class Pipeline(APIClient):
                     branch_false=normalized_false,
                 )
                 new_list.append(condition)
+            elif isinstance(item, For):
+                normalized_steps = [normalize_step(s) for s in item.steps]
+                new_list.append(
+                    For(
+                        validation_expression=item.validation_expression,
+                        iterations=item.iterations,
+                        steps=normalized_steps,
+                    )
+                )
+            elif callable(item):
+                name = getattr(item, "NAME", None) or getattr(
+                    item, "__name__", "unknown"
+                )
+                version = getattr(item, "VERSION", "v1.0") or "v1.0"
+                new_list.append((item, name, version, ""))
             elif not (
                 isinstance(item, tuple)
                 and len(item) == 3
@@ -528,13 +573,75 @@ class Pipeline(APIClient):
                 and isinstance(item[1], str)
             ):
                 raise ValueError(
-                    "Each element must be a tuple (function, name, version) "
-                    "or a Condition object."
+                    "Each element must be a tuple (function, name, version), "
+                    "a Condition object, a For object, or a callable (e.g., @state decorated function)."
                 )
             else:
                 new_list.append((item[0], item[1], item[2], ""))
 
         self.tasks_list = new_list
+
+    def add_state(
+        self,
+        name: str,
+        func: Callable = None,
+        version: str = "",
+        state: Callable = None,
+        depends_on=None,
+        timeout=None,
+        **kwargs,
+    ) -> None:
+        """
+        Add a single step to the pipeline (Phase 2 compatibility method).
+
+        This is a convenience wrapper around set_steps() for adding steps
+        one at a time. Maintains backward compatibility with Phase 2 code.
+
+        Args:
+            name: Step name identifier.
+            func: Callable function for the step (alternative: use 'state' parameter).
+            version: Optional version string (default: "").
+            state: Alternative parameter name for the function (for compatibility).
+            depends_on: Optional list of dependencies (note: currently ignored).
+            timeout: Optional timeout (note: currently ignored).
+            **kwargs: Additional keyword arguments (for future compatibility).
+        """
+        # Support both 'func' and 'state' parameter names
+        step_func = func or state
+        if step_func is None:
+            raise ValueError("Either 'func' or 'state' parameter must be provided")
+
+        current_steps = list(self.tasks_list) if hasattr(self, "tasks_list") else []
+
+        # Convert 4-tuple elements to 3-tuple (strip the 4th empty string added by set_steps)
+        current_steps = [
+            (s[0], s[1], s[2]) if len(s) == 4 else s for s in current_steps
+        ]
+
+        # Convert to 3-tuple format (function, name, version)
+        new_step = (step_func, name, version)
+        current_steps.append(new_step)
+        self.set_steps(current_steps)
+
+    @property
+    def steps(self):
+        """Property to access steps for Phase 2 compatibility."""
+
+        # Create step objects for compatibility
+        class Step:
+            def __init__(self, func, name, version=""):
+                self.func = func
+                self.name = name
+                self.version = version
+
+            def run(self, context):
+                return self.func(context)
+
+        result = []
+        for item in self.tasks_list:
+            if isinstance(item, tuple) and len(item) >= 2:
+                result.append(Step(item[0], item[1], item[2] if len(item) > 2 else ""))
+        return result
 
     def _execute_with_retry(
         self, func: Callable, name: str, *args: Any, **kwargs: Any
@@ -613,6 +720,45 @@ class Pipeline(APIClient):
             raise
         except Exception as e:
             raise TaskError(str(e), Codes.TASK_FAILED) from e
+
+    def _execute_for_inline(self, item: "For", data: dict) -> dict:
+        loop_data = data.copy()
+        loop_data.pop("progress_rich", None)
+
+        iteration = 0
+        while True:
+            if item.validation_expression:
+                if not item._evaluate_condition(loop_data):
+                    break
+
+            if item.iterations is not None and iteration >= item.iterations:
+                break
+
+            for step in item.steps:
+                if isinstance(step, For):
+                    loop_data = self._execute_for_inline(step, loop_data)
+                elif isinstance(step, tuple) and len(step) >= 3:
+                    func, step_name, step_version, _ = step
+                    try:
+                        result = func(loop_data)
+                        if isinstance(result, dict):
+                            loop_data.update(result)
+                    except Exception as e:
+                        loop_data["error"] = str(e)
+                        break
+
+                    if "error" in loop_data:
+                        break
+                else:
+                    continue
+
+            if "error" in loop_data:
+                break
+
+            iteration += 1
+            loop_data["_loop_iteration"] = iteration
+
+        return loop_data
 
     def _run_branch(self, steps: list, data: dict, **kwargs: Any) -> tuple[dict, list]:
         """
@@ -911,11 +1057,7 @@ class Pipeline(APIClient):
                 if self.verbose:
                     print("[METRICS] System metrics collection started")
 
-        total_steps = sum(
-            1
-            for item in self.tasks_list
-            if not isinstance(item, Condition) or item.branch_true
-        )
+        total_steps = len(self.tasks_list)
 
         def progress_bar_generator(size: int):
             """Generate progress bar updates."""
@@ -954,6 +1096,57 @@ class Pipeline(APIClient):
                     if self.verbose:
                         print(f"\n[CONDITION] Evaluating: {item.expression}")
                     data, _ = self._run_branch([item], data, **kwargs)
+                elif isinstance(item, For):
+                    loop_data = data.copy()
+                    loop_data.pop("progress_rich", None)
+                    loop_data.update(args[0] if args else {})
+
+                    iteration = 0
+                    while True:
+                        if item.validation_expression:
+                            if not item._evaluate_condition(loop_data):
+                                break
+
+                        if item.iterations is not None and iteration >= item.iterations:
+                            break
+
+                        for step in item.steps:
+                            if isinstance(step, For):
+                                loop_data = self._execute_for_inline(step, loop_data)
+                            elif isinstance(step, tuple) and len(step) >= 3:
+                                func, step_name, step_version, _ = step
+                                try:
+                                    result = func(loop_data)
+                                    if isinstance(result, dict):
+                                        loop_data.update(result)
+                                except Exception as e:
+                                    loop_data["error"] = str(e)
+                                    break
+
+                                if "error" in loop_data:
+                                    break
+                            elif callable(step):
+                                try:
+                                    result = step(loop_data)
+                                    if isinstance(result, dict):
+                                        loop_data.update(result)
+                                except Exception as e:
+                                    loop_data["error"] = str(e)
+                                    break
+
+                                if "error" in loop_data:
+                                    break
+                            else:
+                                continue
+
+                        if "error" in loop_data:
+                            break
+
+                        iteration += 1
+                        loop_data["_loop_iteration"] = iteration
+
+                    data.update(loop_data)
+                    data.pop("progress_rich", None)
                 else:
                     func, name, version, step_id = item
 

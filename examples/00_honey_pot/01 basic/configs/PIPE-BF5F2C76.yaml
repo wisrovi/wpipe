@@ -1,0 +1,10 @@
+metadata: {}
+pipeline:
+  created_at: '2026-04-09T06:57:39.173992'
+  id: PIPE-BF5F2C76
+  name: viaje
+  version: 1.0.0
+steps:
+- expression: null
+  name: <wpipe.pipe.pipe.For object at 0x7fcf510fd6d0>
+  type: condition

@@ -2,7 +2,8 @@
 Pipeline module for orchestrating task execution.
 """
 
-from .pipe import Condition, Pipeline
-from .pipe_async import PipelineAsync
+from .pipe import Condition, For, Pipeline
+from .pipe_async_minimal import PipelineAsync
 
-__all__ = ["Condition", "Pipeline", "PipelineAsync"]
+__all__ = ["Condition", "For", "Pipeline", "PipelineAsync"]
+
