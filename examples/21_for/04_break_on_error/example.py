@@ -6,8 +6,10 @@ The error is stored in the data for inspection.
 """
 
 from wpipe import For, Pipeline
+from wpipe.util import state
 
 
+@state(name="may_fail", version="v1.0")
 def may_fail(data):
     counter = data.get("counter", 0) + 1
     if counter >= 3:
@@ -24,7 +26,7 @@ def main():
             For(
                 iterations=5,
                 steps=[
-                    (may_fail, "may_fail", "v1"),
+                    may_fail,
                 ],
             ),
         ]
@@ -35,7 +37,6 @@ def main():
     print(f"Error: {result.get('error')}")
     print(f"Iterations: {result.get('_loop_iteration')}")
 
-    # Error should be captured, counter should be 2 (fails at 3rd iteration)
     assert "error" in result
     assert result.get("counter") == 2
     print("\nTest passed!")

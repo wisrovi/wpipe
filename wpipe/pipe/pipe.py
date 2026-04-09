@@ -560,6 +560,12 @@ class Pipeline(APIClient):
                         steps=normalized_steps,
                     )
                 )
+            elif callable(item):
+                name = getattr(item, "NAME", None) or getattr(
+                    item, "__name__", "unknown"
+                )
+                version = getattr(item, "VERSION", "v1.0") or "v1.0"
+                new_list.append((item, name, version, ""))
             elif not (
                 isinstance(item, tuple)
                 and len(item) == 3
@@ -568,7 +574,7 @@ class Pipeline(APIClient):
             ):
                 raise ValueError(
                     "Each element must be a tuple (function, name, version), "
-                    "a Condition object, or a For object."
+                    "a Condition object, a For object, or a callable (e.g., @state decorated function)."
                 )
             else:
                 new_list.append((item[0], item[1], item[2], ""))
@@ -1093,6 +1099,17 @@ class Pipeline(APIClient):
                                 func, step_name, step_version, _ = step
                                 try:
                                     result = func(loop_data)
+                                    if isinstance(result, dict):
+                                        loop_data.update(result)
+                                except Exception as e:
+                                    loop_data["error"] = str(e)
+                                    break
+
+                                if "error" in loop_data:
+                                    break
+                            elif callable(step):
+                                try:
+                                    result = step(loop_data)
                                     if isinstance(result, dict):
                                         loop_data.update(result)
                                 except Exception as e:

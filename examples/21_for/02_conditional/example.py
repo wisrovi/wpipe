@@ -2,12 +2,14 @@
 Example 02: For loop with conditional expression
 
 Demonstrates how to use For with a validation_expression that
-controls when the loop continues.
+controls when the loop continues. Also shows @state decorated functions.
 """
 
 from wpipe import For, Pipeline
+from wpipe.util import state
 
 
+@state(name="decrement", version="v1.0")
 def decrement_until_zero(data):
     data["counter"] = data.get("counter", 10) - 1
     return data
@@ -21,7 +23,7 @@ def main():
             For(
                 validation_expression="counter > 0",
                 steps=[
-                    (decrement_until_zero, "decrement", "v1"),
+                    decrement_until_zero,
                 ],
             ),
         ]

@@ -2,14 +2,15 @@
 Example 03: Nested For loops
 
 This example demonstrates nested For loops.
-Note: Nested For loops have some complexity in current implementation.
+Shows multiple @state decorated functions in a For loop.
 """
 
 from wpipe import For, Pipeline
+from wpipe.util import state
 
 
+@state(name="track", version="v1.0")
 def track_iterations(data):
-    """Track iteration counts in a list."""
     iteration = data.get("_loop_iteration", 0)
     data["history"] = data.get("history", [])
     data["history"].append(f"iter_{iteration}")
@@ -24,7 +25,7 @@ def main():
             For(
                 iterations=3,
                 steps=[
-                    (track_iterations, "track", "v1"),
+                    track_iterations,
                 ],
             ),
         ]
@@ -34,7 +35,6 @@ def main():
     print(f"History: {result.get('history')}")
     print(f"Iterations: {result.get('_loop_iteration')}")
 
-    # Should have 3 entries
     assert len(result["history"]) == 3
     print("\nTest passed!")
 
