@@ -19,7 +19,7 @@ from .checkpoint import CheckpointManager
 from .dashboard import start_dashboard
 from .export import PipelineExporter
 from .log import new_logger
-from .pipe import Condition, Pipeline, PipelineAsync
+from .pipe import Condition, For, Pipeline, PipelineAsync
 from .ram import memory
 from .sqlite import Wsqlite
 from .timeout import timeout_sync, timeout_async, TaskTimer, TimeoutError
@@ -29,6 +29,7 @@ from .type_hinting import PipelineContext, TypeValidator, GenericPipeline
 from .parallel import ParallelExecutor, ExecutionMode, DAGScheduler
 from .composition import PipelineAsStep, CompositionHelper, NestedPipelineStep
 from .decorators import step, StepRegistry, AutoRegister, get_step_registry
+from .util import auto_dict_input, object_to_dict, state, to_obj
 
 __all__ = [
     # Phase 1 - Reliability
@@ -55,8 +56,14 @@ __all__ = [
     "StepRegistry",
     "AutoRegister",
     "get_step_registry",
+    # Transform decorators
+    "to_obj",
+    "auto_dict_input",
+    "state",
+    "object_to_dict",
     # Core Pipeline
     "Condition",
+    "For",
     "Pipeline",
     "PipelineAsync",
     "Wsqlite",
