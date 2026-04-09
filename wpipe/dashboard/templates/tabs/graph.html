@@ -12,6 +12,7 @@
                     <button onclick="graphZoomOut()" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
                     <button onclick="graphReset()" title="Reset View"><i class="fas fa-compress-arrows-alt"></i></button>
                     <button onclick="graphFit()" title="Fit to Screen"><i class="fas fa-expand-arrows-alt"></i></button>
+                    <button onclick="showCurrentPipelineHistory()" title="Pipeline History"><i class="fas fa-history"></i></button>
                 </div>
                 <div class="graph-container" id="graph-container">
                     <svg class="graph-svg" id="graph-svg">
@@ -67,7 +68,10 @@
                     </svg>
                     <div id="graph-empty" class="graph-empty">
                         <i class="fas fa-diagram-project"></i>
-                        <p data-i18n="selectPipeline">Select a pipeline to visualize</p>
+                        <p data-i18n="selectPipeline">Select a pipeline from the right panel</p>
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">
+                            <i class="fas fa-lightbulb"></i> Tip: Click "History" button (🕐) to see past executions
+                        </p>
                     </div>
                 </div>
                 <div class="graph-minimap" id="graph-minimap">

@@ -781,7 +781,18 @@ class Pipeline(APIClient):
                 true_branch = item.branch_true or []
                 false_branch = item.branch_false or []
 
-                branch_taken = "true" if item.evaluate(data) else "false"
+                # Evaluate condition and handle errors
+                branch_taken = "true"
+                error_message = None
+                try:
+                    branch_taken = "true" if item.evaluate(data) else "false"
+                except Exception as e:
+                    error_message = str(e)
+                    # If condition fails, treat as false by default
+                    branch_taken = "false"
+                    if self.verbose:
+                        print(f"[CONDITION ERROR] {cond_name}: {error_message}")
+                
                 branch_executed = (
                     true_branch if branch_taken == "true" else false_branch
                 )
@@ -838,15 +849,22 @@ class Pipeline(APIClient):
                 executed_step_ids.extend(branch_ids)
 
                 if cond_step_id and self.tracker:
+                    output_data = {
+                        "branch_taken": branch_taken,
+                        "expression": cond_expr,
+                        "true_branch_ids": true_branch_ids,
+                        "false_branch_ids": false_branch_ids,
+                        "skipped_branch_names": skipped_branch_names,
+                    }
+                    
+                    # Add error message if condition evaluation failed
+                    if error_message:
+                        output_data["error"] = error_message
+                    
                     self.tracker.complete_step(
                         cond_step_id,
-                        output_data={
-                            "branch_taken": branch_taken,
-                            "expression": cond_expr,
-                            "true_branch_ids": true_branch_ids,
-                            "false_branch_ids": false_branch_ids,
-                            "skipped_branch_names": skipped_branch_names,
-                        },
+                        output_data=output_data,
+                        error_message=error_message if error_message else None,
                     )
 
             elif callable(item):

@@ -12,6 +12,28 @@ let graphState = {
     startY: 0
 };
 
+// ==================== SIDEBAR ====================
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (!sidebar || !overlay) return;
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+};
+
+// Close sidebar when clicking outside on mobile
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (window.innerWidth > 768) {
+        sidebar?.classList.remove('active');
+        overlay?.classList.remove('active');
+    }
+});
+
 // ==================== INITIALIZATION ====================
 function init() {
     loadPipelines();
@@ -44,6 +66,238 @@ window.refreshData = function() {
     loadStats();
 };
 
+// ==================== MISSING FUNCTIONS ====================
+let currentLang = 'en';
+
+const translations = {
+    en: {
+        tutorialTitle: 'Dashboard Tutorial',
+        tutorialIntro: 'Welcome to wpipe Dashboard! This guide will help you understand each view.',
+        pipelineTabs: 'Pipeline Tabs (require selection)',
+        graph: 'Graph - Visualizes the execution flow of a selected pipeline. Each node is a step.',
+        graphHelp: '🔍 Zoom: Mouse wheel | ✋ Pan: Drag | 📜 History: Click clock button',
+        data: 'Data - Shows input/output of each step in the selected pipeline.',
+        globalTabs: 'Global Views (independent of selection)',
+        timeline: 'Timeline - Shows execution trends over days (last 7/14/30 days).',
+        analytics: 'Analytics - Overview: pie chart of statuses, slowest steps, total stats.',
+        alerts: 'Alerts - Pipeline errors and warnings. Filter by severity.',
+        events: 'Events - Log of all pipeline/step events (created, started, completed, failed).',
+        states: 'States - Reusable step functions: most used, slowest, with most errors.',
+        pipelines: 'Pipelines - Which pipelines are slowest, have most errors, recent runs.',
+        history: 'To see past executions:',
+        historySteps: '1. Select any pipeline from the right list\n2. Click the History button (🕐) in graph controls\n3. Click any previous execution to view it',
+        close: 'Got it!'
+    },
+    es: {
+        tutorialTitle: 'Tutorial del Dashboard',
+        tutorialIntro: '¡Bienvenido a wpipe Dashboard! Esta guía te ayudará a entender cada vista.',
+        pipelineTabs: 'Pestañas de Pipeline (requieren selección)',
+        graph: 'Graph - Visualiza el flujo de ejecución del pipeline seleccionado. Cada nodo es un paso.',
+        graphHelp: '🔍 Zoom: Rueda ratón | ✋ Mover: Arrastrar | 📜 Historial: Botón reloj',
+        data: 'Data - Muestra entrada/salida de cada paso del pipeline seleccionado.',
+        globalTabs: 'Vistas Globales (independientes de selección)',
+        timeline: 'Timeline - Muestra tendencias de ejecución por días (últimos 7/14/30 días).',
+        analytics: 'Analytics - Resumen: gráfico de estados, pasos más lentos, estadísticas.',
+        alerts: 'Alerts - Errores y warnings de pipelines. Filtra por severidad.',
+        events: 'Events - Registro de eventos de pipelines/pasos (creado, iniciado, completado, error).',
+        states: 'States - Funciones de paso reutilizables: más usadas, lentas, con errores.',
+        pipelines: 'Pipelines - Cuáles son más lentos, con más errores, ejecuciones recientes.',
+        history: 'Para ver ejecuciones anteriores:',
+        historySteps: '1. Selecciona un pipeline de la lista derecha\n2. Haz click en el botón History (🕐) en controles del graph\n3. Haz click en cualquier ejecución anterior para verla',
+        close: '¡Entendido!'
+    }
+};
+
+window.changeLanguage = function(lang) {
+    currentLang = lang;
+    console.log('Language changed to:', lang);
+    updateI18n();
+};
+
+function updateI18n() {
+    const t = translations[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+    });
+}
+
+window.showTutorial = function() {
+    const modal = document.getElementById('tutorial-modal');
+    if (!modal) return;
+    
+    const t = translations[currentLang];
+    
+    modal.style.display = 'flex';
+    document.getElementById('tutorial-content').innerHTML = `
+        <h2 style="margin-bottom:0.5rem"><i class="fas fa-rocket"></i> ${t.tutorialTitle}</h2>
+        <p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.9rem">${t.tutorialIntro}</p>
+        
+        <div style="text-align:left;line-height:1.8">
+            <div style="background:var(--bg-tertiary);padding:0.75rem;border-radius:8px;margin-bottom:1rem">
+                <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">${t.pipelineTabs}</div>
+                <p style="margin:0.25rem 0"><i class="fas fa-diagram-project" style="width:20px;color:#3b82f6"></i> <strong>${t.graph}</strong></p>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-left:20px;margin-bottom:0.5rem">${t.graphHelp}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-database" style="width:20px;color:#10b981"></i> <strong>${t.data}</strong></p>
+            </div>
+            
+            <div style="background:var(--bg-tertiary);padding:0.75rem;border-radius:8px;margin-bottom:1rem">
+                <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">${t.globalTabs}</div>
+                <p style="margin:0.25rem 0"><i class="fas fa-chart-gantt" style="width:20px;color:#8b5cf6"></i> ${t.timeline}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-chart-line" style="width:20px;color:#ec4899"></i> ${t.analytics}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-bell" style="width:20px;color:#f59e0b"></i> ${t.alerts}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-bookmark" style="width:20px;color:#06b6d4"></i> ${t.events}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-cubes" style="width:20px;color:#ef4444"></i> ${t.states}</p>
+                <p style="margin:0.25rem 0"><i class="fas fa-project-diagram" style="width:20px;color:#14b8a6"></i> ${t.pipelines}</p>
+            </div>
+            
+            <div style="background:rgba(59,130,246,0.1);padding:0.75rem;border-radius:8px;border-left:3px solid #3b82f6">
+                <div style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem">${t.history}</div>
+                <pre style="font-size:0.8rem;white-space:pre-wrap;margin:0;color:var(--text-secondary)">${t.historySteps}</pre>
+            </div>
+        </div>
+        
+        <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-primary" style="margin-top:1.5rem">${t.close}</button>
+    `;
+};
+
+window.filterPipelinesBySearch = function(query) {
+    const items = document.querySelectorAll('.pipeline-item');
+    items.forEach(item => {
+        const name = item.querySelector('.pipeline-name')?.textContent.toLowerCase() || '';
+        item.style.display = name.includes(query.toLowerCase()) ? '' : 'none';
+    });
+};
+
+window.filterPipelines = function(status) {
+    const items = document.querySelectorAll('.pipeline-item');
+    items.forEach(item => {
+        const itemStatus = item.querySelector('.pipeline-status')?.className || '';
+        if (!status || itemStatus.includes(status)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+};
+
+// ==================== PIPELINE HISTORY ====================
+let currentPipelineId = null;
+let currentPipelineName = null;
+
+window.showCurrentPipelineHistory = function() {
+    if (currentPipelineName) {
+        showPipelineHistoryModal(currentPipelineName, currentPipelineId);
+    } else {
+        showAllPipelinesHistory();
+    }
+};
+
+window.showAllPipelinesHistory = function() {
+    const modal = document.getElementById('tutorial-modal');
+    if (!modal) return;
+    
+    const title = currentLang === 'es' ? 'Todas las Ejecuciones' : 'All Pipeline Executions';
+    const selectMsg = currentLang === 'es' ? 'Selecciona un pipeline:' : 'Select a pipeline:';
+    
+    modal.style.display = 'flex';
+    document.getElementById('tutorial-content').innerHTML = `
+        <h2 style="margin-bottom:1rem"><i class="fas fa-history"></i> ${title}</h2>
+        <p style="color:var(--text-muted);margin-bottom:1rem;font-size:0.9rem">${selectMsg}</p>
+        <div id="all-pipelines-list" style="max-height:400px;overflow-y:auto">
+            <div class="loading"><div class="spinner"></div></div>
+        </div>
+        <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
+    `;
+    
+    fetch('/api/pipelines')
+        .then(r => r.json())
+        .then(pipelines => {
+            if (!pipelines || pipelines.length === 0) {
+                document.getElementById('all-pipelines-list').innerHTML = '<p style="color:var(--text-muted)">No pipelines found</p>';
+                return;
+            }
+            
+            // Group by pipeline name
+            const grouped = {};
+            pipelines.forEach(p => {
+                const name = p.name || p.id;
+                if (!grouped[name]) grouped[name] = [];
+                grouped[name].push(p);
+            });
+            
+            let html = '';
+            Object.keys(grouped).sort().forEach(name => {
+                const runs = grouped[name].slice(0, 5); // Show max 5 recent
+                html += `
+                    <div style="margin-bottom:1rem">
+                        <div style="font-weight:600;margin-bottom:0.5rem">${name}</div>
+                        ${runs.map(p => `
+                            <div class="pipeline-item" onclick="selectPipeline('${p.id}');document.getElementById('tutorial-modal').style.display='none'" 
+                                 style="margin:0.25rem 0;padding:0.5rem;font-size:0.85rem">
+                                <div class="pipeline-status ${p.status}" style="width:8px;height:8px"></div>
+                                <span style="color:var(--text-muted)">${fmtTime(p.created_at)}</span>
+                                <span class="status-badge ${p.status}" style="font-size:0.7rem">${p.status}</span>
+                                ${p.total_duration_ms ? '<span style="color:var(--text-muted)">'+fmtDuration(p.total_duration_ms)+'</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            document.getElementById('all-pipelines-list').innerHTML = html;
+        });
+};
+
+async function loadPipelineHistory(pipelineName) {
+    try {
+        const res = await fetch(`/api/pipelines/by-name/${encodeURIComponent(pipelineName)}`);
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        console.error('Error loading pipeline history:', e);
+        return [];
+    }
+}
+
+function showPipelineHistoryModal(pipelineName, currentId) {
+    const modal = document.getElementById('tutorial-modal');
+    if (!modal) return;
+    
+    modal.style.display = 'flex';
+    document.getElementById('tutorial-content').innerHTML = `
+        <h2 style="margin-bottom:1rem"><i class="fas fa-history"></i> Pipeline History: ${pipelineName}</h2>
+        <div id="history-list" style="max-height:400px;overflow-y:auto">
+            <div class="loading"><div class="spinner"></div> Loading...</div>
+        </div>
+        <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
+    `;
+    
+    fetch(`/api/pipelines/by-name/${encodeURIComponent(pipelineName)}`)
+        .then(r => r.json())
+        .then(pipelines => {
+            const list = document.getElementById('history-list');
+            if (!pipelines || pipelines.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted)">No history found</p>';
+                return;
+            }
+            
+            list.innerHTML = pipelines.map(p => `
+                <div class="pipeline-item" onclick="selectPipeline('${p.id}');document.getElementById('tutorial-modal').style.display='none'" 
+                     style="margin:0.5rem 0;padding:0.75rem;cursor:pointer;${p.id === currentId ? 'border:2px solid #3b82f6' : ''}">
+                    <div class="pipeline-status ${p.status}"></div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">${p.name || p.id}</div>
+                        <div class="pipeline-meta">
+                            <span>${p.status}</span>
+                            <span>${fmtTime(p.started_at)}</span>
+                            ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
+
 // ==================== PIPELINES ====================
 async function loadPipelines() {
     try {
@@ -62,30 +316,128 @@ function renderPipelineList(pipelines) {
         return;
     }
     
-    list.innerHTML = pipelines.map(p => `
-        <div class="pipeline-item" onclick="selectPipeline('${p.id}')">
-            <div class="pipeline-status ${p.status}"></div>
-            <div class="pipeline-info">
-                <div class="pipeline-name">${p.name || p.id}</div>
-                <div class="pipeline-meta">
-                    <span>${p.status}</span>
-                    ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
+    // Group pipelines by name
+    const grouped = {};
+    pipelines.forEach(p => {
+        const name = p.name || 'Unnamed';
+        if (!grouped[name]) {
+            grouped[name] = [];
+        }
+        grouped[name].push(p);
+    });
+    
+    // Sort executions by date (most recent first) within each group
+    Object.keys(grouped).forEach(name => {
+        grouped[name].sort((a, b) => new Date(b.started_at) - new Date(a.started_at));
+    });
+    
+    // Render grouped pipelines with collapsible sections
+    let html = '';
+    Object.keys(grouped).sort().forEach(name => {
+        const executions = grouped[name];
+        const latestStatus = executions[0].status;
+        const latestDuration = executions[0].total_duration_ms;
+        const count = executions.length;
+        
+        // Escape quotes in name for onclick
+        const safeName = name.replace(/'/g, "\\'");
+        
+        html += `
+            <div class="pipeline-group">
+                <div class="pipeline-group-header" onclick="togglePipelineGroup('${safeName}', event)">
+                    <i class="fas fa-chevron-right expand-icon"></i>
+                    <div class="pipeline-status ${latestStatus}"></div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">${name}</div>
+                        <div class="pipeline-meta">
+                            <span>${count} execution${count !== 1 ? 's' : ''}</span>
+                            <span>${latestStatus}</span>
+                            ${latestDuration ? '<span>' + fmtDuration(latestDuration) + '</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pipeline-group-content" style="display:none;">
+                    ${executions.map(p => `
+                        <div class="pipeline-execution" onclick="selectPipeline('${p.id}')">
+                            <div class="pipeline-status ${p.status}"></div>
+                            <div class="pipeline-info">
+                                <div class="pipeline-id">${p.id}</div>
+                                <div class="pipeline-meta">
+                                    <span>${p.status}</span>
+                                    <span>${fmtTime(p.started_at)}</span>
+                                    ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    });
+    
+    list.innerHTML = html;
+}
+
+// Toggle pipeline group expansion
+window.togglePipelineGroup = function(name, evt) {
+    if (evt) evt.stopPropagation();
+    
+    // Find the group by looking for the header that contains this name
+    const headers = document.querySelectorAll('.pipeline-group-header');
+    let targetGroup = null;
+    
+    for (let header of headers) {
+        const nameEl = header.querySelector('.pipeline-name');
+        if (nameEl && nameEl.textContent.trim() === name) {
+            targetGroup = header.closest('.pipeline-group');
+            break;
+        }
+    }
+    
+    if (!targetGroup) return;
+    
+    const content = targetGroup.querySelector('.pipeline-group-content');
+    const icon = targetGroup.querySelector('.expand-icon');
+    
+    if (!content || !icon) return;
+    
+    const isExpanded = content.style.display !== 'none';
+    content.style.display = isExpanded ? 'none' : 'block';
+    icon.classList.toggle('expanded', !isExpanded);
 }
 
 async function selectPipeline(id) {
     try {
+        const pRes = await fetch('/api/pipelines/' + id);
+        const pipeline = await pRes.json();
+        
+        currentPipelineId = id;
+        currentPipelineName = pipeline.name;
+        
+        // Mark execution as active in the list
+        document.querySelectorAll('.pipeline-execution').forEach(el => {
+            el.classList.remove('active');
+        });
+        document.querySelector(`.pipeline-execution[onclick="selectPipeline('${id}')"]`)?.classList.add('active');
+        
         const res = await fetch('/api/pipelines/' + id + '/graph');
         const graph = await res.json();
         graphState.currentGraph = graph;
         renderGraph(graph);
         
-        const pRes = await fetch('/api/pipelines/' + id);
-        const pipeline = await pRes.json();
         renderSteps(pipeline);
+        
+        // Update pipeline info in header
+        const info = document.getElementById('graph-pipeline-info');
+        if (info) {
+            info.innerHTML = `
+                <span style="font-size:0.8rem;color:var(--text-muted)">${pipeline.name}</span>
+                <button onclick="showCurrentPipelineHistory()" style="margin-left:0.5rem;padding:2px 8px;font-size:0.7rem" class="btn btn-ghost">
+                    <i class="fas fa-history"></i> History
+                </button>
+            `;
+        }
     } catch (e) {
         console.error('Error selecting pipeline:', e);
     }
@@ -169,6 +521,9 @@ function renderGraph(graph) {
         
         const color = statusColors[nd.status] || '#64748b';
         
+        // Detect if node is a pipeline (nested pipeline call)
+        const isPipeline = nd.type === 'pipeline' || nd.name?.includes('Pipeline') || nd.step_type === 'pipeline';
+        
         if (nd.type === 'condition') {
             g.innerHTML = `
                 <polygon points="0,-30 30,0 0,30 -30,0" fill="#8b5cf6" stroke="${color}" stroke-width="3"/>
@@ -182,6 +537,16 @@ function renderGraph(graph) {
                 <text text-anchor="middle" dominant-baseline="central" fill="#9ca3af" font-size="16">⊘</text>
                 <rect x="-45" y="30" width="90" height="18" rx="4" fill="rgba(30,41,59,0.9)"/>
                 <text y="43" text-anchor="middle" fill="#9ca3af" font-size="10">${nd.name.substring(0,10)}</text>
+            `;
+        } else if (isPipeline) {
+            // Render pipeline nodes with double circle and special styling
+            const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
+            g.innerHTML = `
+                <circle r="28" fill="${color}" stroke="${color}" stroke-width="2"/>
+                <circle r="22" fill="none" stroke="${color}" stroke-width="2" opacity="0.6"/>
+                <text text-anchor="middle" dominant-baseline="central" fill="white" font-size="18" font-weight="bold">⊕</text>
+                <rect x="-55" y="35" width="110" height="22" rx="5" fill="rgba(15,23,42,0.95)"/>
+                <text y="51" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">${nd.name.substring(0,12)}</text>
             `;
         } else {
             const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
@@ -306,16 +671,37 @@ function showNodeTooltip(e, node) {
     
     let content = `<strong>${node.name}</strong><br>`;
     content += `<span>Type: ${node.type || 'task'}</span><br>`;
-    content += `<span>Status: ${node.status}</span>`;
+    content += `<span>Status: <strong style="color: ${node.status === 'completed' ? '#10b981' : node.status === 'error' ? '#f43f5e' : node.status === 'running' ? '#3b82f6' : '#f59e0b'}">${node.status}</strong></span>`;
     
     if (node.duration_ms) {
-        content += `<br><span>Duration: ${fmtDuration(node.duration_ms)}</span>`;
+        content += `<br><span>Duration: <strong>${fmtDuration(node.duration_ms)}</strong></span>`;
     }
     if (node.start_time) {
         content += `<br><span>Started: ${fmtTime(node.start_time)}</span>`;
     }
     if (node.end_time) {
         content += `<br><span>Ended: ${fmtTime(node.end_time)}</span>`;
+    }
+    
+    // Show condition info if applicable
+    if (node.type === 'condition') {
+        content += `<br><span style="border-top: 1px solid rgba(148, 163, 184, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;">`;
+        content += `<strong>Condition:</strong><br>`;
+        if (node.expression) {
+            content += `${node.expression}<br>`;
+        }
+        if (node.branch_taken) {
+            content += `<strong>Branch: ${node.branch_taken === 'true' ? '✓ TRUE' : '✗ FALSE'}</strong>`;
+        }
+        if (node.error_message) {
+            content += `<br><span style="color: #f43f5e;"><strong>Error:</strong><br>${node.error_message}</span>`;
+        }
+        content += `</span>`;
+    }
+    
+    // Show error message if present
+    if (node.error_message && node.type !== 'condition') {
+        content += `<br><span style="color: #f43f5e; border-top: 1px solid rgba(148, 163, 184, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;"><strong>Error:</strong><br>${node.error_message}</span>`;
     }
     
     tooltip.innerHTML = content;
@@ -451,9 +837,32 @@ function setupEventListeners() {
 }
 
 // ==================== TAB SWITCHING ====================
+const pipelineTabs = ['graph', 'data'];
+
 window.switchTab = function(tabName) {
+    // Check if pipeline-specific tab requires selection
+    if (pipelineTabs.includes(tabName) && !currentPipelineId) {
+        const msg = currentLang === 'es' 
+            ? 'Selecciona un pipeline de la lista derecha primero'
+            : 'Select a pipeline from the right list first';
+        alert(msg);
+        return;
+    }
+    
+    // Update all tabs (old layout)
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+    const oldTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+    if (oldTab) oldTab.classList.add('active');
+    
+    // Update new layout nav buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    const navBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
+    if (navBtn) navBtn.classList.add('active');
+    
+    // Update pipeline-specific tabs
+    document.querySelectorAll('.pipeline-tabs .tab').forEach(t => t.classList.remove('active'));
+    const pipelineTab = document.querySelector(`.pipeline-tabs .tab[data-tab="${tabName}"]`);
+    if (pipelineTab) pipelineTab.classList.add('active');
     
     document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
     document.getElementById(`tab-${tabName}`).style.display = 'block';
@@ -472,6 +881,14 @@ window.switchTab = function(tabName) {
         loadDataTable();
     } else if (tabName === 'timeline') {
         loadTimeline();
+    }
+};
+
+// Scroll to nav button when switching tab
+window.scrollToNav = function(tabName) {
+    const navBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
+    if (navBtn) {
+        navBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }
 };
 
