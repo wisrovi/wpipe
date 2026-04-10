@@ -1,0 +1,87 @@
+{
+  "skill_name": "kind-cluster",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "create-kind-cluster",
+      "prompt": "Crea un cluster Kind llamado 'test-cluster' con 1 control-plane y 5 workers (3 GPU, 2 CPU)",
+      "expected_output": "Cluster funcional con nodos correctamente etiquetados",
+      "assertions": [
+        {
+          "name": "cluster_created",
+          "text": "kind create cluster exitoso",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "6_nodes",
+          "text": "6 nodos visibles (1 control + 5 workers)",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "correct_labels",
+          "text": "Workers tienen etiquetas correctas (GPU/CPU)",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "validate-gpu-pods",
+      "prompt": "Crea y ejecuta pods nvidia-smi en worker1, worker2 y worker3 para validar GPUs",
+      "expected_output": "Pods completados mostrando info de nvidia-smi",
+      "assertions": [
+        {
+          "name": "pods_created",
+          "text": "3 pods GPU creados",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "pods_completed",
+          "text": "Pods completados (no Pending/Error)",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "nvidia_smi_output",
+          "text": "Logs muestran salida de nvidia-smi",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "generate-results-table",
+      "prompt": "Genera worker_results.md con los resultados de la validación de GPUs",
+      "expected_output": "Tabla markdown con resultados por worker",
+      "assertions": [
+        {
+          "name": "table_created",
+          "text": "worker_results.md creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "all_workers_listed",
+          "text": "Todos los 5 workers listados",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "gpu_status_filled",
+          "text": "Status GPU (Yes/No) para workers GPU",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

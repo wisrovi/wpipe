@@ -1,0 +1,75 @@
+{
+  "skill_name": "code-quality",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "full-quality-audit",
+      "prompt": "Realiza una auditoría de calidad completa en el proyecto /app con:\n- Pylint ≥9.0\n- Coverage ≥85%\n- Genera REPORT.html",
+      "expected_output": "Reporte HTML con métricas de calidad, coverage y código mejorado",
+      "assertions": [
+        {
+          "name": "pylint_score_above_9",
+          "text": "Pylint score ≥9.0",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "coverage_above_85",
+          "text": "Coverage ≥85%",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "report_html_generated",
+          "text": "REPORT.html generado",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "improve-low-coverage",
+      "prompt": "El proyecto /app tiene 60% coverage. Agrega tests hasta alcanzar 85%.",
+      "expected_output": "Tests adicionales y coverage mejorado a ≥85%",
+      "assertions": [
+        {
+          "name": "coverage_improved",
+          "text": "Coverage mejorado a ≥85%",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "tests_added",
+          "text": "Nuevos tests agregados",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "pylint-refactor",
+      "prompt": "Mejora el código en /app hasta obtener Pylint ≥9.5. Current score: 7.0",
+      "expected_output": "Código refactorizado con Pylint ≥9.5",
+      "assertions": [
+        {
+          "name": "pylint_improved",
+          "text": "Pylint score ≥9.5",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "no_major_issues",
+          "text": "Sin errores o warnings mayores",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

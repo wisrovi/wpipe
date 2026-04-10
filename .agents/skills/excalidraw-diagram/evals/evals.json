@@ -1,0 +1,87 @@
+{
+  "skill_name": "excalidraw-diagram",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-diagram",
+      "prompt": "Crea un diagrama de arquitectura de sistema con: User → API → Database. Guarda como system.excalidraw y renderiza a PNG",
+      "expected_output": "system.excalidraw y system.png creados",
+      "assertions": [
+        {
+          "name": "excalidraw_created",
+          "text": "Archivo .excalidraw creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "valid_json",
+          "text": "JSON es válido (type: excalidraw, version: 2)",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "png_rendered",
+          "text": "PNG renderizado correctamente",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "diagram-with-arrows",
+      "prompt": "Crea diagrama de flujo con 5 pasos y flechas de conexión: A → B → C → D → E",
+      "expected_output": "Diagrama con 5 cajas conectadas por flechas",
+      "assertions": [
+        {
+          "name": "five_boxes",
+          "text": "5 cajas creadas",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "four_arrows",
+          "text": "4 flechas conectando las cajas",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "png_valid",
+          "text": "PNG muestra el flujo completo",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "color-coded-diagram",
+      "prompt": "Crea diagrama con colores semánticos: Frontend (cyan), Backend (blue), Database (purple)",
+      "expected_output": "Diagrama con colores correctos por tipo",
+      "assertions": [
+        {
+          "name": "frontend_cyan",
+          "text": "Frontend usa color cyan",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "backend_blue",
+          "text": "Backend usa color blue",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "database_purple",
+          "text": "Database usa color purple",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

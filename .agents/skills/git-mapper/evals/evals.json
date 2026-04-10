@@ -1,0 +1,66 @@
+{
+  "skill_name": "git-mapper",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "generate-mapper-script",
+      "prompt": "Genera un script mapper_files.sh para commits granulares en /app con 5 archivos modificados",
+      "expected_output": "Script bash ejecutable con git add y git commit para cada archivo",
+      "assertions": [
+        {
+          "name": "script_created",
+          "text": "mapper_files.sh creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "script_executable",
+          "text": "Script es ejecutable (chmod +x)",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_git_add",
+          "text": "Script tiene git add por archivo",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_git_commit",
+          "text": "Script tiene git commit",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "conventional-commits",
+      "prompt": "Genera script de commits para /app donde:\n- .py files usen [FEATURE]\n- .md files usen [DOC]\n- config files usen [CONFIG]",
+      "expected_output": "Script con prefijos correctos según tipo de archivo",
+      "assertions": [
+        {
+          "name": "py_uses_feature",
+          "text": "Archivos .py usan [FEATURE]",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "md_uses_doc",
+          "text": "Archivos .md usan [DOC]",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "config_uses_config",
+          "text": "Archivos de config usan [CONFIG]",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

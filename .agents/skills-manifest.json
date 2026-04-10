@@ -1,0 +1,194 @@
+{
+  "$schema": "https://opencode.ai/skills-manifest.schema.json",
+  "version": "1.0.0",
+  "name": "wisrovi-agent-skills",
+  "description": "Agent CLI skills template library for OpenCode/Claude Code - 12 skills profesionales con evals, scripts y references",
+  "author": "wisrovi",
+  "repository": "https://github.com/wisrovi/agent-skills",
+  "skills": [
+    {
+      "name": "user-setup",
+      "version": "1.0.0",
+      "description": "Configura perfil de usuario y reglas de interacción. Code Review obligatorio antes de output.",
+      "compatibility": ["opencode", "claude"],
+      "category": "configuration",
+      "status": "stable",
+      "tags": ["setup", "configuration", "rules", "code-review"],
+      "triggers": ["configurar", "setup", "reglas", "perfil"],
+      "anti_triggers": ["ya configurado"],
+      "files": ["evals/evals.json"]
+    },
+    {
+      "name": "code-review",
+      "version": "1.0.0",
+      "description": "Revisión automática Python + Security Report estilo pentest con bandit/safety.",
+      "compatibility": ["opencode", "claude"],
+      "category": "quality",
+      "status": "stable",
+      "tags": ["code-review", "security", "quality", "python", "bandit"],
+      "triggers": ["revisar código", "analizar código", "seguridad", "vulnerabilidades"],
+      "files": [
+        "references/security-report-template.md",
+        "references/coding-standards.md",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "readme-makefile",
+      "version": "1.0.0",
+      "description": "Genera README.md + Makefile + Excalidraw PNGs. Combina documentación y automatización.",
+      "compatibility": ["opencode", "claude"],
+      "category": "documentation",
+      "status": "stable",
+      "tags": ["documentation", "readme", "makefile", "excalidraw"],
+      "triggers": ["crear README", "makefile", "documentación", "generar docs"],
+      "files": [
+        "references/readme-sections.md",
+        "references/makefile-template.mk",
+        "references/excalidraw-colors.md",
+        "scripts/generate_readme.py",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "code-quality",
+      "version": "1.0.0",
+      "description": "Audita código Python: Pylint ≥9.0, tests ≥85% coverage, reportes HTML/PDF.",
+      "compatibility": ["opencode", "claude"],
+      "category": "quality",
+      "status": "stable",
+      "tags": ["quality", "testing", "coverage", "pylint", "reports"],
+      "triggers": ["auditar código", "quality", "coverage", "tests", "generar reporte"],
+      "files": [
+        "scripts/generate_report.py",
+        "scripts/analyze_coverage.py",
+        "references/pylint-rules.md",
+        "references/coverage-tips.md",
+        "references/html-template.html",
+        "examples/example_module.py",
+        "examples/test_example_module.py",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "documentation",
+      "version": "1.0.0",
+      "description": "Genera documentación: Sphinx HTML + LaTeX PDF + Technical Whitepaper. Invoca sphinx-docs.",
+      "compatibility": ["opencode", "claude"],
+      "category": "documentation",
+      "status": "stable",
+      "tags": ["documentation", "latex", "pdf", "whitepaper"],
+      "triggers": ["generar PDF", "documentación LaTeX", "whitepaper", "generar docs"],
+      "files": [
+        "references/latex-preamble.tex",
+        "references/whitepaper-template.tex",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "sphinx-docs",
+      "version": "1.0.0",
+      "description": "Genera documentación Sphinx HTML lista para Read the Docs con autodoc.",
+      "compatibility": ["opencode", "claude"],
+      "category": "documentation",
+      "status": "stable",
+      "tags": ["sphinx", "documentation", "html", "readthedocs", "api-docs"],
+      "triggers": ["sphinx", "readthedocs", "API docs", "generar docs HTML"],
+      "files": [
+        "references/conf.py",
+        "references/index-template.rst",
+        "references/module-template.rst",
+        "examples/00-examples.md",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "git-mapper",
+      "version": "1.0.0",
+      "description": "Genera script para commits granulares por archivo con Conventional Commits.",
+      "compatibility": ["opencode", "claude"],
+      "category": "git",
+      "status": "stable",
+      "tags": ["git", "commits", "version-control", "scripts"],
+      "triggers": ["git commit", "commits granulares", "mapper", "generar commits"],
+      "files": [
+        "scripts/generate_commits.py",
+        "examples/00-examples.md",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "doc-to-markdown",
+      "version": "1.0.0",
+      "description": "Convierte documentos (DOCX, PDF, Excel, ODT) a Markdown.",
+      "compatibility": ["opencode", "claude"],
+      "category": "conversion",
+      "status": "stable",
+      "tags": ["conversion", "markdown", "pandoc", "documents"],
+      "triggers": ["convertir a markdown", "DOCX a md", "PDF a texto", "migrar documentos"],
+      "files": [
+        "examples/00-examples.md",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "kind-cluster",
+      "version": "1.0.0",
+      "description": "Crea cluster Kind con GPUs (3 GPU + 2 CPU) y validación con pods nvidia-smi.",
+      "compatibility": ["opencode", "claude"],
+      "category": "kubernetes",
+      "status": "stable",
+      "tags": ["kubernetes", "kind", "gpu", "docker", "nvidia"],
+      "triggers": ["crear cluster kind", "kind cluster", "kubernetes gpu", "nvidia-smi"],
+      "files": [
+        "examples/00-examples.md",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "file-date-mapper",
+      "version": "1.0.0",
+      "description": "Mapea archivos por fecha y mueve a carpeta evidencias con CSV.",
+      "compatibility": ["opencode", "claude"],
+      "category": "utilities",
+      "status": "stable",
+      "tags": ["files", "dates", "organization", "evidence"],
+      "triggers": ["mapear archivos por fecha", "evidencias", "organizar por fecha"],
+      "files": [
+        "scripts/map_files.py",
+        "examples/00-examples.md",
+        "evals/evals.json"
+      ]
+    },
+    {
+      "name": "excalidraw-diagram",
+      "version": "1.0.0",
+      "description": "Genera diagramas Excalidraw profesionales con PNGs exportados.",
+      "compatibility": ["opencode", "claude"],
+      "category": "diagrams",
+      "status": "stable",
+      "tags": ["diagrams", "excalidraw", "png", "architecture", "visualization"],
+      "triggers": ["diagrama excalidraw", "generar diagrama PNG", "arquitectura visual"],
+      "files": [
+        "references/render_excalidraw.py",
+        "references/render_template.html",
+        "references/pyproject.toml",
+        "evals/evals.json"
+      ]
+    }
+  ],
+  "categories": {
+    "configuration": "Setup y configuración del agente",
+    "quality": "Calidad de código y revisión",
+    "documentation": "Generación de documentación",
+    "git": "Gestión de versionado",
+    "conversion": "Conversión de formatos",
+    "kubernetes": "Gestión de clusters K8s",
+    "utilities": "Utilidades varias",
+    "diagrams": "Generación de diagramas"
+  },
+  "dependencies": {
+    "documentation": ["sphinx-docs", "readme-makefile", "excalidraw-diagram"],
+    "readme-makefile": ["excalidraw-diagram"]
+  }
+}

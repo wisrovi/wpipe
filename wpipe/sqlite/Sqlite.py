@@ -3,17 +3,17 @@ SQLite database module for storing pipeline execution records.
 """
 
 import json
-import os
-import sqlite3
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
 from typing import Optional, Union
 
 import pandas as pd
+from wsqlite import WSQLite
+
+from .tables_dto.records import RecordModel
 
 
 class SQLite:
-    """SQLite database wrapper for storing pipeline records."""
+    """SQLite database wrapper for storing pipeline records using WSQLite."""
 
     def __init__(self, db_name: str = "register.db") -> None:
         """
@@ -23,22 +23,8 @@ class SQLite:
             db_name: Path to the SQLite database file.
         """
         self.db_name = db_name
-        self._create_table_if_not_exists()
+        self.db = WSQLite(RecordModel, db_name)
         self.executor = ThreadPoolExecutor(max_workers=10)
-
-    def _create_table_if_not_exists(self) -> None:
-        """Create the records table if it doesn't exist."""
-        if not self.db_name:
-            return
-
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
-            cursor.execute("""CREATE TABLE IF NOT EXISTS records
-                (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 input TEXT,
-                 output TEXT,
-                 details TEXT DEFAULT NULL,
-                 datetime TEXT DEFAULT CURRENT_TIMESTAMP)""")
 
     def async_write(
         self,
@@ -49,12 +35,6 @@ class SQLite:
     ) -> None:
         """
         Asynchronously write a record to the database.
-
-        Args:
-            input_data: Input data to store.
-            output: Output data to store.
-            details: Additional details to store.
-            record_id: Optional ID for updating existing record.
         """
         self.executor.submit(self.write, input_data, output, details, record_id)
 
@@ -67,125 +47,45 @@ class SQLite:
     ) -> Optional[int]:
         """
         Write a record to the database.
-
-        Args:
-            input_data: Input data to store.
-            output: Output data to store.
-            details: Additional details to store.
-            record_id: Optional ID for updating existing record.
-
-        Returns:
-            Record ID or None if write failed.
         """
-        if not self.check_table_exists():
-            return None
-
-        if isinstance(input_data, dict):
-            input_data = json.dumps(input_data)
-
+        # Convert dicts to JSON strings for storage
+        input_str = json.dumps(input_data) if isinstance(input_data, dict) else input_data
+        
         if isinstance(output, dict):
-            output["datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            output = json.dumps(output)
+            output_str = json.dumps(output)
         elif isinstance(output, str):
-            output = json.dumps(
-                {
-                    "output": output,
-                    "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                }
-            )
+            output_str = json.dumps({"output": output})
+        else:
+            output_str = None
 
-        if isinstance(details, dict):
-            details = json.dumps(details)
+        details_str = json.dumps(details) if isinstance(details, dict) else details
 
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
+        model_data = RecordModel(
+            id=record_id,
+            input=input_str,
+            output=output_str,
+            details=details_str
+        )
 
-            if not record_id:
-                cursor.execute(
-                    "INSERT INTO records (input, output, details) VALUES (?, ?, ?)",
-                    (input_data, output, details),
-                )
-                record_id = cursor.lastrowid
-            else:
-                if not self.read_by_id(record_id):
-                    return None
+        if record_id:
+            self.db.update(record_id, model_data)
+            return record_id
+        else:
+            return self.db.insert(model_data)
 
-                if not input_data and not details and output:
-                    cursor.execute(
-                        "UPDATE records SET output = ? WHERE id = ?",
-                        (output, record_id),
-                    )
-                elif not input_data and output and details:
-                    cursor.execute(
-                        "UPDATE records SET output = ?, details = ? WHERE id = ?",
-                        (output, details, record_id),
-                    )
-                elif input_data and output and details:
-                    cursor.execute(
-                        "UPDATE records SET input = ?, output = ?, "
-                        "details = ? WHERE id = ?",
-                        (input_data, output, details, record_id),
-                    )
-                elif input_data and output and not details:
-                    cursor.execute(
-                        "UPDATE records SET input = ?, output = ? WHERE id = ?",
-                        (input_data, output, record_id),
-                    )
-            conn.commit()
-
-        return record_id
-
-    def read_by_id(self, record_id: int) -> list:
-        """
-        Read a record by ID.
-
-        Args:
-            record_id: The record ID to fetch.
-
-        Returns:
-            List of records (usually 0 or 1).
-        """
-        if not self.check_table_exists():
-            return []
-
-        results = []
-
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM records WHERE id = ?", (record_id,))
-            results = cursor.fetchall()
-
-        return results
-
-    def _view_records(self) -> pd.DataFrame:
-        """
-        Internal method to view all records.
-
-        Returns:
-            DataFrame with all records.
-        """
-        with sqlite3.connect(self.db_name) as conn:
-            return pd.read_sql_query("SELECT * FROM records", conn)
+    def read_by_id(self, record_id: int) -> Optional[RecordModel]:
+        """Read a record by ID."""
+        results = self.db.get_by_field(id=record_id)
+        return results[0] if results else None
 
     def export_to_dataframe(
         self, save_csv: bool = False, csv_name: str = "records.csv"
     ) -> pd.DataFrame:
-        """
-        Export records to a pandas DataFrame.
+        """Export records to a pandas DataFrame."""
+        records = self.db.get_all()
+        df = pd.DataFrame([r.model_dump() for r in records])
 
-        Args:
-            save_csv: Whether to save to CSV file.
-            csv_name: Path for CSV output.
-
-        Returns:
-            DataFrame containing the records.
-        """
-        if not self.check_table_exists():
-            return pd.DataFrame()
-
-        df = self._view_records()
-
-        if save_csv:
+        if save_csv and not df.empty:
             df.to_csv(csv_name, index=False)
 
         return df
@@ -198,51 +98,27 @@ class SQLite:
     ) -> list:
         """
         Get records within a date range.
-
-        Args:
-            start_date: Start date in ISO format.
-            end_date: End date in ISO format.
-            days: If provided, get records from the last N days.
-
-        Returns:
-            List of records within the date range.
+        Note: WSQLite doesn't support complex range queries yet, 
+        so we fetch all and filter or use raw SQL if necessary.
         """
-        if not self.check_table_exists():
-            return []
-
         from datetime import datetime, timedelta
-
+        
+        all_records = self.db.get_all()
+        
         if days is not None:
-            end_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            start_date = (datetime.now() - timedelta(days=days)).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
+            limit = datetime.now() - timedelta(days=days)
+            return [r for r in all_records if datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") >= limit]
 
-        if start_date is None or end_date is None:
-            return []
+        if start_date and end_date:
+            s = datetime.fromisoformat(start_date)
+            e = datetime.fromisoformat(end_date)
+            return [r for r in all_records if s <= datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") <= e]
 
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM records WHERE datetime BETWEEN ? AND ?",
-                (start_date, end_date),
-            )
-            return cursor.fetchall()
+        return all_records
 
     def count_records(self) -> int:
-        """
-        Count the total number of records.
-
-        Returns:
-            Total number of records.
-        """
-        if not self.check_table_exists():
-            return 0
-
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM records")
-            return cursor.fetchone()[0]
+        """Count the total number of records."""
+        return len(self.db.get_all())
 
     def update_record(
         self,
@@ -250,77 +126,29 @@ class SQLite:
         output: Optional[Union[str, dict]] = None,
         details: Optional[Union[str, dict]] = None,
     ) -> None:
-        """
-        Update a record by ID.
-
-        Args:
-            record_id: The record ID to update.
-            output: Output data to update.
-            details: Details data to update.
-        """
-        if not self.check_table_exists():
+        """Update a record by ID."""
+        current = self.read_by_id(record_id)
+        if not current:
             return
 
-        output_json = json.dumps(output) if output else None
-        details_json = json.dumps(details) if details else None
-
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
-            if output_json and details_json:
-                cursor.execute(
-                    "UPDATE records SET output = ?, details = ? WHERE id = ?",
-                    (output_json, details_json, record_id),
-                )
-            elif output_json:
-                cursor.execute(
-                    "UPDATE records SET output = ? WHERE id = ?",
-                    (output_json, record_id),
-                )
-            elif details_json:
-                cursor.execute(
-                    "UPDATE records SET details = ? WHERE id = ?",
-                    (details_json, record_id),
-                )
-            conn.commit()
+        if output:
+            current.output = json.dumps(output) if isinstance(output, dict) else output
+        if details:
+            current.details = json.dumps(details) if isinstance(details, dict) else details
+        
+        self.db.update(record_id, current)
 
     def delete_by_id(self, record_id: int) -> None:
-        """
-        Delete a record by ID.
-
-        Args:
-            record_id: The record ID to delete.
-        """
-        if not self.check_table_exists():
-            return
-
-        with sqlite3.connect(self.db_name) as conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM records WHERE id = ?", (record_id,))
-            conn.commit()
+        """Delete a record by ID."""
+        self.db.delete(record_id)
 
     def check_table_exists(self) -> bool:
-        """
-        Check if the table exists and is accessible.
-
-        Returns:
-            True if table exists, False otherwise.
-        """
-        if not self.db_name:
-            return False
-
-        if os.path.dirname(self.db_name):
-            if not os.path.exists(os.path.dirname(self.db_name)):
-                os.makedirs(os.path.dirname(self.db_name))
-
-        self._create_table_if_not_exists()
-
-        return True
+        """Check if database is accessible."""
+        return self.db is not None
 
     def __enter__(self) -> "SQLite":
-        """Enter context manager."""
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        """Exit context manager."""
         if self.executor:
             self.executor.shutdown(wait=True)

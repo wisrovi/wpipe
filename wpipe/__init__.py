@@ -23,7 +23,7 @@ from .pipe import Condition, For, Pipeline, PipelineAsync
 from .ram import memory
 from .sqlite import Wsqlite
 from .timeout import timeout_sync, timeout_async, TaskTimer, TimeoutError
-from .tracking import PipelineTracker
+from .tracking import PipelineTracker, Metric, Severity
 from .resource_monitor import ResourceMonitor, ResourceMonitorRegistry
 from .type_hinting import PipelineContext, TypeValidator, GenericPipeline
 from .parallel import ParallelExecutor, ExecutionMode, DAGScheduler
