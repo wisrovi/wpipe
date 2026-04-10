@@ -16,19 +16,19 @@ Phase 2 Features (Parallelism & Composition):
 
 from .api_client import APIClient
 from .checkpoint import CheckpointManager
+from .composition import CompositionHelper, NestedPipelineStep, PipelineAsStep
 from .dashboard import start_dashboard
+from .decorators import AutoRegister, StepRegistry, get_step_registry, step
 from .export import PipelineExporter
 from .log import new_logger
+from .parallel import DAGScheduler, ExecutionMode, ParallelExecutor
 from .pipe import Condition, For, Pipeline, PipelineAsync
 from .ram import memory
-from .sqlite import Wsqlite
-from .timeout import timeout_sync, timeout_async, TaskTimer, TimeoutError
-from .tracking import PipelineTracker, Metric, Severity
 from .resource_monitor import ResourceMonitor, ResourceMonitorRegistry
-from .type_hinting import PipelineContext, TypeValidator, GenericPipeline
-from .parallel import ParallelExecutor, ExecutionMode, DAGScheduler
-from .composition import PipelineAsStep, CompositionHelper, NestedPipelineStep
-from .decorators import step, StepRegistry, AutoRegister, get_step_registry
+from .sqlite import Wsqlite
+from .timeout import TaskTimer, TimeoutError, timeout_async, timeout_sync
+from .tracking import Metric, PipelineTracker, Severity
+from .type_hinting import GenericPipeline, PipelineContext, TypeValidator
 from .util import auto_dict_input, object_to_dict, state, to_obj
 
 __all__ = [

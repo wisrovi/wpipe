@@ -8,7 +8,7 @@ and for creating structured state classes from functions.
 from dataclasses import asdict, is_dataclass
 from functools import wraps
 from types import SimpleNamespace
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 from pydantic import BaseModel
 

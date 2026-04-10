@@ -6,9 +6,9 @@ storing state in the tracking database.
 """
 
 import json
-from datetime import datetime
-from typing import Optional, Dict, Any
 import sqlite3
+from typing import Any, Dict, Optional
+
 from wpipe.util.transform import object_to_dict
 
 

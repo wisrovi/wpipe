@@ -4,12 +4,13 @@ Resource monitoring for pipeline task execution.
 Tracks RAM, CPU, and other system metrics during pipeline execution.
 """
 
-import psutil
+import sqlite3
 import threading
 import time
-from typing import Dict, List, Any, Optional
 from datetime import datetime
-import sqlite3
+from typing import Any, Dict, List, Optional
+
+import psutil
 
 
 class ResourceMonitor:
@@ -26,17 +27,17 @@ class ResourceMonitor:
         self.task_name = task_name
         self.db_path = db_path
         self.process = psutil.Process()
-        
+
         self.start_time: Optional[float] = None
         self.end_time: Optional[float] = None
-        
+
         self.start_ram_mb: float = 0.0
         self.peak_ram_mb: float = 0.0
         self.end_ram_mb: float = 0.0
-        
+
         self.start_cpu_percent: float = 0.0
         self.avg_cpu_percent: float = 0.0
-        
+
         self.metrics: List[Dict[str, Any]] = []
         self._monitoring = False
         self._monitor_thread: Optional[threading.Thread] = None
@@ -56,7 +57,7 @@ class ResourceMonitor:
         self.start_ram_mb = self.process.memory_info().rss / (1024 * 1024)
         self.peak_ram_mb = self.start_ram_mb
         self.start_cpu_percent = self.process.cpu_percent(interval=0.1)
-        
+
         self._monitoring = True
         self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True)
         self._monitor_thread.start()
@@ -64,16 +65,16 @@ class ResourceMonitor:
     def stop(self) -> None:
         """Stop resource monitoring."""
         self._monitoring = False
-        
+
         if self._monitor_thread:
             self._monitor_thread.join(timeout=2)
-        
+
         self.end_time = time.time()
         self.end_ram_mb = self.process.memory_info().rss / (1024 * 1024)
-        
+
         if self.metrics:
             self.avg_cpu_percent = sum(m['cpu_percent'] for m in self.metrics) / len(self.metrics)
-        
+
         if self.db_path:
             self._save_to_db()
 
@@ -83,15 +84,15 @@ class ResourceMonitor:
             try:
                 ram_mb = self.process.memory_info().rss / (1024 * 1024)
                 cpu_percent = self.process.cpu_percent(interval=0.1)
-                
+
                 self.peak_ram_mb = max(self.peak_ram_mb, ram_mb)
-                
+
                 self.metrics.append({
                     'timestamp': time.time(),
                     'ram_mb': ram_mb,
                     'cpu_percent': cpu_percent,
                 })
-                
+
                 time.sleep(0.5)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 break
@@ -131,7 +132,7 @@ class ResourceMonitor:
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                
+
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS resource_metrics (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -144,7 +145,7 @@ class ResourceMonitor:
                         created_at TEXT DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
-                
+
                 cursor.execute("""
                     INSERT INTO resource_metrics 
                     (task_name, start_ram_mb, peak_ram_mb, end_ram_mb, avg_cpu_percent, elapsed_seconds)
@@ -157,7 +158,7 @@ class ResourceMonitor:
                     self.avg_cpu_percent,
                     self.elapsed_seconds,
                 ))
-                
+
                 conn.commit()
         except Exception as e:
             print(f"Warning: Could not save metrics to DB: {e}")

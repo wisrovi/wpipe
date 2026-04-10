@@ -5,10 +5,10 @@ Provides parallel execution capabilities for pipelines.
 """
 
 from .executor import (
-    ParallelExecutor,
+    ContextMerger,
     DAGScheduler,
     ExecutionMode,
-    ContextMerger,
+    ParallelExecutor,
     StepDependency,
 )
 

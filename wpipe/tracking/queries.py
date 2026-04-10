@@ -3,7 +3,7 @@ Data query module for pipeline and event retrieval.
 """
 
 import json
-from typing import Any, List, Optional
+from typing import List, Optional
 
 
 class QueryManager:
@@ -20,12 +20,12 @@ class QueryManager:
         """Get list of pipelines for the dashboard."""
         all_pipelines = self.db_pipelines.get_all()
         all_pipelines.sort(key=lambda x: x.started_at or "", reverse=True)
-        
+
         if status:
             all_pipelines = [p for p in all_pipelines if p.status == status]
-            
+
         paged = all_pipelines[offset : offset + limit]
-        
+
         result = []
         for p in paged:
             d = p.model_dump()
@@ -41,16 +41,16 @@ class QueryManager:
         pipelines = self.db_pipelines.get_by_field(id=pipeline_id)
         if not pipelines:
             return None
-            
+
         pipeline = pipelines[0].model_dump()
         for field in ["input_data", "output_data"]:
             if pipeline.get(field):
                 try: pipeline[field] = json.loads(pipeline[field])
                 except: pass
-                
+
         steps = self.db_steps.get_by_field(pipeline_id=pipeline_id)
         steps.sort(key=lambda x: x.step_order)
-        
+
         pipeline["steps"] = []
         for s in steps:
             sd = s.model_dump()
@@ -59,7 +59,7 @@ class QueryManager:
                     try: sd[field] = json.loads(sd[field])
                     except: pass
             pipeline["steps"].append(sd)
-            
+
         return pipeline
 
     def get_pipeline_executions(self, name: str, limit: int = 100, offset: int = 0) -> List[dict]:

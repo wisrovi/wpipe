@@ -4,10 +4,9 @@ Step decorators for pipeline definitions.
 Provides @wpipe.step() decorator for inline step definitions.
 """
 
-from typing import Callable, Optional, List, Any, Dict
-from functools import wraps
 from dataclasses import dataclass, field
-
+from functools import wraps
+from typing import Any, Callable, Dict, List, Optional
 
 # Global registry for decorated steps
 _STEP_REGISTRY: Dict[str, 'DecoratedStep'] = {}
@@ -29,7 +28,7 @@ class StepMetadata:
 
 class DecoratedStep:
     """Represents a decorated step."""
-    
+
     def __init__(
         self,
         func: Callable,
@@ -56,23 +55,23 @@ class DecoratedStep:
         self.parallel = parallel
         self.NAME = self.metadata.name
         self.VERSION = self.metadata.version
-    
+
     def __call__(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute decorated step."""
         return self.metadata.func(context)
-    
+
     def get_name(self) -> str:
         """Get step name."""
         return self.metadata.name
-    
+
     def get_dependencies(self) -> List[str]:
         """Get step dependencies."""
         return self.metadata.depends_on
-    
+
     def get_timeout(self) -> Optional[float]:
         """Get step timeout."""
         return self.metadata.timeout
-    
+
     def get_metadata(self) -> StepMetadata:
         """Get all metadata."""
         return self.metadata
@@ -111,7 +110,7 @@ def step(
     """
     def decorator(func: Callable) -> Callable:
         step_name = name or func.__name__
-        
+
         # Create decorated step
         decorated = DecoratedStep(
             func=func,
@@ -124,38 +123,38 @@ def step(
             description=description,
             tags=tags,
         )
-        
+
         # Register in global registry
         _STEP_REGISTRY[step_name] = decorated
-        
+
         # Preserve original function but add metadata
         @wraps(func)
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
-        
+
         wrapper._wpipe_step = decorated
         wrapper._wpipe_metadata = decorated.get_metadata()
-        
+
         # Mirror attributes for @state compatibility
         wrapper.NAME = decorated.NAME
         wrapper.VERSION = decorated.VERSION
-        
+
         return wrapper
-    
+
     return decorator
 
 
 class StepRegistry:
     """Registry for managing decorated steps."""
-    
+
     def __init__(self):
         """Initialize registry."""
         self.steps: Dict[str, DecoratedStep] = {}
-    
+
     def register(self, decorated_step: DecoratedStep) -> None:
         """Register a decorated step."""
         self.steps[decorated_step.get_name()] = decorated_step
-    
+
     def register_func(
         self,
         func: Callable,
@@ -176,23 +175,23 @@ class StepRegistry:
             **metadata,
         )
         self.register(decorated)
-    
+
     def get(self, name: str) -> Optional[DecoratedStep]:
         """Get step by name."""
         return self.steps.get(name)
-    
+
     def get_all(self) -> Dict[str, DecoratedStep]:
         """Get all registered steps."""
         return self.steps.copy()
-    
+
     def clear(self) -> None:
         """Clear all registered steps."""
         self.steps.clear()
-    
+
     def get_global_registry() -> Dict[str, DecoratedStep]:
         """Get global step registry."""
         return _STEP_REGISTRY.copy()
-    
+
     @staticmethod
     def from_global() -> 'StepRegistry':
         """Create registry from global registry."""
@@ -217,7 +216,7 @@ class AutoRegister:
         pipeline = Pipeline()
         AutoRegister.register_all(pipeline)
     """
-    
+
     @staticmethod
     def register_all(pipeline: 'Pipeline', registry: Optional[StepRegistry] = None) -> None:
         """
@@ -231,7 +230,7 @@ class AutoRegister:
             steps = _STEP_REGISTRY
         else:
             steps = registry.get_all()
-        
+
         for name, decorated_step in steps.items():
             metadata = decorated_step.get_metadata()
             pipeline.add_state(
@@ -240,7 +239,7 @@ class AutoRegister:
                 depends_on=metadata.depends_on,
                 timeout=metadata.timeout,
             )
-    
+
     @staticmethod
     def register_by_tag(
         pipeline: 'Pipeline',
@@ -259,7 +258,7 @@ class AutoRegister:
             steps = _STEP_REGISTRY
         else:
             steps = registry.get_all()
-        
+
         for name, decorated_step in steps.items():
             metadata = decorated_step.get_metadata()
             if tag in metadata.tags:

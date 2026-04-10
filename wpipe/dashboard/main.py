@@ -9,7 +9,6 @@ The dashboard is modularized into:
 - templates/: HTML template views
 """
 
-import json
 from pathlib import Path
 from typing import Optional
 
@@ -19,7 +18,6 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
 from wpipe.tracking import PipelineTracker
-
 
 # Get the dashboard directory path
 DASHBOARD_DIR = Path(__file__).parent
@@ -37,8 +35,9 @@ def start_dashboard(
     open_browser: bool = False,
 ):
     """Start the wpipe dashboard server."""
-    import uvicorn
     from webbrowser import open as open_url
+
+    import uvicorn
 
     app = create_app(db_path, config_dir)
 

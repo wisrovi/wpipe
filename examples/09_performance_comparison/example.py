@@ -5,7 +5,7 @@ Demonstrates comparing two pipeline executions.
 Shows how to identify performance regressions between runs.
 """
 
-import random
+import time
 from wpipe import Pipeline, PipelineTracker
 
 
@@ -48,38 +48,29 @@ def main():
     )
     p2.set_steps(
         [
-            (load_data_slow, "load", "v2.0"),
-            (process_slow, "process", "v2.0"),
-            (output_result, "output", "v2.0"),
+            (load_data_slow, "load", "v1.0"),
+            (process_slow, "process", "v1.0"),
+            (output_result, "output", "v1.0"),
         ]
     )
     result_b = p2.run({"count": 100})
     print(f"  Pipeline ID: {p2.pipeline_id}")
     print(f"  Result: {result_b}")
 
-    # Compare the two executions
+    # Compare stats
     print("\n[Comparing Executions]")
-    comparison = tracker.compare_pipelines(p1.pipeline_id, p2.pipeline_id)
 
-    print(f"\n  Duration A: {comparison['pipeline_a']['duration_ms']:.2f}ms")
-    print(f"  Duration B: {comparison['pipeline_b']['duration_ms']:.2f}ms")
-    print(
-        f"  Difference: {comparison['duration_diff_ms']:.2f}ms ({comparison['duration_diff_percent']:+.1f}%)"
-    )
+    stats = tracker.get_stats()
+    if stats:
+        print(f"\n  Total Executions: {stats.get('total_executions', 0)}")
+        print(f"  Successful: {stats.get('completed', 0)}")
+        print(f"  Failed: {stats.get('errors', 0)}")
 
-    print("\n  Step Comparison:")
-    for step in comparison["steps_comparison"]:
-        if step["in_a"] and step["in_b"]:
-            status = "⚠️ CHANGED" if step.get("status_changed") else "✓ Same"
-            print(
-                f"    - {step['step_name']}: {step['duration_a']:.1f}ms -> {step['duration_b']:.1f}ms {status}"
-            )
-        elif step["in_a"]:
-            print(f"    - {step['step_name']}: Removed in B")
-        else:
-            print(f"    - {step['step_name']}: Added in B")
+    print("\n  Top Slow Steps:")
+    slow_steps = tracker.get_top_slow_steps(limit=5)
+    for step in slow_steps:
+        print(f"    - {step['step_name']}: {step.get('avg_duration_ms', 0):.1f}ms avg")
 
-    print(f"\n[Comparison ID] {comparison['comparison_id']}")
     print(
         f"\n[Dashboard] Run: python -m wpipe.dashboard --db {db_path} --config-dir {config_dir} --open"
     )
@@ -116,7 +107,6 @@ def process_slow(d):
     import time
 
     time.sleep(0.4)  # Slower
-    # Extra validation step that takes time
     validated = []
     for x in d["data"]:
         time.sleep(0.001)  # Small delay per item

@@ -1,6 +1,8 @@
 """Minimal PipelineAsync for Phase 1."""
 import asyncio
+
 from .pipe import Pipeline
+
 
 class PipelineAsync(Pipeline):
     """Async wrapper for Pipeline."""

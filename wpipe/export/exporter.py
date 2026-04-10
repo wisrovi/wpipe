@@ -5,12 +5,11 @@ Provides functionality to export pipeline logs, metrics, and statistics
 to various formats (JSON, CSV) for analysis and reporting.
 """
 
-import csv
 import json
-from datetime import datetime
-from typing import Dict, List, Any, Optional
 import sqlite3
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class PipelineExporter:
@@ -168,7 +167,7 @@ class PipelineExporter:
         """Calculate pipeline statistics."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            
+
             try:
                 # Check if table exists
                 cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='executions'")
@@ -181,7 +180,7 @@ class PipelineExporter:
                         "average_execution_time_seconds": 0.0,
                         "exported_at": datetime.now().isoformat(),
                     }
-                
+
                 # Total executions
                 exec_query = "SELECT COUNT(*) FROM executions"
                 if pipeline_id:

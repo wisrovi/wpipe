@@ -11,12 +11,12 @@
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![LTS](https://img.shields.io/badge/LTS-1.0.0-green.svg)](CHANGELOG.md)
+[![LTS](https://img.shields.io/badge/LTS-1.5.0-green.svg)](CHANGELOG.md)
 [![Tests](https://img.shields.io/badge/tests-106%20passing-10b981)](https://github.com/wisrovi/wpipe/actions)
 [![Documentation](https://img.shields.io/badge/docs-wpipe-blue)](https://wpipe.readthedocs.io/)
 [![GitHub stars](https://img.shields.io/github/stars/wisrovi/wpipe?style=social)](https://github.com/wisrovi/wpipe/stargazers)
 
-> **Long Term Support (LTS)**: Version 1.0.0 is the first LTS release with guaranteed backward compatibility, comprehensive documentation, and 100+ examples.
+> **Version 1.5**: Major release with parallel execution, pipeline composition, step decorators, resource monitoring, checkpointing, timeout controls, type hinting, and export capabilities.
 
 ## Project Overview
 
@@ -48,6 +48,13 @@
 | 🧪 **Type Hints** | Complete type annotations |
 | 🔒 **Memory Control** | Built-in memory utilities |
 | 🧩 **Composable** | Reusable pipeline components |
+| ⚡ **Parallel Execution** | Execute steps in parallel (I/O or CPU bound) |
+| 📂 **Pipeline Composition** | Use pipelines as steps in other pipelines |
+| 🎯 **Step Decorators** | Define steps inline with @step decorator |
+| 💾 **Checkpointing** | Save and resume from checkpoints |
+| ⏱️ **Timeouts** | Prevent hanging tasks with timeout support |
+| 📈 **Resource Monitoring** | Track RAM and CPU during execution |
+| 📤 **Export** | Export logs, metrics, and statistics to JSON/CSV |
 
 ---
 

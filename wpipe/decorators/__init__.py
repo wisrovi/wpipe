@@ -5,13 +5,13 @@ Provides @step decorator for inline step definitions.
 """
 
 from .step import (
-    step,
-    StepRegistry,
     AutoRegister,
     DecoratedStep,
     StepMetadata,
-    get_step_registry,
+    StepRegistry,
     clear_registry,
+    get_step_registry,
+    step,
 )
 
 __all__ = [

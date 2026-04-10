@@ -4,7 +4,8 @@ Alert system for pipeline and step monitoring.
 
 import re
 import uuid
-from typing import Any, List, Optional
+from typing import Optional
+
 from wpipe.sqlite.tables_dto.tracker_models import AlertConfigModel, AlertFiredModel
 
 
@@ -23,6 +24,7 @@ class AlertManager:
         name: Optional[str] = None,
         severity: str = "warning",
         message: Optional[str] = None,
+        steps: Optional[list] = None,
     ) -> int:
         """Add an alert threshold configuration."""
         match = re.match(r"([><=!]+)\s*(\d+(\.\d+)?)", expression)
@@ -34,6 +36,9 @@ class AlertManager:
 
         if not name:
             name = f"alert_{metric}_{condition}{value}_{uuid.uuid4().hex[:4]}"
+
+        if steps:
+            self._alert_hooks[name] = steps
 
         model = AlertConfigModel(
             name=name,

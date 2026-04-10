@@ -24,8 +24,7 @@ def main():
     tracker.add_alert_threshold(
         name="slow_pipeline",
         metric="pipeline_duration_ms",
-        condition=">",
-        value=2000,
+        expression=">2000",
         severity="warning",
         message="Pipeline execution exceeded 2 seconds",
     )
@@ -34,8 +33,7 @@ def main():
     tracker.add_alert_threshold(
         name="slow_step",
         metric="step_duration_ms",
-        condition=">",
-        value=500,
+        expression=">500",
         severity="warning",
         message="Step execution exceeded 500ms",
     )
@@ -44,8 +42,7 @@ def main():
     tracker.add_alert_threshold(
         name="pipeline_error",
         metric="error_rate",
-        condition=">",
-        value=0,
+        expression=">0",
         severity="critical",
         message="Pipeline execution failed",
     )

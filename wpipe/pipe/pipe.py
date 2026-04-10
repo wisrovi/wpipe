@@ -298,7 +298,7 @@ class Pipeline(APIClient):
             )
         else:
             self._pending_events.append(event_info)
-            
+
         if steps:
             self._post_run_tasks.extend(steps)
 
@@ -316,7 +316,7 @@ class Pipeline(APIClient):
             except Exception as e:
                 if self.verbose:
                     print(f"[HOOK ERROR] Task failed: {e}")
-        
+
         return data
 
     def link_to_pipeline(self, other_pipeline_id: str, relation_type: str = "related"):
@@ -655,7 +655,7 @@ class Pipeline(APIClient):
                 print(f"\n[CONDITION] Evaluating: {item.expression}")
             data, _ = self._run_branch([item], data, **kwargs)
             return data
-            
+
         if isinstance(item, For):
             loop_data = data.copy()
             loop_data.pop("progress_rich", None)
@@ -691,13 +691,13 @@ class Pipeline(APIClient):
             func = item
             name = getattr(item, "NAME", None) or getattr(item, "__name__", "task")
             version = getattr(item, "VERSION", "v1.0") or "v1.0"
-        
+
         if func:
             self.task_name = name
             self.task_id = step_id
             tracked_step_id = self._start_step_tracking(name, version, "task", data)
             data["progress_rich"] = data.get("progress_rich") or self.progress_rich
-            
+
             step_error = None
             step_error_trace = None
             try:
@@ -713,10 +713,10 @@ class Pipeline(APIClient):
             finally:
                 alert_hooks = self._end_step_tracking(tracked_step_id, data if not step_error else None, step_error, step_error_trace)
                 data = self._handle_alert_hooks(alert_hooks, data)
-            
+
             if self.verbose and not isinstance(item, (For, Condition)):
                 print()
-                
+
         return data
 
     def _run_branch(self, steps: list, data: dict, **kwargs: Any) -> tuple[dict, list]:
@@ -734,7 +734,7 @@ class Pipeline(APIClient):
                     branch_taken = "true" if item.evaluate(data) else "false"
                 except Exception as e:
                     error_message = str(e); branch_taken = "false"
-                
+
                 branch_executed = item.branch_true if branch_taken == "true" else (item.branch_false or [])
                 cond_step_id = None
                 if self.tracker and self.pipeline_id:
@@ -779,7 +779,7 @@ class Pipeline(APIClient):
         data = args[0].copy() if args else {}
         checkpoint_mgr = kwargs.get("checkpoint_mgr")
         checkpoint_id = kwargs.get("checkpoint_id")
-        
+
         # --- LÓGICA DE REANUDACIÓN NATIVA ---
         start_at_step = 0
         if checkpoint_mgr and checkpoint_id and checkpoint_mgr.can_resume(checkpoint_id):
@@ -793,24 +793,24 @@ class Pipeline(APIClient):
 
         if self.tracker:
             registration = self.tracker.register_pipeline(
-                name=self.pipeline_name, 
-                steps=self.tasks_list, 
-                input_data=data, 
-                worker_id=self.worker_id, 
-                worker_name=self.worker_name, 
+                name=self.pipeline_name,
+                steps=self.tasks_list,
+                input_data=data,
+                worker_id=self.worker_id,
+                worker_name=self.worker_name,
                 parent_pipeline_id=self.parent_pipeline_id
             )
             self.pipeline_id = registration["pipeline_id"]
             self._step_order = start_at_step
-            
+
             if self.verbose:
                 print(f"\n[MATRÍCULA] Pipeline registered: {self.pipeline_id}")
                 print(f"[MATRÍCULA] Config YAML: {registration['yaml_path']}")
-            
-            for event in self._pending_events: 
+
+            for event in self._pending_events:
                 self.tracker.add_event(pipeline_id=self.pipeline_id, **event)
             self._pending_events = []
-            
+
             if self._collect_system_metrics:
                 metrics_collector = SystemMetricsCollector(self.tracker, self.pipeline_id)
                 metrics_collector.start()
@@ -827,7 +827,7 @@ class Pipeline(APIClient):
                         yield i, progress_rich_instance
                         progress_rich_instance.update(task, advance=1)
             except (LiveError, ImportError):
-                for i in tqdm(range(size), desc=self.task_name): 
+                for i in tqdm(range(size), desc=self.task_name):
                     yield i, None
 
         try:
@@ -839,7 +839,7 @@ class Pipeline(APIClient):
                 item = self.tasks_list[advance_id]
                 data["progress_rich"] = progress
                 data = self._execute_step(item, data, **kwargs)
-                
+
                 # GUARDAR PROGRESO AUTOMÁTICAMENTE
                 if checkpoint_mgr and checkpoint_id and "error" not in data:
                     name = getattr(item, "NAME", getattr(item, "__name__", f"step_{advance_id}"))
@@ -848,33 +848,33 @@ class Pipeline(APIClient):
                 if "error" in data:
                     error_message = data.get("error")
                     error_step = getattr(item, "NAME", str(item))
-                    if not self.continue_on_error: 
+                    if not self.continue_on_error:
                         break
         except Exception as e:
             error_message = str(e)
             error_step = self.task_name
-            if not self.continue_on_error: 
+            if not self.continue_on_error:
                 raise
         finally:
             data = self._execute_post_run_tasks(data)
-            if metrics_collector: 
+            if metrics_collector:
                 metrics_collector.stop()
             if self.tracker and self.pipeline_id:
                 alert_hooks = self.tracker.complete_pipeline(
-                    pipeline_id=self.pipeline_id, 
-                    output_data=data if not error_message else None, 
-                    error_message=error_message, 
+                    pipeline_id=self.pipeline_id,
+                    output_data=data if not error_message else None,
+                    error_message=error_message,
                     error_step=error_step
                 )
                 data = self._handle_alert_hooks(alert_hooks, data)
                 if self.verbose:
                     status = "ERROR" if error_message else "COMPLETED"
                     print(f"\n[MATRÍCULA] Pipeline {self.pipeline_id}: {status}")
-            
+
             # Si terminó con éxito total, limpiamos el checkpoint
             if not error_message and checkpoint_mgr and checkpoint_id:
                 checkpoint_mgr.clear_checkpoints(checkpoint_id)
-                
+
         data.pop("progress_rich", None)
         return data
 

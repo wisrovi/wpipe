@@ -4,7 +4,7 @@ Statistical analysis and trend calculation for the dashboard.
 
 import math
 from datetime import datetime, timedelta
-from typing import Any, List, Optional
+from typing import List, Optional
 
 
 class AnalysisManager:
@@ -23,17 +23,17 @@ class AnalysisManager:
         completed = len([p for p in all_p if p.status == "completed"])
         errors = len([p for p in all_p if p.status == "error"])
         running = len([p for p in all_p if p.status == "running"])
-        
+
         durations = [p.total_duration_ms for p in all_p if p.status == "completed" and p.total_duration_ms]
         avg_duration = sum(durations) / len(durations) if durations else 0
-        
+
         all_steps = self.db_steps.get_all()
         total_steps = len(all_steps)
         completed_steps = len([s for s in all_steps if s.status == "completed"])
-        
+
         fired = self.db_alerts_fired.get_all()
         unack = len([a for a in fired if getattr(a, 'acknowledged', 0) == 0])
-        
+
         return {
             "total_pipelines": total,
             "completed": completed,
@@ -53,7 +53,7 @@ class AnalysisManager:
         filtered = [p for p in all_p if p.started_at and p.started_at >= cutoff]
         if pipeline_name:
             filtered = [p for p in filtered if p.name == pipeline_name]
-            
+
         daily = {}
         for p in filtered:
             date = p.started_at.split("T")[0]
@@ -65,7 +65,7 @@ class AnalysisManager:
                 if p.total_duration_ms: daily[date]["durations"].append(p.total_duration_ms)
             elif p.status == "error":
                 daily[date]["errors"] += 1
-                
+
         result = []
         for date in sorted(daily.keys()):
             day = daily[date]
@@ -85,7 +85,7 @@ class AnalysisManager:
             stats[h.step_name]["count"] += 1
             stats[h.step_name]["total_ms"] += h.duration_ms
             stats[h.step_name]["max_ms"] = max(stats[h.step_name]["max_ms"], h.duration_ms)
-            
+
         slow_steps = []
         for name, s in stats.items():
             s["avg_duration_ms"] = s["total_ms"] / s["count"]
@@ -111,11 +111,11 @@ class AnalysisManager:
         most_used = sorted(stats.values(), key=lambda x: x["execution_count"], reverse=True)[:20]
         for item in most_used: item["avg_duration_ms"] = item["total_ms"] / item["execution_count"]
 
-        slowest = sorted([s for s in stats.values() if s["execution_count"] > s["error_count"]], 
+        slowest = sorted([s for s in stats.values() if s["execution_count"] > s["error_count"]],
                          key=lambda x: (x["total_ms"] / (x["execution_count"] - x["error_count"])), reverse=True)[:15]
         for item in slowest: item["avg_duration_ms"] = item["total_ms"] / (item["execution_count"] - item["error_count"])
 
-        most_errors = sorted([s for s in stats.values() if s["error_count"] > 0], 
+        most_errors = sorted([s for s in stats.values() if s["error_count"] > 0],
                              key=lambda x: x["error_count"] / x["execution_count"], reverse=True)[:15]
         for item in most_errors: item["error_rate"] = item["error_count"] / item["execution_count"]
 
@@ -142,11 +142,11 @@ class AnalysisManager:
             if p.status == "error": stats[p.name]["error_count"] += 1
             if p.total_duration_ms: stats[p.name]["total_ms"] += p.total_duration_ms
 
-        slowest = sorted([s for s in stats.values() if s["execution_count"] > s["error_count"]], 
+        slowest = sorted([s for s in stats.values() if s["execution_count"] > s["error_count"]],
                          key=lambda x: (x["total_ms"] / (x["execution_count"] - x["error_count"])), reverse=True)[:10]
         for item in slowest: item["avg_duration_ms"] = item["total_ms"] / (item["execution_count"] - item["error_count"])
 
-        most_errors = sorted([s for s in stats.values() if s["error_count"] > 0], 
+        most_errors = sorted([s for s in stats.values() if s["error_count"] > 0],
                              key=lambda x: x["error_count"] / x["execution_count"], reverse=True)[:10]
         for item in most_errors: item["error_rate"] = item["error_count"] / item["execution_count"]
 

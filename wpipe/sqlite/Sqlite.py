@@ -50,7 +50,7 @@ class SQLite:
         """
         # Convert dicts to JSON strings for storage
         input_str = json.dumps(input_data) if isinstance(input_data, dict) else input_data
-        
+
         if isinstance(output, dict):
             output_str = json.dumps(output)
         elif isinstance(output, str):
@@ -102,9 +102,9 @@ class SQLite:
         so we fetch all and filter or use raw SQL if necessary.
         """
         from datetime import datetime, timedelta
-        
+
         all_records = self.db.get_all()
-        
+
         if days is not None:
             limit = datetime.now() - timedelta(days=days)
             return [r for r in all_records if datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") >= limit]
@@ -135,7 +135,7 @@ class SQLite:
             current.output = json.dumps(output) if isinstance(output, dict) else output
         if details:
             current.details = json.dumps(details) if isinstance(details, dict) else details
-        
+
         self.db.update(record_id, current)
 
     def delete_by_id(self, record_id: int) -> None:

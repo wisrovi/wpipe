@@ -7,12 +7,10 @@ retry logic, API tracking, and execution history tracking.
 """
 
 import asyncio
-import inspect
 import json
-import os
-import time
 import traceback
-from typing import Any, Awaitable, Callable, Optional, Union
+from collections.abc import Awaitable
+from typing import Any, Callable, Optional, Union
 
 from rich.errors import LiveError
 from rich.progress import Progress
@@ -23,7 +21,7 @@ from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import logger
 from wpipe.tracking import PipelineTracker
 
-from .pipe import Condition, ProgressManager, SystemMetricsCollector, get_system_metrics
+from .pipe import Condition, ProgressManager, SystemMetricsCollector
 
 
 def _is_async_callable(func: Any) -> bool:

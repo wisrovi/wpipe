@@ -4,8 +4,8 @@ Pipeline composition for nested pipelines.
 Allows using a Pipeline as a step within another Pipeline.
 """
 
-from typing import Dict, Any, Optional, Callable
 from dataclasses import dataclass
+from typing import Any, Callable, Dict, Optional
 
 
 @dataclass
@@ -16,12 +16,12 @@ class PipelineAsStep:
     This allows nesting pipelines: a Pipeline object can be added
     to another Pipeline and executed as a single step unit.
     """
-    
+
     name: str
     pipeline: 'Pipeline'
     timeout: Optional[float] = None
     depends_on: Optional[list] = None
-    
+
     def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute nested pipeline.
@@ -34,14 +34,14 @@ class PipelineAsStep:
         """
         # Run the nested pipeline with parent context
         result = self.pipeline.run(context)
-        
+
         # Return only new/modified keys
         return {k: v for k, v in result.items() if k not in context}
-    
+
     def get_dependencies(self) -> list:
         """Get step dependencies."""
         return self.depends_on or []
-    
+
     def get_timeout(self) -> Optional[float]:
         """Get step timeout."""
         return self.timeout
@@ -49,7 +49,7 @@ class PipelineAsStep:
 
 class CompositionHelper:
     """Helper utilities for pipeline composition."""
-    
+
     @staticmethod
     def merge_contexts(
         parent: Dict[str, Any],
@@ -71,7 +71,7 @@ class CompositionHelper:
             Merged context
         """
         merged = parent.copy()
-        
+
         for key, value in child.items():
             if key in parent:
                 if conflict_resolution == "child_wins":
@@ -85,9 +85,9 @@ class CompositionHelper:
                         merged[key] = value
             else:
                 merged[key] = value
-        
+
         return merged
-    
+
     @staticmethod
     def extract_context_subset(
         context: Dict[str, Any],
@@ -104,7 +104,7 @@ class CompositionHelper:
             Subset context
         """
         return {k: context.get(k) for k in keys if k in context}
-    
+
     @staticmethod
     def validate_context_compatibility(
         parent_schema: Dict[str, type],
@@ -131,7 +131,7 @@ class CompositionHelper:
                         f"Type mismatch for key '{key}': "
                         f"expected {parent_type}, got {child_type}"
                     )
-        
+
         return True
 
 
@@ -145,7 +145,7 @@ class NestedPipelineStep:
     - Error handling
     - Performance tracking
     """
-    
+
     def __init__(
         self,
         name: str,
@@ -170,27 +170,27 @@ class NestedPipelineStep:
         self.result_filter = result_filter
         self.timeout = timeout
         self.execution_time = 0.0
-    
+
     def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute nested pipeline with filtering."""
         import time
-        
+
         # Filter context if needed
         child_context = context
         if self.context_filter:
             child_context = self.context_filter(context)
-        
+
         # Run pipeline
         start = time.time()
         result = self.pipeline.run(child_context)
         self.execution_time = time.time() - start
-        
+
         # Filter result if needed
         if self.result_filter:
             result = self.result_filter(result)
-        
+
         return result
-    
+
     def get_execution_time(self) -> float:
         """Get last execution time."""
         return self.execution_time

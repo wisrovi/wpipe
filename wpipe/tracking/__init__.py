@@ -5,6 +5,6 @@ Provides functionality to track pipeline execution history,
 step timings, and error information.
 """
 
-from .tracker import PipelineTracker, Metric, Severity
+from .tracker import Metric, PipelineTracker, Severity
 
 __all__ = ["PipelineTracker", "Metric", "Severity"]

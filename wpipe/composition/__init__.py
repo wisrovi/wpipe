@@ -3,9 +3,9 @@ Pipeline composition module for nested pipelines.
 """
 
 from .pipeline_step import (
-    PipelineAsStep,
     CompositionHelper,
     NestedPipelineStep,
+    PipelineAsStep,
 )
 
 __all__ = [

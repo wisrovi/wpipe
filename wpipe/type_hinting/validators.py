@@ -4,16 +4,16 @@ Type hinting validators for pipeline context and data.
 Provides utilities for validating and enforcing type hints throughout the pipeline.
 """
 
-from typing import TypeVar, Generic, Type, Dict, Any, get_args, get_origin
-from typing_extensions import TypedDict
+from typing import Any, Dict, Generic, Type, TypeVar, get_args, get_origin
 
+from typing_extensions import TypedDict
 
 T = TypeVar('T')
 
 
 class PipelineContext(TypedDict, total=False):
     """Base typed context for pipeline steps."""
-    
+
     step_id: str
     step_name: str
     execution_id: str
@@ -52,7 +52,7 @@ class TypeValidator:
         if origin is dict:
             if not isinstance(value, dict):
                 raise TypeError(f"Expected dict, got {type(value).__name__}")
-            
+
             if args:
                 key_type, val_type = args
                 for k, v in value.items():
@@ -60,19 +60,19 @@ class TypeValidator:
                         raise TypeError(f"Dict key must be {key_type.__name__}, got {type(k).__name__}")
                     if not isinstance(v, val_type):
                         raise TypeError(f"Dict value must be {val_type.__name__}, got {type(v).__name__}")
-            
+
             return value
 
         if origin is list:
             if not isinstance(value, list):
                 raise TypeError(f"Expected list, got {type(value).__name__}")
-            
+
             if args:
                 item_type = args[0]
                 for item in value:
                     if not isinstance(item, item_type):
                         raise TypeError(f"List item must be {item_type.__name__}, got {type(item).__name__}")
-            
+
             return value
 
         return value
@@ -98,7 +98,7 @@ class TypeValidator:
         for key, expected_type in schema.items():
             if key not in data:
                 raise KeyError(f"Required key '{key}' not found in data")
-            
+
             validated[key] = TypeValidator.validate(data[key], expected_type)
 
         return validated
