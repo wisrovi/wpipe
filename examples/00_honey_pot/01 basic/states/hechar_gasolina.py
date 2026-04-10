@@ -1,6 +1,6 @@
-from wpipe import Condition, For, Pipeline, state, to_obj, timeout_sync
-
 from dto.car import Car, Niveles
+
+from wpipe import Condition, For, Pipeline, state, timeout_sync, to_obj
 
 
 @timeout_sync(seconds=2)

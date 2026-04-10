@@ -1,33 +1,28 @@
 from dto.car import Car
 from states import (
+    Print_info,
     cambiar_aceite,
     conducir,
     desinflar_neumaticos,
+    fase_preparacion,
     hechar_gasolina,
     inflar_neumaticos,
-    Print_info,
     print_gasolina,
-    fase_preparacion,
 )
 
-from wpipe import (
-    Condition,
-    For,
-    Metric,
-    Pipeline,
-    Severity,
-    auto_dict_input,
-)
+from wpipe import Condition, For, Metric, Pipeline, Severity, auto_dict_input
 
 
 def get_viaje_pipeline():
     viaje = Pipeline(
-        pipeline_name="viaje", verbose=False, tracking_db="wpipe_dashboard.db",
-        # 
+        pipeline_name="viaje",
+        verbose=False,
+        tracking_db="wpipe_dashboard.db",
+        #
         max_retries=3,  # Retry up to 3 times
         retry_delay=0.5,  # Wait 0.5 seconds between retries
         retry_on_exceptions=(RuntimeError,),  # Only retry on RuntimeError
-        # 
+        #
         collect_system_metrics=True,  # Enable metrics collection
     )
 

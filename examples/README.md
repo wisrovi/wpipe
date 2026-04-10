@@ -19,17 +19,35 @@ This directory contains a comprehensive collection of **working examples** demon
 
 ## Features
 
-| Feature | Description | Complexity Level |
-|---------|-------------|------------------|
-| Basic Pipeline | Core pipeline creation and execution | 1 |
-| API Pipeline | Pipeline with API tracking and worker management | 2 |
-| Error Handling | Strategies for managing failures and recovery | 3 |
-| Conditional Execution | Dynamic branching based on data conditions | 4 |
-| Retry Mechanisms | Automatic retry with configurable backoff | 5 |
-| SQLite Integration | Persistent storage of pipeline execution data | 6 |
-| Nested Pipelines | Hierarchical pipeline composition | 7 |
-| YAML Configuration | External configuration loading and validation | 8 |
-| Microservice Patterns | Service architecture with health checks and metrics | 9 |
+| # | Feature | Description | Directory |
+|---|---------|-------------|-----------|
+| 01 | Basic Pipeline | Core pipeline creation and execution | `01_basic_pipeline/` |
+| 02 | Tracking | Pipeline with API tracking and worker management | `02_tracking/` |
+| 03 | API | API integration with worker tracking | `03_api/` |
+| 04 | Error Handling | Strategies for managing failures and recovery | `04_error_handling/` |
+| 05 | Conditions | Dynamic branching based on data conditions | `05_conditions/` |
+| 06 | SQLite | Persistent storage of pipeline execution data | `06_sqlite/` |
+| 07 | Nested | Hierarchical pipeline composition | `07_nested/` |
+| 08 | Retry | Automatic retry with configurable backoff | `08_retry/` |
+| 09 | Alerts | Alert and notification mechanisms | `09_alerts/` |
+| 10 | Checkpointing | Pipeline checkpoint and resume | `10_checkpointing/` |
+| 11 | Config | External configuration loading and validation | `11_config/` |
+| 12 | Dashboard | Visual dashboard and monitoring | `12_dashboard/` |
+| 13 | Metrics | Metrics export and collection | `13_metrics/` |
+| 14 | Resource | Resource monitoring | `14_resource/` |
+| 15 | Export | Data export (CSV, JSON) | `15_export/` |
+| 16 | Log | Log export and management | `16_log/` |
+| 17 | Parallel | Parallel execution patterns | `17_parallel/` |
+| 18 | Composition | Pipeline composition patterns | `18_composition/` |
+| 19 | Decorators | Decorator patterns | `19_decorators/` |
+| 20 | Benchmarks | Performance benchmarks | `20_benchmarks/` |
+| 21 | For | Loop/iteration patterns | `21_for/` |
+| 22 | Timeouts | Timeout handling | `22_timeouts/` |
+| 23 | Events | Event handling and annotations | `23_events/` |
+| 24 | Microservice | Microservice architecture patterns | `24_microservice/` |
+| 26 | Relations | Pipeline relations | `26_relations/` |
+| 28 | Type Hinting | Type hinting and validation | `28_type_hinting/` |
+| 00 | Honey Pot | Test/demo environment | `00_honey_pot/` |
 
 ---
 
@@ -169,17 +187,36 @@ The wpipe library doesn't require compilation, but the development environment s
 
 ## 5. 📂 File-by-File Guide
 
-| Directory | Description |
-|-----------|-------------|
-| `01_basic_pipeline/` | Core pipeline functionality - 15 examples |
-| `02_api_pipeline/` | API integration with worker tracking - 21 examples |
-| `03_error_handling/` | Error handling and recovery strategies - 11 examples |
-| `04_condition/` | Conditional execution and branching - 12 examples |
-| `05_retry/` | Retry mechanisms with backoff - 12 examples |
-| `06_sqlite_integration/` | SQLite database operations - 12 examples |
-| `07_nested_pipelines/` | Nested/hierarchical pipeline composition - 12 examples |
-| `08_yaml_config/` | YAML configuration loading and validation - 12 examples |
-| `09_microservice/` | Microservice architecture patterns - 10 examples |
+| # | Directory | Description |
+|---|-----------|-------------|
+| 01 | `01_basic_pipeline/` | Core pipeline functionality |
+| 02 | `02_tracking/` | Pipeline tracking |
+| 03 | `03_api/` | API integration |
+| 04 | `04_error_handling/` | Error handling strategies |
+| 05 | `05_conditions/` | Conditional execution |
+| 06 | `06_sqlite/` | SQLite database |
+| 07 | `07_nested/` | Nested pipelines |
+| 08 | `08_retry/` | Retry mechanisms |
+| 09 | `09_alerts/` | Alert mechanisms |
+| 10 | `10_checkpointing/` | Checkpoint and resume |
+| 11 | `11_config/` | YAML configuration |
+| 12 | `12_dashboard/` | Dashboard |
+| 13 | `13_metrics/` | Metrics export |
+| 14 | `14_resource/` | Resource monitoring |
+| 15 | `15_export/` | Data export |
+| 16 | `16_log/` | Log export |
+| 17 | `17_parallel/` | Parallel execution |
+| 18 | `18_composition/` | Composition patterns |
+| 19 | `19_decorators/` | Decorator patterns |
+| 20 | `20_benchmarks/` | Benchmarks |
+| 21 | `21_for/` | Loop patterns |
+| 22 | `22_timeouts/` | Timeout handling |
+| 23 | `23_events/` | Event handling |
+| 24 | `24_microservice/` | Microservice |
+| 25 | `25_nested/` | Advanced nested |
+| 26 | `26_relations/` | Pipeline relations |
+| 27 | `27_retry_logic/` | Advanced retry |
+| 28 | `28_type_hinting/` | Type hinting |
 
 ---
 
@@ -187,31 +224,37 @@ The wpipe library doesn't require compilation, but the development environment s
 
 ```
 examples/
-├── 01_basic_pipeline/
-│   ├── 01_simple_function/      # Basic function step
-│   ├── 02_class_steps/          # Class-based steps
-│   ├── 03_mixed_steps/          # Mixed step types
-│   ├── 04_default_values/       # Default parameter handling
-│   ├── 05_args_kwargs/          # *args and **kwargs
-│   ├── 06_dict_processing/      # Dictionary manipulation
-│   ├── 07_multiple_runs/        # Multiple executions
-│   ├── 08_data_aggregation/     # Data aggregation
-│   ├── 09_empty_data/           # Empty input handling
-│   ├── 10_lambda_steps/        # Lambda functions
-│   ├── 11_decorator_steps/      # Decorator patterns
-│   ├── 12_context_manager/      # Context manager usage
-│   ├── 13_async_pipeline/       # Async execution
-│   ├── 14_pipeline_chaining/    # Pipeline chaining
-│   └── 15_pipeline_clone/       # Pipeline cloning
-├── 02_api_pipeline/            # API integration examples
-├── 03_error_handling/          # Error handling examples
-├── 04_condition/               # Conditional examples
-├── 05_retry/                   # Retry mechanism examples
-├── 06_sqlite_integration/      # Database examples
-├── 07_nested_pipelines/        # Nested pipeline examples
-├── 08_yaml_config/             # YAML configuration examples
-├── 09_microservice/            # Microservice examples
-└── test/                        # Test files
+├── 00_honey_pot/              # Test/demo environment
+├── 01_basic_pipeline/          # Core pipeline functionality
+├── 02_tracking/               # Pipeline tracking
+├── 03_api/                   # API integration
+├── 04_error_handling/          # Error handling
+├── 05_conditions/            # Conditional execution
+├── 06_sqlite/                # SQLite database
+├── 07_nested/                 # Nested pipelines
+├── 08_retry/                  # Retry mechanisms
+├── 09_alerts/                 # Alert mechanisms
+├── 10_checkpointing/          # Checkpoint and resume
+├── 11_config/                 # YAML configuration
+├── 12_dashboard/              # Dashboard
+├── 13_metrics/                # Metrics export
+├── 14_resource/               # Resource monitoring
+├── 15_export/                 # Data export
+├── 16_log/                   # Log export
+├── 17_parallel/              # Parallel execution
+├── 18_composition/            # Composition patterns
+├── 19_decorators/             # Decorator patterns
+├── 20_benchmarks/             # Benchmarks
+├── 21_for/                   # Loop patterns
+├── 22_timeouts/               # Timeout handling
+├── 23_events/                # Event handling
+├── 24_microservice/           # Microservice
+├── 25_nested/                # Advanced nested
+├── 26_relations/             # Pipeline relations
+├── 27_retry_logic/            # Advanced retry
+├── 28_type_hinting/           # Type hinting
+├── configs/                  # Shared configurations
+└── test/                     # Test files
 ```
 
 ---
@@ -232,32 +275,89 @@ pip install -e .
 ### Running Examples
 
 ```bash
-# Level 1: Basic pipeline
+# 01: Basic pipeline
 python examples/01_basic_pipeline/01_simple_function/example.py
 
-# Level 2: API tracking
-python examples/02_api_pipeline/01_basic_api/example.py
+# 02: Tracking
+python examples/02_tracking/example.py
 
-# Level 3: Error handling
-python examples/03_error_handling/01_basic_error_example/example.py
+# 03: API
+python examples/03_api/01_basic_api/example.py
 
-# Level 4: Conditional execution
-python examples/04_condition/01_basic_condition_example/example.py
+# 04: Error handling
+python examples/04_error_handling/01_basic_error_example/example.py
 
-# Level 5: Retry mechanisms
-python examples/05_retry/01_basic_retry_example/example.py
+# 05: Conditions
+python examples/05_conditions/01_basic_condition_example/example.py
 
-# Level 6: SQLite integration
-python examples/06_sqlite_integration/01_basic_write_example/example.py
+# 06: SQLite
+python examples/06_sqlite/01_basic_write_example/example.py
 
-# Level 7: Nested pipelines
-python examples/07_nested_pipelines/01_basic_nested_example/example.py
+# 07: Nested pipelines
+python examples/07_nested/01_basic_nested_example/example.py
 
-# Level 8: YAML configuration
-python examples/08_yaml_config/01_read_yaml_example/example.py
+# 08: Retry
+python examples/08_retry/01_basic_retry_example/example.py
 
-# Level 9: Microservice
-python examples/09_microservice/01_basic_service_example/example.py
+# 09: Alerts
+python examples/09_alerts/example.py
+
+# 10: Checkpointing
+python examples/10_checkpointing/01_basic/example.py
+
+# 11: Config (YAML)
+python examples/11_config/01_read_yaml_example/example.py
+
+# 12: Dashboard
+python examples/12_dashboard/01_pipeline_with_sqlite/example.py
+
+# 13: Metrics
+python examples/13_metrics/example.py
+
+# 14: Resource monitoring
+python examples/14_resource/01_basic/example.py
+
+# 15: Export
+python examples/15_export/01_json/example.py
+
+# 16: Log export
+python examples/16_log/example.py
+
+# 17: Parallel execution
+python examples/17_parallel/01_basic/example.py
+
+# 18: Composition
+python examples/18_composition/01_nested/example.py
+
+# 19: Decorators
+python examples/19_decorators/01_basic/example.py
+
+# 20: Benchmarks
+python examples/20_benchmarks/example.py
+
+# 21: For loops
+python examples/21_for/01_iterations/example.py
+
+# 22: Timeouts
+python examples/22_timeouts/01_sync_timeout/example.py
+
+# 23: Events
+python examples/23_events/example.py
+
+# 24: Microservice
+python examples/24_microservice/01_basic_service_example/example.py
+
+# 25: Nested (Advanced)
+python examples/25_nested/01_basic_nested_example/example.py
+
+# 26: Relations
+python examples/26_relations/example.py
+
+# 27: Retry Logic
+python examples/27_retry_logic/01_basic_retry_example/example.py
+
+# 28: Type Hinting
+python examples/28_type_hinting/01_basic/example.py
 ```
 
 ---

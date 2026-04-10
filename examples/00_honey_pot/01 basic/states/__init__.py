@@ -3,8 +3,6 @@ from .conducir import conducir
 from .desinflar_neumaticos import desinflar_neumaticos
 from .hechar_gasolina import hechar_gasolina
 from .inflar_neumaticos import inflar_neumaticos
-from .print_info import Print_info
-from .print_gasolina import print_gasolina
 from .preparacion import (
     A_abrir_coche,
     B_inflar_neumaticos,
@@ -12,6 +10,8 @@ from .preparacion import (
     D_arrancar_motor,
     fase_preparacion,
 )
+from .print_gasolina import print_gasolina
+from .print_info import Print_info
 
 __all__ = [
     "cambiar_aceite",

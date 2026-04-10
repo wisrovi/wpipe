@@ -3,7 +3,8 @@ Tests for exceptions module.
 """
 
 import pytest
-from wpipe.exception import ApiError, TaskError, ProcessError, Codes
+
+from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 
 
 class TestCodes:

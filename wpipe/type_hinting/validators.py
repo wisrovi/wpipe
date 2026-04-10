@@ -8,7 +8,7 @@ from typing import Any, Dict, Generic, Type, TypeVar, get_args, get_origin
 
 from typing_extensions import TypedDict
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class PipelineContext(TypedDict, total=False):
@@ -57,9 +57,13 @@ class TypeValidator:
                 key_type, val_type = args
                 for k, v in value.items():
                     if not isinstance(k, key_type):
-                        raise TypeError(f"Dict key must be {key_type.__name__}, got {type(k).__name__}")
+                        raise TypeError(
+                            f"Dict key must be {key_type.__name__}, got {type(k).__name__}"
+                        )
                     if not isinstance(v, val_type):
-                        raise TypeError(f"Dict value must be {val_type.__name__}, got {type(v).__name__}")
+                        raise TypeError(
+                            f"Dict value must be {val_type.__name__}, got {type(v).__name__}"
+                        )
 
             return value
 
@@ -71,7 +75,9 @@ class TypeValidator:
                 item_type = args[0]
                 for item in value:
                     if not isinstance(item, item_type):
-                        raise TypeError(f"List item must be {item_type.__name__}, got {type(item).__name__}")
+                        raise TypeError(
+                            f"List item must be {item_type.__name__}, got {type(item).__name__}"
+                        )
 
             return value
 

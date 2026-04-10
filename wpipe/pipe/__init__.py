@@ -6,4 +6,3 @@ from .pipe import Condition, For, Pipeline
 from .pipe_async_minimal import PipelineAsync
 
 __all__ = ["Condition", "For", "Pipeline", "PipelineAsync"]
-

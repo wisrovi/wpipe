@@ -42,7 +42,7 @@ class ResourceMonitor:
         self._monitoring = False
         self._monitor_thread: Optional[threading.Thread] = None
 
-    def __enter__(self) -> 'ResourceMonitor':
+    def __enter__(self) -> "ResourceMonitor":
         """Enter context manager."""
         self.start()
         return self
@@ -73,7 +73,9 @@ class ResourceMonitor:
         self.end_ram_mb = self.process.memory_info().rss / (1024 * 1024)
 
         if self.metrics:
-            self.avg_cpu_percent = sum(m['cpu_percent'] for m in self.metrics) / len(self.metrics)
+            self.avg_cpu_percent = sum(m["cpu_percent"] for m in self.metrics) / len(
+                self.metrics
+            )
 
         if self.db_path:
             self._save_to_db()
@@ -87,11 +89,13 @@ class ResourceMonitor:
 
                 self.peak_ram_mb = max(self.peak_ram_mb, ram_mb)
 
-                self.metrics.append({
-                    'timestamp': time.time(),
-                    'ram_mb': ram_mb,
-                    'cpu_percent': cpu_percent,
-                })
+                self.metrics.append(
+                    {
+                        "timestamp": time.time(),
+                        "ram_mb": ram_mb,
+                        "cpu_percent": cpu_percent,
+                    }
+                )
 
                 time.sleep(0.5)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -113,15 +117,23 @@ class ResourceMonitor:
     def get_summary(self) -> Dict[str, Any]:
         """Get monitoring summary."""
         return {
-            'task_name': self.task_name,
-            'elapsed_seconds': round(self.elapsed_seconds, 2),
-            'start_ram_mb': round(self.start_ram_mb, 2),
-            'peak_ram_mb': round(self.peak_ram_mb, 2),
-            'end_ram_mb': round(self.end_ram_mb, 2),
-            'ram_increase_mb': round(self.ram_increase_mb, 2),
-            'avg_cpu_percent': round(self.avg_cpu_percent, 2),
-            'start_time': datetime.fromtimestamp(self.start_time).isoformat() if self.start_time else None,
-            'end_time': datetime.fromtimestamp(self.end_time).isoformat() if self.end_time else None,
+            "task_name": self.task_name,
+            "elapsed_seconds": round(self.elapsed_seconds, 2),
+            "start_ram_mb": round(self.start_ram_mb, 2),
+            "peak_ram_mb": round(self.peak_ram_mb, 2),
+            "end_ram_mb": round(self.end_ram_mb, 2),
+            "ram_increase_mb": round(self.ram_increase_mb, 2),
+            "avg_cpu_percent": round(self.avg_cpu_percent, 2),
+            "start_time": (
+                datetime.fromtimestamp(self.start_time).isoformat()
+                if self.start_time
+                else None
+            ),
+            "end_time": (
+                datetime.fromtimestamp(self.end_time).isoformat()
+                if self.end_time
+                else None
+            ),
         }
 
     def _save_to_db(self) -> None:
@@ -133,7 +145,8 @@ class ResourceMonitor:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS resource_metrics (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         task_name TEXT NOT NULL,
@@ -144,20 +157,24 @@ class ResourceMonitor:
                         elapsed_seconds REAL,
                         created_at TEXT DEFAULT CURRENT_TIMESTAMP
                     )
-                """)
+                """
+                )
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO resource_metrics 
                     (task_name, start_ram_mb, peak_ram_mb, end_ram_mb, avg_cpu_percent, elapsed_seconds)
                     VALUES (?, ?, ?, ?, ?, ?)
-                """, (
-                    self.task_name,
-                    self.start_ram_mb,
-                    self.peak_ram_mb,
-                    self.end_ram_mb,
-                    self.avg_cpu_percent,
-                    self.elapsed_seconds,
-                ))
+                """,
+                    (
+                        self.task_name,
+                        self.start_ram_mb,
+                        self.peak_ram_mb,
+                        self.end_ram_mb,
+                        self.avg_cpu_percent,
+                        self.elapsed_seconds,
+                    ),
+                )
 
                 conn.commit()
         except Exception as e:
@@ -190,4 +207,6 @@ class ResourceMonitorRegistry:
 
     def get_total_cpu_time(self) -> float:
         """Get total CPU time across all tasks."""
-        return sum(m.avg_cpu_percent * m.elapsed_seconds for m in self.monitors.values())
+        return sum(
+            m.avg_cpu_percent * m.elapsed_seconds for m in self.monitors.values()
+        )

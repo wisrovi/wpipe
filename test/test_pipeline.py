@@ -3,8 +3,9 @@ Tests for the Pipeline class main functionality.
 """
 
 import pytest
+
+from wpipe.exception import ProcessError, TaskError
 from wpipe.pipe import Pipeline
-from wpipe.exception import TaskError, ProcessError
 
 
 class TestPipelineBasic:
@@ -46,7 +47,7 @@ class TestSetSteps:
         """Test set_steps raises error with invalid input."""
         pipeline = Pipeline()
         with pytest.raises(ValueError):
-            pipeline.set_steps([("not_a_tuple")])
+            pipeline.set_steps(["not_a_tuple"])
 
     def test_set_steps_with_wrong_tuple_length(self):
         """Test set_steps raises error with wrong tuple length."""

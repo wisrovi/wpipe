@@ -2,10 +2,12 @@
 Comprehensive tests for API client functionality.
 """
 
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from wpipe.api_client.api_client import APIClient
+
 from wpipe import Pipeline
+from wpipe.api_client.api_client import APIClient
 
 
 class TestAPIClientInit:

@@ -3,8 +3,10 @@ Tests for utility functions.
 """
 
 import os
+
 import pytest
-from wpipe.util import leer_yaml, escribir_yaml
+
+from wpipe.util import escribir_yaml, leer_yaml
 
 
 class TestYamlUtilities:

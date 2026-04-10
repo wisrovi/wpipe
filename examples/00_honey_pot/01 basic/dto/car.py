@@ -1,10 +1,13 @@
 try:
     from pydantic import BaseModel  # pip install pydantic
+
     HAS_PYDANTIC = True
 except ImportError:
+
     class BaseModel:
         def model_dump(self):
-            return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+            return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+
     HAS_PYDANTIC = False
 
 from dataclasses import asdict, dataclass, is_dataclass

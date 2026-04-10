@@ -29,7 +29,8 @@ class CheckpointManager:
         """Create checkpoint table if it doesn't exist."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 CREATE TABLE IF NOT EXISTS checkpoints (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     pipeline_id TEXT NOT NULL,
@@ -40,7 +41,8 @@ class CheckpointManager:
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     UNIQUE(pipeline_id, step_order)
                 )
-            """)
+            """
+            )
             conn.commit()
 
     def save_checkpoint(
@@ -65,11 +67,14 @@ class CheckpointManager:
             cursor = conn.cursor()
             serializable_data = object_to_dict(data) if data else None
             data_json = json.dumps(serializable_data) if serializable_data else None
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT OR REPLACE INTO checkpoints 
                 (pipeline_id, step_order, step_name, status, data)
                 VALUES (?, ?, ?, ?, ?)
-            """, (pipeline_id, step_order, step_name, status, data_json))
+            """,
+                (pipeline_id, step_order, step_name, status, data_json),
+            )
             conn.commit()
 
     def get_last_checkpoint(self, pipeline_id: str) -> Optional[Dict[str, Any]]:
@@ -84,13 +89,16 @@ class CheckpointManager:
         """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT step_order, step_name, status, data, created_at
                 FROM checkpoints
                 WHERE pipeline_id = ? AND status = 'success'
                 ORDER BY step_order DESC
                 LIMIT 1
-            """, (pipeline_id,))
+            """,
+                (pipeline_id,),
+            )
             row = cursor.fetchone()
 
         if not row:
@@ -127,8 +135,7 @@ class CheckpointManager:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "DELETE FROM checkpoints WHERE pipeline_id = ?",
-                (pipeline_id,)
+                "DELETE FROM checkpoints WHERE pipeline_id = ?", (pipeline_id,)
             )
             conn.commit()
 
@@ -144,7 +151,8 @@ class CheckpointManager:
         """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT 
                     COUNT(*) as total,
                     SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success,
@@ -152,7 +160,9 @@ class CheckpointManager:
                     MAX(created_at) as last_checkpoint
                 FROM checkpoints
                 WHERE pipeline_id = ?
-            """, (pipeline_id,))
+            """,
+                (pipeline_id,),
+            )
             row = cursor.fetchone()
 
         return {

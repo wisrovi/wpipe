@@ -7,4 +7,4 @@ to various formats (JSON, CSV) for analysis and reporting.
 
 from .exporter import PipelineExporter
 
-__all__ = ['PipelineExporter']
+__all__ = ["PipelineExporter"]

@@ -7,4 +7,4 @@ and ensure pipeline reliability.
 
 from .timeout import TaskTimer, TimeoutError, timeout_async, timeout_sync
 
-__all__ = ['TimeoutError', 'timeout_sync', 'timeout_async', 'TaskTimer']
+__all__ = ["TimeoutError", "timeout_sync", "timeout_async", "TaskTimer"]

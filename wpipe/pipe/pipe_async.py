@@ -28,7 +28,7 @@ def _is_async_callable(func: Any) -> bool:
     """Check if a callable is async (handles both functions and callable objects)."""
     if asyncio.iscoroutinefunction(func):
         return True
-    if hasattr(func, '__call__') and asyncio.iscoroutinefunction(func.__call__):
+    if hasattr(func, "__call__") and asyncio.iscoroutinefunction(func.__call__):
         return True
     return False
 
@@ -619,9 +619,9 @@ class PipelineAsync(APIClient):
                 try:
                     result = await self._task_invoke(func, name, *(data,), **kwargs)
 
-                    assert isinstance(result, dict), (
-                        f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                    )
+                    assert isinstance(
+                        result, dict
+                    ), f"[ERROR] The result of state ({self.task_name}) must be a dict"
 
                     data.update(result)
                 except Exception as e:
@@ -660,9 +660,9 @@ class PipelineAsync(APIClient):
                 try:
                     result = await self._task_invoke(func, name, *(data,), **kwargs)
 
-                    assert isinstance(result, dict), (
-                        f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                    )
+                    assert isinstance(
+                        result, dict
+                    ), f"[ERROR] The result of state ({self.task_name}) must be a dict"
 
                     data.update(result)
                 except Exception as e:
@@ -853,9 +853,9 @@ class PipelineAsync(APIClient):
                             func, name, *(data,), **kwargs
                         )
 
-                        assert isinstance(result_data, dict), (
-                            f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                        )
+                        assert isinstance(
+                            result_data, dict
+                        ), f"[ERROR] The result of state ({self.task_name}) must be a dict"
 
                         data.update(result_data)
                     except Exception as e:

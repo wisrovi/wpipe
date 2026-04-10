@@ -12,23 +12,23 @@ from typing import Any, Callable, Dict, Optional
 class PipelineAsStep:
     """
     Wrapper that treats a Pipeline as a single step.
-    
+
     This allows nesting pipelines: a Pipeline object can be added
     to another Pipeline and executed as a single step unit.
     """
 
     name: str
-    pipeline: 'Pipeline'
+    pipeline: "Pipeline"
     timeout: Optional[float] = None
     depends_on: Optional[list] = None
 
     def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute nested pipeline.
-        
+
         Args:
             context: Parent pipeline context
-            
+
         Returns:
             Results from nested pipeline
         """
@@ -54,11 +54,11 @@ class CompositionHelper:
     def merge_contexts(
         parent: Dict[str, Any],
         child: Dict[str, Any],
-        conflict_resolution: str = "child_wins"
+        conflict_resolution: str = "child_wins",
     ) -> Dict[str, Any]:
         """
         Merge child context into parent context.
-        
+
         Args:
             parent: Parent pipeline context
             child: Child pipeline context
@@ -66,7 +66,7 @@ class CompositionHelper:
                 - "child_wins": Child values override parent
                 - "parent_wins": Parent values override child
                 - "merge_list": Merge lists instead of replacing
-                
+
         Returns:
             Merged context
         """
@@ -89,17 +89,14 @@ class CompositionHelper:
         return merged
 
     @staticmethod
-    def extract_context_subset(
-        context: Dict[str, Any],
-        keys: list
-    ) -> Dict[str, Any]:
+    def extract_context_subset(context: Dict[str, Any], keys: list) -> Dict[str, Any]:
         """
         Extract subset of context for child pipeline.
-        
+
         Args:
             context: Full context
             keys: Keys to extract
-            
+
         Returns:
             Subset context
         """
@@ -107,19 +104,18 @@ class CompositionHelper:
 
     @staticmethod
     def validate_context_compatibility(
-        parent_schema: Dict[str, type],
-        child_schema: Dict[str, type]
+        parent_schema: Dict[str, type], child_schema: Dict[str, type]
     ) -> bool:
         """
         Validate that child pipeline context is compatible with parent.
-        
+
         Args:
             parent_schema: Parent context schema
             child_schema: Child context schema
-            
+
         Returns:
             True if compatible
-            
+
         Raises:
             TypeError: If incompatible
         """
@@ -138,7 +134,7 @@ class CompositionHelper:
 class NestedPipelineStep:
     """
     Advanced wrapper for nested pipelines with advanced features.
-    
+
     Features:
     - Context transformation
     - Result filtering
@@ -149,14 +145,14 @@ class NestedPipelineStep:
     def __init__(
         self,
         name: str,
-        pipeline: 'Pipeline',
+        pipeline: "Pipeline",
         context_filter: Optional[Callable] = None,
         result_filter: Optional[Callable] = None,
         timeout: Optional[float] = None,
     ):
         """
         Initialize nested pipeline step.
-        
+
         Args:
             name: Step name
             pipeline: Pipeline to nest

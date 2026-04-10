@@ -1,4 +1,4 @@
-from wpipe import to_obj, timeout_sync
+from wpipe import timeout_sync, to_obj
 
 
 @timeout_sync(seconds=2)

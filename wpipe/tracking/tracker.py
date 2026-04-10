@@ -38,6 +38,7 @@ def _safe_json_dumps(data: Any) -> str:
 
 class Metric:
     """Constants for alert metrics."""
+
     PIPELINE_DURATION = "pipeline_duration_ms"
     STEP_DURATION = "step_duration_ms"
     ERROR_RATE = "error_rate"
@@ -45,6 +46,7 @@ class Metric:
 
 class Severity:
     """Constants for alert severity levels."""
+
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
@@ -53,7 +55,7 @@ class Severity:
 class PipelineTracker:
     """
     Unified Pipeline Tracker.
-    
+
     Orchestrates registration, step tracking, alerts, and dashboard queries.
     """
 
@@ -76,9 +78,19 @@ class PipelineTracker:
         self._alert_hooks = {}
 
         # Specialized Managers
-        self.alerts = AlertManager(self.db_alerts_config, self.db_alerts_fired, self._alert_hooks)
-        self.queries = QueryManager(self.db_pipelines, self.db_steps, self.db_alerts_config, self.db_alerts_fired, self.db_events)
-        self.analysis = AnalysisManager(self.db_pipelines, self.db_steps, self.db_step_history, self.db_alerts_fired)
+        self.alerts = AlertManager(
+            self.db_alerts_config, self.db_alerts_fired, self._alert_hooks
+        )
+        self.queries = QueryManager(
+            self.db_pipelines,
+            self.db_steps,
+            self.db_alerts_config,
+            self.db_alerts_fired,
+            self.db_events,
+        )
+        self.analysis = AnalysisManager(
+            self.db_pipelines, self.db_steps, self.db_step_history, self.db_alerts_fired
+        )
 
     # ========================================
     # DELEGATED METHODS (Backward Compatibility)
@@ -129,17 +141,32 @@ class PipelineTracker:
 
     def register_pipeline(self, name: str, steps: list, **kwargs) -> dict:
         pipeline_id = f"PIPE-{uuid.uuid4().hex[:8].upper()}"
-        if not os.path.exists(self.config_dir): os.makedirs(self.config_dir)
-        yaml_path = os.path.join(self.config_dir, f"{name}.yaml")
+        if not os.path.exists(self.config_dir):
+            os.makedirs(self.config_dir)
+        safe_name = os.path.basename(os.path.normpath(name))
+        yaml_path = os.path.join(self.config_dir, f"{safe_name}.yaml")
         if not os.path.exists(yaml_path):
             import yaml
-            config = {"name": name, "registered_at": datetime.now().isoformat(), "step_count": len(steps), "steps": [str(s) for s in steps]}
-            with open(yaml_path, "w") as f: yaml.dump(config, f)
+
+            config = {
+                "name": name,
+                "registered_at": datetime.now().isoformat(),
+                "step_count": len(steps),
+                "steps": [str(s) for s in steps],
+            }
+            with open(yaml_path, "w") as f:
+                yaml.dump(config, f)
 
         model = PipelineModel(
-            id=pipeline_id, name=name, worker_id=kwargs.get("worker_id"),
+            id=pipeline_id,
+            name=name,
+            worker_id=kwargs.get("worker_id"),
             worker_name=kwargs.get("worker_name"),
-            input_data=_safe_json_dumps(kwargs.get("input_data")) if kwargs.get("input_data") else None,
+            input_data=(
+                _safe_json_dumps(kwargs.get("input_data"))
+                if kwargs.get("input_data")
+                else None
+            ),
             parent_pipeline_id=kwargs.get("parent_pipeline_id"),
             yaml_path=yaml_path,
         )
@@ -148,63 +175,118 @@ class PipelineTracker:
             self.link_pipelines(kwargs.get("parent_pipeline_id"), pipeline_id)
         return {"pipeline_id": pipeline_id, "yaml_path": yaml_path}
 
-    def complete_pipeline(self, pipeline_id: str, output_data: Optional[dict] = None, error_message: Optional[str] = None, error_step: Optional[str] = None) -> list:
+    def complete_pipeline(
+        self,
+        pipeline_id: str,
+        output_data: Optional[dict] = None,
+        error_message: Optional[str] = None,
+        error_step: Optional[str] = None,
+    ) -> list:
         pipelines = self.db_pipelines.get_by_field(id=pipeline_id)
-        if not pipelines: return []
+        if not pipelines:
+            return []
         model = pipelines[0]
         started = datetime.fromisoformat(model.started_at)
         duration_ms = (datetime.now() - started).total_seconds() * 1000
         model.status = "error" if error_message else "completed"
-        model.completed_at = datetime.now().isoformat(); model.total_duration_ms = duration_ms
+        model.completed_at = datetime.now().isoformat()
+        model.total_duration_ms = duration_ms
         model.output_data = _safe_json_dumps(output_data) if output_data else None
-        model.error_message = error_message; model.error_step = error_step
+        model.error_message = error_message
+        model.error_step = error_step
         self.db_pipelines.update(pipeline_id, model)
-        return self.alerts.check_pipeline_alerts(pipeline_id, model.name, model.status, duration_ms, self.db_pipelines)
+        return self.alerts.check_pipeline_alerts(
+            pipeline_id, model.name, model.status, duration_ms, self.db_pipelines
+        )
 
-    def start_step(self, pipeline_id: str, step_order: int, step_name: str, **kwargs) -> int:
+    def start_step(
+        self, pipeline_id: str, step_order: int, step_name: str, **kwargs
+    ) -> int:
         model = StepModel(
-            pipeline_id=pipeline_id, step_order=step_order, step_name=step_name,
-            step_version=kwargs.get("step_version"), step_type=kwargs.get("step_type", "task"),
-            input_data=_safe_json_dumps(kwargs.get("input_data")) if kwargs.get("input_data") else None,
+            pipeline_id=pipeline_id,
+            step_order=step_order,
+            step_name=step_name,
+            step_version=kwargs.get("step_version"),
+            step_type=kwargs.get("step_type", "task"),
+            input_data=(
+                _safe_json_dumps(kwargs.get("input_data"))
+                if kwargs.get("input_data")
+                else None
+            ),
         )
         return self.db_steps.insert(model)
 
-    def complete_step(self, step_id: int, output_data: Optional[dict] = None, error_message: Optional[str] = None, error_traceback: Optional[str] = None, pipeline_id: Optional[str] = None) -> list:
+    def complete_step(
+        self,
+        step_id: int,
+        output_data: Optional[dict] = None,
+        error_message: Optional[str] = None,
+        error_traceback: Optional[str] = None,
+        pipeline_id: Optional[str] = None,
+    ) -> list:
         steps = self.db_steps.get_by_field(id=step_id)
-        if not steps: return []
+        if not steps:
+            return []
         model = steps[0]
         started = datetime.fromisoformat(model.started_at)
         duration_ms = (datetime.now() - started).total_seconds() * 1000
         model.status = "error" if error_message else "completed"
-        model.completed_at = datetime.now().isoformat(); model.duration_ms = duration_ms
+        model.completed_at = datetime.now().isoformat()
+        model.duration_ms = duration_ms
         model.output_data = _safe_json_dumps(output_data) if output_data else None
-        model.error_message = error_message; model.error_traceback = error_traceback
+        model.error_message = error_message
+        model.error_traceback = error_traceback
         self.db_steps.update(step_id, model)
 
-        history = StepHistoryModel(pipeline_id=pipeline_id or model.pipeline_id, step_name=model.step_name, duration_ms=duration_ms, status=model.status)
+        history = StepHistoryModel(
+            pipeline_id=pipeline_id or model.pipeline_id,
+            step_name=model.step_name,
+            duration_ms=duration_ms,
+            status=model.status,
+        )
         self.db_step_history.insert(history)
-        return self.alerts.check_step_alerts(pipeline_id or model.pipeline_id, model.step_name, duration_ms)
+        return self.alerts.check_step_alerts(
+            pipeline_id or model.pipeline_id, model.step_name, duration_ms
+        )
 
-    def link_pipelines(self, parent_id: str, child_id: str, relation_type: str = "triggered"):
-        model = PipelineRelationModel(parent_pipeline_id=parent_id, child_pipeline_id=child_id, relation_type=relation_type)
+    def link_pipelines(
+        self, parent_id: str, child_id: str, relation_type: str = "triggered"
+    ):
+        model = PipelineRelationModel(
+            parent_pipeline_id=parent_id,
+            child_pipeline_id=child_id,
+            relation_type=relation_type,
+        )
         self.db_pipeline_relations.insert(model)
 
     def add_event(self, pipeline_id: str, event_type: str, event_name: str, **kwargs):
         model = EventModel(
-            pipeline_id=pipeline_id, step_id=kwargs.get("step_id"), event_type=event_type,
-            event_name=event_name, message=kwargs.get("message"),
+            pipeline_id=pipeline_id,
+            step_id=kwargs.get("step_id"),
+            event_type=event_type,
+            event_name=event_name,
+            message=kwargs.get("message"),
             data=json.dumps(kwargs.get("data")) if kwargs.get("data") else None,
-            tags=json.dumps(kwargs.get("tags")) if kwargs.get("tags") else None
+            tags=json.dumps(kwargs.get("tags")) if kwargs.get("tags") else None,
         )
         self.db_events.insert(model)
 
     def record_system_metrics(self, pipeline_id: str, metrics: dict):
-        model = SystemMetricsModel(pipeline_id=pipeline_id, cpu_percent=metrics.get("cpu_percent"), memory_percent=metrics.get("memory_percent"), memory_used_mb=metrics.get("memory_used_mb"), memory_available_mb=metrics.get("memory_available_mb"), disk_io_read_mb=metrics.get("disk_io_read_mb"), disk_io_write_mb=metrics.get("disk_io_write_mb"))
+        model = SystemMetricsModel(
+            pipeline_id=pipeline_id,
+            cpu_percent=metrics.get("cpu_percent"),
+            memory_percent=metrics.get("memory_percent"),
+            memory_used_mb=metrics.get("memory_used_mb"),
+            memory_available_mb=metrics.get("memory_available_mb"),
+            disk_io_read_mb=metrics.get("disk_io_read_mb"),
+            disk_io_write_mb=metrics.get("disk_io_write_mb"),
+        )
         self.db_system_metrics.insert(model)
 
     def acknowledge_alert(self, alert_id: int):
         alerts = self.db_alerts_fired.get_by_field(id=alert_id)
-        if alerts: self.db_alerts_fired.update(alert_id, alerts[0])
+        if alerts:
+            self.db_alerts_fired.update(alert_id, alerts[0])
         return {"status": "success"}
 
     def get_pipeline_graph(self, pipeline_id: str) -> dict:
@@ -231,8 +313,16 @@ class PipelineTracker:
                 "version": step.get("step_version"),
                 "error": step.get("error_message"),
                 "order": step["step_order"],
-                "branch_taken": output_data.get("branch_taken") if isinstance(output_data, dict) else None,
-                "expression": output_data.get("expression") if isinstance(output_data, dict) else None,
+                "branch_taken": (
+                    output_data.get("branch_taken")
+                    if isinstance(output_data, dict)
+                    else None
+                ),
+                "expression": (
+                    output_data.get("expression")
+                    if isinstance(output_data, dict)
+                    else None
+                ),
                 "has_input": step.get("input_data") is not None,
                 "has_output": step.get("output_data") is not None,
             }
@@ -243,21 +333,27 @@ class PipelineTracker:
                 prev_step = steps_list[i - 1]
                 # Si el anterior no es una condición, conexión simple
                 if prev_step["step_type"] != "condition":
-                    edges.append({
-                        "from": f"step_{prev_step['id']}",
-                        "to": f"step_{step['id']}",
-                        "label": "next"
-                    })
+                    edges.append(
+                        {
+                            "from": f"step_{prev_step['id']}",
+                            "to": f"step_{step['id']}",
+                            "label": "next",
+                        }
+                    )
                 else:
                     # Si el anterior fue una condición, marcamos si este paso fue tomado o saltado
-                    is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
-                    edges.append({
-                        "from": f"step_{prev_step['id']}",
-                        "to": f"step_{step['id']}",
-                        "label": "taken" if not is_skipped else "skipped",
-                        "style": "solid" if not is_skipped else "dashed",
-                        "color": "#10b981" if not is_skipped else "#6b7280"
-                    })
+                    is_skipped = (
+                        step["status"] == "skipped" or step["step_type"] == "skipped"
+                    )
+                    edges.append(
+                        {
+                            "from": f"step_{prev_step['id']}",
+                            "to": f"step_{step['id']}",
+                            "label": "taken" if not is_skipped else "skipped",
+                            "style": "solid" if not is_skipped else "dashed",
+                            "color": "#10b981" if not is_skipped else "#6b7280",
+                        }
+                    )
 
         return {
             "pipeline_id": pipeline_id,
@@ -270,5 +366,7 @@ class PipelineTracker:
 
     def delete_pipeline(self, pipeline_id: str):
         self.db_pipelines.delete(pipeline_id)
-        for s in self.db_steps.get_by_field(pipeline_id=pipeline_id): self.db_steps.delete(s.id)
-        for e in self.db_events.get_by_field(pipeline_id=pipeline_id): self.db_events.delete(e.id)
+        for s in self.db_steps.get_by_field(pipeline_id=pipeline_id):
+            self.db_steps.delete(s.id)
+        for e in self.db_events.get_by_field(pipeline_id=pipeline_id):
+            self.db_events.delete(e.id)

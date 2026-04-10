@@ -1,6 +1,6 @@
 from dto.car import Car, Niveles
-from wpipe import to_obj
-from wpipe import state
+
+from wpipe import state, to_obj
 
 
 @state(name="conducir", version="v1.0")

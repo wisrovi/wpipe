@@ -9,12 +9,13 @@ from functools import wraps
 from typing import Any, Callable, Dict, List, Optional
 
 # Global registry for decorated steps
-_STEP_REGISTRY: Dict[str, 'DecoratedStep'] = {}
+_STEP_REGISTRY: Dict[str, "DecoratedStep"] = {}
 
 
 @dataclass
 class StepMetadata:
     """Metadata for a decorated step."""
+
     name: str
     func: Callable
     version: str = "v1.0"
@@ -89,7 +90,7 @@ def step(
 ):
     """
     Decorator to mark a function as a pipeline step.
-    
+
     Args:
         name: Step name (defaults to function name)
         version: Step version (defaults to "v1.0")
@@ -99,15 +100,16 @@ def step(
         parallel: Whether this step can run in parallel
         description: Step description
         tags: List of tags for step
-        
+
     Returns:
         Decorated function
-        
+
     Example:
         @wpipe.step(timeout=30, depends_on=["fetch_data"])
         def process_data(context):
             return {"result": "..."}
     """
+
     def decorator(func: Callable) -> Callable:
         step_name = name or func.__name__
 
@@ -163,7 +165,7 @@ class StepRegistry:
     ) -> None:
         """
         Register a function as a step.
-        
+
         Args:
             func: Function to register
             name: Step name
@@ -193,7 +195,7 @@ class StepRegistry:
         return _STEP_REGISTRY.copy()
 
     @staticmethod
-    def from_global() -> 'StepRegistry':
+    def from_global() -> "StepRegistry":
         """Create registry from global registry."""
         registry = StepRegistry()
         registry.steps = _STEP_REGISTRY.copy()
@@ -203,25 +205,27 @@ class StepRegistry:
 class AutoRegister:
     """
     Utility to auto-register decorated steps into a pipeline.
-    
+
     Example:
         @wpipe.step(timeout=30)
         def fetch_data(context):
             return {"data": [...]}
-        
+
         @wpipe.step(depends_on=["fetch_data"])
         def process_data(context):
             return {"result": [...]}
-        
+
         pipeline = Pipeline()
         AutoRegister.register_all(pipeline)
     """
 
     @staticmethod
-    def register_all(pipeline: 'Pipeline', registry: Optional[StepRegistry] = None) -> None:
+    def register_all(
+        pipeline: "Pipeline", registry: Optional[StepRegistry] = None
+    ) -> None:
         """
         Auto-register all decorated steps to pipeline.
-        
+
         Args:
             pipeline: Target pipeline
             registry: Optional custom registry (uses global by default)
@@ -242,13 +246,13 @@ class AutoRegister:
 
     @staticmethod
     def register_by_tag(
-        pipeline: 'Pipeline',
+        pipeline: "Pipeline",
         tag: str,
         registry: Optional[StepRegistry] = None,
     ) -> None:
         """
         Register steps with specific tag.
-        
+
         Args:
             pipeline: Target pipeline
             tag: Tag to filter by

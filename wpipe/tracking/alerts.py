@@ -50,7 +50,9 @@ class AlertManager:
         )
         return self.db_alerts_config.insert(model)
 
-    def evaluate_condition(self, condition: str, actual: float, threshold: float) -> bool:
+    def evaluate_condition(
+        self, condition: str, actual: float, threshold: float
+    ) -> bool:
         """Evaluate if a metric value triggers a condition."""
         ops = {
             ">": actual > threshold,
@@ -61,11 +63,15 @@ class AlertManager:
         }
         return ops.get(condition, False)
 
-    def check_step_alerts(self, pipeline_id: str, step_name: str, duration_ms: float) -> list:
+    def check_step_alerts(
+        self, pipeline_id: str, step_name: str, duration_ms: float
+    ) -> list:
         """Check and fire step-level alerts."""
         fired_hooks = []
         # Import local constants to avoid circular imports if needed
-        configs = self.db_alerts_config.get_by_field(metric="step_duration_ms", enabled=1)
+        configs = self.db_alerts_config.get_by_field(
+            metric="step_duration_ms", enabled=1
+        )
 
         for config in configs:
             if self.evaluate_condition(config.condition, duration_ms, config.value):
@@ -83,7 +89,14 @@ class AlertManager:
                     fired_hooks.extend(self._alert_hooks[config.name])
         return fired_hooks
 
-    def check_pipeline_alerts(self, pipeline_id: str, pipeline_name: str, status: str, duration_ms: float, db_pipelines) -> list:
+    def check_pipeline_alerts(
+        self,
+        pipeline_id: str,
+        pipeline_name: str,
+        status: str,
+        duration_ms: float,
+        db_pipelines,
+    ) -> list:
         """Check and fire pipeline-level alerts."""
         fired_hooks = []
         configs = self.db_alerts_config.get_by_field(enabled=1)
@@ -97,7 +110,9 @@ class AlertManager:
                 errors = len([p for p in all_p if p.status == "error"])
                 metric_value = (errors / len(all_p) * 100) if all_p else 0
 
-            if metric_value is not None and self.evaluate_condition(config.condition, metric_value, config.value):
+            if metric_value is not None and self.evaluate_condition(
+                config.condition, metric_value, config.value
+            ):
                 fire_model = AlertFiredModel(
                     alert_config_id=config.id or 0,
                     pipeline_id=pipeline_id,

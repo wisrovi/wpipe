@@ -4,10 +4,12 @@ Tests for Phase 1 checkpoint functionality.
 Tests CheckpointManager and checkpoint workflows.
 """
 
-import pytest
 import sqlite3
 import tempfile
 from pathlib import Path
+
+import pytest
+
 from wpipe import CheckpointManager
 
 
@@ -34,12 +36,14 @@ class TestCheckpointManager:
     def test_table_creation(self, db_path):
         """Test checkpoint table creation."""
         checkpoint_mgr = CheckpointManager(db_path)
-        
+
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='checkpoints'")
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='checkpoints'"
+            )
             table = cursor.fetchone()
-        
+
         assert table is not None
 
     def test_save_checkpoint(self, checkpoint_mgr):
@@ -49,14 +53,14 @@ class TestCheckpointManager:
             step_order=0,
             step_name="step_1",
             status="success",
-            data={"result": "test_data"}
+            data={"result": "test_data"},
         )
-        
+
         with sqlite3.connect(checkpoint_mgr.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM checkpoints")
             count = cursor.fetchone()[0]
-        
+
         assert count == 1
 
     def test_get_last_checkpoint(self, checkpoint_mgr):
@@ -68,11 +72,11 @@ class TestCheckpointManager:
                 step_order=i,
                 step_name=f"step_{i}",
                 status="success",
-                data={"step": i}
+                data={"step": i},
             )
-        
+
         last = checkpoint_mgr.get_last_checkpoint("test_pipeline")
-        
+
         assert last is not None
         assert last["step_order"] == 2
         assert last["step_name"] == "step_2"
@@ -81,14 +85,11 @@ class TestCheckpointManager:
     def test_can_resume(self, checkpoint_mgr):
         """Test resume detection."""
         assert not checkpoint_mgr.can_resume("non_existent")
-        
+
         checkpoint_mgr.save_checkpoint(
-            pipeline_id="resumable",
-            step_order=0,
-            step_name="step_1",
-            status="success"
+            pipeline_id="resumable", step_order=0, step_name="step_1", status="success"
         )
-        
+
         assert checkpoint_mgr.can_resume("resumable")
 
     def test_clear_checkpoints(self, checkpoint_mgr):
@@ -99,13 +100,13 @@ class TestCheckpointManager:
                 pipeline_id="test",
                 step_order=i,
                 step_name=f"step_{i}",
-                status="success"
+                status="success",
             )
-        
+
         assert checkpoint_mgr.can_resume("test")
-        
+
         checkpoint_mgr.clear_checkpoints("test")
-        
+
         assert not checkpoint_mgr.can_resume("test")
 
     def test_get_checkpoint_stats(self, checkpoint_mgr):
@@ -114,9 +115,9 @@ class TestCheckpointManager:
         checkpoint_mgr.save_checkpoint("test", 0, "step_1", "success")
         checkpoint_mgr.save_checkpoint("test", 1, "step_2", "success")
         checkpoint_mgr.save_checkpoint("test", 2, "step_3", "failed")
-        
+
         stats = checkpoint_mgr.get_checkpoint_stats("test")
-        
+
         assert stats["total_checkpoints"] == 3
         assert stats["successful"] == 2
         assert stats["failed"] == 1
@@ -124,17 +125,17 @@ class TestCheckpointManager:
     def test_data_persistence(self, checkpoint_mgr):
         """Test that data is persisted correctly."""
         test_data = {"key": "value", "number": 42, "list": [1, 2, 3]}
-        
+
         checkpoint_mgr.save_checkpoint(
             pipeline_id="test",
             step_order=0,
             step_name="step_1",
             status="success",
-            data=test_data
+            data=test_data,
         )
-        
+
         last = checkpoint_mgr.get_last_checkpoint("test")
-        
+
         assert last["data"] == test_data
 
     def test_checkpoint_update(self, checkpoint_mgr):
@@ -145,22 +146,22 @@ class TestCheckpointManager:
             step_order=0,
             step_name="step_1",
             status="success",
-            data={"version": 1}
+            data={"version": 1},
         )
-        
+
         # Update same checkpoint
         checkpoint_mgr.save_checkpoint(
             pipeline_id="test",
             step_order=0,
             step_name="step_1",
             status="success",
-            data={"version": 2}
+            data={"version": 2},
         )
-        
+
         # Should still have only one checkpoint
         stats = checkpoint_mgr.get_checkpoint_stats("test")
         assert stats["total_checkpoints"] == 1
-        
+
         # Data should be updated
         last = checkpoint_mgr.get_last_checkpoint("test")
         assert last["data"]["version"] == 2

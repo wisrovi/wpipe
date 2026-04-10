@@ -23,8 +23,11 @@ class SQLite:
             db_name: Path to the SQLite database file.
         """
         self.db_name = db_name
-        self.db = WSQLite(RecordModel, db_name)
         self.executor = ThreadPoolExecutor(max_workers=10)
+        if db_name:
+            self.db = WSQLite(RecordModel, db_name)
+        else:
+            self.db = None
 
     def async_write(
         self,
@@ -49,7 +52,9 @@ class SQLite:
         Write a record to the database.
         """
         # Convert dicts to JSON strings for storage
-        input_str = json.dumps(input_data) if isinstance(input_data, dict) else input_data
+        input_str = (
+            json.dumps(input_data) if isinstance(input_data, dict) else input_data
+        )
 
         if isinstance(output, dict):
             output_str = json.dumps(output)
@@ -61,10 +66,7 @@ class SQLite:
         details_str = json.dumps(details) if isinstance(details, dict) else details
 
         model_data = RecordModel(
-            id=record_id,
-            input=input_str,
-            output=output_str,
-            details=details_str
+            id=record_id, input=input_str, output=output_str, details=details_str
         )
 
         if record_id:
@@ -98,7 +100,7 @@ class SQLite:
     ) -> list:
         """
         Get records within a date range.
-        Note: WSQLite doesn't support complex range queries yet, 
+        Note: WSQLite doesn't support complex range queries yet,
         so we fetch all and filter or use raw SQL if necessary.
         """
         from datetime import datetime, timedelta
@@ -107,12 +109,20 @@ class SQLite:
 
         if days is not None:
             limit = datetime.now() - timedelta(days=days)
-            return [r for r in all_records if datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") >= limit]
+            return [
+                r
+                for r in all_records
+                if datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") >= limit
+            ]
 
         if start_date and end_date:
             s = datetime.fromisoformat(start_date)
             e = datetime.fromisoformat(end_date)
-            return [r for r in all_records if s <= datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") <= e]
+            return [
+                r
+                for r in all_records
+                if s <= datetime.strptime(r.datetime, "%Y-%m-%d %H:%M:%S") <= e
+            ]
 
         return all_records
 
@@ -134,7 +144,9 @@ class SQLite:
         if output:
             current.output = json.dumps(output) if isinstance(output, dict) else output
         if details:
-            current.details = json.dumps(details) if isinstance(details, dict) else details
+            current.details = (
+                json.dumps(details) if isinstance(details, dict) else details
+            )
 
         self.db.update(record_id, current)
 
@@ -144,6 +156,8 @@ class SQLite:
 
     def check_table_exists(self) -> bool:
         """Check if database is accessible."""
+        if not self.db_name:
+            return False
         return self.db is not None
 
     def __enter__(self) -> "SQLite":

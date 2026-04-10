@@ -16,14 +16,16 @@ from typing import Any, Callable, Dict, List, Optional, Set
 
 class ExecutionMode(Enum):
     """Execution mode for parallel steps."""
-    IO_BOUND = "io_bound"      # Use ThreadPoolExecutor
-    CPU_BOUND = "cpu_bound"    # Use ProcessPoolExecutor
+
+    IO_BOUND = "io_bound"  # Use ThreadPoolExecutor
+    CPU_BOUND = "cpu_bound"  # Use ProcessPoolExecutor
     SEQUENTIAL = "sequential"  # No parallelism
 
 
 @dataclass
 class StepDependency:
     """Represents a step and its dependencies."""
+
     name: str
     func: Callable
     timeout: Optional[float] = None
@@ -62,7 +64,7 @@ class DAGScheduler:
     def topological_sort(self) -> List[List[str]]:
         """
         Get steps in topological order, grouped by execution level.
-        
+
         Returns:
             List of lists, where each inner list contains steps that can
             run in parallel at that level.
@@ -91,33 +93,7 @@ class DAGScheduler:
     def get_parallel_groups(self) -> List[List[StepDependency]]:
         """Get groups of steps that can run in parallel."""
         groups = self.topological_sort()
-        return [
-            [self.steps[name] for name in group]
-            for group in groups
-        ]
-
-
-class ContextMerger:
-    """Merge contexts from parallel step executions."""
-
-    @staticmethod
-    def merge(contexts: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Merge multiple contexts into single context.
-        
-        Args:
-            contexts: Dict mapping step names to their result contexts
-            
-        Returns:
-            Merged context with all results
-        """
-        merged = {}
-
-        for step_name, context in contexts.items():
-            if context:
-                merged.update(context)
-
-        return merged
+        return [[self.steps[name] for name in group] for group in groups]
 
 
 class ParallelExecutor:
@@ -126,7 +102,7 @@ class ParallelExecutor:
     def __init__(self, max_workers: int = 4):
         """
         Initialize parallel executor.
-        
+
         Args:
             max_workers: Maximum number of worker threads/processes
         """
@@ -145,7 +121,7 @@ class ParallelExecutor:
     ) -> None:
         """
         Add step to executor.
-        
+
         Args:
             name: Step name
             func: Step function
@@ -165,10 +141,10 @@ class ParallelExecutor:
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute all steps respecting dependencies.
-        
+
         Args:
             context: Initial pipeline context
-            
+
         Returns:
             Final context with all step results
         """
@@ -209,7 +185,9 @@ class ParallelExecutor:
             if cpu_tasks:
                 with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
                     futures = {
-                        executor.submit(self._execute_step_safe, step, current_context): step
+                        executor.submit(
+                            self._execute_step_safe, step, current_context
+                        ): step
                         for step in cpu_tasks
                     }
 

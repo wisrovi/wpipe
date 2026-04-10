@@ -3,7 +3,9 @@ Tests for logging functionality.
 """
 
 import os
+
 import pytest
+
 from wpipe.log import new_logger
 
 

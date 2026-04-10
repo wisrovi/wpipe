@@ -1,0 +1,7 @@
+name: log_export_demo
+registered_at: '2026-04-10T09:14:05.206632'
+step_count: 3
+steps:
+- (<function step_1_collect at 0x7d2964a9f740>, 'collect_data', 'v1.0', '')
+- (<function step_2_filter at 0x7d29649c1ee0>, 'filter_data', 'v1.0', '')
+- (<function step_3_enrich at 0x7d29649c1f80>, 'enrich_data', 'v1.0', '')
