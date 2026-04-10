@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 from typing import Optional, Dict, Any
 import sqlite3
+from wpipe.util.transform import object_to_dict
 
 
 class CheckpointManager:
@@ -62,7 +63,8 @@ class CheckpointManager:
         """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            data_json = json.dumps(data) if data else None
+            serializable_data = object_to_dict(data) if data else None
+            data_json = json.dumps(serializable_data) if serializable_data else None
             cursor.execute("""
                 INSERT OR REPLACE INTO checkpoints 
                 (pipeline_id, step_order, step_name, status, data)
