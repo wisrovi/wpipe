@@ -85,14 +85,11 @@ from .parallel import DAGScheduler, ExecutionMode, ParallelExecutor
 from .pipe import Condition, For, Pipeline, PipelineAsync
 from .ram import memory
 from .resource_monitor import ResourceMonitor, ResourceMonitorRegistry
-from .sqlite.sqlite_logs import LogGestor, LogGestorModel
-from .sqlite import Wsqlite
+from .sqlite import Wsqlite, Wsqlite
 from .timeout import TaskTimer, TimeoutError, timeout_async, timeout_sync
-from .tracking import PipelineTracker
+from .tracking import Metric, PipelineTracker, Severity
 from .type_hinting import GenericPipeline, PipelineContext, TypeValidator
 from .util import auto_dict_input, object_to_dict, state, to_obj
-
-SQLiteLogs = LogGestor
 
 __all__ = [
     # Phase 1 - Reliability
@@ -129,13 +126,14 @@ __all__ = [
     "For",
     "Pipeline",
     "PipelineAsync",
-    "Wsqlite",
     "memory",
     "new_logger",
     "start_dashboard",
     "PipelineTracker",
+    "Metric",
+    "Severity",
+    "Wsqlite",
     # SQLite logging
-    "LogGestorModel",
-    "LogGestor",
-    "SQLiteLogs",
-]
+    "Wsqlite",
+    ]
+
