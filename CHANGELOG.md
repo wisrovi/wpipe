@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.1] - Release (2026-04-10)
+
+### Fixed
+- Alert system API compatibility with new `expression` parameter
+- Performance comparison example using `get_stats()` instead of deprecated method
+
+### Changed
+- Reduced package size (42MB → 140KB) by excluding heavy examples
+- Updated README with Phase 2 features
+
+---
+
+## [1.5.0] - Release (2026-04-10)
+
+### Added - Phase 2: Parallelism & Composition
+
+#### Parallel Execution
+- **ParallelExecutor**: Execute pipeline steps in parallel
+  - ThreadPoolExecutor for I/O-bound tasks
+  - ProcessPoolExecutor for CPU-bound tasks
+  - Automatic dependency resolution with DAGScheduler
+
+- **ExecutionMode** enum: `IO_BOUND`, `CPU_BOUND`, `SEQUENTIAL`
+- **DAGScheduler**: Dependency graph, topological sorting
+
+#### Pipeline Composition
+- **PipelineAsStep**: Treat pipelines as steps
+- **NestedPipelineStep**: Composition wrapper
+- **CompositionHelper**: Utility functions
+
+#### Step Decorators
+- **@step()** decorator: Inline step definition
+- **StepRegistry**: Central registry
+- **AutoRegister**: Bulk registration
+
+#### Resource Monitoring & Export
+- **ResourceMonitor**: Track RAM/CPU during execution
+- **Exporter**: JSON/CSV export capabilities
+- **Type validators**: Input/output validation
+
+### Performance
+- 3-5x speedup for I/O-heavy pipelines
+
+---
+
 ## [2.0.0] - Phase 2 Complete (In Progress)
 
 ### Added - Phase 2: Parallelism & Composition
