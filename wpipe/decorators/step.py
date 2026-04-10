@@ -18,6 +18,7 @@ class StepMetadata:
     """Metadata for a decorated step."""
     name: str
     func: Callable
+    version: str = "v1.0"
     timeout: Optional[float] = None
     depends_on: List[str] = field(default_factory=list)
     retry_count: int = 0
@@ -33,6 +34,7 @@ class DecoratedStep:
         self,
         func: Callable,
         name: Optional[str] = None,
+        version: str = "v1.0",
         timeout: Optional[float] = None,
         depends_on: Optional[List[str]] = None,
         retry_count: int = 0,
@@ -44,6 +46,7 @@ class DecoratedStep:
         self.metadata = StepMetadata(
             name=name or func.__name__,
             func=func,
+            version=version,
             timeout=timeout,
             depends_on=depends_on or [],
             retry_count=retry_count,
@@ -51,6 +54,8 @@ class DecoratedStep:
             tags=tags or [],
         )
         self.parallel = parallel
+        self.NAME = self.metadata.name
+        self.VERSION = self.metadata.version
     
     def __call__(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute decorated step."""
@@ -75,6 +80,7 @@ class DecoratedStep:
 
 def step(
     name: Optional[str] = None,
+    version: str = "v1.0",
     timeout: Optional[float] = None,
     depends_on: Optional[List[str]] = None,
     retry_count: int = 0,
@@ -87,6 +93,7 @@ def step(
     
     Args:
         name: Step name (defaults to function name)
+        version: Step version (defaults to "v1.0")
         timeout: Timeout in seconds
         depends_on: List of step names this depends on
         retry_count: Number of retries on failure
@@ -109,6 +116,7 @@ def step(
         decorated = DecoratedStep(
             func=func,
             name=step_name,
+            version=version,
             timeout=timeout,
             depends_on=depends_on,
             retry_count=retry_count,
@@ -127,6 +135,10 @@ def step(
         
         wrapper._wpipe_step = decorated
         wrapper._wpipe_metadata = decorated.get_metadata()
+        
+        # Mirror attributes for @state compatibility
+        wrapper.NAME = decorated.NAME
+        wrapper.VERSION = decorated.VERSION
         
         return wrapper
     
