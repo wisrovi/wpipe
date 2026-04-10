@@ -175,3 +175,4 @@ cython_debug/
 configs/*.yaml
 exports/
 *.zip
+*.db
