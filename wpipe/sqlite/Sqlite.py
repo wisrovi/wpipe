@@ -4,12 +4,94 @@ SQLite database module for storing pipeline execution records.
 
 import json
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from typing import Optional, Union
 
 import pandas as pd
+from pydantic import BaseModel, Field
 from wsqlite import WSQLite
 
+from .tables_dto.log_gestor_model import WsqliteModel
 from .tables_dto.records import RecordModel
+
+
+class Wsqlite:
+    """Simplified SQLite wrapper for pipeline records."""
+
+    id: Optional[int] = None
+
+    def __init__(self, db_name: str = "register.db") -> None:
+        """
+        Initialize Wsqlite wrapper.
+
+        Args:
+            db_name: Path to the SQLite database file.
+        """
+        self.db_name = db_name
+        self._output_db: dict = {}
+        self._details_db: dict = {}
+        self._input_db: dict = {}
+        self.db = WSQLite(WsqliteModel, db_name)
+
+    @property
+    def input(self) -> dict:
+        """Get input data."""
+        return self._input_db
+
+    @input.setter
+    def input(self, value: dict) -> None:
+        """Set input data and create a new record."""
+        self._input_db = value
+        self._create(input_data=value)
+
+    @property
+    def output(self) -> dict:
+        """Get output data."""
+        return self._output_db
+
+    @output.setter
+    def output(self, value: dict) -> None:
+        """Set output data."""
+        self._output_db = value
+
+    @property
+    def details(self) -> dict:
+        """Get details data."""
+        return self._details_db
+
+    @details.setter
+    def details(self, value: dict) -> None:
+        """Set details data."""
+        self._details_db = value
+
+    def _create(self, input_data: dict) -> None:
+        """Create a new record with input data."""
+        input_data_json = str(input_data)
+        record_id = self.db.insert(WsqliteModel(input=input_data_json))
+
+        if record_id is not None:
+            self.id = record_id
+
+    def _update(self, output: dict, details: Optional[dict] = None) -> None:
+        """Update the current record with output and details."""
+        details = details or {}
+        if self.id is not None:
+            self.db.update(
+                self.id,
+                WsqliteModel(id=self.id, output=str(output), details=str(details)),
+            )
+
+    def count_records(self) -> int:
+        """Return the number of records in the database."""
+        return self.db.count_records()
+
+    def __enter__(self) -> "Wsqlite":
+        """Enter context manager."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit context manager and update record."""
+        self._update(output=self._output_db, details=self._details_db)
 
 
 class SQLite:
