@@ -108,28 +108,28 @@ sequenceDiagram
     User->>Pipeline: Create Pipeline(verbose=True)
     User->>Pipeline: set_steps([...])
     User->>Pipeline: run(initial_data)
-
+    
     Pipeline->>Step1: Execute Step1(initial_data)
     Step1-->>Pipeline: Return {result1}
-
+    
     Pipeline->>Pipeline: Accumulate data
     Pipeline->>Step2: Execute Step2(accumulated_data)
     Step2-->>Pipeline: Return {result2}
-
+    
     alt with API enabled
         Pipeline->>ExternalAPI: worker_register()
         ExternalAPI-->>Pipeline: worker_id
         Pipeline->>ExternalAPI: register_process()
         ExternalAPI-->>Pipeline: process_id
     end
-
+    
     alt with SQLite enabled
         Pipeline->>SQLite: write(input, output, details)
         SQLite-->>Pipeline: record_id
     end
-
+    
     Pipeline-->>User: Return accumulated_results
-
+    
     Note over User,Pipeline: Pipeline execution complete
 ```
 
@@ -146,26 +146,26 @@ graph TB
         C[Condition<br/>pipe/pipe.py]
         PM[ProgressManager<br/>pipe/pipe.py]
     end
-
+    
     subgraph Integration["🔌 Integration Layer"]
         API[APIClient<br/>api_client/]
         SQL[Sqlite<br/>sqlite/]
         WS[Wsqlite<br/>sqlite/]
     end
-
+    
     subgraph Utilities["🛠️ Utilities Layer"]
         LOG[new_logger<br/>log/]
         RAM[memory<br/>ram/]
         YAML[leer_yaml<br/>util/]
     end
-
+    
     subgraph Exceptions["⚠️ Exception Layer"]
         TE[TaskError<br/>exception/]
         AE[ApiError<br/>exception/]
         PE[ProcessError<br/>exception/]
         CO[Codes<br/>exception/]
     end
-
+    
     P --> C
     P --> PM
     P --> API
@@ -175,7 +175,7 @@ graph TB
     API --> AE
     SQL --> PE
     WS --> SQL
-
+    
     User --> P
     User --> C
     User --> API
@@ -193,12 +193,12 @@ graph LR
     A --> C[api_client/]
     A --> D[sqlite/]
     A --> E[exception/]
-
+    
     B --> F[rich<br/>ProgressManager]
     C --> G[requests<br/>HTTP calls]
     D --> H[sqlite3<br/>Database]
     E --> I[Built-in exceptions]
-
+    
     User --> A
 ```
 
@@ -214,7 +214,7 @@ flowchart LR
     B --> C[pip install -e .]
     C --> D[📦 wpipe Package]
     D --> E[✅ Ready for Development]
-
+    
     style A fill:#e1f5fe
     style E fill:#c8e6c9
 ```
@@ -227,25 +227,25 @@ flowchart TD
     B --> C[⚙️ Configure Steps]
     C --> D[▶️ Call pipeline.run]
     D --> E[📊 Initialize Progress]
-
+    
     E --> F{Step Loop}
     F -->|For each step| G[📥 Get Step Data]
     G --> H[⚡ Execute Step Function]
     H --> I{Success?}
-
+    
     I -->|Yes| J[📦 Accumulate Results]
     J --> K{Next Step?}
     K -->|Yes| F
     K -->|No| L[✅ Return Final Results]
-
+    
     I -->|No| M{Retry Config?}
     M -->|Yes| N[⏳ Wait retry_delay]
     N --> O[🔄 Retry Attempt]
     O --> H
-
+    
     M -->|No| P[❌ Raise TaskError]
     P --> Q[📋 Capture Partial Results]
-
+    
     style L fill:#c8e6c9
     style P fill:#ffcdd2
 ```
@@ -305,7 +305,7 @@ pip install -e ".[dev]"
 
 ```python
 import wpipe
-print(wpipe.__version__)  # 2.0.0
+print(wpipe.__version__)  # 1.0.0
 ```
 
 ---
@@ -398,528 +398,220 @@ pipeline = Pipeline(
 
 ## Advanced Usage
 
-### ParallelExecutor
+### Parallel Execution
 
-Execute pipeline steps in parallel using thread or process pools. Ideal for I/O-bound tasks (API calls, file operations) or CPU-bound tasks (data transformations).
+Execute independent steps in parallel for I/O or CPU-bound tasks:
 
 ```python
-from wpipe import ParallelExecutor, ExecutionMode
+from wpipe import Pipeline
+from wpipe.parallel import ParallelExecutor, ExecutionMode
 
-def fetch_users(context):
-    """Simulate fetching users from an API (I/O-bound)."""
-    return {"users": ["Alice", "Bob", "Charlie"]}
+def fetch_users(data):
+    import time; time.sleep(1)
+    return {"users": ["Alice", "Bob"]}
 
-def fetch_orders(context):
-    """Simulate fetching orders from another API (I/O-bound)."""
-    return {"orders": [101, 102, 103]}
+def fetch_posts(data):
+    import time; time.sleep(1)
+    return {"posts": ["Post 1", "Post 2"]}
 
-def fetch_products(context):
-    """Simulate fetching product catalog (I/O-bound)."""
-    return {"products": ["Widget", "Gadget", "Thingamajig"]}
+def aggregate(data):
+    return {"total": len(data.get("users", [])) + len(data.get("posts", []))}
 
-def merge_data(context):
-    """Merge all fetched data into a single report."""
-    return {
-        "report": {
-            "users": context.get("users", []),
-            "orders": context.get("orders", []),
-            "products": context.get("products", []),
-        }
-    }
-
-# Create the parallel executor
 executor = ParallelExecutor(max_workers=4)
-
-# Add steps - the first three can run in parallel (no dependencies)
 executor.add_step("fetch_users", fetch_users, mode=ExecutionMode.IO_BOUND)
-executor.add_step("fetch_orders", fetch_orders, mode=ExecutionMode.IO_BOUND)
-executor.add_step("fetch_products", fetch_products, mode=ExecutionMode.IO_BOUND)
+executor.add_step("fetch_posts", fetch_posts, mode=ExecutionMode.IO_BOUND)
+executor.add_step("aggregate", aggregate, depends_on=["fetch_users", "fetch_posts"])
 
-# merge_data depends on all three fetch steps
-executor.add_step(
-    "merge_data",
-    merge_data,
-    mode=ExecutionMode.IO_BOUND,
-    depends_on=["fetch_users", "fetch_orders", "fetch_products"],
-)
-
-# Execute with initial context
-result = executor.execute({})
-print(result)
-# Output: {'users': [...], 'orders': [...], 'products': [...], 'report': {...}}
+result = executor.execute({})  # 4x faster than sequential!
 ```
 
-For CPU-bound tasks, use `ExecutionMode.CPU_BOUND` which leverages `ProcessPoolExecutor`:
+### For Loops
 
-```python
-import math
-
-def heavy_computation_a(context):
-    """CPU-intensive calculation."""
-    result = sum(math.sqrt(i) for i in range(1_000_000))
-    return {"result_a": result}
-
-def heavy_computation_b(context):
-    """Another CPU-intensive calculation."""
-    result = sum(math.factorial(i % 20) for i in range(10_000))
-    return {"result_b": result}
-
-executor = ParallelExecutor(max_workers=2)
-executor.add_step("calc_a", heavy_computation_a, mode=ExecutionMode.CPU_BOUND)
-executor.add_step("calc_b", heavy_computation_b, mode=ExecutionMode.CPU_BOUND)
-
-result = executor.execute({})
-```
-
-### For Class
-
-Iterate over data or run steps multiple times with count-based or condition-based loops.
+Iterate over steps with count or condition:
 
 ```python
 from wpipe import Pipeline, For
 
-def load_items(data):
-    """Load a list of items to process."""
-    return {"items": [{"id": 1, "name": "A"}, {"id": 2, "name": "B"}, {"id": 3, "name": "C"}]}
+def check_status(data):
+    count = data.get("count", 0) + 1
+    return {"count": count, "done": count >= 3}
 
-def process_item(data):
-    """Process a single item."""
-    current_index = data.get("_loop_iteration", 0)
-    items = data.get("items", [])
-    if current_index < len(items):
-        item = items[current_index]
-        return {"processed": data.get("processed", []) + [item["name"]]}
-    return {}
+# Count-based loop
+loop = For(steps=[(check_status, "Check", "v1.0")], iterations=3)
 
-def finalize(data):
-    """Finalize processing."""
-    return {"total_processed": len(data.get("processed", []))}
+# Condition-based loop
+loop = For(steps=[(check_status, "Check", "v1.0")], validation_expression="not data.get('done', False)")
 
-# Count-based loop: run process_item exactly 3 times
-loop_step = For(iterations=3, steps=[(process_item, "Process Item", "v1.0")])
-
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([
-    (load_items, "Load Items", "v1.0"),
-    loop_step,
-    (finalize, "Finalize", "v1.0"),
-])
-
-result = pipeline.run({})
-# Output: {'items': [...], 'processed': ['A', 'B', 'C'], 'total_processed': 3}
+pipeline = Pipeline(verbose=False)
+pipeline.set_steps([loop])
+result = pipeline.run({"count": 0})
 ```
 
-Condition-based loop that runs until a condition is false:
+### Pipeline Composition
+
+Use pipelines as steps in other pipelines:
 
 ```python
-from wpipe import For
+from wpipe import Pipeline
+from wpipe.composition import NestedPipelineStep, PipelineAsStep
 
-def generate_data(data):
-    """Generate or update data each iteration."""
-    current = data.get("counter", 0) + 1
-    return {"counter": current, "value": current * 10}
+# Inner pipelines
+clean = Pipeline(verbose=False)
+clean.set_steps([(lambda d: {"cleaned": True}, "Clean", "v1.0")])
 
-# Loop until counter reaches 5
-loop_step = For(
-    validation_expression="counter < 5",
-    steps=[(generate_data, "Generate", "v1.0")],
-)
+analyze = Pipeline(verbose=False)
+analyze.set_steps([(lambda d: {"analyzed": True}, "Analyze", "v1.0")])
 
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([loop_step])
-
-result = pipeline.run({"counter": 0})
-# Runs 5 iterations until counter >= 5
-```
-
-### NestedPipelineStep / Composition
-
-Use a pipeline as a step within another pipeline for modular, composable workflows.
-
-```python
-from wpipe import Pipeline, PipelineAsStep, NestedPipelineStep
-
-# --- Inner pipeline: data cleaning ---
-def load_raw(data):
-    return {"raw": [1, 2, None, 4, None, 6]}
-
-def clean_data(data):
-    cleaned = [x for x in data["raw"] if x is not None]
-    return {"cleaned": cleaned, "removed_none": 2}
-
-cleaning_pipeline = Pipeline(verbose=False)
-cleaning_pipeline.set_steps([
-    (load_raw, "Load Raw", "v1.0"),
-    (clean_data, "Clean Data", "v1.0"),
+# Compose into main pipeline
+main = Pipeline(verbose=False)
+main.set_steps([
+    (lambda d: {"data": "raw"}, "Fetch", "v1.0"),
+    (lambda d: NestedPipelineStep("clean", clean).run(d), "Clean", "v1.0"),
+    (lambda d: NestedPipelineStep("analyze", analyze).run(d), "Analyze", "v1.0"),
 ])
 
-# --- Inner pipeline: data analysis ---
-def analyze(data):
-    cleaned = data.get("cleaned", [])
-    return {
-        "mean": sum(cleaned) / len(cleaned),
-        "min": min(cleaned),
-        "max": max(cleaned),
-    }
-
-analysis_pipeline = Pipeline(verbose=False)
-analysis_pipeline.set_steps([
-    (analyze, "Analyze", "v1.0"),
-])
-
-# --- Outer pipeline: compose both ---
-# Option 1: Use PipelineAsStep (simple wrapper)
-data_step = PipelineAsStep(name="Data Cleaning", pipeline=cleaning_pipeline)
-
-# Option 2: Use NestedPipelineStep with filters (advanced)
-def filter_context(context):
-    """Only pass relevant keys to child pipeline."""
-    return {"cleaned": context.get("cleaned", [])}
-
-nested_analysis = NestedPipelineStep(
-    name="Analysis",
-    pipeline=analysis_pipeline,
-    context_filter=filter_context,
-)
-
-outer_pipeline = Pipeline(verbose=True)
-outer_pipeline.set_steps([
-    data_step,
-    nested_analysis,
-])
-
-result = outer_pipeline.run({})
-# Output: {'raw': [...], 'cleaned': [1, 2, 4, 6], 'removed_none': 2, 'mean': 3.25, 'min': 1, 'max': 6}
+result = main.run({})
 ```
 
 ### @step Decorator
 
-Define pipeline steps inline using the `@step` decorator instead of tuples.
+Define steps inline with metadata:
 
 ```python
-import wpipe
+from wpipe import step, AutoRegister, Pipeline
 
-@wpipe.step(name="Fetch Users", version="v2.0", timeout=30)
-def fetch_users(data):
-    """Fetch users from an external source."""
-    return {"users": [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]}
+@step(description="Fetch data", timeout=30, tags=["data"], retry_count=3)
+def fetch_data(context):
+    return {"data": [1, 2, 3]}
 
-@wpipe.step(
-    name="Enrich Users",
-    version="v1.0",
-    depends_on=["Fetch Users"],
-    retry_count=2,
-    tags=["enrichment", "users"],
-)
-def enrich_users(data):
-    """Add additional data to each user."""
-    enriched = []
-    for user in data.get("users", []):
-        user["status"] = "active"
-        user["score"] = 100
-        enriched.append(user)
-    return {"enriched_users": enriched, "count": len(enriched)}
+@step(description="Process", depends_on=["fetch_data"], tags=["transform"])
+def process_data(context):
+    return {"processed": context.get("data", [])}
 
-@wpipe.step(name="Generate Report", version="v1.0", description="Final report generation")
-def generate_report(data):
-    """Generate a summary report."""
-    return {
-        "report": f"Processed {data.get('count', 0)} users successfully",
-        "status": "complete",
-    }
-
-# Auto-register all decorated steps to the pipeline
-pipeline = Pipeline(verbose=True)
-wpipe.AutoRegister.register_all(pipeline)
-
-result = pipeline.run({})
-# Output: {'users': [...], 'enriched_users': [...], 'count': 2, 'report': '...', 'status': 'complete'}
-
-# Or register by tag
-pipeline2 = Pipeline(verbose=True)
-wpipe.AutoRegister.register_by_tag(pipeline2, tag="enrichment")
-```
-
-You can also use decorated steps manually in `set_steps`:
-
-```python
-import wpipe
-
-@wpipe.step(name="Step A", version="v1.0")
-def step_a(data):
-    return {"a": 1}
-
-@wpipe.step(name="Step B", version="v1.0")
-def step_b(data):
-    return {"b": data.get("a", 0) + 1}
-
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([
-    step_a,
-    step_b,
-])
-
+# Auto-register all decorated steps
+pipeline = Pipeline(verbose=False)
+AutoRegister.register_all(pipeline)
 result = pipeline.run({})
 ```
 
-### CheckpointManager
+### Checkpointing
 
-Save pipeline execution state and resume from checkpoints after interruptions.
+Save and resume pipeline state:
 
 ```python
-from wpipe import Pipeline, CheckpointManager
+from wpipe import Pipeline
+from wpipe.checkpoint import CheckpointManager
 
-def step_1(data):
-    return {"data_1": "processed"}
+checkpoint = CheckpointManager(tracking_db="tracking.db")
 
-def step_2(data):
-    return {"data_2": "processed"}
+# Create checkpoint
+checkpoint.create_checkpoint("v1", "my_pipeline", {"state": "initial"})
 
-def step_3(data):
-    return {"data_3": "processed"}
+# Check if can resume
+can_resume = checkpoint.can_resume("my_pipeline")
+if can_resume:
+    state = checkpoint.get_checkpoint("my_pipeline", "v1")
+    print(f"Resuming from: {state}")
 
-# Create a checkpoint manager pointing to a tracking database
-checkpoint_mgr = CheckpointManager(db_path="tracking.db")
-
-pipeline = Pipeline(
-    verbose=True,
-    tracking_db="tracking.db",
-    pipeline_name="My Checkpointed Pipeline",
-)
-pipeline.set_steps([
-    (step_1, "Step 1", "v1.0"),
-    (step_2, "Step 2", "v1.0"),
-    (step_3, "Step 3", "v1.0"),
-])
-
-# First run - executes all steps and saves checkpoints
-result = pipeline.run({}, checkpoint_mgr=checkpoint_mgr, checkpoint_id="my_pipeline_001")
-
-# Check if we can resume
-if checkpoint_mgr.can_resume("my_pipeline_001"):
-    stats = checkpoint_mgr.get_checkpoint_stats("my_pipeline_001")
-    print(f"Checkpoints: {stats}")
-    # Output: {'total_checkpoints': 3, 'successful': 3, 'failed': 0, ...}
-
-    # Get the last checkpoint
-    last = checkpoint_mgr.get_last_checkpoint("my_pipeline_001")
-    print(f"Last checkpoint: step {last['step_order']} - {last['step_name']}")
-
-# To manually resume, pass the same checkpoint_id:
-# result = pipeline.run({}, checkpoint_mgr=checkpoint_mgr, checkpoint_id="my_pipeline_001")
-
-# Clear checkpoints when done
-checkpoint_mgr.clear_checkpoints("my_pipeline_001")
+# Get stats
+stats = checkpoint.get_checkpoint_stats("my_pipeline")
+print(f"Total checkpoints: {stats['total_checkpoints']}")
 ```
 
-### ResourceMonitor
+### Resource Monitoring
 
-Track CPU and RAM usage during pipeline or task execution.
+Track CPU and RAM during execution:
 
 ```python
-from wpipe import ResourceMonitor
+from wpipe import Pipeline
+from wpipe.resource_monitor import ResourceMonitor, ResourceMonitorRegistry
 
-# As a context manager for any block of code
-with ResourceMonitor(task_name="data_processing") as monitor:
-    # Simulate some work
-    result = sum(i ** 2 for i in range(10_000_000))
-    data = {"result": result}
+# Single task monitoring
+monitor = ResourceMonitor()
+monitor.start()
+# ... run your task ...
+monitor.stop()
+stats = monitor.get_stats()
+print(f"Peak RAM: {stats['peak_ram_mb']} MB")
 
-# Get the monitoring summary
-summary = monitor.get_summary()
-print(f"Elapsed: {summary['elapsed_seconds']:.2f}s")
-print(f"Peak RAM: {summary['peak_ram_mb']:.2f} MB")
-print(f"Avg CPU: {summary['avg_cpu_percent']:.2f}%")
-print(f"RAM increase: {summary['ram_increase_mb']:.2f} MB")
+# Registry for multiple tasks with SQLite persistence
+registry = ResourceMonitorRegistry(db_path="resources.db")
+task_id = registry.register_task("my_task")
+registry.record_usage(task_id, {"cpu": 45.2, "ram": 512.0})
 ```
 
-With persistent storage to SQLite:
+### Export to JSON/CSV
+
+Export logs, metrics, and statistics:
 
 ```python
-from wpipe import ResourceMonitor, ResourceMonitorRegistry
+from wpipe.export import PipelineExporter
 
-registry = ResourceMonitorRegistry()
-
-# Monitor multiple tasks
-task_names = ["etl_extract", "etl_transform", "etl_load"]
-
-for task_name in task_names:
-    with ResourceMonitor(task_name=task_name, db_path="metrics.db") as monitor:
-        # Simulate work
-        _ = [x ** 2 for x in range(1_000_000)]
-        registry.add(task_name, monitor)
-
-# Get aggregate statistics
-full_summary = registry.get_summary()
-peak_ram = registry.get_peak_ram()
-print(f"Peak RAM across all tasks: {peak_ram:.2f} MB")
-```
-
-### PipelineExporter
-
-Export pipeline execution logs, metrics, and statistics to JSON or CSV.
-
-```python
-from wpipe import Pipeline, PipelineExporter
-
-# After running pipelines with tracking_db enabled, export the data
 exporter = PipelineExporter(db_path="tracking.db")
 
-# Export execution logs as JSON
+# Export pipeline logs to JSON
 logs_json = exporter.export_pipeline_logs(format="json")
-print(logs_json)
 
-# Export logs to a file
-exporter.export_pipeline_logs(
-    pipeline_id="abc-123",
-    format="json",
-    output_path="pipeline_logs.json",
-)
+# Export to CSV with filter
+logs_csv = exporter.export_pipeline_logs(pipeline_id="PIPE-123", format="csv")
 
-# Export logs as CSV
-exporter.export_pipeline_logs(
-    format="csv",
-    output_path="pipeline_logs.csv",
-)
+# Export metrics
+metrics = exporter.export_metrics(format="json")
 
-# Export system metrics
-metrics_json = exporter.export_metrics(format="json", output_path="metrics.json")
+# Export statistics
+stats = exporter.export_statistics(format="json")
 
-# Export statistics summary (JSON only)
-stats = exporter.export_statistics(format="json", output_path="statistics.json")
-print(stats)
-# Output:
-# {
-#   "total_executions": 42,
-#   "successful_executions": 40,
-#   "success_rate_percent": 95.24,
-#   "average_execution_time_seconds": 3.17,
-#   "exported_at": "2026-04-14T10:30:00"
-# }
+# Save to file
+exporter.export_pipeline_logs(output_path="logs.json", format="json")
 ```
 
 ### Timeout Decorators
 
-Prevent tasks from hanging by setting execution time limits.
+Prevent hanging tasks:
 
 ```python
-from wpipe import timeout_sync, TimeoutError
+from wpipe.timeout import timeout_sync, timeout_async, TaskTimer
+import asyncio
 
+# Sync timeout
 @timeout_sync(seconds=5)
-def potentially_slow_operation(data):
-    """This function will be killed if it takes more than 5 seconds."""
-    import time
-    time.sleep(10)  # Will timeout
-    return {"result": "done"}
+def slow_function(data):
+    import time; time.sleep(10)  # Will be killed after 5s
+    return {"done": True}
 
-try:
-    result = potentially_slow_operation({})
-except TimeoutError as e:
-    print(f"Timed out: {e}")
-    # Output: Timed out: Task 'potentially_slow_operation' exceeded timeout of 5s
+# Async timeout
+@timeout_async(seconds=5)
+async def slow_async_function(data):
+    import asyncio; await asyncio.sleep(10)  # Will be killed after 5s
+    return {"done": True}
+
+# Task timer context manager
+with TaskTimer("my_task") as timer:
+    # ... your code ...
+    pass
+print(f"Elapsed: {timer.elapsed_ms}ms")
 ```
 
-For async tasks, use `timeout_async`:
+### Async Pipeline
 
 ```python
 import asyncio
-from wpipe import timeout_async, TimeoutError
+from wpipe.pipe.pipe_async import PipelineAsync
 
-async def slow_api_call():
-    """Simulate a slow async API call."""
-    await asyncio.sleep(10)
-    return {"data": "response"}
-
-async def run_with_timeout():
-    try:
-        result = await timeout_async(seconds=3, coro=slow_api_call())
-        return result
-    except TimeoutError as e:
-        print(f"Async timeout: {e}")
-        return {"error": "request timed out"}
-
-asyncio.run(run_with_timeout())
-```
-
-Using TaskTimer as a context manager:
-
-```python
-from wpipe import TaskTimer
-
-with TaskTimer(task_name="heavy_computation", timeout_seconds=30) as timer:
-    result = sum(i ** 2 for i in range(10_000_000))
-
-print(f"Elapsed: {timer.elapsed_seconds:.2f}s")
-if timer.exceeded_timeout():
-    print("WARNING: Task exceeded timeout!")
-```
-
-### PipelineAsync
-
-Run pipelines with async/await for I/O-bound workflows that benefit from true concurrency.
-
-```python
-import asyncio
-from wpipe import PipelineAsync
-
-async def async_fetch_users(data):
-    """Async function to fetch users from an API."""
-    await asyncio.sleep(0.5)  # Simulate network latency
-    return {"users": [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]}
-
-async def async_enrich(data):
-    """Async function to enrich user data."""
-    users = data.get("users", [])
-    await asyncio.sleep(0.3)  # Simulate API call
-    for user in users:
-        user["role"] = "admin"
-    return {"enriched_users": users}
-
-async def async_save(data):
-    """Async function to save to database."""
-    await asyncio.sleep(0.2)  # Simulate DB write
-    return {"saved": len(data.get("enriched_users", [])), "status": "success"}
-
-async def main():
-    pipeline = PipelineAsync(verbose=True)
-    pipeline.set_steps([
-        (async_fetch_users, "Fetch Users", "v1.0"),
-        (async_enrich, "Enrich Users", "v1.0"),
-        (async_save, "Save Users", "v1.0"),
-    ])
-
-    result = await pipeline.run({})
-    print(result)
-    # Output: {'users': [...], 'enriched_users': [...], 'saved': 2, 'status': 'success'}
-
-asyncio.run(main())
-```
-
-Async pipeline with retry and error handling:
-
-```python
-import asyncio
-from wpipe import PipelineAsync
-
-async def flaky_api_call(data):
-    """Simulates an API that sometimes fails."""
-    import random
+async def fetch_data(data):
     await asyncio.sleep(0.1)
-    if random.random() < 0.5:
-        raise ConnectionError("Temporary network issue")
-    return {"api_response": "success"}
+    return {"data": "fetched"}
+
+async def process_data(data):
+    await asyncio.sleep(0.1)
+    return {"processed": True}
 
 async def main():
-    pipeline = PipelineAsync(
-        verbose=True,
-        max_retries=3,
-        retry_delay=1.0,
-        retry_on_exceptions=(ConnectionError,),
-    )
+    pipeline = PipelineAsync(verbose=False)
     pipeline.set_steps([
-        (flaky_api_call, "Flaky API", "v1.0"),
+        (fetch_data, "Fetch", "v1.0"),
+        (process_data, "Process", "v1.0"),
     ])
-
     result = await pipeline.run({})
     print(result)
 
