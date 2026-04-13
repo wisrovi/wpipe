@@ -721,6 +721,27 @@
             line-height: 1.7;
         }
 
+        .feature-code {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            overflow-x: auto;
+        }
+
+        .feature-code pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #e6edf3;
+        }
+
+        .feature-code code {
+            font-family: inherit;
+        }
+
         .feature-link {
             display: inline-flex;
             align-items: center;
@@ -1664,6 +1685,165 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
                     </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Features Section -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Phase 2: v2.0</span>
+                <h2 class="section-title">Advanced <span class="gradient-text">Features</span></h2>
+                <p class="section-description">
+                    Enterprise-grade capabilities for complex workflows, performance, and reliability.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Parallel Execution</h3>
+                    <p>Execute steps in parallel using ThreadPoolExecutor (I/O) or ProcessPoolExecutor (CPU). 3-5x speedup.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe.parallel import ParallelExecutor, ExecutionMode
+
+executor = ParallelExecutor(max_workers=4)
+executor.add_step("fetch", fetch_data, mode=ExecutionMode.IO_BOUND)
+executor.add_step("process", process, depends_on=["fetch"])
+result = executor.execute({})</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔁</div>
+                    <h3>For Loops</h3>
+                    <p>Iterate over steps with count-based or condition-based loops.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe import Pipeline, For
+
+loop = For(
+    steps=[(check_status, "Check", "v1.0")],
+    iterations=3
+)
+pipeline = Pipeline(verbose=False)
+pipeline.set_steps([loop])
+result = pipeline.run({"count": 0})</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧩</div>
+                    <h3>Pipeline Composition</h3>
+                    <p>Nest pipelines within other pipelines with smart context filtering.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe.composition import NestedPipelineStep
+
+clean = Pipeline(verbose=False)
+clean.set_steps([(clean_fn, "Clean", "v1.0")])
+
+main = Pipeline(verbose=False)
+main.set_steps([
+    (lambda d: NestedPipelineStep("clean", clean).run(d), "Clean", "v1.0"),
+])
+result = main.run({})</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>@step Decorator</h3>
+                    <p>Define steps inline with metadata: timeout, dependencies, tags, retries.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe import step, AutoRegister, Pipeline
+
+@step(description="Fetch", timeout=30, tags=["data"])
+def fetch_data(context):
+    return {"data": [1, 2, 3]}
+
+pipeline = Pipeline(verbose=False)
+AutoRegister.register_all(pipeline)
+result = pipeline.run({})</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Checkpointing</h3>
+                    <p>Save pipeline state and resume from checkpoints after failures.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe.checkpoint import CheckpointManager
+
+checkpoint = CheckpointManager(tracking_db="tracking.db")
+checkpoint.create_checkpoint("v1", "pipeline", {"state": "init"})
+if checkpoint.can_resume("pipeline"):
+    state = checkpoint.get_checkpoint("pipeline", "v1")</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Resource Monitoring</h3>
+                    <p>Track CPU and RAM usage per task with SQLite persistence.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe.resource_monitor import ResourceMonitor
+
+monitor = ResourceMonitor()
+monitor.start()
+# ... run task ...
+monitor.stop()
+stats = monitor.get_stats()
+print(f"Peak RAM: {stats['peak_ram_mb']} MB")</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📤</div>
+                    <h3>Export JSON/CSV</h3>
+                    <p>Export logs, metrics, and statistics for analysis.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe.export import PipelineExporter
+
+exporter = PipelineExporter(db_path="tracking.db")
+logs = exporter.export_pipeline_logs(format="json")
+metrics = exporter.export_metrics(format="json")
+stats = exporter.export_statistics(format="json")</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Timeout Decorators</h3>
+                    <p>Prevent hanging tasks with sync and async timeouts.</p>
+                    <div class="feature-code">
+<pre><code>from wpipe.timeout import timeout_sync
+
+@timeout_sync(seconds=5)
+def slow_function(data):
+    import time; time.sleep(10)  # Killed after 5s
+    return {"done": True}</code></pre>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Async Pipeline</h3>
+                    <p>Full async pipeline support with awaitable steps.</p>
+                    <div class="feature-code">
+<pre><code>import asyncio
+from wpipe.pipe.pipe_async import PipelineAsync
+
+async def fetch(data):
+    await asyncio.sleep(0.1)
+    return {"data": "fetched"}
+
+async def main():
+    p = PipelineAsync(verbose=False)
+    p.set_steps([(fetch, "Fetch", "v1.0")])
+    result = await p.run({})
+
+asyncio.run(main())</code></pre>
+                    </div>
                 </div>
             </div>
         </div>
