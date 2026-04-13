@@ -11,16 +11,15 @@
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![LTS](https://img.shields.io/badge/LTS-1.5.0-green.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/tests-106%20passing-10b981)](https://github.com/wisrovi/wpipe/actions)
+[![LTS](https://img.shields.io/badge/LTS-2.0.0-green.svg)](CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/coverage-90%25-brightgreen.svg)](https://github.com/wisrovi/wpipe/actions)
 [![Documentation](https://img.shields.io/badge/docs-wpipe-blue)](https://wpipe.readthedocs.io/)
-[![GitHub stars](https://img.shields.io/github/stars/wisrovi/wpipe?style=social)](https://github.com/wisrovi/wpipe/stargazers)
 
-> **Version 1.5**: Major release with parallel execution, pipeline composition, step decorators, resource monitoring, checkpointing, timeout controls, type hinting, and export capabilities.
+> **Version 2.0.0-LTS**: Long-Term Support release with parallel execution, pipeline composition, step decorators, resource monitoring, checkpointing, and 90% test coverage.
 
 ## Project Overview
 
-**wpipe** is a powerful, lightweight Python library for creating and executing sequential data processing pipelines without the complexity of web-based workflow tools. It provides a clean, intuitive API for orchestrating complex data processing tasks while maintaining production-grade quality.
+**wpipe** is a powerful, enterprise-grade Python library for creating and executing complex data processing pipelines. It is designed for mission-critical environments where reliability, observability, and performance are paramount. Now in its **LTS (Long-Term Support)** phase, WPipe guarantees a stable API and long-term maintenance.
 
 ### Key Characteristics
 

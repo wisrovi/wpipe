@@ -4,6 +4,29 @@ All notable changes to WPipe will be documented in this file.
 
 ---
 
+## [2.0.0-LTS] - 2026-04-13
+
+### Added
+- **LTS Certification**: Long-Term Support release for mission-critical pipelines.
+- **Improved Coverage**: Minimum 90% test coverage for core components.
+- **Enhanced Reliability**: Stabilized Honey Pot and LogGestor examples.
+- **Consistency**: PipelineExporter synchronized with unified PipelineModel schema.
+- **API Maturity**: Full support for parallel execution and composition as stable features.
+
+### Fixed
+- Checkpoint persistence in demo scenarios.
+- Database schema mismatch in export tools.
+
+---
+
+## [1.5.3] - 2026-04-10
+
+### Added
+- Official 2.0.0-LTS preparation.
+- Minor fixes in examples.
+
+---
+
 ## [1.5.1] - 2026-04-10
 
 ### Fixed

@@ -66,19 +66,31 @@ class Wsqlite:
 
     def _create(self, input_data: dict) -> None:
         """Create a new record with input data."""
-        input_data_json = str(input_data)
-        record_id = self.db.insert(WsqliteModel(input=input_data_json))
+        import json
+
+        input_data_json = json.dumps(input_data)
+
+        dto_to_insert = WsqliteModel(input=input_data_json)
+
+        record_id = self.db.insert(dto_to_insert)
 
         if record_id is not None:
             self.id = record_id
 
     def _update(self, output: dict, details: Optional[dict] = None) -> None:
         """Update the current record with output and details."""
+        import json
+
         details = details or {}
         if self.id is not None:
             self.db.update(
                 self.id,
-                WsqliteModel(id=self.id, output=str(output), details=str(details)),
+                WsqliteModel(
+                    id=self.id,
+                    input=json.dumps(self._input_db),
+                    output=json.dumps(output),
+                    details=json.dumps(details),
+                ),
             )
 
     def count_records(self) -> int:

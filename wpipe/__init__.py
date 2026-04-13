@@ -1,6 +1,28 @@
 import sqlite3
-
+import threading
 from wsqlite import WSQLite as Wsqlite_original
+
+
+# --- OPTIMIZATION: CONNECTION POOLING AND WAL MODE ---
+_db_connections = {}
+_db_lock = threading.Lock()
+
+
+def patched_get_connection(self):
+    """Obtiene una conexión compartida a la base de datos para mejorar el rendimiento."""
+    with _db_lock:
+        if self.db_name not in _db_connections:
+            # check_same_thread=False is safe because we use a lock for operations or assume SQLite serializable mode
+            conn = sqlite3.connect(self.db_name, check_same_thread=False)
+            # Enable WAL mode for high concurrency performance
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            _db_connections[self.db_name] = conn
+        return _db_connections[self.db_name]
+
+
+# Apply connection monkeypatch
+Wsqlite_original._get_connection = patched_get_connection
 
 
 # Monkeypatch WSQLite to return lastrowid on insert
@@ -15,13 +37,128 @@ def patched_insert(self, data):
     placeholders = ", ".join(["?" for _ in dump])
     values = tuple(dump.values())
     query = f"INSERT INTO {self.table_name} ({fields}) VALUES ({placeholders})"
-    with self._get_connection() as conn:
+
+    conn = self._get_connection()
+    with _db_lock:
         cursor = conn.execute(query, values)
         conn.commit()
         return cursor.lastrowid
 
 
 Wsqlite_original.insert = patched_insert
+
+
+# Also need to patch update, delete, etc. to use the lock if we share the connection
+def patched_update(self, record_id, data):
+    """Actualiza un registro en la base de datos."""
+    dump = data.model_dump()
+    fields = ", ".join(f"{key} = ?" for key in dump.keys())
+    values = tuple(dump.values()) + (record_id,)
+
+    query = f"UPDATE {self.table_name} SET {fields} WHERE id = ?"
+
+    conn = self._get_connection()
+    with _db_lock:
+        conn.execute(query, values)
+        conn.commit()
+
+
+def patched_delete(self, record_id):
+    """Elimina un registro de la base de datos."""
+    query = f"DELETE FROM {self.table_name} WHERE id = ?"
+
+    conn = self._get_connection()
+    with _db_lock:
+        conn.execute(query, (record_id,))
+        conn.commit()
+
+
+def patched_get_by_field(self, **filters):
+    """Obtiene registros filtrando por cualquier campo."""
+    if not filters:
+        return self.get_all()
+
+    conditions = " AND ".join(f"{key} = ?" for key in filters.keys())
+    values = tuple(filters.values())
+
+    query = f"SELECT * FROM {self.table_name} WHERE {conditions}"
+
+    conn = self._get_connection()
+    with _db_lock:
+        cursor = conn.execute(query, values)
+        rows = cursor.fetchall()
+
+    return [
+        self.model(
+            **{
+                key: (value if value is not None else self._default_value(key))
+                for key, value in zip(self.model.model_fields.keys(), row)
+            }
+        )
+        for row in rows
+    ]
+
+
+def patched_get_all(self):
+    """Obtiene todos los registros de la tabla."""
+    query = f"SELECT * FROM {self.table_name}"
+
+    conn = self._get_connection()
+    with _db_lock:
+        cursor = conn.execute(query)
+        rows = cursor.fetchall()
+
+    return [
+        self.model(
+            **{
+                key: (value if value is not None else self._default_value(key))
+                for key, value in zip(self.model.model_fields.keys(), row)
+            }
+        )
+        for row in rows
+    ]
+
+
+def patched_create_table_if_not_exists(self):
+    """Crea la tabla en SQLite si no existe."""
+    fields = ", ".join(
+        f"{field} {self._get_sql_type(typ)}"
+        for field, typ in self.model.model_fields.items()
+    )
+    query = f"CREATE TABLE IF NOT EXISTS {self.table_name} ({fields})"
+
+    conn = self._get_connection()
+    with _db_lock:
+        conn.execute(query)
+        conn.commit()
+
+
+def patched_sync_table_with_model(self):
+    """Sincroniza la tabla con el modelo Pydantic."""
+    conn = self._get_connection()
+    with _db_lock:
+        cursor = conn.execute(f"PRAGMA table_info({self.table_name})")
+        existing_columns = {row[1] for row in cursor.fetchall()}
+
+    model_fields = set(self.model.model_fields.keys())
+    new_fields = model_fields - existing_columns
+
+    if new_fields:
+        with _db_lock:
+            for field in new_fields:
+                field_type = self._get_sql_type(self.model.model_fields[field])
+                alter_query = f"ALTER TABLE {self.table_name} ADD COLUMN {field} {field_type} DEFAULT NULL"
+                conn.execute(alter_query)
+            conn.commit()
+
+
+# Apply other monkeypatches for thread safety with shared connection
+Wsqlite_original.update = patched_update
+Wsqlite_original.delete = patched_delete
+Wsqlite_original.get_by_field = patched_get_by_field
+Wsqlite_original.get_all = patched_get_all
+Wsqlite_original._create_table_if_not_exists = patched_create_table_if_not_exists
+Wsqlite_original._sync_table_with_model = patched_sync_table_with_model
 
 
 def patched_get_sql_type(self, field):
@@ -58,9 +195,12 @@ def patched_get_sql_type(self, field):
 Wsqlite_original._get_sql_type = patched_get_sql_type
 
 
+__version__ = "1.5.4"
+
+
 """
 wpipe - A Python library for creating and executing pipelines with task orchestration.
-
+...
 Phase 1 Features (Core Reliability & Observability):
 - Checkpointing & Resume: Save and resume from checkpoints
 - Timeouts: Prevent hanging tasks with timeout support
@@ -77,12 +217,22 @@ Phase 2 Features (Parallelism & Composition):
 from .api_client import APIClient
 from .checkpoint import CheckpointManager
 from .composition import CompositionHelper, NestedPipelineStep, PipelineAsStep
-from .dashboard import start_dashboard
+
+
+def __getattr__(name):
+    if name == "start_dashboard":
+        from .dashboard import start_dashboard
+
+        return start_dashboard
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
 from .decorators import AutoRegister, StepRegistry, get_step_registry, step
 from .export import PipelineExporter
 from .log import new_logger
 from .parallel import DAGScheduler, ExecutionMode, ParallelExecutor
-from .pipe import Condition, For, Pipeline, PipelineAsync
+from .pipe import Condition, For, Pipeline
+from .pipe.pipe_async import PipelineAsync
 from .ram import memory
 from .resource_monitor import ResourceMonitor, ResourceMonitorRegistry
 from .sqlite import Wsqlite, Wsqlite
@@ -135,5 +285,4 @@ __all__ = [
     "Wsqlite",
     # SQLite logging
     "Wsqlite",
-    ]
-
+]

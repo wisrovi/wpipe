@@ -1,6 +1,6 @@
 name: viaje
-registered_at: '2026-04-10T09:00:04.586747'
+registered_at: '2026-04-13T08:49:31.045946'
 step_count: 2
 steps:
-- (<function fase_preparacion at 0x7c9640511080>, 'fase_preparacion', 'v1.1', '')
-- <wpipe.pipe.pipe.For object at 0x7c9640653890>
+- (<function fase_preparacion at 0x7692412919e0>, 'fase_preparacion', 'v1.1', '')
+- <wpipe.pipe.pipe.For object at 0x7692413d7b10>

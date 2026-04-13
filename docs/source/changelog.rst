@@ -8,6 +8,31 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[1.5.3] - 2026-04-13
+---------------------
+
+Added
+~~~~~
+
+**Performance Improvements**
+
+- **SQLite Performance Boost**: Implemented Connection Pooling and WAL (Write-Ahead Logging) mode.
+- **Ultra-fast Tracking**: Reduced tracking overhead by 99% (from 900ms to 6ms per 40 steps).
+- **Thread-safe DB**: Global locking mechanism for safe database access during parallel execution.
+
+**New Features**
+
+- **Parallel Execution**: Support for IO-bound (Threading) and CPU-bound (Process) parallel steps.
+- **Pipeline Composition**: Nested pipelines and `PipelineAsStep` support for complex hierarchies.
+- **Step Decorators**: New `@step` and `@state` decorators for cleaner pipeline definitions.
+- **Checkpointing**: Save and resume pipeline execution from specific steps.
+- **Resource Monitoring**: Real-time CPU and RAM tracking per step.
+- **Automatic Registration**: `AutoRegister` for streamlined step discovery.
+
+**LTS Update**
+
+- Transition to 1.5.x as the new stable LTS branch.
+
 [1.0.0] - 2026-03-22
 ---------------------
 

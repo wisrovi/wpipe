@@ -45,10 +45,10 @@ class PipelineExporter:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
-            query = "SELECT * FROM executions"
+            query = "SELECT * FROM pipelines"
             if pipeline_id:
                 query += f" WHERE pipeline_id = '{pipeline_id}'"
-            query += " ORDER BY created_at DESC"
+            query += " ORDER BY started_at DESC"
 
             cursor.execute(query)
             rows = cursor.fetchall()
@@ -171,7 +171,7 @@ class PipelineExporter:
             try:
                 # Check if table exists
                 cursor.execute(
-                    "SELECT name FROM sqlite_master WHERE type='table' AND name='executions'"
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='pipelines'"
                 )
                 if not cursor.fetchone():
                     # Table doesn't exist, return empty stats
@@ -184,14 +184,15 @@ class PipelineExporter:
                     }
 
                 # Total executions
-                exec_query = "SELECT COUNT(*) FROM executions"
+                exec_query = "SELECT COUNT(*) FROM pipelines"
                 if pipeline_id:
                     exec_query += f" WHERE pipeline_id = '{pipeline_id}'"
                 cursor.execute(exec_query)
                 total_executions = cursor.fetchone()[0]
 
                 # Average execution time
-                time_query = "SELECT AVG(execution_time) FROM executions WHERE execution_time IS NOT NULL"
+                # Convert ms to seconds for consistency in report
+                time_query = "SELECT AVG(total_duration_ms) / 1000.0 FROM pipelines WHERE total_duration_ms IS NOT NULL"
                 if pipeline_id:
                     time_query += f" AND pipeline_id = '{pipeline_id}'"
                 cursor.execute(time_query)
@@ -199,7 +200,7 @@ class PipelineExporter:
 
                 # Success rate
                 success_query = (
-                    "SELECT COUNT(*) FROM executions WHERE status = 'completed'"
+                    "SELECT COUNT(*) FROM pipelines WHERE status = 'completed'"
                 )
                 if pipeline_id:
                     success_query += f" AND pipeline_id = '{pipeline_id}'"

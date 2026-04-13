@@ -33,7 +33,7 @@ def get_system_metrics() -> dict:
         disk_io = psutil.disk_io_counters()
 
         return {
-            "cpu_percent": process.cpu_percent(),
+            "cpu_percent": process.cpu_percent(interval=0),
             "memory_percent": memory.percent,
             "memory_used_mb": memory.used / 1024 / 1024,
             "memory_available_mb": memory.available / 1024 / 1024,
@@ -708,9 +708,9 @@ class Pipeline(APIClient):
                 result_data = self._task_invoke(func, name, *(data,), **kwargs)
                 if result_data is None:
                     result_data = {}
-                assert isinstance(
-                    result_data, dict
-                ), f"[ERROR] result of {name} must be dict or None"
+                assert isinstance(result_data, dict), (
+                    f"[ERROR] result of {name} must be dict or None"
+                )
                 data.update(result_data)
             except Exception as e:
                 step_error = str(e)

@@ -26,7 +26,6 @@ def get_viaje_pipeline():
         collect_system_metrics=True,  # Enable metrics collection
     )
 
-    # NUEVA SINTAXIS SIMPLIFICADA
     # Alerta de pipeline lento (>500ms)
     viaje.tracker.add_alert_threshold(
         metric=Metric.PIPELINE_DURATION,

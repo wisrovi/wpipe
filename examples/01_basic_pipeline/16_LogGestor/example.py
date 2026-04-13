@@ -12,14 +12,8 @@ with Wsqlite(db_name="demo.db") as db:
 
     db.input = args_dict
 
-    try:
-        results = {"queso": "delicioso"}
+    db.details = {"info": "Starting the process..."}
 
-        db.output = results
+    db.output = {"queso": "delicioso"}
 
-        print(results)
-    except Exception as error:
-
-        db.details = {"error": f"Exception-Error: {str(error)}"}
-
-        raise
+print("complete")

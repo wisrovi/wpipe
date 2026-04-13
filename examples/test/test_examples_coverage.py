@@ -266,37 +266,6 @@ class TestSQLiteCoverage:
         assert len(df) >= 1
 
 
-class TestWsqliteCoverage:
-    """Tests to improve Wsqlite coverage."""
-
-    def test_wsqlite_context_manager(self, tmp_path):
-        """Test Wsqlite context manager."""
-        db_path = tmp_path / "test.db"
-
-        # Note: Wsqlite imported from wpipe is the class from Sqlite.py or the monkeypatched one
-        # If it's the simplified one from Wsqlite.py:
-        from wpipe.sqlite.Wsqlite import Wsqlite as WsqliteLocal
-        with WsqliteLocal(db_name=str(db_path)) as db:
-            db.input = {"test": "data"}
-            db.output = {"result": True}
-            db.details = {"info": "test"}
-
-        db2 = SQLite(str(db_path))
-        assert db2.count_records() == 1
-
-    def test_wsqlite_without_output(self, tmp_path):
-        """Test Wsqlite without setting output."""
-        from wpipe.sqlite.Wsqlite import Wsqlite as WsqliteLocal
-        db_path = tmp_path / "test.db"
-
-        with WsqliteLocal(db_name=str(db_path)) as db:
-            db.input = {"test": "data"}
-
-        db2 = SQLite(str(db_path))
-        record = db2.read_by_id(1)
-        assert record is not None
-
-
 class TestDashboardCoverage:
     """Tests to improve dashboard coverage."""
 

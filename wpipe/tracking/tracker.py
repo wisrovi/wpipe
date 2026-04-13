@@ -52,6 +52,47 @@ class Severity:
     CRITICAL = "critical"
 
 
+# --- PROFESSIONAL TABLE NAMING FOR LTS ---
+class pipelines(PipelineModel):
+    pass
+
+
+class steps(StepModel):
+    pass
+
+
+class step_history(StepHistoryModel):
+    pass
+
+
+class performance_stats(PerformanceStatsModel):
+    pass
+
+
+class alerts_config(AlertConfigModel):
+    pass
+
+
+class alerts_fired(AlertFiredModel):
+    pass
+
+
+class events(EventModel):
+    pass
+
+
+class pipeline_relations(PipelineRelationModel):
+    pass
+
+
+class system_metrics(SystemMetricsModel):
+    pass
+
+
+class comparisons(ComparisonModel):
+    pass
+
+
 class PipelineTracker:
     """
     Unified Pipeline Tracker.
@@ -63,17 +104,17 @@ class PipelineTracker:
         self.db_path = db_path
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
 
-        # Table instances
-        self.db_pipelines = WSQLite(PipelineModel, db_path)
-        self.db_steps = WSQLite(StepModel, db_path)
-        self.db_step_history = WSQLite(StepHistoryModel, db_path)
-        self.db_performance_stats = WSQLite(PerformanceStatsModel, db_path)
-        self.db_alerts_config = WSQLite(AlertConfigModel, db_path)
-        self.db_alerts_fired = WSQLite(AlertFiredModel, db_path)
-        self.db_events = WSQLite(EventModel, db_path)
-        self.db_pipeline_relations = WSQLite(PipelineRelationModel, db_path)
-        self.db_system_metrics = WSQLite(SystemMetricsModel, db_path)
-        self.db_comparisons = WSQLite(ComparisonModel, db_path)
+        # Table instances with professional names
+        self.db_pipelines = WSQLite(pipelines, db_path)
+        self.db_steps = WSQLite(steps, db_path)
+        self.db_step_history = WSQLite(step_history, db_path)
+        self.db_performance_stats = WSQLite(performance_stats, db_path)
+        self.db_alerts_config = WSQLite(alerts_config, db_path)
+        self.db_alerts_fired = WSQLite(alerts_fired, db_path)
+        self.db_events = WSQLite(events, db_path)
+        self.db_pipeline_relations = WSQLite(pipeline_relations, db_path)
+        self.db_system_metrics = WSQLite(system_metrics, db_path)
+        self.db_comparisons = WSQLite(comparisons, db_path)
 
         self._alert_hooks = {}
 
