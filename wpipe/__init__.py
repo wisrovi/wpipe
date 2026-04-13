@@ -11,14 +11,14 @@ _db_lock = threading.Lock()
 def patched_get_connection(self):
     """Obtiene una conexión compartida a la base de datos para mejorar el rendimiento."""
     with _db_lock:
-        if self.db_name not in _db_connections:
+        if self.db_path not in _db_connections:
             # check_same_thread=False is safe because we use a lock for operations or assume SQLite serializable mode
-            conn = sqlite3.connect(self.db_name, check_same_thread=False)
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
             # Enable WAL mode for high concurrency performance
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
-            _db_connections[self.db_name] = conn
-        return _db_connections[self.db_name]
+            _db_connections[self.db_path] = conn
+        return _db_connections[self.db_path]
 
 
 # Apply connection monkeypatch
@@ -235,7 +235,7 @@ from .pipe import Condition, For, Pipeline
 from .pipe.pipe_async import PipelineAsync
 from .ram import memory
 from .resource_monitor import ResourceMonitor, ResourceMonitorRegistry
-from .sqlite import Wsqlite, Wsqlite
+from .sqlite import Wsqlite
 from .timeout import TaskTimer, TimeoutError, timeout_async, timeout_sync
 from .tracking import Metric, PipelineTracker, Severity
 from .type_hinting import GenericPipeline, PipelineContext, TypeValidator
@@ -282,7 +282,5 @@ __all__ = [
     "PipelineTracker",
     "Metric",
     "Severity",
-    "Wsqlite",
-    # SQLite logging
     "Wsqlite",
 ]
