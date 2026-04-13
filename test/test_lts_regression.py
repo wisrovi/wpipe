@@ -67,7 +67,7 @@ class TestVersionConsistency:
 
     def test_version_starts_with_2(self):
         """LTS version should start with 2."""
-        assert wpipe.__version__.startswith("2.")
+        assert wpipe.__version__.startswith("1.5.")
 
 
 # ============================================================

@@ -195,7 +195,7 @@ def patched_get_sql_type(self, field):
 Wsqlite_original._get_sql_type = patched_get_sql_type
 
 
-__version__ = "1.5.4"
+__version__ = "1.5.6"
 
 
 """
