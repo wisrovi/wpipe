@@ -15,16 +15,15 @@ from wpipe.util.transform import object_to_dict, auto_dict_input, state, to_obj
 
 @pytest.fixture
 def lts_db():
-    db_path = "test_lts_coverage.db"
-    if os.path.exists(db_path):
-        os.remove(db_path)
-    # Initialize tracker to ensure tables are created via WSQLite
+    import tempfile
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    # Initialize tracker to ensure tables are created
     tracker = PipelineTracker(db_path)
+    tracker.register_pipeline("_init", [])
     yield db_path
     if os.path.exists(db_path):
-        # We don't remove it here to allow tests to see the state if needed, 
-        # but fixture will cleanup next time
-        pass
+        os.remove(db_path)
 
 # --- Async Pipeline Tests ---
 

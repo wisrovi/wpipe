@@ -95,7 +95,7 @@ class Wsqlite:
 
     def count_records(self) -> int:
         """Return the number of records in the database."""
-        return self.db.count_records()
+        return self.db.count()
 
     def __enter__(self) -> "Wsqlite":
         """Enter context manager."""
@@ -171,8 +171,14 @@ class SQLite:
 
     def read_by_id(self, record_id: int) -> Optional[RecordModel]:
         """Read a record by ID."""
-        results = self.db.get_by_field(id=record_id)
-        return results[0] if results else None
+        all_records = self.db.get_all()
+        for r in all_records:
+            if r.id == record_id:
+                return r
+        # Fallback: return by index if id is not set
+        if record_id > 0 and len(all_records) >= record_id:
+            return all_records[record_id - 1]
+        return None
 
     def export_to_dataframe(
         self, save_csv: bool = False, csv_name: str = "records.csv"
@@ -242,11 +248,30 @@ class SQLite:
                 json.dumps(details) if isinstance(details, dict) else details
             )
 
-        self.db.update(record_id, current)
+        # Use rowid-based update since wsqlite stores id as None
+        import sqlite3
+        output_val = current.output
+        details_val = current.details
+        conn = sqlite3.connect(self.db_name)
+        conn.execute(
+            f"UPDATE {self.db.table_name} SET output = ?, details = ? WHERE rowid = ?",
+            (output_val, details_val, record_id)
+        )
+        conn.commit()
+        conn.close()
 
     def delete_by_id(self, record_id: int) -> None:
         """Delete a record by ID."""
-        self.db.delete(record_id)
+        # Since wsqlite stores id as None in the model but auto-increments
+        # the SQLite rowid, delete by rowid matching the record_id
+        all_records = self.db.get_all()
+        if record_id > 0 and len(all_records) >= record_id:
+            # Delete by rowid (1-based index matches our insert return)
+            import sqlite3
+            conn = sqlite3.connect(self.db_name)
+            conn.execute(f"DELETE FROM {self.db.table_name} WHERE rowid = ?", (record_id,))
+            conn.commit()
+            conn.close()
 
     def check_table_exists(self) -> bool:
         """Check if database is accessible."""

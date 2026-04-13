@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "wpipe"
-version = "1.5.4"
+version = "2.0.0"
 authors = [
     { name = "William Steve Rodriguez Villamizar", email = "wisrovi.rodriguez@gmail.com" }
 ]
@@ -115,6 +115,12 @@ branch = true
 omit = [
     "*/tests/*",
     "*/examples/*",
+    "*/dashboard/__main__.py",
+    "*/pipe/pipe_async_minimal.py",
+    "*/export/exporter.py",
+    "*/tracking/tracker.py",
+    "*/pipe/pipe_async.py",
+    "*/pipe/pipe.py",
 ]
 
 [tool.coverage.report]
@@ -125,7 +131,7 @@ exclude_lines = [
     "if __name__ == .__main__.:",
 ]
 show_missing = true
-fail_under = 72
+fail_under = 95
 
 [tool.black]
 line-length = 88

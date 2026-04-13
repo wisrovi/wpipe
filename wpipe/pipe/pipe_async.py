@@ -400,7 +400,7 @@ class PipelineAsync(APIClient):
             elif not (
                 isinstance(item, tuple)
                 and len(item) == 3
-                and callable(item[0])
+                and (callable(item[0]) or isinstance(item[0], PipelineAsync))
                 and isinstance(item[1], str)
             ):
                 raise ValueError(

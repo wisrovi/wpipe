@@ -13,9 +13,9 @@ from wpipe.exception import TaskError
 
 @pytest.fixture
 def lts_db_v2():
-    db_path = "test_lts_coverage_v2.db"
-    if os.path.exists(db_path):
-        os.remove(db_path)
+    import tempfile
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
     tracker = PipelineTracker(db_path)
     # Important: Register a pipeline to force the 'pipelines' table creation in disk
     tracker.register_pipeline("init_v2", [])
@@ -87,14 +87,14 @@ def test_exporter_robustness_v2(lts_db_v2):
     # Ensure there is at least one completed execution
     reg = tracker.register_pipeline("export_target", [])
     tracker.complete_pipeline(reg["pipeline_id"])
-    
-    # Small wait to ensure SQLite disk sync
-    time.sleep(0.1)
-    
+
+    # Wait to ensure SQLite disk sync
+    time.sleep(0.2)
+
     exporter = PipelineExporter(lts_db_v2)
     stats = json.loads(exporter.export_statistics())
     assert stats["total_executions"] >= 1
-    
+
     logs = exporter.export_pipeline_logs(format="json")
     assert "export_target" in logs
 
