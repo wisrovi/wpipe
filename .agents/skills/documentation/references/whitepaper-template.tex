@@ -1,0 +1,199 @@
+% =============================================================================
+% TECHNICAL WHITEPAPER TEMPLATE
+% 40-60 páginas, estilo industrial
+% =============================================================================
+
+% Usar el preámbulo base
+\input{latex-preamble.tex}
+
+\begin{document}
+
+% =============================================================================
+% PÁGINA DE TÍTULO
+% =============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    \ifdefined\sourcespath
+    \includegraphics[width=0.25\textwidth]{\sourcespath/project-logo.png}
+    \fi
+    
+    \vspace{1cm}
+    
+    {\Huge\textbf{\sffamily Project Title}}\\[0.5cm]
+    {\Large\textbf{\sffamily Subtitle}}\\[1cm]
+    {\large\textbf{\sffamily \today}}
+    
+    \vfill
+    
+    \colorbox{blue!70!black}{\color{white}\textbf{\sffamily Technology Stack}}
+    
+    \vspace{2cm}
+    
+    {\large\textbf{\sffamily Technical Whitepaper}}\\[0.5cm]
+    {\large\textbf{\sffamily Document Version 1.0}}
+\end{titlepage}
+
+% =============================================================================
+% PÁGINA DE AUTOR
+% =============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    
+    {\Large\textbf{\sffamily About the Author}}\\[1cm]
+    {\Large\textbf{\sffamily wisrovi}}\\[0.5cm]
+    \textit{\sffamily AI Solutions Architect}\\[1cm]
+    
+    \vspace{1cm}
+    
+    \textbf{\sffamily Contact Information:}\\[0.5cm]
+    \href{https://www.linkedin.com/in/wisrovi-rodriguez}{\sffamily LinkedIn}\\[0.3cm]
+    \href{https://github.com/wisrovi}{\sffamily GitHub}\\[0.3cm]
+    \href{https://hub.docker.com/u/wisrovi}{\sffamily DockerHub}\\[0.3cm]
+    \href{https://pypi.org/search/?q=wisrovi}{\sffamily PyPI}\\[0.3cm]
+    \hrefmailto{wisrovi.rodriguez@gmail.com}{\sffamily wisrovi.rodriguez@gmail.com}
+\end{titlepage}
+
+% =============================================================================
+% TABLA DE CONTENIDOS
+% =============================================================================
+\tableofcontents
+\cleardoublepage
+\listoffigures
+\cleardoublepage
+\listoftables
+\cleardoublepage
+
+% =============================================================================
+% CAPÍTULOS
+% =============================================================================
+
+\chapter{Executive Summary}
+\cleardoublepage
+
+\section{Overview}
+% Breve descripción del proyecto
+
+\section{Key Findings}
+% Principales hallazgos técnicos
+
+\section{Recommendations}
+% Recomendaciones de alto nivel
+
+% =============================================================================
+
+\chapter{Introduction}
+\cleardoublepage
+
+\section{Background}
+% Contexto y motivación
+
+\section{Objectives}
+% Objetivos del documento
+
+\section{Scope}
+% Alcance del documento
+
+% =============================================================================
+
+\chapter{Architecture}
+\cleardoublepage
+
+\section{System Overview}
+% Vista general del sistema
+
+\section{System Architecture}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{sources/system-architecture.png}
+    \caption{System Architecture - High-level component overview}
+    \label{fig:arch-overview}
+\end{figure}
+\textit{Figure \ref{fig:arch-overview} illustrates the primary system components and their interactions.}
+
+\section{Data Flow}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{sources/data-flow.png}
+    \caption{Data Flow - End-to-end data transformation}
+    \label{fig:data-flow}
+\end{figure}
+\textit{Figure \ref{fig:data-flow} demonstrates the complete data pipeline from input to output.}
+
+\section{Component Interaction}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{sources/component-interaction.png}
+    \caption{Component Interaction - Module communication patterns}
+    \label{fig:component-interaction}
+\end{figure}
+\textit{Figure \ref{fig:component-interaction} details the inter-module communication protocols.}
+
+% =============================================================================
+
+\chapter{Technical Analysis}
+\cleardoublepage
+
+\section{Code Quality Metrics}
+% Métricas de calidad de código
+
+\section{Security Assessment}
+% Evaluación de seguridad
+
+\section{Performance Considerations}
+% Consideraciones de rendimiento
+
+% =============================================================================
+
+\chapter{Risk Assessment}
+\cleardoublepage
+
+\section{Technical Risk Matrix}
+
+\begin{table}[htbp]
+\centering
+\caption{Technical Risk Matrix}
+\label{tbl:risk-matrix}
+\begin{tabular}{|l|c|c|c|p{4cm}|}
+\hline
+\textbf{Component} & \textbf{Risk} & \textbf{Prob} & \textbf{Impact} & \textbf{Mitigation} \\
+\hline
+Database & High & 3 & 5 & Connection pooling \\
+\hline
+API Rate Limits & Medium & 4 & 3 & Exponential backoff \\
+\hline
+Data Loss & Medium & 2 & 4 & Regular backups \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Mitigation Strategies}
+% Estrategias de mitigación
+
+% =============================================================================
+
+\chapter{Conclusion}
+\cleardoublepage
+
+\section{Summary}
+% Resumen de hallazgos
+
+\section{Future Work}
+% Trabajo futuro recomendado
+
+% =============================================================================
+
+\appendix
+\chapter{Glossary}
+% Glosario de términos
+
+\chapter{Bibliography}
+% Referencias en formato APA
+
+\begin{thebibliography}{99}
+%\bibitem{key} Author. (Year). Title. Publisher.
+\end{thebibliography}
+
+\end{document}

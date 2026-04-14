@@ -1,0 +1,7 @@
+name: checkpoint_demo
+registered_at: '2026-04-10T09:13:41.611556'
+step_count: 3
+steps:
+- (<function slow_step_1 at 0x78047ffa3740>, 'load_data', 'v1.0', '')
+- (<function slow_step_2 at 0x78047ffa3880>, 'process_data', 'v1.0', '')
+- (<function slow_step_3 at 0x78047ffa3920>, 'save_data', 'v1.0', '')

@@ -1,0 +1,93 @@
+{
+  "skill_name": "documentation",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "full-documentation-flow",
+      "prompt": "Genera documentación completa (PDF + Sphinx HTML) para /app usando el flujo: readme-makefile → sphinx-docs → LaTeX → PDF",
+      "expected_output": "PDF compilado y documentación Sphinx HTML",
+      "assertions": [
+        {
+          "name": "readme_makefile_invoked",
+          "text": "readme-makefile fue invocado primero",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "sphinx_invoked",
+          "text": "sphinx-docs fue invocado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "pdf_generated",
+          "text": "PDF generado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "html_docs_generated",
+          "text": "Documentación Sphinx HTML generada",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "pdf-with-excalidraw",
+      "prompt": "Genera un PDF técnico para /app que incluya los diagramas Excalidraw PNG como figuras",
+      "expected_output": "PDF con figuras de Excalidraw integradas",
+      "assertions": [
+        {
+          "name": "pngs_in_pdf",
+          "text": "PNGs de Excalidraw en el PDF",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "figures_captioned",
+          "text": "Figuras tienen captions",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "technical-whitepaper",
+      "prompt": "Genera un Technical Whitepaper de 40-60 páginas para /app con: Executive Summary, Architecture, Risk Matrix, Bibliography",
+      "expected_output": "Documento LaTeX con todas las secciones requeridas",
+      "assertions": [
+        {
+          "name": "has_executive_summary",
+          "text": "Tiene Executive Summary",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_architecture",
+          "text": "Tiene Architecture Blueprint",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_risk_matrix",
+          "text": "Tiene Risk Matrix",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_bibliography",
+          "text": "Tiene Bibliography en APA",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

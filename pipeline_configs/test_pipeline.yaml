@@ -1,0 +1,6 @@
+name: test_pipeline
+registered_at: '2026-04-10T23:36:33.389555'
+step_count: 2
+steps:
+- step1
+- step2

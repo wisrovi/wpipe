@@ -1,0 +1,13 @@
+# =============================================================================
+# pyproject.toml for Excalidraw Diagram Renderer
+# =============================================================================
+
+[project]
+name = "excalidraw-renderer"
+version = "0.1.0"
+description = "Render Excalidraw diagrams to PNG"
+requires-python = ">=3.10"
+dependencies = ["playwright>=1.40.0"]
+
+[tool.uv]
+dev-dependencies = []

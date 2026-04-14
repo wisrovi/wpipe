@@ -1,0 +1,10 @@
+name: honey_pot_inference
+registered_at: '2026-04-14T01:39:23.965056'
+step_count: 3
+steps:
+- (<states.yaml_read.LoadConfig object at 0x7f540716cd70>, 'states.yaml_read', '1.0.1',
+  '')
+- (<states.image_inference.ImageInference object at 0x7f540716cec0>, 'states.image_inference',
+  '1.2.1', '')
+- (<function choice_random_result at 0x7f54f309b4c0>, 'choice_random_result', 'v1.0',
+  '')

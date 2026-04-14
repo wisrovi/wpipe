@@ -1,0 +1,11 @@
+{
+  "dataset_id": 1,
+  "record_count": 100,
+  "statistics": {
+    "count": 100,
+    "min": 3,
+    "max": 199,
+    "mean": 99.6,
+    "sum": 9960
+  }
+}

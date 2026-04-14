@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excalidraw Renderer</title>
+    <script type="module">
+        import * as excalidraw from 'https://esm.sh/@excalidraw/excalidraw@0.17.3';
+
+        window.__moduleReady = false;
+        window.__renderComplete = false;
+
+        async function init() {
+            try {
+                const { exportToSvg } = excalidraw;
+                
+                window.renderDiagram = async function(data) {
+                    try {
+                        const container = document.getElementById('root');
+                        const tempApp = await excalidraw.initializeScene({
+                            container,
+                            excalidrawApi: null
+                        });
+
+                        await tempApp.updateScene({
+                            elements: data.elements || [],
+                            appState: data.appState || {}
+                        });
+
+                        const svg = await exportToSvg({
+                            elements: tempApp.getSceneElements(),
+                            appState: {
+                                ...tempApp.getAppState(),
+                                ...(data.appState || {})
+                            }
+                        });
+
+                        document.getElementById('root').innerHTML = '';
+                        document.getElementById('root').appendChild(svg);
+
+                        window.__renderComplete = true;
+                        return { success: true };
+                    } catch (error) {
+                        return { success: false, error: error.message };
+                    }
+                };
+
+                window.__moduleReady = true;
+            } catch (error) {
+                console.error('Module initialization failed:', error);
+            }
+        }
+
+        init();
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #ffffff;
+        }
+        #root { 
+            width: 100%; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #root svg {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>

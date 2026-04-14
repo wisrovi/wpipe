@@ -1,0 +1,81 @@
+{
+  "skill_name": "doc-to-markdown",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "docx-to-markdown",
+      "prompt": "Convierte /app/document.docx a markdown con imágenes extraídas",
+      "expected_output": "document.md y carpeta images/ con recursos",
+      "assertions": [
+        {
+          "name": "markdown_created",
+          "text": "document.md creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "images_extracted",
+          "text": "Imágenes extraídas a carpeta images/",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "headings_preserved",
+          "text": "Encabezados preservados",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "excel-to-markdown",
+      "prompt": "Convierte /app/data.xlsx a markdown con todas las hojas",
+      "expected_output": "Archivo markdown con tablas de cada hoja",
+      "assertions": [
+        {
+          "name": "markdown_created",
+          "text": "Archivo markdown creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "all_sheets",
+          "text": "Todas las hojas incluidas",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "tables_formatted",
+          "text": "Tablas en formato markdown",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "batch-conversion",
+      "prompt": "Convierte todos los documentos en /app/docs/ (3 DOCX, 2 PDF) a markdown",
+      "expected_output": "5 archivos .md generados con reporte de conversión",
+      "assertions": [
+        {
+          "name": "all_files_converted",
+          "text": "Todos los archivos convertidos",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "report_generated",
+          "text": "Reporte de conversión generado",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}
