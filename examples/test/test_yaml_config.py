@@ -48,14 +48,16 @@ class TestYamlUtilities:
     def test_yaml_with_nested_data(self, tmp_path):
         """Test reading YAML with nested data."""
         yaml_file = tmp_path / "nested.yaml"
-        yaml_file.write_text("""
+        yaml_file.write_text(
+            """
 outer:
   inner:
     key: value
   list:
     - item1
     - item2
-""")
+"""
+        )
 
         result = leer_yaml(str(yaml_file))
         assert result["outer"]["inner"]["key"] == "value"

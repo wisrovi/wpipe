@@ -1,0 +1,91 @@
+% =============================================================================
+% PREÁMBULO LATEX EXACTO - COPIAR LITERALMENTE
+% =============================================================================
+\documentclass[12pt,a4paper]{report}
+
+% Fuentes CRÍTICAS para compatibilidad Word
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}           % Helvetica para texto principal
+\usepackage{courier}           % Courier para código
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{tocbibind}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{appendix}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Márgenes
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm,
+    headheight=15pt
+}
+
+% Listings para código
+\lstset{
+    basicstyle=\ttfamily\fontfamily{pcr}\selectfont,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    frameround=tttt,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    breaklines=true,
+    tabsize=2,
+    captionpos=b,
+    xleftmargin=2em,
+}
+
+% Headers y footers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\color{blue!70!black}\textbf{\sffamily\leftmark}}
+\fancyhead[R]{\color{blue!70!black}\textbf{\sffamily\thepage}}
+\fancyfoot[C]{\color{gray}\small\sffamily Project Name}
+
+% Títulos con sans-serif
+\titleformat{\chapter}[display]
+    {\normalfont\huge\bfseries\sffamily\color{blue!70!black}}
+    {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+\titleformat{\section}
+    {\normalfont\Large\bfseries\sffamily\color{blue!70!black}}
+    {\thesection}{1em}{}
+
+\titleformat{\subsection}
+    {\normalfont\large\bfseries\sffamily\color{orange!80!black}}
+    {\thesubsection}{1em}{}
+
+% Hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    urlcolor=blue!70!black,
+    pdftitle={Project Name},
+    pdfauthor={wisrovi},
+}
+
+% =============================================================================
+% REGLAS DE ORO
+% =============================================================================
+% 1. USAR SOLO helvet (\sffamily) + courier (\ttfamily)
+% 2. EVITAR lmodern, fuentes matemáticas complejas
+% 3. CAPÍTULOS: \cleardoublepage al inicio
+% 4. TÍTULOS: \sffamily en todos
+% 5. CÓDIGO: \fontfamily{pcr}\selectfont
+% 6. IMÁGENES: Solo PNG/JPG, rutas a sources/

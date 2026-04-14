@@ -1,5 +1,6 @@
 import pytest
-from wpipe import Pipeline, Condition
+
+from wpipe import Condition, Pipeline
 
 
 def test_condition_evaluate_true():

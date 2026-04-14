@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T04:11:50.416131'
+  id: PIPE-F3A28091
+  name: retry_example
+  version: 1.0.0
+steps:
+- name: prepare
+  type: task
+  version: v1.0
+- name: flaky_operation
+  type: task
+  version: v1.0
+- name: cleanup
+  type: task
+  version: v1.0

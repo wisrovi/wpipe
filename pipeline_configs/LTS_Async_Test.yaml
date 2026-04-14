@@ -1,0 +1,8 @@
+name: LTS_Async_Test
+registered_at: '2026-04-13T10:36:22.328143'
+step_count: 2
+steps:
+- (<function test_async_pipeline_full_flow.<locals>.step1 at 0x736b00683ce0>, 'step1',
+  'v1', '')
+- (<function test_async_pipeline_full_flow.<locals>.step2 at 0x736b00683d80>, 'step2',
+  'v1', '')

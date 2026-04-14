@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:22:26.241754'
+  id: PIPE-D4A54254
+  name: extract_data
+  version: 1.0.0
+steps:
+- name: connect_source
+  type: task
+  version: v1.0
+- name: fetch_records
+  type: task
+  version: v1.0
+- name: parse_data
+  type: task
+  version: v1.0

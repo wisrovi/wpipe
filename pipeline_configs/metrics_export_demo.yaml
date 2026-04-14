@@ -1,0 +1,7 @@
+name: metrics_export_demo
+registered_at: '2026-04-10T09:06:51.792425'
+step_count: 3
+steps:
+- (<function step_1_fetch_data at 0x7cb652e9b920>, 'fetch_data', 'v1.0', '')
+- (<function step_2_validate at 0x7cb652d97100>, 'validate_data', 'v1.0', '')
+- (<function step_3_transform at 0x7cb652d971a0>, 'transform_data', 'v1.0', '')

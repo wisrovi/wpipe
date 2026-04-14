@@ -210,13 +210,13 @@
 .. image:: https://img.shields.io/badge/tests-106%20passing-10b981
    :alt: Tests
 
-.. image:: https://img.shields.io/badge/LTS-1.0.0-green
+.. image:: https://img.shields.io/badge/LTS-1.5.3-green
    :alt: LTS
 
 wpipe |version| Documentation
 =============================
 
-**wpipe** is a powerful, lightweight Python library for creating and executing sequential data processing pipelines without the complexity of web-based workflow tools.
+**wpipe** is a powerful, lightweight Python library for creating and executing sequential and parallel data processing pipelines.
 
 .. toctree::
    :maxdepth: 2
@@ -261,16 +261,28 @@ Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellen
             <p>Define your pipelines entirely in Python code. No YAML, no JSON configuration files.</p>
         </div>
         <div class="feature-card">
-            <h3><span>📦</span> Minimal Dependencies</h3>
-            <p>Only requires <code>requests</code> and <code>pyyaml</code>. Lightweight and easy to maintain.</p>
+            <h3><span>🔀</span> Parallel Execution</h3>
+            <p>Execute steps in parallel using Threading or Process pooling with automatic dependency resolution.</p>
         </div>
         <div class="feature-card">
-            <h3><span>🛡️</span> Production Ready</h3>
-            <p>Comprehensive error handling, retry logic, logging, and progress tracking built-in.</p>
+            <h3><span>🧩</span> Pipeline Composition</h3>
+            <p>Nest pipelines within other pipelines to create complex, reusable workflow hierarchies.</p>
         </div>
         <div class="feature-card">
-            <h3><span>💾</span> SQLite Integration</h3>
-            <p>Persist pipeline execution results with built-in database support and CSV export.</p>
+            <h3><span>🎯</span> Step Decorators</h3>
+            <p>Define pipeline steps easily using the <code>@step</code> decorator for functions and classes.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>💾</span> Checkpointing</h3>
+            <p>Save pipeline state and resume from specific steps, perfect for long-running workflows.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>📈</span> Resource Monitoring</h3>
+            <p>Track CPU and RAM usage for each step automatically during pipeline execution.</p>
+        </div>
+        <div class="feature-card">
+            <h3><span>🚀</span> SQLite Performance</h3>
+            <p>Ultra-fast tracking with shared connections and WAL mode. 99% faster than version 1.0.</p>
         </div>
         <div class="feature-card">
             <h3><span>🌐</span> API Integration</h3>
@@ -287,18 +299,6 @@ Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellen
         <div class="feature-card">
             <h3><span>📊</span> 100% Type Hints</h3>
             <p>Full type annotations for excellent IDE support and better developer experience.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>📚</span> 100+ Examples</h3>
-            <p>Comprehensive docs and examples for every feature and skill level.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>🔀</span> Nested Pipelines</h3>
-            <p>Compose complex workflows from smaller, reusable pipelines.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>✅</span> LTS Release</h3>
-            <p>Version 1.0.0 with guaranteed backward compatibility and long-term support.</p>
         </div>
     </div>
 

@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T19:21:56.450564'
+  id: PIPE-BF489F9D
+  name: Pipeline
+  version: 1.0.0
+steps:
+- name: Fetch Data
+  type: task
+  version: v1.0
+- name: Process Records
+  type: task
+  version: v1.0
+- name: Calculate Stats
+  type: task
+  version: v1.0

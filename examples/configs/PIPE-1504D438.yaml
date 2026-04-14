@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:22:26.547542'
+  id: PIPE-1504D438
+  name: transform_data
+  version: 1.0.0
+steps:
+- name: clean_data
+  type: task
+  version: v1.0
+- name: normalize_data
+  type: task
+  version: v1.0
+- name: validate_data
+  type: task
+  version: v1.0

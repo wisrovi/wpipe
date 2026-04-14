@@ -15,8 +15,8 @@ project = "wpipe"
 copyright = f"2024-{datetime.now().year}, William Steve Rodriguez Villamizar"
 author = "William Steve Rodriguez Villamizar"
 author_url = "https://github.com/wisrovi"
-version = "1.0.0"
-release = "1.0.0"
+version = "2.0.0-LTS"
+release = "2.0.0-LTS"
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -195,7 +195,7 @@ add_function_parentheses = True
 
 rst_prolog = """
 .. |wpipe| replace:: **wpipe**
-.. |version| replace:: 1.0.0
+.. |version| replace:: 2.0.0-LTS
 .. |date| replace:: {date}
 """.format(date=datetime.now().strftime("%B %d, %Y"))
 

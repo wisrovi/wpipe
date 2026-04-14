@@ -1,0 +1,87 @@
+{
+  "skill_name": "sphinx-docs",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-sphinx-setup",
+      "prompt": "Genera documentación Sphinx completa para /app con autodoc",
+      "expected_output": "docs/ con estructura Sphinx y HTML compilado",
+      "assertions": [
+        {
+          "name": "docs_created",
+          "text": "Directorio docs/ creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "makefile_exists",
+          "text": "Makefile existe en docs/",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "conf_py_exists",
+          "text": "conf.py existe",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "html_built",
+          "text": "HTML compilado sin errores",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "readthedocs-config",
+      "prompt": "Crea .readthedocs.yaml para el proyecto /app",
+      "expected_output": ".readthedocs.yaml válido en raíz",
+      "assertions": [
+        {
+          "name": "rtd_yaml_created",
+          "text": ".readthedocs.yaml creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "rtd_config_valid",
+          "text": "Configuración válida (version, build, sphinx, python)",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "autodoc-generation",
+      "prompt": "Ejecuta sphinx-apidoc para /app y genera API docs automáticas",
+      "expected_output": "docs/source/api/modules.rst generado con contenido",
+      "assertions": [
+        {
+          "name": "apidoc_run",
+          "text": "sphinx-apidoc ejecutado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "modules_rst_created",
+          "text": "modules.rst creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "modules_rst_has_content",
+          "text": "modules.rst tiene contenido (no vacío)",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

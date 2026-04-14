@@ -1,0 +1,63 @@
+{
+  "skill_name": "file-date-mapper",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "map-files-by-date",
+      "prompt": "Mapea archivos en /app por fecha (May 2025 - Jan 2026) y genera file_mapping.csv",
+      "expected_output": "CSV con mapeo completo y archivos movidos a evidencias/",
+      "assertions": [
+        {
+          "name": "csv_created",
+          "text": "file_mapping.csv creado",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "correct_columns",
+          "text": "CSV tiene columnas: path_original, fecha_creacion, fecha_edicion, en_rango_fechas, path_destino",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "files_moved",
+          "text": "Archivos dentro del rango movidos a evidencias/",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "preserve-folder-structure",
+      "prompt": "Mapea /app conservando la estructura de carpetas: project/src/file.py → evidencias/src/file.py",
+      "expected_output": "Estructura de carpetas preservada en evidencias/",
+      "assertions": [
+        {
+          "name": "structure_preserved",
+          "text": "Subcarpetas preservadas en evidencias/",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "outside-range-not-moved",
+      "prompt": "Verifica que archivos fuera del rango (ej: de 2024) NO fueron movidos",
+      "expected_output": "Archivos de 2024 siguen en ubicación original",
+      "assertions": [
+        {
+          "name": "outside_range_kept",
+          "text": "Archivos fuera del rango no movidos",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

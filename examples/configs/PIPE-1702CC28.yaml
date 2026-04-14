@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:46:39.529950'
+  id: PIPE-1702CC28
+  name: data_export
+  version: 1.0.0
+steps:
+- name: format
+  type: task
+  version: v1.0
+- name: compress
+  type: task
+  version: v1.0
+- name: upload
+  type: task
+  version: v1.0

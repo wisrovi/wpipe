@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:46:35.164251'
+  id: PIPE-629514A4
+  name: data_transformation
+  version: 1.0.0
+steps:
+- name: normalize
+  type: task
+  version: v1.0
+- name: enrich
+  type: task
+  version: v1.0
+- name: aggregate
+  type: task
+  version: v1.0

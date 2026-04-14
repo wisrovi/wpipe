@@ -3,6 +3,7 @@ Tests for RAM memory utilities.
 """
 
 import pytest
+
 from wpipe.ram import memory
 from wpipe.ram.ram import get_memory
 

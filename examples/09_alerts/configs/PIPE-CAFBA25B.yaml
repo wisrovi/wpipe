@@ -1,0 +1,10 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-30T04:13:31.590554'
+  id: PIPE-CAFBA25B
+  name: slow_pipeline
+  version: 1.0.0
+steps:
+- name: slow
+  type: task
+  version: v1.0

@@ -1,0 +1,117 @@
+{
+  "skill_name": "readme-makefile",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-readme-generation",
+      "prompt": "Genera un README.md profesional y Makefile para el proyecto /app",
+      "expected_output": "README.md con todas las secciones obligatorias y Makefile funcional",
+      "assertions": [
+        {
+          "name": "readme_has_title",
+          "text": "README tiene título",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "readme_has_badges",
+          "text": "README tiene badges",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "readme_has_quickstart",
+          "text": "README tiene sección Quick Start",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "readme_has_architecture",
+          "text": "README tiene sección Architecture con Mermaid",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "readme_has_author",
+          "text": "README tiene sección Author",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "makefile_exists",
+          "text": "Makefile existe con targets básicos",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "readme-with-excalidraw",
+      "prompt": "Genera README.md, Makefile y diagramas Excalidraw PNG para /app. Incluye System Architecture y Data Flow diagrams.",
+      "expected_output": "README con PNGs de Excalidraw embedidos",
+      "assertions": [
+        {
+          "name": "excalidraw_files_created",
+          "text": "Archivos .excalidraw creados",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "pngs_rendered",
+          "text": "PNGs renderizados",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "readme_references_pngs",
+          "text": "README referencia los PNGs",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "makefile-complete",
+      "prompt": "Genera un Makefile completo para /app con: install, lint, test, diagrams-render, clean",
+      "expected_output": "Makefile con todos los targets funcionando",
+      "assertions": [
+        {
+          "name": "target_install",
+          "text": "Target install existe",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "target_lint",
+          "text": "Target lint existe",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "target_test",
+          "text": "Target test existe",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "target_help",
+          "text": "Target help existe",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "make_help_works",
+          "text": "make help muestra todos los targets",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

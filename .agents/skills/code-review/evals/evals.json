@@ -1,0 +1,87 @@
+{
+  "skill_name": "code-review",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-security-check",
+      "prompt": "Revisa este código y genera un security report:\n\nimport os\nimport eval\nexec(user_input)",
+      "expected_output": "Security report identificando vulns críticas (eval/exec) y código refactorizado",
+      "assertions": [
+        {
+          "name": "detects_eval_usage",
+          "text": "Detecta uso de eval() como vulnerabilidad crítica",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "generates_security_report",
+          "text": "Genera SECURITY_REPORT.md",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "code_refactored",
+          "text": "Código refactorizado sin eval/exec",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "refactor-complex-function",
+      "prompt": "Revisa y refactoriza:\n\ndef get_user_data(user_id, include_profile=True, include_orders=True, include_settings=True, validate=True):\n    # 50 líneas con múltiples responsabilidades",
+      "expected_output": "Función dividida, cada helper con responsabilidad única, type hints y docstrings",
+      "assertions": [
+        {
+          "name": "function_split",
+          "text": "Función original dividida en múltiples funciones",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "type_hints_added",
+          "text": "Todas las funciones tienen type hints",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "docstrings_added",
+          "text": "Todas las funciones tienen docstrings",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "bandit-integration",
+      "prompt": "Ejecuta bandit en un proyecto Python con estos problemas:\n1. Hardcoded password: password = 'secret123'\n2. shell=True en subprocess\n3. requests sin verify=False",
+      "expected_output": "Reporte bandit con issues y código corregido",
+      "assertions": [
+        {
+          "name": "bandit_finds_hardcoded_password",
+          "text": "Bandit detecta password hardcoded",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "bandit_finds_shell_true",
+          "text": "Bandit detecta shell=True",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "code_fixed",
+          "text": "Código corregido con environment variables",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

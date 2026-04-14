@@ -1,0 +1,42 @@
+<!-- Data Tab -->
+<div id="tab-data" class="tab-content" style="display:none">
+    <div class="tab-description">
+        <i class="fas fa-info-circle"></i>
+        <strong>Data</strong> lets you browse raw database records. Select a table (pipelines, steps, alerts, events), search, and paginate through the data.
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-database"></i> <span data-i18n="sqliteData">SQLite Database Records</span></div>
+        </div>
+        <div class="card-body">
+            <div class="data-filters">
+                <input type="text" id="data-search" placeholder="Search..." oninput="loadDataTable()">
+                <select id="data-table-select" onchange="loadDataTable()">
+                    <option value="pipelines">Pipelines</option>
+                    <option value="steps">Steps</option>
+                    <option value="alerts_fired">Alerts</option>
+                    <option value="events">Events</option>
+                </select>
+                <select id="data-status-filter" onchange="loadDataTable()">
+                    <option value="">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="error">Error</option>
+                    <option value="running">Running</option>
+                </select>
+            </div>
+            <div class="data-table-container">
+                <table class="data-table" id="data-table">
+                    <thead id="data-thead"></thead>
+                    <tbody id="data-tbody"></tbody>
+                </table>
+            </div>
+            <div class="data-pagination">
+                <div class="data-pagination-info" id="data-pagination-info"></div>
+                <div class="data-pagination-buttons">
+                    <button onclick="dataPrevPage()" id="data-btn-prev" disabled>Previous</button>
+                    <button onclick="dataNextPage()" id="data-btn-next" disabled>Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

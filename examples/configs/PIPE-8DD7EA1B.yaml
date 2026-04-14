@@ -1,0 +1,13 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:46:30.487767'
+  id: PIPE-8DD7EA1B
+  name: data_collector
+  version: 1.0.0
+steps:
+- name: collect_api
+  type: task
+  version: v1.0
+- name: validate_collection
+  type: task
+  version: v1.0

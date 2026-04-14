@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:22:42.865966'
+  id: PIPE-894A5A9F
+  name: data_validation
+  version: 1.0.0
+steps:
+- name: check_schema
+  type: task
+  version: v1.0
+- name: validate_fields
+  type: task
+  version: v1.0
+- name: clean_invalid
+  type: task
+  version: v1.0

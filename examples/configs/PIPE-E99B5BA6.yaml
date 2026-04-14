@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:46:30.516238'
+  id: PIPE-E99B5BA6
+  name: data_processor
+  version: 1.0.0
+steps:
+- name: transform
+  type: task
+  version: v1.0
+- name: enrich
+  type: task
+  version: v1.0
+- name: aggregate
+  type: task
+  version: v1.0

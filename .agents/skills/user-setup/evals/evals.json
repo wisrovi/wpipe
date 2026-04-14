@@ -1,0 +1,75 @@
+{
+  "skill_name": "user-setup",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-configuration",
+      "prompt": "Configura el agente para que responda en español y haz code review antes de cada output",
+      "expected_output": "El agente confirma el idioma español y explica que aplicará code review automático antes de presentar código",
+      "assertions": [
+        {
+          "name": "confirms_spanish",
+          "text": "Confirma idioma español",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "explains_code_review",
+          "text": "Explica que hará code review antes de output",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "code-review-checklist",
+      "prompt": "Revisa este código antes de mostrarlo:\n\ndef calculate(x,y):\n    print('calculating')\n    result = x + y\n    print(result)\n    return result",
+      "expected_output": "Código refactorizado con loguru, sin prints, con type hints y docstrings",
+      "assertions": [
+        {
+          "name": "no_print_statements",
+          "text": "No hay prints (usar loguru)",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_type_hints",
+          "text": "Tiene type hints",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "has_docstring",
+          "text": "Tiene docstring",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "long-function-refactor",
+      "prompt": "Refactoriza esta función larga:\n\ndef process_order(order_id, customer_id, items, discount, tax, shipping, payment_method, billing_address, shipping_address, notes, priority):\n    # 50 líneas de código",
+      "expected_output": "Función dividida en funciones más pequeñas, cada una con responsabilidad única",
+      "assertions": [
+        {
+          "name": "function_divided",
+          "text": "La función original está dividida",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "name": "helper_functions_exist",
+          "text": "Existen funciones auxiliares",
+          "passed": null,
+          "evidence": null
+        }
+      ],
+      "files": []
+    }
+  ]
+}

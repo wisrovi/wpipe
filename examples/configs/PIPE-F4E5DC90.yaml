@@ -1,0 +1,16 @@
+metadata: {}
+pipeline:
+  created_at: '2026-03-29T09:22:51.817070'
+  id: PIPE-F4E5DC90
+  name: api_notification
+  version: 1.0.0
+steps:
+- name: fetch_data
+  type: task
+  version: v1.0
+- name: process_data
+  type: task
+  version: v1.0
+- name: notify_webhook
+  type: task
+  version: v1.0

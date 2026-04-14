@@ -510,3 +510,296 @@ All public classes and functions can be imported from the main wpipe package:
     from wpipe.log import new_logger
     from wpipe.ram import memory
     from wpipe.util import leer_yaml, escribir_yaml
+
+Phase 2: Advanced Features
+===========================
+
+ParallelExecutor
+----------------
+
+.. py:class:: ParallelExecutor(max_workers=4)
+
+   Execute pipeline steps in parallel using ThreadPoolExecutor or ProcessPoolExecutor.
+
+   .. code-block:: python
+
+      from wpipe.parallel import ParallelExecutor, ExecutionMode
+
+      executor = ParallelExecutor(max_workers=4)
+      executor.add_step("fetch_users", fetch_users, mode=ExecutionMode.IO_BOUND)
+      executor.add_step("fetch_posts", fetch_posts, mode=ExecutionMode.IO_BOUND)
+      executor.add_step("aggregate", aggregate, depends_on=["fetch_users", "fetch_posts"])
+      result = executor.execute({})
+
+   .. py:method:: add_step(name, func, mode=ExecutionMode.SEQUENTIAL, depends_on=None)
+
+      Add a step to the executor.
+
+   .. py:method:: execute(initial_data)
+
+      Execute all steps and return accumulated results.
+
+ExecutionMode
+-------------
+
+.. py:class:: ExecutionMode
+
+   Enum with values: IO_BOUND, CPU_BOUND, SEQUENTIAL
+
+DAGScheduler
+------------
+
+.. py:class:: DAGScheduler
+
+   Manages dependency graph with topological sorting.
+
+For
+---
+
+.. py:class:: For(steps, iterations=None, validation_expression=None)
+
+   Loop construct for pipelines. Supports count-based or condition-based iteration.
+
+   .. code-block:: python
+
+      from wpipe import Pipeline, For
+
+      loop = For(steps=[(step_func, "Step", "v1.0")], iterations=3)
+      pipeline = Pipeline(verbose=False)
+      pipeline.set_steps([loop])
+      result = pipeline.run({})
+
+   .. py:method:: should_continue(data, current_iteration)
+
+      Returns True if loop should continue.
+
+NestedPipelineStep
+------------------
+
+.. py:class:: NestedPipelineStep(name, pipeline, context_filter=None)
+
+   Use a pipeline as a step inside another pipeline.
+
+   .. code-block:: python
+
+      from wpipe import Pipeline
+      from wpipe.composition import NestedPipelineStep
+
+      inner = Pipeline(verbose=False)
+      inner.set_steps([(step_func, "Inner", "v1.0")])
+
+      main = Pipeline(verbose=False)
+      main.set_steps([
+          (lambda d: NestedPipelineStep("inner", inner).run(d), "Nested", "v1.0"),
+      ])
+      result = main.run({})
+
+@step Decorator
+---------------
+
+.. py:decorator:: step(description=None, timeout=None, depends_on=None, tags=None, retry_count=0)
+
+   Define pipeline steps inline with metadata.
+
+   .. code-block:: python
+
+      from wpipe import step, AutoRegister, Pipeline
+
+      @step(description="Fetch data", timeout=30, tags=["data"])
+      def fetch_data(context):
+          return {"data": [1, 2, 3]}
+
+      pipeline = Pipeline(verbose=False)
+      AutoRegister.register_all(pipeline)
+      result = pipeline.run({})
+
+StepRegistry
+^^^^^^^^^^^^
+
+.. py:class:: StepRegistry
+
+   Central registry for decorated steps.
+
+AutoRegister
+^^^^^^^^^^^^
+
+.. py:class:: AutoRegister
+
+   Bulk registration helper for decorated steps.
+
+CheckpointManager
+-----------------
+
+.. py:class:: CheckpointManager(tracking_db=None)
+
+   Save and resume pipeline state across executions.
+
+   .. code-block:: python
+
+      from wpipe.checkpoint import CheckpointManager
+
+      checkpoint = CheckpointManager(tracking_db="tracking.db")
+      checkpoint.create_checkpoint("v1", "my_pipeline", {"state": "initial"})
+      can_resume = checkpoint.can_resume("my_pipeline")
+      if can_resume:
+          state = checkpoint.get_checkpoint("my_pipeline", "v1")
+
+   .. py:method:: create_checkpoint(version, pipeline_name, state)
+
+      Save a checkpoint.
+
+   .. py:method:: can_resume(pipeline_name)
+
+      Check if pipeline can be resumed.
+
+   .. py:method:: get_checkpoint(pipeline_name, version)
+
+      Retrieve checkpoint state.
+
+ResourceMonitor
+---------------
+
+.. py:class:: ResourceMonitor()
+
+   Track CPU and RAM usage during task execution.
+
+   .. code-block:: python
+
+      from wpipe.resource_monitor import ResourceMonitor
+
+      monitor = ResourceMonitor()
+      monitor.start()
+      # ... run task ...
+      monitor.stop()
+      stats = monitor.get_stats()
+
+   .. py:method:: start()
+
+      Start monitoring.
+
+   .. py:method:: stop()
+
+      Stop monitoring and compute stats.
+
+   .. py:method:: get_stats()
+
+      Return dict with peak_ram_mb, avg_cpu_percent, etc.
+
+ResourceMonitorRegistry
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. py:class:: ResourceMonitorRegistry(db_path="resources.db")
+
+   Registry for multiple task monitoring with SQLite persistence.
+
+PipelineExporter
+----------------
+
+.. py:class:: PipelineExporter(db_path=None)
+
+   Export pipeline logs, metrics, and statistics to JSON or CSV.
+
+   .. code-block:: python
+
+      from wpipe.export import PipelineExporter
+
+      exporter = PipelineExporter(db_path="tracking.db")
+      logs = exporter.export_pipeline_logs(format="json")
+      metrics = exporter.export_metrics(format="json")
+      stats = exporter.export_statistics(format="json")
+
+   .. py:method:: export_pipeline_logs(pipeline_id=None, format="json", output_path=None)
+
+      Export pipeline logs.
+
+   .. py:method:: export_metrics(pipeline_id=None, format="json", output_path=None)
+
+      Export system metrics.
+
+   .. py:method:: export_statistics(format="json", output_path=None)
+
+      Export pipeline statistics.
+
+Timeout Decorators
+------------------
+
+.. py:decorator:: timeout_sync(seconds)
+
+   Set timeout for synchronous functions.
+
+   .. code-block:: python
+
+      from wpipe.timeout import timeout_sync
+
+      @timeout_sync(seconds=5)
+      def slow_function(data):
+          import time; time.sleep(10)  # Killed after 5s
+          return {"done": True}
+
+.. py:decorator:: timeout_async(seconds)
+
+   Set timeout for async coroutines.
+
+   .. code-block:: python
+
+      from wpipe.timeout import timeout_async
+      import asyncio
+
+      @timeout_async(seconds=5)
+      async def slow_async(data):
+          await asyncio.sleep(10)  # Killed after 5s
+          return {"done": True}
+
+TimeoutError
+^^^^^^^^^^^^
+
+.. py:exception:: TimeoutError
+
+   Raised when a task exceeds its timeout.
+
+TaskTimer
+^^^^^^^^^
+
+.. py:class:: TaskTimer(name)
+
+   Context manager for timing task execution.
+
+   .. code-block:: python
+
+      from wpipe.timeout import TaskTimer
+
+      with TaskTimer("my_task") as timer:
+          pass  # your code
+      print(f"Elapsed: {timer.elapsed_ms}ms")
+
+PipelineAsync
+-------------
+
+.. py:class:: PipelineAsync(verbose=False, max_retries=0, retry_delay=1.0)
+
+   Async version of Pipeline. Execute async steps with await.
+
+   .. code-block:: python
+
+      import asyncio
+      from wpipe.pipe.pipe_async import PipelineAsync
+
+      async def fetch(data):
+          await asyncio.sleep(0.1)
+          return {"data": "fetched"}
+
+      async def main():
+          p = PipelineAsync(verbose=False)
+          p.set_steps([(fetch, "Fetch", "v1.0")])
+          result = await p.run({})
+          print(result)
+
+      asyncio.run(main())
+
+   .. py:method:: set_steps(steps)
+
+      Configure pipeline steps.
+
+   .. py:method:: run(input_data)
+
+      Execute the async pipeline.
