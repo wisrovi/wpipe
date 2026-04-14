@@ -583,9 +583,7 @@ class Pipeline(APIClient):
 
         current_steps = list(self.tasks_list) if hasattr(self, "tasks_list") else []
         current_steps = [
-            (s[0], s[1], s[2]) if isinstance(s, tuple) and len(s) == 4 else s
-            for s in current_steps
-            if isinstance(s, tuple)
+            (s[0], s[1], s[2]) if len(s) == 4 else s for s in current_steps
         ]
         new_step = (step_func, name, version)
         current_steps.append(new_step)
