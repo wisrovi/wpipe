@@ -230,13 +230,9 @@ def __getattr__(name):
 from .decorators import AutoRegister, StepRegistry, get_step_registry, step
 from .export import PipelineExporter
 from .log import new_logger
-<<<<<<< HEAD
-from .pipe import Condition, Pipeline, PipelineAsync
-=======
 from .parallel import DAGScheduler, ExecutionMode, ParallelExecutor
 from .pipe import Condition, For, Pipeline
 from .pipe.pipe_async import PipelineAsync
->>>>>>> DEV-WSRV/changes_for_future_LTS_v1.5
 from .ram import memory
 from .resource_monitor import ResourceMonitor, ResourceMonitorRegistry
 from .sqlite import Wsqlite
@@ -280,10 +276,6 @@ __all__ = [
     "For",
     "Pipeline",
     "PipelineAsync",
-<<<<<<< HEAD
-    "Wsqlite",
-=======
->>>>>>> DEV-WSRV/changes_for_future_LTS_v1.5
     "memory",
     "new_logger",
     "start_dashboard",
