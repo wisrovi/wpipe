@@ -7,12 +7,11 @@ retry logic, API tracking, and execution history tracking.
 """
 
 import asyncio
-import inspect
 import json
-import os
-import time
 import traceback
-from typing import Any, Awaitable, Callable, Optional, Union
+import inspect
+from collections.abc import Awaitable
+from typing import Any, Callable, Optional, Union
 
 from rich.errors import LiveError
 from rich.progress import Progress
@@ -23,14 +22,14 @@ from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import logger
 from wpipe.tracking import PipelineTracker
 
-from .pipe import Condition, ProgressManager, SystemMetricsCollector, get_system_metrics
+from .pipe import Condition, ProgressManager, SystemMetricsCollector
 
 
 def _is_async_callable(func: Any) -> bool:
     """Check if a callable is async (handles both functions and callable objects)."""
     if asyncio.iscoroutinefunction(func):
         return True
-    if hasattr(func, '__call__') and asyncio.iscoroutinefunction(func.__call__):
+    if hasattr(func, "__call__") and asyncio.iscoroutinefunction(func.__call__):
         return True
     return False
 
@@ -490,10 +489,14 @@ class PipelineAsync(APIClient):
 
             if isinstance(func, PipelineAsync):
                 return await func.run(*args, **kwargs)
-            elif _is_async_callable(func):
-                return await func(*args, **kwargs)
-            else:
-                return func(*args, **kwargs)
+            
+            # Call the function/callable
+            result = func(*args, **kwargs)
+            
+            # If it returns a coroutine, await it
+            if asyncio.iscoroutine(result) or inspect.isawaitable(result):
+                return await result
+            return result
         except (TaskError, ApiError):
             raise
         except Exception as e:
@@ -621,9 +624,9 @@ class PipelineAsync(APIClient):
                 try:
                     result = await self._task_invoke(func, name, *(data,), **kwargs)
 
-                    assert isinstance(result, dict), (
-                        f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                    )
+                    assert isinstance(
+                        result, dict
+                    ), f"[ERROR] The result of state ({self.task_name}) must be a dict"
 
                     data.update(result)
                 except Exception as e:
@@ -662,9 +665,9 @@ class PipelineAsync(APIClient):
                 try:
                     result = await self._task_invoke(func, name, *(data,), **kwargs)
 
-                    assert isinstance(result, dict), (
-                        f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                    )
+                    assert isinstance(
+                        result, dict
+                    ), f"[ERROR] The result of state ({self.task_name}) must be a dict"
 
                     data.update(result)
                 except Exception as e:
@@ -788,8 +791,8 @@ class PipelineAsync(APIClient):
                     self.tracker, self.pipeline_id
                 )
                 metrics_collector.start()
-                if self.verbose:
-                    print("[METRICS] System metrics collection started")
+
+        data = args[0].copy() if args else {}
 
         total_steps = sum(
             1
@@ -841,7 +844,6 @@ class PipelineAsync(APIClient):
                     self.task_id = step_id
                     self.progress_rich = progress
 
-                    data.update(args[0] if args else {})
                     data["progress_rich"] = progress
 
                     tracked_step_id = self._start_step_tracking(
@@ -855,9 +857,9 @@ class PipelineAsync(APIClient):
                             func, name, *(data,), **kwargs
                         )
 
-                        assert isinstance(result_data, dict), (
-                            f"[ERROR] The result of state ({self.task_name}) must be a dict"
-                        )
+                        assert isinstance(
+                            result_data, dict
+                        ), f"[ERROR] The result of state ({self.task_name}) must be a dict"
 
                         data.update(result_data)
                     except Exception as e:

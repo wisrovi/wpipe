@@ -11,16 +11,15 @@
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![LTS](https://img.shields.io/badge/LTS-1.0.0-green.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/tests-106%20passing-10b981)](https://github.com/wisrovi/wpipe/actions)
+[![LTS](https://img.shields.io/badge/LTS-2.0.0-green.svg)](CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/coverage-90%25-brightgreen.svg)](https://github.com/wisrovi/wpipe/actions)
 [![Documentation](https://img.shields.io/badge/docs-wpipe-blue)](https://wpipe.readthedocs.io/)
-[![GitHub stars](https://img.shields.io/github/stars/wisrovi/wpipe?style=social)](https://github.com/wisrovi/wpipe/stargazers)
 
-> **Long Term Support (LTS)**: Version 1.0.0 is the first LTS release with guaranteed backward compatibility, comprehensive documentation, and 100+ examples.
+> **Version 2.0.0-LTS**: Long-Term Support release with parallel execution, pipeline composition, step decorators, resource monitoring, checkpointing, and 90% test coverage.
 
 ## Project Overview
 
-**wpipe** is a powerful, lightweight Python library for creating and executing sequential data processing pipelines without the complexity of web-based workflow tools. It provides a clean, intuitive API for orchestrating complex data processing tasks while maintaining production-grade quality.
+**wpipe** is a powerful, enterprise-grade Python library for creating and executing complex data processing pipelines. It is designed for mission-critical environments where reliability, observability, and performance are paramount. Now in its **LTS (Long-Term Support)** phase, WPipe guarantees a stable API and long-term maintenance.
 
 ### Key Characteristics
 
@@ -48,6 +47,13 @@
 | 🧪 **Type Hints** | Complete type annotations |
 | 🔒 **Memory Control** | Built-in memory utilities |
 | 🧩 **Composable** | Reusable pipeline components |
+| ⚡ **Parallel Execution** | Execute steps in parallel (I/O or CPU bound) |
+| 📂 **Pipeline Composition** | Use pipelines as steps in other pipelines |
+| 🎯 **Step Decorators** | Define steps inline with @step decorator |
+| 💾 **Checkpointing** | Save and resume from checkpoints |
+| ⏱️ **Timeouts** | Prevent hanging tasks with timeout support |
+| 📈 **Resource Monitoring** | Track RAM and CPU during execution |
+| 📤 **Export** | Export logs, metrics, and statistics to JSON/CSV |
 
 ---
 
@@ -386,6 +392,230 @@ pipeline = Pipeline(
     retry_delay=2.0,
     retry_on_exceptions=(ConnectionError, TimeoutError),
 )
+```
+
+---
+
+## Advanced Usage
+
+### Parallel Execution
+
+Execute independent steps in parallel for I/O or CPU-bound tasks:
+
+```python
+from wpipe import Pipeline
+from wpipe.parallel import ParallelExecutor, ExecutionMode
+
+def fetch_users(data):
+    import time; time.sleep(1)
+    return {"users": ["Alice", "Bob"]}
+
+def fetch_posts(data):
+    import time; time.sleep(1)
+    return {"posts": ["Post 1", "Post 2"]}
+
+def aggregate(data):
+    return {"total": len(data.get("users", [])) + len(data.get("posts", []))}
+
+executor = ParallelExecutor(max_workers=4)
+executor.add_step("fetch_users", fetch_users, mode=ExecutionMode.IO_BOUND)
+executor.add_step("fetch_posts", fetch_posts, mode=ExecutionMode.IO_BOUND)
+executor.add_step("aggregate", aggregate, depends_on=["fetch_users", "fetch_posts"])
+
+result = executor.execute({})  # 4x faster than sequential!
+```
+
+### For Loops
+
+Iterate over steps with count or condition:
+
+```python
+from wpipe import Pipeline, For
+
+def check_status(data):
+    count = data.get("count", 0) + 1
+    return {"count": count, "done": count >= 3}
+
+# Count-based loop
+loop = For(steps=[(check_status, "Check", "v1.0")], iterations=3)
+
+# Condition-based loop
+loop = For(steps=[(check_status, "Check", "v1.0")], validation_expression="not data.get('done', False)")
+
+pipeline = Pipeline(verbose=False)
+pipeline.set_steps([loop])
+result = pipeline.run({"count": 0})
+```
+
+### Pipeline Composition
+
+Use pipelines as steps in other pipelines:
+
+```python
+from wpipe import Pipeline
+from wpipe.composition import NestedPipelineStep, PipelineAsStep
+
+# Inner pipelines
+clean = Pipeline(verbose=False)
+clean.set_steps([(lambda d: {"cleaned": True}, "Clean", "v1.0")])
+
+analyze = Pipeline(verbose=False)
+analyze.set_steps([(lambda d: {"analyzed": True}, "Analyze", "v1.0")])
+
+# Compose into main pipeline
+main = Pipeline(verbose=False)
+main.set_steps([
+    (lambda d: {"data": "raw"}, "Fetch", "v1.0"),
+    (lambda d: NestedPipelineStep("clean", clean).run(d), "Clean", "v1.0"),
+    (lambda d: NestedPipelineStep("analyze", analyze).run(d), "Analyze", "v1.0"),
+])
+
+result = main.run({})
+```
+
+### @step Decorator
+
+Define steps inline with metadata:
+
+```python
+from wpipe import step, AutoRegister, Pipeline
+
+@step(description="Fetch data", timeout=30, tags=["data"], retry_count=3)
+def fetch_data(context):
+    return {"data": [1, 2, 3]}
+
+@step(description="Process", depends_on=["fetch_data"], tags=["transform"])
+def process_data(context):
+    return {"processed": context.get("data", [])}
+
+# Auto-register all decorated steps
+pipeline = Pipeline(verbose=False)
+AutoRegister.register_all(pipeline)
+result = pipeline.run({})
+```
+
+### Checkpointing
+
+Save and resume pipeline state:
+
+```python
+from wpipe import Pipeline
+from wpipe.checkpoint import CheckpointManager
+
+checkpoint = CheckpointManager(tracking_db="tracking.db")
+
+# Create checkpoint
+checkpoint.create_checkpoint("v1", "my_pipeline", {"state": "initial"})
+
+# Check if can resume
+can_resume = checkpoint.can_resume("my_pipeline")
+if can_resume:
+    state = checkpoint.get_checkpoint("my_pipeline", "v1")
+    print(f"Resuming from: {state}")
+
+# Get stats
+stats = checkpoint.get_checkpoint_stats("my_pipeline")
+print(f"Total checkpoints: {stats['total_checkpoints']}")
+```
+
+### Resource Monitoring
+
+Track CPU and RAM during execution:
+
+```python
+from wpipe import Pipeline
+from wpipe.resource_monitor import ResourceMonitor, ResourceMonitorRegistry
+
+# Single task monitoring
+monitor = ResourceMonitor()
+monitor.start()
+# ... run your task ...
+monitor.stop()
+stats = monitor.get_stats()
+print(f"Peak RAM: {stats['peak_ram_mb']} MB")
+
+# Registry for multiple tasks with SQLite persistence
+registry = ResourceMonitorRegistry(db_path="resources.db")
+task_id = registry.register_task("my_task")
+registry.record_usage(task_id, {"cpu": 45.2, "ram": 512.0})
+```
+
+### Export to JSON/CSV
+
+Export logs, metrics, and statistics:
+
+```python
+from wpipe.export import PipelineExporter
+
+exporter = PipelineExporter(db_path="tracking.db")
+
+# Export pipeline logs to JSON
+logs_json = exporter.export_pipeline_logs(format="json")
+
+# Export to CSV with filter
+logs_csv = exporter.export_pipeline_logs(pipeline_id="PIPE-123", format="csv")
+
+# Export metrics
+metrics = exporter.export_metrics(format="json")
+
+# Export statistics
+stats = exporter.export_statistics(format="json")
+
+# Save to file
+exporter.export_pipeline_logs(output_path="logs.json", format="json")
+```
+
+### Timeout Decorators
+
+Prevent hanging tasks:
+
+```python
+from wpipe.timeout import timeout_sync, timeout_async, TaskTimer
+import asyncio
+
+# Sync timeout
+@timeout_sync(seconds=5)
+def slow_function(data):
+    import time; time.sleep(10)  # Will be killed after 5s
+    return {"done": True}
+
+# Async timeout
+@timeout_async(seconds=5)
+async def slow_async_function(data):
+    import asyncio; await asyncio.sleep(10)  # Will be killed after 5s
+    return {"done": True}
+
+# Task timer context manager
+with TaskTimer("my_task") as timer:
+    # ... your code ...
+    pass
+print(f"Elapsed: {timer.elapsed_ms}ms")
+```
+
+### Async Pipeline
+
+```python
+import asyncio
+from wpipe.pipe.pipe_async import PipelineAsync
+
+async def fetch_data(data):
+    await asyncio.sleep(0.1)
+    return {"data": "fetched"}
+
+async def process_data(data):
+    await asyncio.sleep(0.1)
+    return {"processed": True}
+
+async def main():
+    pipeline = PipelineAsync(verbose=False)
+    pipeline.set_steps([
+        (fetch_data, "Fetch", "v1.0"),
+        (process_data, "Process", "v1.0"),
+    ])
+    result = await pipeline.run({})
+    print(result)
+
+asyncio.run(main())
 ```
 
 ---

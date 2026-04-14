@@ -1,5 +1,16 @@
 // Dashboard JavaScript
 
+// Escape HTML to prevent XSS
+function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 let graphState = {
     scale: 1,
     translateX: 0,
@@ -231,13 +242,13 @@ window.showAllPipelinesHistory = function() {
                 const runs = grouped[name].slice(0, 5); // Show max 5 recent
                 html += `
                     <div style="margin-bottom:1rem">
-                        <div style="font-weight:600;margin-bottom:0.5rem">${name}</div>
+                        <div style="font-weight:600;margin-bottom:0.5rem">${escapeHtml(name)}</div>
                         ${runs.map(p => `
-                            <div class="pipeline-item" onclick="selectPipeline('${p.id}');document.getElementById('tutorial-modal').style.display='none'" 
+                            <div class="pipeline-item" onclick="selectPipeline('${escapeHtml(p.id)}');document.getElementById('tutorial-modal').style.display='none'" 
                                  style="margin:0.25rem 0;padding:0.5rem;font-size:0.85rem">
-                                <div class="pipeline-status ${p.status}" style="width:8px;height:8px"></div>
+                                <div class="pipeline-status ${escapeHtml(p.status)}" style="width:8px;height:8px"></div>
                                 <span style="color:var(--text-muted)">${fmtTime(p.created_at)}</span>
-                                <span class="status-badge ${p.status}" style="font-size:0.7rem">${p.status}</span>
+                                <span class="status-badge ${escapeHtml(p.status)}" style="font-size:0.7rem">${escapeHtml(p.status)}</span>
                                 ${p.total_duration_ms ? '<span style="color:var(--text-muted)">'+fmtDuration(p.total_duration_ms)+'</span>' : ''}
                             </div>
                         `).join('')}
@@ -282,13 +293,13 @@ function showPipelineHistoryModal(pipelineName, currentId) {
             }
             
             list.innerHTML = pipelines.map(p => `
-                <div class="pipeline-item" onclick="selectPipeline('${p.id}');document.getElementById('tutorial-modal').style.display='none'" 
+                <div class="pipeline-item" onclick="selectPipeline('${escapeHtml(p.id)}');document.getElementById('tutorial-modal').style.display='none'" 
                      style="margin:0.5rem 0;padding:0.75rem;cursor:pointer;${p.id === currentId ? 'border:2px solid #3b82f6' : ''}">
-                    <div class="pipeline-status ${p.status}"></div>
+                    <div class="pipeline-status ${escapeHtml(p.status)}"></div>
                     <div class="pipeline-info">
-                        <div class="pipeline-name">${p.name || p.id}</div>
+                        <div class="pipeline-name">${escapeHtml(p.name || p.id)}</div>
                         <div class="pipeline-meta">
-                            <span>${p.status}</span>
+                            <span>${escapeHtml(p.status)}</span>
                             <span>${fmtTime(p.started_at)}</span>
                             ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
                         </div>
@@ -359,12 +370,12 @@ function renderPipelineList(pipelines) {
                 
                 <div class="pipeline-group-content" style="display:none;">
                     ${executions.map(p => `
-                        <div class="pipeline-execution" onclick="selectPipeline('${p.id}')">
-                            <div class="pipeline-status ${p.status}"></div>
+                        <div class="pipeline-execution" onclick="selectPipeline('${escapeHtml(p.id)}')">
+                            <div class="pipeline-status ${escapeHtml(p.status)}"></div>
                             <div class="pipeline-info">
-                                <div class="pipeline-id">${p.id}</div>
+                                <div class="pipeline-id">${escapeHtml(p.id)}</div>
                                 <div class="pipeline-meta">
-                                    <span>${p.status}</span>
+                                    <span>${escapeHtml(p.status)}</span>
                                     <span>${fmtTime(p.started_at)}</span>
                                     ${p.total_duration_ms ? '<span>' + fmtDuration(p.total_duration_ms) + '</span>' : ''}
                                 </div>
@@ -734,8 +745,8 @@ function renderSteps(pipeline) {
     list.innerHTML = pipeline.steps.map((s, idx) => `
         <div class="step-card" onclick="toggleStepDetails(${idx})" style="cursor:pointer">
             <div class="step-header" style="display:flex;align-items:center;gap:0.75rem">
-                <div class="step-icon ${s.status}">${getStepIcon(s.status)}</div>
-                <div class="step-name" style="flex:1">${s.step_name}</div>
+                <div class="step-icon ${escapeHtml(s.status)}">${getStepIcon(s.status)}</div>
+                <div class="step-name" style="flex:1">${escapeHtml(s.step_name)}</div>
                 <div class="step-meta">
                     ${s.duration_ms ? fmtDuration(s.duration_ms) : ''}
                     <i class="fas fa-chevron-down step-chevron" style="margin-left:0.5rem;font-size:0.7rem"></i>
@@ -1070,7 +1081,7 @@ function renderSlowSteps(steps) {
     
     container.innerHTML = steps.slice(0, 5).map(s => `
         <div style="display:flex;justify-content:space-between;padding:0.5rem;border-bottom:1px solid var(--border)">
-            <span>${s.step_name}</span>
+            <span>${escapeHtml(s.step_name)}</span>
             <span style="color:var(--text-muted)">${fmtDuration(s.avg_duration)}</span>
         </div>
     `).join('');

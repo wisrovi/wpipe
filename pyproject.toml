@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "wpipe"
-version = "1.0.0"
+version = "1.5.6"
 authors = [
     { name = "William Steve Rodriguez Villamizar", email = "wisrovi.rodriguez@gmail.com" }
 ]
@@ -40,6 +40,10 @@ dependencies = [
     "pyyaml>=6.0.1",
     "tqdm>=4.66.0",
     "rich>=13.7.0",
+    "pydantic>=2.0.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "wsqlite>=0.1.0",
 ]
 
 [project.optional-dependencies]
@@ -69,12 +73,34 @@ Changelog = "https://github.com/wisrovi/wpipe/blob/main/CHANGELOG.md"
 [tool.hatch.build.targets.sdist]
 include = [
     "/wpipe",
-    "/examples",
+    "/examples/01_basic_pipeline",
+    "/examples/02_api_pipeline",
+    "/examples/11_checkpointing",
+    "/examples/12_timeouts",
+    "/examples/13_type_hinting",
+    "/examples/14_resource_monitor",
+    "/examples/15_export",
+    "/examples/16_parallelism",
     "/test",
+]
+exclude = [
+    "**/*.db",
+    "**/*.log",
+    "**/*.zip",
+    "**/__pycache__",
+    "**/configs",
+    "**/logs",
+    "**/*.yaml",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["wpipe"]
+exclude = [
+    "**/*.db",
+    "**/*.log",
+    "**/*.zip",
+    "**/__pycache__",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["test"]

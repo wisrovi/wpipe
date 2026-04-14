@@ -1,0 +1,60 @@
+# See https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Caracas"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "wisrovi"
+    labels:
+      - "dependencies"
+      - "security"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Group minor and patch updates together
+    groups:
+      python-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Caracas"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "wisrovi"
+    labels:
+      - "ci-cd"
+      - "dependencies"
+    commit-message:
+      prefix: "ci"
+
+  # Documentation dependencies
+  - package-ecosystem: "pip"
+    directory: "/docs"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "wisrovi"
+    labels:
+      - "documentation"
+      - "dependencies"
+    commit-message:
+      prefix: "docs"

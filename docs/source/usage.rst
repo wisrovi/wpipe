@@ -405,3 +405,383 @@ All 100+ examples are organized in ``examples/``:
 * ``07_nested_pipelines/`` - Nested workflows (9 examples)
 * ``08_yaml_config/`` - YAML configuration (9 examples)
 * ``09_microservice/`` - Microservice patterns (9 examples)
+
+Advanced Features
+-----------------
+
+Parallel Execution with ParallelExecutor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute multiple steps concurrently for improved performance:
+
+.. code-block:: python
+
+   from wpipe.parallel import ParallelExecutor, ExecutionMode
+   import time
+
+   def fetch_url(data):
+       time.sleep(1)  # Simulates IO wait
+       return {"url_data": "fetched"}
+
+   def process_data(data):
+       time.sleep(1)
+       return {"processed": True}
+
+   def compute_heavy(data):
+       time.sleep(1)
+       return {"computed": True}
+
+   # IO_BOUND: Best for network/disk operations
+   executor = ParallelExecutor(mode=ExecutionMode.IO_BOUND, max_workers=10)
+   executor.set_steps([
+       (fetch_url, "Fetch URL", "v1.0"),
+       (process_data, "Process", "v1.0"),
+       (compute_heavy, "Compute", "v1.0"),
+   ])
+
+   result = executor.run({"input": "data"})
+
+   # CPU_BOUND: Best for computation-heavy tasks
+   cpu_executor = ParallelExecutor(mode=ExecutionMode.CPU_BOUND, max_workers=4)
+   cpu_executor.set_steps([
+       (compute_heavy, "Compute 1", "v1.0"),
+       (compute_heavy, "Compute 2", "v1.0"),
+   ])
+
+   result = cpu_executor.run({"input": "data"})
+
+For Loops in Pipelines
+~~~~~~~~~~~~~~~~~~~~~~
+
+Iterate over collections within a pipeline:
+
+.. code-block:: python
+
+   from wpipe.pipe import ForLoop
+
+   def fetch_item(data):
+       return {"items": [1, 2, 3, 4, 5]}
+
+   def process_item(item_data):
+       item = item_data["item"]
+       return {"processed_item": item * 2}
+
+   def aggregate(data):
+       results = data.get("_loop_results", [])
+       return {"all_processed": results, "count": len(results)}
+
+   # Create a for loop step that iterates over 'items'
+   loop_step = ForLoop(
+       func=process_item,
+       name="Process Each Item",
+       version="v1.0",
+       iterable_key="items",
+   )
+
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       (fetch_item, "Fetch Items", "v1.0"),
+       loop_step,
+       (aggregate, "Aggregate Results", "v1.0"),
+   ])
+
+   result = pipeline.run({})
+   # result['all_processed'] = [2, 4, 6, 8, 10]
+
+Pipeline Composition with NestedPipelineStep
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Embed entire pipelines as single steps within larger workflows:
+
+.. code-block:: python
+
+   from wpipe.pipe import NestedPipelineStep
+
+   # Create a sub-pipeline for data extraction
+   extract_pipeline = Pipeline()
+   extract_pipeline.set_steps([
+       (lambda d: {"raw": "data"}, "Fetch Raw", "v1.0"),
+       (lambda d: {"cleaned": d["raw"].upper()}, "Clean", "v1.0"),
+   ])
+
+   # Create a sub-pipeline for data transformation
+   transform_pipeline = Pipeline()
+   transform_pipeline.set_steps([
+       (lambda d: {"transformed": d["cleaned"] + "_v2"}, "Transform", "v1.0"),
+   ])
+
+   # Wrap pipelines as nested steps
+   extract_step = NestedPipelineStep(
+       pipeline=extract_pipeline,
+       name="Extract Phase",
+       version="v1.0",
+   )
+
+   transform_step = NestedPipelineStep(
+       pipeline=transform_pipeline,
+       name="Transform Phase",
+       version="v1.0",
+   )
+
+   # Build main pipeline using nested steps
+   main_pipeline = Pipeline()
+   main_pipeline.set_steps([
+       extract_step,
+       transform_step,
+   ])
+
+   result = main_pipeline.run({})
+   # result['transformed'] = 'DATA_v2'
+
+@step Decorator Usage
+~~~~~~~~~~~~~~~~~~~~~
+
+Simplify step creation with a decorator:
+
+.. code-block:: python
+
+   from wpipe.decorators import step
+
+   @step(name="Fetch Data", version="v1.0")
+   def fetch_data(data):
+       return {"fetched": True, "records": [1, 2, 3]}
+
+   @step(name="Transform", version="v1.0")
+   def transform(data):
+       return {"transformed": [r * 10 for r in data["records"]]}
+
+   @step(name="Validate", version="v1.0")
+   def validate(data):
+       return {"valid": len(data["transformed"]) > 0}
+
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       fetch_data,
+       transform,
+       validate,
+   ])
+
+   result = pipeline.run({})
+   # result['valid'] = True
+
+   # Decorator with error handling
+   @step(name="Risky Operation", version="v1.0", retry=3)
+   def risky_op(data):
+       import random
+       if random.random() < 0.5:
+           raise RuntimeError("Temporary failure")
+       return {"success": True}
+
+Checkpointing with CheckpointManager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Save and restore pipeline state for long-running workflows:
+
+.. code-block:: python
+
+   from wpipe.checkpoint import CheckpointManager
+
+   def long_task_1(data):
+       return {"task1_done": True}
+
+   def long_task_2(data):
+       return {"task2_done": True}
+
+   def long_task_3(data):
+       return {"task3_done": True}
+
+   # Initialize checkpoint manager
+   checkpoint_mgr = CheckpointManager(
+       checkpoint_dir="./checkpoints",
+       pipeline_name="my_pipeline",
+   )
+
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       (long_task_1, "Task 1", "v1.0"),
+       (long_task_2, "Task 2", "v1.0"),
+       (long_task_3, "Task 3", "v1.0"),
+   ])
+
+   # Run with checkpointing - saves state after each step
+   result = pipeline.run({"input": "data"})
+   checkpoint_mgr.save(pipeline.get_accumulated_data())
+
+   # Restore from checkpoint
+   if checkpoint_mgr.exists():
+       restored_data = checkpoint_mgr.load()
+       print(f"Restored: {restored_data}")
+
+   # List available checkpoints
+   checkpoints = checkpoint_mgr.list_checkpoints()
+   for cp in checkpoints:
+       print(f"Checkpoint: {cp['name']} at {cp['timestamp']}")
+
+   # Delete old checkpoints
+   checkpoint_mgr.delete("my_pipeline_2024-01-01")
+
+Resource Monitoring with ResourceMonitor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Track CPU, memory, and disk usage during pipeline execution:
+
+.. code-block:: python
+
+   from wpipe.monitor import ResourceMonitor
+
+   def heavy_computation(data):
+       import time
+       time.sleep(2)
+       return {"computed": True}
+
+   # Initialize monitor
+   monitor = ResourceMonitor(
+       interval=1.0,  # Sample every 1 second
+       log_file="resource_usage.log",
+   )
+
+   # Start monitoring before pipeline
+   monitor.start()
+
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       (heavy_computation, "Heavy Task 1", "v1.0"),
+       (heavy_computation, "Heavy Task 2", "v1.0"),
+   ])
+
+   result = pipeline.run({"input": "data"})
+
+   # Stop monitoring and get report
+   monitor.stop()
+   report = monitor.get_report()
+
+   print(f"Peak CPU: {report['cpu']['peak']}%")
+   print(f"Peak Memory: {report['memory']['peak']} MB")
+   print(f"Average Disk I/O: {report['disk']['avg']} MB/s")
+
+   # Export monitoring data
+   monitor.export_report("monitoring_summary.json")
+
+Exporting to JSON/CSV with PipelineExporter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Serialize pipeline configurations and results:
+
+.. code-block:: python
+
+   from wpipe.export import PipelineExporter
+
+   def step1(data):
+       return {"value": data["x"] * 2}
+
+   def step2(data):
+       return {"final": data["value"] + 10}
+
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       (step1, "Double", "v1.0"),
+       (step2, "Add Ten", "v1.0"),
+   ])
+
+   result = pipeline.run({"x": 5})
+
+   # Export pipeline configuration to JSON
+   exporter = PipelineExporter()
+   exporter.to_json(pipeline, "pipeline_config.json")
+
+   # Export results to JSON
+   exporter.results_to_json(result, "pipeline_results.json")
+
+   # Export results to CSV (for list-based results)
+   results_list = [
+       {"id": 1, "value": 10, "status": "ok"},
+       {"id": 2, "value": 20, "status": "ok"},
+   ]
+   exporter.results_to_csv(results_list, "pipeline_results.csv")
+
+   # Load pipeline from JSON config
+   loaded_pipeline = exporter.from_json("pipeline_config.json")
+
+Timeout Decorators
+~~~~~~~~~~~~~~~~~~
+
+Enforce time limits on long-running steps:
+
+.. code-block:: python
+
+   from wpipe.decorators import timeout
+   from wpipe.exception import TimeoutError
+
+   @timeout(seconds=5)
+   def potentially_slow_operation(data):
+       import time
+       time.sleep(10)  # Will be interrupted
+       return {"completed": True}
+
+   @timeout(seconds=10, fallback={"status": "timed_out"})
+   def with_fallback(data):
+       import time
+       time.sleep(15)
+       return {"completed": True}
+
+   pipeline = Pipeline()
+   pipeline.set_steps([
+       (potentially_slow_operation, "Timed Step", "v1.0"),
+   ])
+
+   try:
+       result = pipeline.run({})
+   except TimeoutError as e:
+       print(f"Operation timed out after {e.seconds} seconds")
+
+Async Pipelines with PipelineAsync
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fully asynchronous pipeline execution:
+
+.. code-block:: python
+
+   import asyncio
+   from wpipe.asyncio import PipelineAsync
+
+   async def async_fetch(data):
+       await asyncio.sleep(1)
+       return {"fetched": True, "data": [1, 2, 3]}
+
+   async def async_transform(data):
+       await asyncio.sleep(0.5)
+       return {"transformed": [x * 2 for x in data["data"]]}
+
+   async def async_save(data):
+       await asyncio.sleep(0.5)
+       return {"saved": True, "result": data["transformed"]}
+
+   async def run_pipeline():
+       pipeline = PipelineAsync(verbose=True)
+       pipeline.set_steps([
+           (async_fetch, "Async Fetch", "v1.0"),
+           (async_transform, "Async Transform", "v1.0"),
+           (async_save, "Async Save", "v1.0"),
+       ])
+
+       result = await pipeline.run({"input": "data"})
+       return result
+
+   # Execute async pipeline
+   result = asyncio.run(run_pipeline())
+   # result['saved'] = True
+   # result['result'] = [2, 4, 6]
+
+   # Async with error handling
+   async def run_pipeline_safe():
+       pipeline = PipelineAsync()
+       pipeline.set_steps([
+           (async_fetch, "Async Fetch", "v1.0"),
+       ])
+
+       try:
+           result = await pipeline.run({})
+           return result
+       except Exception as e:
+           print(f"Async pipeline error: {e}")
+           return None

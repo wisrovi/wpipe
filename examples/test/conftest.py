@@ -68,18 +68,3 @@ pipeline_use: false
 def db_file(temp_dir):
     """Create a temporary database file path."""
     return str(Path(temp_dir) / "test_register.db")
-
-
-@pytest.fixture(autouse=True)
-def reset_dashboard_config():
-    """Reset dashboard config after each test."""
-    try:
-        from wpipe.dashboard.main import set_db_path
-
-        yield
-        set_db_path("register.db")
-    except ImportError:
-        yield
-        set_db_path(original_path)
-    except ImportError:
-        yield

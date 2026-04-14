@@ -1,6 +1,0 @@
-categoria,region,count,sum,mean,min,max
-A,norte,2,250,125.0,100,150
-A,oeste,1,120,120.0,120,120
-B,norte,1,220,220.0,220,220
-B,sur,2,450,225.0,200,250
-C,este,2,650,325.0,300,350

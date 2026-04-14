@@ -9,7 +9,6 @@ The dashboard is modularized into:
 - templates/: HTML template views
 """
 
-import json
 from pathlib import Path
 from typing import Optional
 
@@ -19,7 +18,6 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
 from wpipe.tracking import PipelineTracker
-
 
 # Get the dashboard directory path
 DASHBOARD_DIR = Path(__file__).parent
@@ -37,8 +35,9 @@ def start_dashboard(
     open_browser: bool = False,
 ):
     """Start the wpipe dashboard server."""
-    import uvicorn
     from webbrowser import open as open_url
+
+    import uvicorn
 
     app = create_app(db_path, config_dir)
 
@@ -105,10 +104,21 @@ def create_app(
         return tracker.get_pipeline(pipeline_id)
 
     @app.get("/api/pipelines/by-name/{pipeline_name}")
+<<<<<<< HEAD
     async def get_pipeline_executions(pipeline_name: str, limit: int = 100, offset: int = 0):
         """Get all executions of a pipeline by name."""
         tracker = PipelineTracker(db_path, config_dir)
         return tracker.get_pipeline_executions(pipeline_name, limit=limit, offset=offset)
+=======
+    async def get_pipeline_executions(
+        pipeline_name: str, limit: int = 100, offset: int = 0
+    ):
+        """Get all executions of a pipeline by name."""
+        tracker = PipelineTracker(db_path, config_dir)
+        return tracker.get_pipeline_executions(
+            pipeline_name, limit=limit, offset=offset
+        )
+>>>>>>> DEV-WSRV/changes_for_future_LTS_v1.5
 
     @app.get("/api/pipelines/{pipeline_id}/graph")
     async def get_pipeline_graph(pipeline_id: str):
