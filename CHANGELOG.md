@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.5.7] - 2026-04-19
+## [1.6.0] - 2026-04-19
 
-### Persistence and Reliability Overhaul
+### Persistence and Reliability Overhaul (Major Update)
 
 This release focuses on architectural purity and reliability, unifying all persistence under `wsqlite` and enhancing the pipeline orchestration engine.
 
