@@ -1,4 +1,4 @@
-# 🚀 WPipe v1.6.1
+# 🚀 WPipe v1.6.2
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 
@@ -34,16 +34,18 @@ pip install wpipe
 ## 🚀 Ejemplo de Poder: El Viaje Resiliente
 
 ```python
-from wpipe import Pipeline, For, Condition, Parallel, step, PipelineContext
+from wpipe import Pipeline, For, Condition, Parallel, step, to_obj, PipelineContext
 
 # 1. Definimos el contrato de nuestra Bodega
 class MiContexto(PipelineContext):
     motor: str
     temperatura: float
 
-# 2. Creamos estados inteligentes
+# 2. Creamos estados inteligentes con validación automática
 @step(name="Verificar", retry_count=3)
+@to_obj(MiContexto) # <-- ACTIVA LA VALIDACIÓN Y CONVERSIÓN
 def verificar_motor(ctx: MiContexto):
+    print(f"Chequeando motor: {ctx.motor}")
     return {"temperatura": 85.5}
 
 # 3. Orquestación de Alto Nivel

@@ -5,6 +5,18 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2026-04-19
+
+### Documentation and Example Refinement
+
+Fixed critical missing decorator in README examples and synced version across all platforms.
+
+### Fixed
+- **README Example**: Added missing `@to_obj(Context)` decorator in the "Example of Power" to correctly show how data validation and object conversion is triggered.
+- **Parity**: Ensured `to_obj` and `step` decorators are shown working together for best practices.
+
+---
+
 ## [1.6.1] - 2026-04-19
 
 ### Stability and Persistence Refinement
