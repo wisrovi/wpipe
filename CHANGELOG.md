@@ -5,6 +5,20 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-04-19
+
+### Stability and Persistence Refinement
+
+This patch release resolves critical persistence issues in the LogGestor and unifies the internal database engine.
+
+### Added
+- **Native ID Tracking**: Implemented direct `rowid` capture for all SQLite operations, ensuring reliable record updates.
+
+### Fixed
+- **LogGestor Data Loss**: Fixed a bug where `output` and `details` were not persisted correctly due to ID synchronization issues.
+- **Circular Imports**: Resolved module dependency conflicts between core components and SQLite wrappers.
+- **Database Connector Robustness**: Improved connection pooling and thread safety for the internal WSQLite driver.
+
 ---
 
 ## [1.6.0] - 2026-04-19

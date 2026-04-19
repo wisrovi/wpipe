@@ -185,7 +185,7 @@
 .. image:: https://img.shields.io/badge/tests-625%20passing-10b981
    :alt: Tests
 
-.. image:: https://img.shields.io/badge/LTS-1.6.0-green
+.. image:: https://img.shields.io/badge/LTS-1.6.1-green
    :alt: LTS
 
 wpipe |version| Documentation
@@ -296,7 +296,7 @@ Your First Pipeline
         </div>
         <div class="stat-box">
             <div class="value">LTS</div>
-            <div class="label">1.6.0</div>
+            <div class="label">1.6.1</div>
         </div>
     </div>
 
