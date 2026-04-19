@@ -6,22 +6,21 @@ This guide will help you get started with wpipe, a powerful Python library for c
 1. Overview
 ----------
 
-**wpipe** is a pipeline orchestration library that enables you to:
+**wpipe** is an industrial-grade pipeline orchestration library that enables you to:
 
-- Create sequential data processing workflows
-- Orchestrate complex multi-step processes
-- Integrate with external APIs for tracking and monitoring
-- Persist execution results to SQLite databases
-- Handle errors gracefully with custom exceptions
-- Monitor progress with rich terminal output
+- Create sequential and **Parallel** data processing workflows.
+- Use **Intelligent Checkpoints** with logical expressions for auto-resumption.
+- Implement **Forensic Error Capture** with file/line precision.
+- Enforce **Data Contracts** using `PipelineContext` and `TypeValidator`.
+- Choosing between **Synchronous or Asynchronous** engines with 100% parity.
+- Monitor hardware resources (CPU/RAM) with high-resolution, non-blocking metrics.
 
 **Key Benefits:**
 
-- **Simple API**: Get started in minutes with an intuitive interface
-- **Flexible**: Use functions or classes as pipeline steps
-- **Extensible**: Add custom decorators and error handling
-- **Production-Ready**: Comprehensive error handling and logging
-- **Well-Documented**: Extensive documentation and examples
+- **Lightning Mode**: Optimized SQLite architecture with WAL mode and non-blocking monitoring.
+- **Native Parallelism**: Execute steps using Threading or Process pooling with a single command.
+- **Resilient by Design**: Intelligent milestones and auto-retry hierarchy.
+- **Pure Architecture**: Unified persistence via WSQLite, zero raw SQL in core components.
 
 2. Prerequisites
 ----------------
@@ -32,14 +31,14 @@ Before installing wpipe, ensure you have:
 ~~~~~~~~~~~~~~~~~~
 
 - **Minimum**: Python 3.9
-- **Recommended**: Python 3.10 or higher
+- **Recommended**: Python 3.12 or higher (for latest typing features)
 
 Check your Python version:
 
 .. code-block:: bash
 
     python --version
-    # Python 3.10.12
+    # Python 3.12.1
 
 2.2 Operating System
 ~~~~~~~~~~~~~~~~~~~
@@ -111,8 +110,9 @@ Verify wpipe is installed correctly:
 .. code-block:: python
 
     import wpipe
-    print(wpipe.__version__)
-    # 1.0.0
+    # Basic core validation
+    from wpipe import Pipeline, Parallel
+    print("WPipe Engine v1.6.0 Ready")
 
 4.2 Check Available Classes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -311,12 +311,18 @@ Steps are the building blocks of a pipeline. They can be:
         def __call__(self, data):
             return {"result": data["value"] * self.multiplier}
 
-**Lambda Steps (for simple operations):**
+**Parallel Blocks (for concurrency):**
 
 .. code-block:: python
 
+    from wpipe import Parallel
+
     pipeline.set_steps([
-        (lambda d: {"doubled": d["x"] * 2}, "Double", "v1.0"),
+        Parallel(
+            steps=[task_a, task_b, task_c],
+            max_workers=3,
+            use_processes=False  # True for CPU-heavy tasks
+        )
     ])
 
 6.3 Data Flow
