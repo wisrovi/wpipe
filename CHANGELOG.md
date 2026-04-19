@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.7] - 2026-04-19
+
+### Persistence and Reliability Overhaul
+
+This release focuses on architectural purity and reliability, unifying all persistence under `wsqlite` and enhancing the pipeline orchestration engine.
+
+### Added
+- **Intelligent Checkpoints**: New `add_checkpoint` method with expression evaluation for real-time milestone tracking.
+- **Forensic Error Capture**: New `add_error_capture` system that provides file path and line number for easier debugging.
+- **Unified WSQLite Persistence**: Removed all direct `sqlite3` dependencies in favor of `wsqlite` and Pydantic models.
+- **High Resolution Resource Monitoring**: Enhanced CPU measurement for short-lived tasks.
+- **PipelineAsync Parity**: Full feature parity between synchronous and asynchronous pipelines.
+- **Progress Visibility Control**: New `show_progress` flag to toggle Rich progress bars.
+
+### Changed
+- **Turbo Mode Persistence**: Enabled WAL (Write-Ahead Logging) and connection pooling by default for massive performance gains.
+- **Retry Hierarchy**: Step-level retry settings now correctly override global pipeline settings.
+
+### Fixed
+- **Database Locks**: Resolved 'database is locked' errors during high-concurrency executions.
+- **Serialization Issues**: Fixed 'Pickle' errors when using complex objects in parallel blocks.
+- **Exporting desynchronization**: PipelineExporter now correctly identifies system-defined table names.
+
+---
+
 ## [1.5.6] - 2026-04-14
 
 ### LTS Certification Release
