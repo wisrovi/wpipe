@@ -4,12 +4,13 @@ Comprehensive tests for the PipelineAsync class.
 
 import asyncio
 import os
-import sqlite3
 import pytest
+from wsqlite import WSQLite
 
 from wpipe.exception import TaskError
 from wpipe.pipe.pipe import Condition
 from wpipe.pipe.pipe_async import PipelineAsync
+from wpipe.sqlite.tables_dto.tracker_models import PipelineModel
 
 
 @pytest.mark.asyncio
@@ -93,15 +94,14 @@ class TestPipelineAsyncTracking:
         await pipeline.run({})
         
         assert os.path.exists(db_file)
-        conn = sqlite3.connect(db_file)
-        cursor = conn.cursor()
         
-        cursor.execute("SELECT name, status FROM pipelines")
-        row = cursor.fetchone()
-        assert row[0] == "AsyncTracked"
-        assert row[1] == "completed"
+        # Verify using WSQLite (no sqlite3 import)
+        inspector = WSQLite(PipelineModel, db_file)
+        results = inspector.get_by_field(name="AsyncTracked")
         
-        conn.close()
+        assert len(results) >= 1
+        assert results[0].name == "AsyncTracked"
+        assert results[0].status == "completed"
 
 
 @pytest.mark.asyncio

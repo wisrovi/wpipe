@@ -14,32 +14,59 @@ chk = CheckpointManager("checkpoints.db")
 # ID estable para la demostración
 ID_VIAJE = "vacaciones_lts_2026"
 
-print(f"\n--- Iniciando Pipeline resumible [{ID_VIAJE}] ---")
+print(f"\n" + "="*60)
+print(f"🚀 PIPELINE RESUMIBLE: {ID_VIAJE}")
+print("="*60 + "\n")
 
 # 2. Datos iniciales
 car = Car(marca="Toyota", modelo="Corolla").__dict__
 
 try:
     if not chk.can_resume(ID_VIAJE):
-        print("\n[!] PRIMERA EJECUCIÓN: Completará la Fase 0 y luego simularemos una caída.")
-        # Ejecutamos la pipeline. Para simular la caída DESPUÉS de un paso, 
-        # podríamos meter una excepción en un paso específico, pero para este ejemplo
-        # simplemente lanzaremos una tras una ejecución parcial si fuera posible.
-        # Aquí, para que sea "perfecto", haremos que falle si es la primera vez.
+        print("⊘ No se encontró punto de control previo. Iniciando viaje desde el garaje...")
+        print("\n[!] PASO 1: Ejecución inicial con caída simulada.")
+        print("-" * 60)
+        
+        # Inyectamos una excepción que ocurrirá DESPUÉS del primer paso exitoso (fase_preparacion)
+        # pero antes de completar el bucle de viajes.
+        # Para esta demo, simplemente lanzamos el error manualmente tras una ejecución parcial.
+        
+        # Ejecutamos la pipeline con el gestor de checkpoints activo
+        viaje.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
+        
+        # Si por algún motivo termina sin errores, forzamos la caída para la demo
+        if not os.path.exists("checkpoints.db"):
+             print("ℹ Nota: No se generaron checkpoints. Asegúrate de que el viaje sea lo suficientemente largo.")
+        
+        raise RuntimeError("🔌 FALLO ELÉCTRICO CRÍTICO: El sistema se ha apagado inesperadamente.")
+    
+    else:
+        print("⟲ ¡SISTEMA RECUPERADO! Detectado punto de control anterior.")
+        last = chk.get_last_checkpoint(ID_VIAJE)
+        
+        print(f"  📍 Último hito guardado: {last['step_name']}")
+        print(f"  🔢 Índice del paso: {last['step_order']}")
+        print(f"  🕒 Fecha del guardado: {last['created_at']}")
+        print(f"  📦 Datos recuperados: {len(last['data'])} llaves en bodega")
+        
+        print("\n>>> PASO 2: Reanudando viaje automáticamente desde el punto exacto...")
+        print("-" * 60)
+        
+        # Al pasar el mismo ID_VIAJE y el gestor, la pipeline saltará los pasos ya hechos
         res = viaje.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
         
-        # Si llega aquí sin fallar (lo cual no queremos en la primera vuelta de la demo)
-        # forzamos la caída para demostrar el checkpoint.
-        raise RuntimeError("Simulación de caída del sistema (Fase 1)")
-    else:
-        print("\n>>> SEGUNDA EJECUCIÓN: Reanudando automáticamente...")
-        res = viaje.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
-        print("\n✓ ¡VIAJE COMPLETADO CON ÉXITO!")
-        # Limpiamos para la próxima vez que se quiera probar
+        print("\n" + "✓" * 60)
+        print("🏁 ¡VIAJE COMPLETADO CON ÉXITO TRAS LA REANUDACIÓN!")
+        print("✓" * 60)
+        
+        # Limpiamos para que se pueda volver a probar la demo desde cero
         chk.clear_checkpoints(ID_VIAJE)
         if os.path.exists("checkpoints.db"):
             os.remove("checkpoints.db")
 
 except Exception as e:
-    print(f"\n✘ SISTEMA CAÍDO: {e}")
-    print(">>> Ejecuta de nuevo para ver la reanudación desde el último punto a salvo.")
+    print(f"\n" + "!" * 60)
+    print(f"✘ SISTEMA CAÍDO: {e}")
+    print("!" * 60)
+    print("\n>>> INSTRUCCIONES: Ejecuta este script una vez más para ver cómo WPipe")
+    print(">>> reanuda el viaje saltándose la fase de preparación.")

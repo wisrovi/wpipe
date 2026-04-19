@@ -1,5 +1,4 @@
 import os
-import sqlite3
 import pytest
 import json
 import time
@@ -8,7 +7,7 @@ from wpipe import PipelineTracker, PipelineExporter, Condition, Pipeline, Pipeli
 from wpipe.tracking.analysis import AnalysisManager
 from wpipe.tracking.queries import QueryManager
 from wpipe.type_hinting.validators import TypeValidator
-from wpipe.sqlite.Sqlite import WSQLite
+from wsqlite import WSQLite
 from wpipe.exception import TaskError
 
 @pytest.fixture
@@ -92,7 +91,8 @@ def test_exporter_robustness_v2(lts_db_v2):
     time.sleep(0.1)
     
     exporter = PipelineExporter(lts_db_v2)
-    stats = json.loads(exporter.export_statistics())
+    stats_output = exporter.export_statistics()
+    stats = json.loads(stats_output) if isinstance(stats_output, str) else stats_output
     assert stats["total_executions"] >= 1
     
     logs = exporter.export_pipeline_logs(format="json")

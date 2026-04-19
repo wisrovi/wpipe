@@ -4,13 +4,14 @@ Tests for Phase 1 checkpoint functionality.
 Tests CheckpointManager and checkpoint workflows.
 """
 
-import sqlite3
 import tempfile
 from pathlib import Path
 
 import pytest
+from wsqlite import WSQLite
 
 from wpipe import CheckpointManager
+from wpipe.sqlite.tables_dto.tracker_models import CheckpointModel
 
 
 class TestCheckpointManager:
@@ -35,16 +36,11 @@ class TestCheckpointManager:
 
     def test_table_creation(self, db_path):
         """Test checkpoint table creation."""
-        checkpoint_mgr = CheckpointManager(db_path)
-
-        with sqlite3.connect(db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='checkpoints'"
-            )
-            table = cursor.fetchone()
-
-        assert table is not None
+        CheckpointManager(db_path)
+        
+        # Verify using WSQLite (no sqlite3 import)
+        inspector = WSQLite(CheckpointModel, db_path)
+        assert inspector.count_records() == 0
 
     def test_save_checkpoint(self, checkpoint_mgr):
         """Test saving a checkpoint."""
@@ -56,12 +52,8 @@ class TestCheckpointManager:
             data={"result": "test_data"},
         )
 
-        with sqlite3.connect(checkpoint_mgr.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM checkpoints")
-            count = cursor.fetchone()[0]
-
-        assert count == 1
+        inspector = WSQLite(CheckpointModel, checkpoint_mgr.db_path)
+        assert inspector.count_records() == 1
 
     def test_get_last_checkpoint(self, checkpoint_mgr):
         """Test retrieving last checkpoint."""

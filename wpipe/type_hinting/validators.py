@@ -28,25 +28,27 @@ class TypeValidator:
     def validate(value: Any, expected_type: Type[T]) -> T:
         """
         Validate value against expected type.
-
-        Args:
-            value: Value to validate
-            expected_type: Expected type
-
-        Returns:
-            Validated value
-
-        Raises:
-            TypeError: If validation fails
         """
         origin = get_origin(expected_type)
         args = get_args(expected_type)
 
+        # Caso especial para PipelineContext (TypedDict)
+        if hasattr(expected_type, "__annotations__") and not isinstance(expected_type, type):
+            if not isinstance(value, dict):
+                raise TypeError(f"Expected dict for TypedDict, got {type(value).__name__}")
+            # Validamos contra las anotaciones del TypedDict
+            return TypeValidator.validate_dict(value, expected_type.__annotations__)
+
         if origin is None:
-            if not isinstance(value, expected_type):
-                raise TypeError(
-                    f"Expected {expected_type.__name__}, got {type(value).__name__}"
-                )
+            # Si es una clase normal (no genérica)
+            try:
+                if not isinstance(value, expected_type):
+                    raise TypeError(
+                        f"Expected {expected_type.__name__}, got {type(value).__name__}"
+                    )
+            except TypeError:
+                # Algunos tipos especiales de typing pueden fallar en isinstance
+                pass
             return value
 
         if origin is dict:

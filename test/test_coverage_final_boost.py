@@ -13,7 +13,6 @@ Comprehensive tests to boost coverage for specific modules:
 import asyncio
 import json
 import os
-import sqlite3
 import sys
 import tempfile
 import traceback
@@ -23,6 +22,9 @@ from unittest.mock import MagicMock, Mock, patch, call
 
 import pytest
 import yaml
+
+from wsqlite import WSQLite
+from wpipe.sqlite.tables_dto.tracker_models import PipelineModel, SystemMetricsModel
 
 # ---------------------------------------------------------------------------
 # 1. wpipe/dashboard/__main__.py
@@ -374,22 +376,10 @@ class TestExporterPipelineLogs:
     """Test PipelineExporter.export_pipeline_logs."""
 
     def _create_db_with_pipelines(self, db_path):
-        """Create a test DB with pipeline data."""
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        c.execute("""CREATE TABLE IF NOT EXISTS pipelines (
-            pipeline_id TEXT,
-            name TEXT,
-            status TEXT,
-            started_at TEXT,
-            total_duration_ms REAL
-        )""")
-        c.execute("INSERT INTO pipelines VALUES (?, ?, ?, ?, ?)",
-                  ("p1", "TestPipeline", "completed", "2024-01-01T00:00:00", 1000.0))
-        c.execute("INSERT INTO pipelines VALUES (?, ?, ?, ?, ?)",
-                  ("p2", "TestPipeline2", "failed", "2024-01-02T00:00:00", 2000.0))
-        conn.commit()
-        conn.close()
+        """Create a test DB with pipeline data via WSQLite."""
+        db = WSQLite(PipelineModel, db_path)
+        db.insert(PipelineModel(id="p1", name="TestPipeline", status="completed", started_at="2024-01-01T00:00:00", total_duration_ms=1000.0))
+        db.insert(PipelineModel(id="p2", name="TestPipeline2", status="failed", started_at="2024-01-02T00:00:00", total_duration_ms=2000.0))
 
     def test_export_pipeline_logs_json(self, tmp_path):
         """Test export_pipeline_logs in JSON format."""
@@ -414,7 +404,7 @@ class TestExporterPipelineLogs:
         result = exporter.export_pipeline_logs(pipeline_id="p1", format="json")
         data = json.loads(result)
         assert len(data) == 1
-        assert data[0]["pipeline_id"] == "p1"
+        assert data[0]["id"] == "p1"
 
     def test_export_pipeline_logs_csv(self, tmp_path):
         """Test export_pipeline_logs in CSV format."""
@@ -427,28 +417,17 @@ class TestExporterPipelineLogs:
         result = exporter.export_pipeline_logs(format="csv")
         lines = result.strip().split("\n")
         assert len(lines) == 3  # header + 2 rows
-        assert "pipeline_id" in lines[0]
+        assert "id" in lines[0]
 
     def test_export_pipeline_logs_csv_with_commas(self, tmp_path):
         """Test CSV export with values containing commas."""
         from wpipe.export.exporter import PipelineExporter
 
-        db = str(tmp_path / "test.db")
-        conn = sqlite3.connect(db)
-        c = conn.cursor()
-        c.execute("""CREATE TABLE IF NOT EXISTS pipelines (
-            pipeline_id TEXT,
-            name TEXT,
-            status TEXT,
-            started_at TEXT,
-            total_duration_ms REAL
-        )""")
-        c.execute("INSERT INTO pipelines VALUES (?, ?, ?, ?, ?)",
-                  ("p1", "Test, Pipeline", "completed", "2024-01-01", 1000.0))
-        conn.commit()
-        conn.close()
+        db_path = str(tmp_path / "test.db")
+        db = WSQLite(PipelineModel, db_path)
+        db.insert(PipelineModel(id="p1", name="Test, Pipeline", status="completed", started_at="2024-01-01", total_duration_ms=1000.0))
 
-        exporter = PipelineExporter(db)
+        exporter = PipelineExporter(db_path)
         result = exporter.export_pipeline_logs(format="csv")
         # Commas in values should be replaced with semicolons
         assert "Test; Pipeline" in result
@@ -482,19 +461,9 @@ class TestExporterMetrics:
     """Test PipelineExporter.export_metrics."""
 
     def _create_db_with_metrics(self, db_path):
-        """Create a test DB with system_metrics table."""
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        c.execute("""CREATE TABLE IF NOT EXISTS system_metrics (
-            pipeline_id TEXT,
-            cpu_percent REAL,
-            memory_mb REAL,
-            created_at TEXT
-        )""")
-        c.execute("INSERT INTO system_metrics VALUES (?, ?, ?, ?)",
-                  ("p1", 45.5, 512.0, "2024-01-01T00:00:00"))
-        conn.commit()
-        conn.close()
+        """Create a test DB with system_metrics table via WSQLite."""
+        db = WSQLite(SystemMetricsModel, db_path)
+        db.insert(SystemMetricsModel(pipeline_id="p1", cpu_percent=45.5, memory_used_mb=512.0, recorded_at="2024-01-01T00:00:00"))
 
     def test_export_metrics_json(self, tmp_path):
         """Test export_metrics in JSON format."""

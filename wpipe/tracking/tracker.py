@@ -189,11 +189,23 @@ class PipelineTracker:
         if not os.path.exists(yaml_path):
             import yaml
 
+            def _serialize_step(s):
+                if hasattr(s, "to_dict"):
+                    return s.to_dict()
+                if isinstance(s, tuple):
+                    return {
+                        "type": "task",
+                        "name": s[1] if len(s) > 1 else "unknown",
+                        "version": s[2] if len(s) > 2 else "v1.0",
+                        "func": str(s[0])
+                    }
+                return str(s)
+
             config = {
                 "name": name,
                 "registered_at": datetime.now().isoformat(),
                 "step_count": len(steps),
-                "steps": [str(s) for s in steps],
+                "steps": [_serialize_step(s) for s in steps],
             }
             with open(yaml_path, "w") as f:
                 yaml.dump(config, f)

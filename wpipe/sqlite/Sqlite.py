@@ -169,10 +169,18 @@ class SQLite:
         else:
             return self.db.insert(model_data)
 
-    def read_by_id(self, record_id: int) -> Optional[RecordModel]:
+    def read_by_id(self, record_id: int) -> Optional[dict]:
         """Read a record by ID."""
+        if not self.db or record_id is None:
+            return None
+        
+        # WSQLite get_by_field returns a list of models
         results = self.db.get_by_field(id=record_id)
-        return results[0] if results else None
+        if results and len(results) > 0:
+            # Return as dict for backward compatibility with examples
+            return results[0].model_dump()
+        
+        return None
 
     def export_to_dataframe(
         self, save_csv: bool = False, csv_name: str = "records.csv"

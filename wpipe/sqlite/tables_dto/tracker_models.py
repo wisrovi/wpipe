@@ -154,6 +154,35 @@ class SystemMetricsModel(BaseModel):
     )
 
 
+class ResourceMetricsModel(BaseModel):
+    """DTO for the resource_metrics table."""
+
+    id: Optional[int] = Field(None, description="Primary Key")
+    task_name: str
+    start_ram_mb: Optional[float] = None
+    peak_ram_mb: Optional[float] = None
+    end_ram_mb: Optional[float] = None
+    avg_cpu_percent: Optional[float] = None
+    elapsed_seconds: Optional[float] = None
+    created_at: Optional[str] = Field(
+        default_factory=lambda: datetime.now().isoformat()
+    )
+
+
+class CheckpointModel(BaseModel):
+    """DTO for the checkpoints table."""
+
+    id: Optional[int] = Field(None, description="Primary Key")
+    pipeline_id: str
+    step_order: int
+    step_name: str
+    status: str
+    data: Optional[str] = None  # JSON string
+    created_at: Optional[str] = Field(
+        default_factory=lambda: datetime.now().isoformat()
+    )
+
+
 class ComparisonModel(BaseModel):
     """DTO for the comparisons table."""
 

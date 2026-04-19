@@ -5,6 +5,8 @@ import tempfile
 from unittest.mock import MagicMock, patch
 from wpipe import Pipeline, PipelineAsync, Condition, For, PipelineTracker, ExecutionMode
 from wpipe.exception import TaskError, ProcessError, ApiError
+from wsqlite import WSQLite
+from wpipe.sqlite.tables_dto.tracker_models import PipelineModel
 
 @pytest.fixture
 def temp_db():
@@ -89,7 +91,6 @@ async def test_pipeline_async_io_bound_mode():
     """Test PipelineAsync with IO_BOUND mode."""
     pipeline = PipelineAsync()
     # Note: PipelineAsync might not have execution_mode if it's strictly sequential in _pipeline_run
-    # but let's check if it covers the lines.
     
     async def step1(d): return {"s1": True}
     pipeline.set_steps([(step1, "S1", "1.0")])
@@ -117,11 +118,10 @@ def test_tracker_add_event_full(temp_db):
 def test_exporter_csv_edge_cases(temp_db):
     """Test exporter with CSV special characters."""
     from wpipe.export import PipelineExporter
-    import sqlite3
     
-    with sqlite3.connect(temp_db) as conn:
-        conn.execute("CREATE TABLE pipelines (id TEXT, started_at TEXT, name TEXT, status TEXT)")
-        conn.execute("INSERT INTO pipelines VALUES ('P1', '2023-01-01', 'Comma, Name', 'completed')")
+    # Use WSQLite to setup the table (no sqlite3 import)
+    db = WSQLite(PipelineModel, temp_db)
+    db.insert(PipelineModel(id='P1', started_at='2023-01-01', name='Comma, Name', status='completed'))
     
     exporter = PipelineExporter(temp_db)
     csv_data = exporter.export_pipeline_logs(format="csv")

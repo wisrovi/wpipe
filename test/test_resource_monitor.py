@@ -6,10 +6,11 @@ import unittest
 from unittest.mock import MagicMock, patch
 import time
 import os
-import sqlite3
 import tempfile
 import shutil
+from wsqlite import WSQLite
 from wpipe.resource_monitor.monitor import ResourceMonitor, ResourceMonitorRegistry
+from wpipe.sqlite.tables_dto.tracker_models import ResourceMetricsModel
 
 
 class TestResourceMonitor(unittest.TestCase):
@@ -56,7 +57,7 @@ class TestResourceMonitor(unittest.TestCase):
 
     @patch("psutil.Process")
     def test_monitor_db_save(self, mock_process_class):
-        """Test saving metrics to SQLite."""
+        """Test saving metrics to SQLite via WSQLite."""
         mock_process = MagicMock()
         mock_process_class.return_value = mock_process
         mock_process.memory_info.return_value.rss = 50 * 1024 * 1024
@@ -66,15 +67,14 @@ class TestResourceMonitor(unittest.TestCase):
         with monitor:
             time.sleep(0.1)
         
-        # Verify DB exists and has data
+        # Verify DB exists and has data using WSQLite
         self.assertTrue(os.path.exists(self.db_path))
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM resource_metrics WHERE task_name = 'db_task'")
-            row = cursor.fetchone()
-            self.assertIsNotNone(row)
-            self.assertEqual(row[1], "db_task")
-            self.assertEqual(row[2], 50.0) # start_ram_mb
+        inspector = WSQLite(ResourceMetricsModel, self.db_path)
+        records = inspector.get_by_field(task_name="db_task")
+        
+        self.assertTrue(len(records) > 0)
+        self.assertEqual(records[0].task_name, "db_task")
+        self.assertEqual(records[0].start_ram_mb, 50.0)
 
     @patch("psutil.Process")
     def test_monitor_registry(self, mock_process_class):

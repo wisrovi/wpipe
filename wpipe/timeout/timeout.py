@@ -7,6 +7,7 @@ and ensure pipeline reliability.
 
 import asyncio
 import signal
+import threading
 from functools import wraps
 from typing import Any, Callable, Optional, TypeVar
 
@@ -34,6 +35,11 @@ def timeout_sync(seconds: Optional[float]) -> Callable:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> T:
             if seconds is None:
+                return func(*args, **kwargs)
+
+            # Check if running in main thread, signal.signal only works there
+            if threading.current_thread() != threading.main_thread():
+                # Cannot enforce timeout using signals in a background thread
                 return func(*args, **kwargs)
 
             def _handle_timeout(signum: int, frame: Any) -> None:

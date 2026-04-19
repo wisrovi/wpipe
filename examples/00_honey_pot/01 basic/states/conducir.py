@@ -1,9 +1,10 @@
 from dto.car import Car, Niveles
 
-from wpipe import state, to_obj
+from wpipe import step, timeout_sync, to_obj
 
 
-@state(name="conducir", version="v1.0")
+@step(name="conducir", version="v1.0", timeout=10, description="Conducir el coche" , tags=["viaje", "coche"], retry_count=3, retry_delay=0.01)
+@timeout_sync(seconds=2)
 @to_obj
 def conducir(my_car: Car):
     if my_car.nivel_gasolina == Niveles.alto:

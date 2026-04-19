@@ -1,6 +1,5 @@
 import asyncio
 import os
-import sqlite3
 import pytest
 import json
 import tempfile
@@ -167,6 +166,6 @@ def test_exporter_official(lts_db):
     assert any(d["name"] == "export_target" for d in data)
     
     # Export Stats
-    stats_json = exporter.export_statistics()
-    stats = json.loads(stats_json)
+    stats_output = exporter.export_statistics()
+    stats = json.loads(stats_output) if isinstance(stats_output, str) else stats_output
     assert stats["total_executions"] >= 1
