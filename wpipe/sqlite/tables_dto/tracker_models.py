@@ -35,6 +35,8 @@ class StepModel(BaseModel):
     step_version: Optional[str] = None
     step_type: str = "task"
     status: str = "running"
+    parent_step_id: Optional[int] = None
+    parallel_group: Optional[str] = None
     started_at: Optional[str] = Field(
         default_factory=lambda: datetime.now().isoformat()
     )

@@ -1,0 +1,8 @@
+name: slow_pipeline
+registered_at: '2026-04-20T06:56:36.081984'
+step_count: 1
+steps:
+- func: <function slow_step at 0x7fee704285e0>
+  name: slow
+  type: task
+  version: v1.0

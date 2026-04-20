@@ -1,0 +1,16 @@
+name: api_notification
+registered_at: '2026-04-20T06:56:03.500420'
+step_count: 3
+steps:
+- func: <function fetch_data at 0x7f29fe87b600>
+  name: fetch_data
+  type: task
+  version: v1.0
+- func: <function process_data at 0x7f29d735c680>
+  name: process_data
+  type: task
+  version: v1.0
+- func: <function notify_webhook at 0x7f29d735c860>
+  name: notify_webhook
+  type: task
+  version: v1.0

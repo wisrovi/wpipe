@@ -1,0 +1,20 @@
+name: data_workflow
+registered_at: '2026-04-20T06:56:06.346374'
+step_count: 4
+steps:
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7fdd2df3c980>>
+  name: collect_phase
+  type: task
+  version: v1.0
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7fdd2df3b4d0>>
+  name: process_phase
+  type: task
+  version: v1.0
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7fdd2df3bc50>>
+  name: export_phase
+  type: task
+  version: v1.0
+- func: <function send_notification at 0x7fdd2de154e0>
+  name: notification
+  type: task
+  version: v1.0

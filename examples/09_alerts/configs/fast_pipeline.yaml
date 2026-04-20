@@ -1,0 +1,8 @@
+name: fast_pipeline
+registered_at: '2026-04-20T06:56:36.077469'
+step_count: 1
+steps:
+- func: <function quick_step at 0x7fee9389b600>
+  name: quick
+  type: task
+  version: v1.0

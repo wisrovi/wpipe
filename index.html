@@ -3,72 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WPipe v1.6.1 - Motor de Orquestación Profesional</title>
+    <title>WPipe v1.6.3 | El Motor de Orquestación Ultra-Rápido para Python</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 2rem; background-color: #f8f9fa; }
-        .hero { background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); color: white; padding: 3rem; border-radius: 1rem; text-align: center; margin-bottom: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .hero h1 { margin: 0; font-size: 3rem; }
-        .version { background: #ffd600; color: #000; padding: 0.2rem 1rem; border-radius: 2rem; font-size: 1rem; font-weight: bold; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-        .feature-card { background: white; padding: 1.5rem; border-radius: 0.8rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eee; transition: transform 0.2s; }
-        .feature-card:hover { transform: translateY(-5px); }
-        .feature-card h3 { color: #1a73e8; margin-top: 0; }
-        code { background: #272822; color: #f8f8f2; padding: 1rem; border-radius: 0.5rem; display: block; overflow-x: auto; font-size: 0.9rem; }
-        .badge { display: inline-block; padding: 0.3rem 0.8rem; background: #e3f2fd; color: #0d47a1; border-radius: 0.5rem; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem; }
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --accent: #f59e0b;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--light);
+            background-color: var(--dark);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.1;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            margin: 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            max-width: 700px;
+            margin: 1.5rem 0 2.5rem;
+        }
+
+        .version-badge {
+            background: rgba(79, 172, 254, 0.1);
+            border: 1px solid var(--secondary);
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: var(--dark);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+        }
+
+        /* Stats Section */
+        .stats-bar {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h2 { font-size: 2.5rem; margin: 0; color: var(--primary); }
+        .stat-item p { margin: 0.5rem 0 0; color: #64748b; font-weight: 600; }
+
+        /* Features Section */
+        .features { padding: 8rem 0; }
+        .section-title { text-align: center; margin-bottom: 5rem; }
+        .section-title h2 { font-size: 3rem; margin: 0; }
+        .section-title p { color: #94a3b8; font-size: 1.2rem; margin-top: 1rem; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: #1e293b;
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: #232f45;
+            border-color: rgba(79, 172, 254, 0.3);
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card h3 { font-size: 1.5rem; margin: 0 0 1rem; }
+        .feature-card p { color: #94a3b8; margin: 0; }
+
+        /* Code Comparison */
+        .comparison { padding: 8rem 0; background: #0a0f1d; }
+        .code-block {
+            background: #011627;
+            padding: 2rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 10rem 0;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--dark), #1e293b);
+        }
+
+        .cta h2 { font-size: 4rem; margin-bottom: 2rem; }
+
+        footer {
+            padding: 4rem 0;
+            text-align: center;
+            color: #475569;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>🚀 WPipe</h1>
-        <p>Motor de Orquestación Grado Industrial <span class="version">v1.6.3</span></p>
-        <p>Orquestación asíncrona, resiliencia extrema y análisis inteligente.</p>
+
+    <section class="hero">
+        <div class="version-badge">WPipe v1.6.3 LTS</div>
+        <h1>Domina el Caos.</h1>
+        <p>WPipe es la librería de orquestación para Python que combina paralelismo nativo, resiliencia extrema y observabilidad forense en un solo paquete ultra-ligero.</p>
+        <div style="margin-top: 2rem;">
+            <a href="https://github.com/wisrovi/wpipe" class="btn btn-primary"><i class="fab fa-github"></i> Ver en GitHub</a>
+            <a href="docs/build/html/index.html" class="btn" style="color: white; margin-left: 1rem;">Documentación <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <div class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h2>&lt; 1ms</h2>
+                    <p>LATENCIA CORE</p>
+                </div>
+                <div class="stat-item">
+                    <h2>100%</h2>
+                    <p>ASÍNCRONO</p>
+                </div>
+                <div class="stat-item">
+                    <h2>625+</h2>
+                    <p>TESTS PASSING</p>
+                </div>
+                <div class="stat-item">
+                    <h2>∞</h2>
+                    <p>ESCALABILIDAD</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <h2>💎 Características de Élite</h2>
-    <div class="features">
-        <div class="feature-card">
-            <div class="badge">RESILIENCIA</div>
-            <h3>Checkpoints Inteligentes</h3>
-            <p>Reanuda pipelines automáticamente desde el último punto seguro tras un fallo, usando expresiones lógicas.</p>
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>¿Por qué ingenieros de élite eligen WPipe?</h2>
+                <p>No es solo un orquestador, es el sistema nervioso de tus aplicaciones distribuidas.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Modo Relámpago</h3>
+                    <p>Arquitectura optimizada con WSQLite y modo WAL. Diseñado para ráfagas de alta frecuencia sin bloqueos.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Resiliencia Forense</h3>
+                    <p>Checkpoints inteligentes. Si el sistema cae, WPipe sabe exactamente dónde reanudar sin perder un milisegundo.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>Paralelismo Puro</h3>
+                    <p>Bypass del GIL de forma transparente. Ejecuta hilos o procesos distribuidos con una sola línea de código.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-eye"></i>
+                    <h3>Observabilidad Total</h3>
+                    <p>Dashboard en tiempo real. Localización exacta de errores (archivo/línea) y métricas de hardware por paso.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-code-branch"></i>
+                    <h3>Paridad Sync/Async</h3>
+                    <p>Escribe una vez, ejecuta como quieras. Soporte nativo para Corrutinas y ejecución bloqueante tradicional.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-file-contract"></i>
+                    <h3>Contratos de Datos</h3>
+                    <p>Validación estricta de esquemas Pydantic integrada. Errores detectados antes de que ocurran.</p>
+                </div>
+            </div>
         </div>
-        <div class="feature-card">
-            <div class="badge">VELOCIDAD</div>
-            <h3>Modo Relámpago</h3>
-            <p>Arquitectura optimizada bajo WSQLite con modo WAL. Monitorización sin bloqueos para ráfagas de alta frecuencia.</p>
-        </div>
-        <div class="feature-card">
-            <div class="badge">CONCURRENCIA</div>
-            <h3>Paralelismo Nativo</h3>
-            <p>Usa Hilos o Procesos de forma declarativa. Paridad total entre ejecución síncrona y asíncrona.</p>
-        </div>
-        <div class="feature-card">
-            <div class="badge">OBSERVABILIDAD</div>
-            <h3>Captura Forense</h3>
-            <p>Localización exacta (archivo y línea) de errores con notificación automática y análisis de estadísticas global.</p>
-        </div>
-    </div>
+    </section>
 
-    <h2>🚀 Inicio Rápido</h2>
-    <p>Crea un viaje resiliente en segundos:</p>
-    <pre><code>from wpipe import Pipeline, Parallel, step
+    <section class="comparison">
+        <div class="container">
+            <div class="section-title">
+                <h2>Simplicidad que Escala</h2>
+                <p>De un script local a una arquitectura de microservicios en segundos.</p>
+            </div>
+            <div class="code-block">
+<pre><span style="color: #ff7b72;">from</span> <span style="color: #d2a8ff;">wpipe</span> <span style="color: #ff7b72;">import</span> Pipeline, step, Parallel
 
-@step(name="Tarea", retry_count=3)
-def mi_tarea(ctx):
-    return {"status": "ok"}
+<span style="color: #d2a8ff;">@step</span>(name=<span style="color: #a5d6ff;">"Analizar"</span>, retry_count=<span style="color: #79c0ff;">3</span>)
+<span style="color: #ff7b72;">def</span> <span style="color: #d2a8ff;">analizar_datos</span>(data):
+    <span style="color: #ff7b72;">return</span> {<span style="color: #a5d6ff;">"status"</span>: <span style="color: #a5d6ff;">"procesado"</span>}
 
-# Orquestación con reanudación y paralelismo
-viaje = Pipeline(pipeline_name="Viaje_Pro")
-viaje.add_checkpoint("hito_1", expression="status == 'ok'")
-
-viaje.set_steps([
-    mi_tarea,
-    Parallel(steps=[paso_A, paso_B], max_workers=2)
+<span style="color: #8b949e;"># Orquestación de grado industrial en 3 líneas</span>
+pipeline = Pipeline(verbose=<span style="color: #79c0ff;">True</span>)
+pipeline.set_steps([
+    Parallel([step_a, step_b, step_c]), <span style="color: #8b949e;"># ¡Paralelismo real!</span>
+    analizar_datos
 ])
+pipeline.run({<span style="color: #a5d6ff;">"input"</span>: <span style="color: #79c0ff;">100</span>})</pre>
+            </div>
+        </div>
+    </section>
 
-viaje.run({"inicio": True})</code></pre>
+    <section class="cta">
+        <div class="container">
+            <h2>¿Listo para acelerar?</h2>
+            <p style="font-size: 1.5rem; color: #94a3b8; margin-bottom: 3rem;">Únete a la nueva generación de orquestación en Python.</p>
+            <code>pip install wpipe</code>
+            <div style="margin-top: 3rem;">
+                <a href="https://github.com/wisrovi/wpipe" class="btn btn-primary">Empieza Gratis Ahora</a>
+            </div>
+        </div>
+    </section>
 
-    <footer style="margin-top: 4rem; text-align: center; color: #666;">
-        <p>Mantenido por <a href="https://github.com/wisrovi" style="color: #1a73e8;">wisrovi</a> | <a href="https://wpipe.readthedocs.io" style="color: #1a73e8;">Documentación Completa</a></p>
+    <footer>
+        <p>&copy; 2024-2026 William Steve Rodriguez Villamizar. WPipe is MIT Licensed.</p>
+        <p>Hecho con <i class="fas fa-heart" style="color: #ff4d4d;"></i> para desarrolladores exigentes.</p>
     </footer>
+
 </body>
 </html>

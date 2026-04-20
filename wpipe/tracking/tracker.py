@@ -261,6 +261,8 @@ class PipelineTracker:
             step_name=step_name,
             step_version=kwargs.get("step_version"),
             step_type=kwargs.get("step_type", "task"),
+            parent_step_id=kwargs.get("parent_step_id"),
+            parallel_group=kwargs.get("parallel_group"),
             input_data=(
                 _safe_json_dumps(kwargs.get("input_data"))
                 if kwargs.get("input_data")

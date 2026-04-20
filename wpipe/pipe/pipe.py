@@ -936,6 +936,9 @@ class Pipeline(APIClient):
         """
         Execute a single step and handle alert hooks.
         """
+        parent_step_id = kwargs.get("parent_step_id")
+        parallel_group = kwargs.get("parallel_group")
+
         if isinstance(item, Condition):
             if self.verbose:
                 print(f"\n[CONDITION] Evaluating: {item.expression}")
@@ -964,6 +967,13 @@ class Pipeline(APIClient):
             return data
 
         if isinstance(item, Parallel):
+            # Tracking del bloque Parallel como un nodo padre
+            tracked_parallel_id = self._start_step_tracking(
+                "Parallel Block", "v1.0", "parallel", data, 
+                parent_step_id=parent_step_id, 
+                parallel_group=parallel_group
+            )
+            
             # Limpiamos el contexto de objetos no serializables
             loop_data = data.copy()
             loop_data.pop("progress_rich", None)
@@ -982,17 +992,20 @@ class Pipeline(APIClient):
                 print(f"[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})")
             
             try:
+                # El group ID para que el dashboard sepa que van juntos
+                current_group = f"group_{tracked_parallel_id or 'none'}"
+                
                 with ExecutorClass(max_workers=max_workers) as executor:
                     if is_multiprocess:
                         # Para procesos usamos el método estático
                         futures = {
-                            executor.submit(self._run_parallel_step, self, step, loop_data.copy(), kwargs): step
+                            executor.submit(self._run_parallel_step, self, step, loop_data.copy(), {**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group}): step
                             for step in item.steps
                         }
                     else:
                         # Para hilos, usamos una función local que captura self pero no requiere pickling
                         def _thread_worker(s, d):
-                            return self._execute_step(s, d, **kwargs)
+                            return self._execute_step(s, d, **{**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group})
                             
                         futures = {
                             executor.submit(_thread_worker, step, loop_data.copy()): step
@@ -1010,6 +1023,8 @@ class Pipeline(APIClient):
                             errors.append(f"Execution error: {str(e)}")
             except Exception as e:
                 data["error"] = f"Executor failure: {str(e)}"
+                # Completar tracking con error
+                self._end_step_tracking(tracked_parallel_id, None, data["error"])
                 return data
             
             # Combinamos los resultados de todos los hilos/procesos
@@ -1019,6 +1034,9 @@ class Pipeline(APIClient):
                 
             if errors:
                 data["error"] = " | ".join(errors)
+            
+            # Finalizar tracking del bloque parallel
+            self._end_step_tracking(tracked_parallel_id, data if not errors else None, data.get("error"))
                 
             return data
 
@@ -1049,7 +1067,11 @@ class Pipeline(APIClient):
         if func:
             self.task_name = name
             self.task_id = step_id
-            tracked_step_id = self._start_step_tracking(name, version, "task", data)
+            tracked_step_id = self._start_step_tracking(
+                name, version, "task", data, 
+                parent_step_id=parent_step_id, 
+                parallel_group=parallel_group
+            )
             data["progress_rich"] = data.get("progress_rich") or self.progress_rich
 
             step_error = None
@@ -1150,6 +1172,8 @@ class Pipeline(APIClient):
         version: Optional[str] = None,
         step_type: str = "task",
         input_data: Optional[dict] = None,
+        parent_step_id: Optional[int] = None,
+        parallel_group: Optional[str] = None,
     ) -> Optional[int]:
         if not self.tracker or not self.pipeline_id:
             return None
@@ -1166,6 +1190,8 @@ class Pipeline(APIClient):
             step_version=version,
             step_type=step_type,
             input_data=filtered_input,
+            parent_step_id=parent_step_id,
+            parallel_group=parallel_group,
         )
 
     def _end_step_tracking(
