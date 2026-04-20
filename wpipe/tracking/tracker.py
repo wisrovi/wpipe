@@ -368,6 +368,8 @@ class PipelineTracker:
                 "version": step.get("step_version"),
                 "error": step.get("error_message"),
                 "order": step["step_order"],
+                "parent_step_id": step.get("parent_step_id"),
+                "parallel_group": step.get("parallel_group"),
                 "branch_taken": (
                     output_data.get("branch_taken")
                     if isinstance(output_data, dict)
