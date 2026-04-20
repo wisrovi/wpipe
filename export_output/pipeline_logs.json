@@ -1,5 +1,21 @@
 [
   {
+    "id": "PIPE-E185A926",
+    "name": "viaje",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-20T07:00:31.753964",
+    "completed_at": "2026-04-20T07:00:31.885524",
+    "total_duration_ms": 131.522,
+    "input_data": "{\"marca\": \"Toyota\", \"modelo\": \"Corolla\", \"ano\": 2020, \"color\": \"Rojo\", \"nivel_gasolina\": \"Medio\", \"nivel_aceite\": \"Medio\", \"nivel_neumaticos\": \"Medio\", \"extras\": {\"aire_acondicionado\": true, \"radio\": true, \"gps\": true, \"asientos_calefaccionados\": false, \"techo_solar\": false}}",
+    "output_data": null,
+    "error_message": "Execution error: error return without exception set | Execution error: bad parameter or other API misuse",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f091e010a50>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje.yaml"
+  },
+  {
     "id": "PIPE-753918A5",
     "name": "viaje",
     "worker_id": null,

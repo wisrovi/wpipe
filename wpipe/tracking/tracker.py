@@ -116,6 +116,8 @@ class PipelineTracker:
         self.db_system_metrics = WSQLite(system_metrics, db_path)
         self.db_comparisons = WSQLite(comparisons, db_path)
 
+        self._ensure_schema_up_to_date()
+
         self._alert_hooks = {}
 
         # Specialized Managers
@@ -433,3 +435,29 @@ class PipelineTracker:
             self.db_steps.delete(s.id)
         for e in self.db_events.get_by_field(pipeline_id=pipeline_id):
             self.db_events.delete(e.id)
+
+    def _ensure_schema_up_to_date(self):
+        """Ensure the database schema is up to date with the latest models."""
+        try:
+            import sqlite3
+            import os
+            if not os.path.exists(self.db_path):
+                return
+            
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Check for parent_step_id and parallel_group in stepmodel
+            cursor.execute("PRAGMA table_info(stepmodel)")
+            columns = [info[1] for info in cursor.fetchall()]
+            
+            if columns: # Only if table exists
+                if "parent_step_id" not in columns:
+                    cursor.execute("ALTER TABLE stepmodel ADD COLUMN parent_step_id INTEGER")
+                if "parallel_group" not in columns:
+                    cursor.execute("ALTER TABLE stepmodel ADD COLUMN parallel_group TEXT")
+                    
+                conn.commit()
+            conn.close()
+        except Exception:
+            pass
