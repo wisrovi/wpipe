@@ -18,7 +18,11 @@ class AnalysisManager:
 
     def get_stats(self) -> dict:
         """Get overall statistics for dashboard summary cards."""
-        all_p = self.db_pipelines.get_all()
+        try:
+            all_p = self.db_pipelines.get_all()
+        except Exception:
+            all_p = []
+            
         total = len(all_p)
         completed = len([p for p in all_p if p.status == "completed"])
         errors = len([p for p in all_p if p.status == "error"])
@@ -31,11 +35,18 @@ class AnalysisManager:
         ]
         avg_duration = sum(durations) / len(durations) if durations else 0
 
-        all_steps = self.db_steps.get_all()
+        try:
+            all_steps = self.db_steps.get_all()
+        except Exception:
+            all_steps = []
+            
         total_steps = len(all_steps)
         completed_steps = len([s for s in all_steps if s.status == "completed"])
 
-        fired = self.db_alerts_fired.get_all()
+        try:
+            fired = self.db_alerts_fired.get_all()
+        except Exception:
+            fired = []
         unack = len([a for a in fired if getattr(a, "acknowledged", 0) == 0])
 
         return {

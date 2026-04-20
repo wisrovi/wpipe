@@ -441,6 +441,16 @@ class PipelineTracker:
         try:
             import sqlite3
             import os
+            
+            # Si el archivo no existe, WSQLite lo creará en la primera operación,
+            # pero necesitamos asegurarnos de que las columnas de paralelismo estén ahí
+            # si WSQLite crea una tabla basada en un modelo antiguo o simplificado.
+            # Forzamos una pequeña operación para asegurar que las tablas existan
+            try:
+                self.db_steps.get_all()
+            except Exception:
+                pass
+
             if not os.path.exists(self.db_path):
                 return
             
@@ -452,12 +462,17 @@ class PipelineTracker:
             columns = [info[1] for info in cursor.fetchall()]
             
             if columns: # Only if table exists
+                modified = False
                 if "parent_step_id" not in columns:
                     cursor.execute("ALTER TABLE stepmodel ADD COLUMN parent_step_id INTEGER")
+                    modified = True
                 if "parallel_group" not in columns:
                     cursor.execute("ALTER TABLE stepmodel ADD COLUMN parallel_group TEXT")
+                    modified = True
                     
-                conn.commit()
+                if modified:
+                    conn.commit()
             conn.close()
         except Exception:
+            # We don't want to crash the whole app if migration fails
             pass
