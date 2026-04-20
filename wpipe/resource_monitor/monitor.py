@@ -58,7 +58,7 @@ class ResourceMonitor:
         self.start_time = time.time()
         self.start_ram_mb = self.process.memory_info().rss / (1024 * 1024)
         self.peak_ram_mb = self.start_ram_mb
-        
+
         # Guardamos los tiempos iniciales de CPU (user + system)
         cpu_times = self.process.cpu_times()
         self.start_cpu_total = cpu_times.user + cpu_times.system
@@ -73,14 +73,14 @@ class ResourceMonitor:
 
         self.end_time = time.time()
         self.end_ram_mb = self.process.memory_info().rss / (1024 * 1024)
-        
+
         # Calculamos el consumo de CPU real basado en tiempos acumulados
         cpu_times = self.process.cpu_times()
         end_cpu_total = cpu_times.user + cpu_times.system
-        
+
         delta_cpu = end_cpu_total - self.start_cpu_total
         duration = self.end_time - self.start_time
-        
+
         if duration > 0:
             # Porcentaje = (tiempo_cpu_usado / tiempo_real) * 100
             self.avg_cpu_percent = (delta_cpu / duration) * 100
@@ -153,7 +153,7 @@ class ResourceMonitor:
 
         try:
             db = WSQLite(ResourceMetricsModel, self.db_path)
-            
+
             metric_data = ResourceMetricsModel(
                 task_name=self.task_name,
                 start_ram_mb=self.start_ram_mb,
@@ -162,7 +162,7 @@ class ResourceMonitor:
                 avg_cpu_percent=self.avg_cpu_percent,
                 elapsed_seconds=self.elapsed_seconds
             )
-            
+
             db.insert(metric_data)
         except Exception as e:
             print(f"Warning: Could not save metrics to DB: {e}")

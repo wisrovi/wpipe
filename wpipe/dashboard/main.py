@@ -9,7 +9,6 @@ The dashboard is modularized into:
 - templates/: HTML template views
 """
 
-import os
 from pathlib import Path
 from typing import Optional
 

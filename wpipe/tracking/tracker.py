@@ -29,11 +29,20 @@ from .queries import QueryManager
 
 
 def _safe_json_dumps(data: Any) -> str:
-    """Safe JSON dump that handles non-serializable objects."""
+    """Safe JSON dump that handles non-serializable objects and circular references."""
+    from wpipe.util.transform import object_to_dict
+    
     try:
-        return json.dumps(data)
-    except (TypeError, OverflowError):
-        return json.dumps(str(data))
+        # Primero convertimos todo a una estructura de dicts/lists limpia
+        # object_to_dict ya maneja referencias circulares y tipos complejos
+        clean_data = object_to_dict(data)
+        return json.dumps(clean_data)
+    except (TypeError, OverflowError, ValueError):
+        try:
+            # Si falla (por ejemplo, por tipos exóticos no cubiertos), intentamos stringify individual
+            return json.dumps(str(data))
+        except Exception:
+            return '"<Unserializable Data>"'
 
 
 class Metric:
@@ -323,8 +332,8 @@ class PipelineTracker:
             event_type=event_type,
             event_name=event_name,
             message=kwargs.get("message"),
-            data=json.dumps(kwargs.get("data")) if kwargs.get("data") else None,
-            tags=json.dumps(kwargs.get("tags")) if kwargs.get("tags") else None,
+            data=_safe_json_dumps(kwargs.get("data")) if kwargs.get("data") else None,
+            tags=_safe_json_dumps(kwargs.get("tags")) if kwargs.get("tags") else None,
         )
         self.db_events.insert(model)
 
@@ -389,7 +398,7 @@ class PipelineTracker:
 
             # --- Lógica de conexión de bordes ---
             parent_id = step.get("parent_step_id")
-            
+
             if parent_id:
                 # Conexión desde el bloque padre al sub-paso
                 edges.append({
@@ -409,7 +418,7 @@ class PipelineTracker:
                         found_prev = cand
                         break
                     j -= 1
-                
+
                 if found_prev:
                     is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
                     edges.append({
@@ -439,9 +448,9 @@ class PipelineTracker:
     def _ensure_schema_up_to_date(self):
         """Ensure the database schema is up to date with the latest models."""
         try:
-            import sqlite3
             import os
-            
+            import sqlite3
+
             # Si el archivo no existe, WSQLite lo creará en la primera operación,
             # pero necesitamos asegurarnos de que las columnas de paralelismo estén ahí
             # si WSQLite crea una tabla basada en un modelo antiguo o simplificado.
@@ -453,15 +462,15 @@ class PipelineTracker:
 
             if not os.path.exists(self.db_path):
                 return
-            
+
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
-            
+
             # Check for parent_step_id and parallel_group in common table names
             for table in ["steps", "stepmodel"]:
                 cursor.execute(f"PRAGMA table_info({table})")
                 columns = [info[1] for info in cursor.fetchall()]
-                
+
                 if columns: # If table exists
                     modified = False
                     if "parent_step_id" not in columns:
@@ -470,7 +479,7 @@ class PipelineTracker:
                     if "parallel_group" not in columns:
                         cursor.execute(f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT")
                         modified = True
-                        
+
                     if modified:
                         conn.commit()
             conn.close()

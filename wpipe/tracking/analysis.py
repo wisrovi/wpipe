@@ -22,7 +22,7 @@ class AnalysisManager:
             all_p = self.db_pipelines.get_all()
         except Exception:
             all_p = []
-            
+
         total = len(all_p)
         completed = len([p for p in all_p if p.status == "completed"])
         errors = len([p for p in all_p if p.status == "error"])
@@ -39,7 +39,7 @@ class AnalysisManager:
             all_steps = self.db_steps.get_all()
         except Exception:
             all_steps = []
-            
+
         total_steps = len(all_steps)
         completed_steps = len([s for s in all_steps if s.status == "completed"])
 

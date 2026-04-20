@@ -2,7 +2,6 @@
 Asynchronous logic control blocks for WPipe pipelines.
 """
 
-import asyncio
 from typing import Any, List, Optional
 
 

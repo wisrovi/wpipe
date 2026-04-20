@@ -38,13 +38,13 @@ class PipelineExporter:
         """
         # Forzamos el nombre de tabla 'pipelines' que es el que usa el Tracker
         db = WSQLite(PipelineModel, self.db_path)
-        db.table_name = "pipelines" 
-        
+        db.table_name = "pipelines"
+
         if pipeline_id:
             results = db.get_by_field(id=pipeline_id)
         else:
             results = db.get_all()
-            
+
         results.sort(key=lambda x: x.started_at or "", reverse=True)
         data = [r.model_dump() for r in results]
 
@@ -66,21 +66,20 @@ class PipelineExporter:
         """
         db = WSQLite(SystemMetricsModel, self.db_path)
         db.table_name = "system_metrics"
-        
+
         if pipeline_id:
             results = db.get_by_field(pipeline_id=pipeline_id)
         else:
             results = db.get_all()
-            
+
         results.sort(key=lambda x: x.recorded_at or "", reverse=True)
         data = [r.model_dump() for r in results]
 
         if format == "json":
             return self._export_json(data, output_path)
-        elif format == "csv":
+        if format == "csv":
             return self._export_csv(data, output_path)
-        else:
-            raise ValueError(f"Unsupported format: {format}")
+        raise ValueError(f"Unsupported format: {format}")
 
     def export_statistics(
         self,
@@ -99,8 +98,7 @@ class PipelineExporter:
                 Path(output_path).write_text(data)
                 return output_path
             return data
-        else:
-            raise ValueError("Statistics export only supports JSON format")
+        raise ValueError("Statistics export only supports JSON format")
 
     def _export_json(
         self, data: List[Dict[str, Any]], output_path: Optional[str] = None
@@ -118,7 +116,8 @@ class PipelineExporter:
         """Export data as CSV."""
         if not data:
             csv_str = ""
-            if output_path: Path(output_path).write_text(csv_str)
+            if output_path:
+                Path(output_path).write_text(csv_str)
             return csv_str
 
         keys = data[0].keys()
@@ -138,12 +137,12 @@ class PipelineExporter:
         try:
             db = WSQLite(PipelineModel, self.db_path)
             db.table_name = "pipelines"
-            
+
             if pipeline_id:
                 results = db.get_by_field(id=pipeline_id)
             else:
                 results = db.get_all()
-                
+
             if not results:
                 return {
                     "total_executions": 0,
@@ -157,7 +156,7 @@ class PipelineExporter:
             durations = [r.total_duration_ms / 1000.0 for r in results if r.total_duration_ms is not None]
             avg_time = sum(durations) / len(durations) if durations else 0.0
             successful = len([r for r in results if r.status == 'completed'])
-            
+
             return {
                 "total_executions": total_executions,
                 "successful_executions": successful,
@@ -165,5 +164,5 @@ class PipelineExporter:
                 "average_execution_time_seconds": round(avg_time, 2),
                 "exported_at": datetime.now().isoformat(),
             }
-        except Exception as e:
+        except OSError as e:
             return {"error": str(e), "total_executions": 0}

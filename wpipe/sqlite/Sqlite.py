@@ -8,10 +8,8 @@ import threading
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Optional
 
-import pandas as pd
-from pydantic import BaseModel, Field
 from wsqlite import WSQLite as WSQLiteBase
 
 from .tables_dto.log_gestor_model import WsqliteModel
@@ -20,7 +18,7 @@ from .tables_dto.records import RecordModel
 
 class PatchedWSQLite(WSQLiteBase):
     """Internal WSQLite with performance tuning."""
-    
+
     _db_connections = {}
     _db_lock = threading.Lock()
 
@@ -42,25 +40,32 @@ class Wsqlite:
         self._output_db: dict = {}
         self._details_db: dict = {}
         self._input_db: dict = {}
-        self.record_uuid = str(uuid.uuid4()) # Identificador único para esta ejecución
+        self._error_db: dict = {}
+        self.record_uuid = str(uuid.uuid4())  # Identificador único para esta ejecución
         self.db = PatchedWSQLite(WsqliteModel, db_name)
 
     @property
-    def input(self) -> dict: return self._input_db
+    def input(self) -> dict:
+        return self._input_db
+
     @input.setter
     def input(self, value: dict) -> None:
         self._input_db = value
         self._save_state()
 
     @property
-    def output(self) -> dict: return self._output_db
+    def output(self) -> dict:
+        return self._output_db
+
     @output.setter
     def output(self, value: dict) -> None:
         self._output_db = value
         self._save_state()
 
     @property
-    def details(self) -> dict: return self._details_db
+    def details(self) -> dict:
+        return self._details_db
+
     @details.setter
     def details(self, value: dict) -> None:
         self._details_db = value
@@ -71,14 +76,15 @@ class Wsqlite:
         # Buscamos si ya existe por datetime o similar, o simplemente insertamos/actualizamos
         # Para el LogGestor, lo más robusto es usar el UUID como identificador en el campo ID (si es string)
         # o manejar una fila única por contexto de 'with'.
-        
+
         model = WsqliteModel(
             input=json.dumps(self._input_db),
             output=json.dumps(self._output_db),
-            details=json.dumps(self._details_db)
+            details=json.dumps(self._details_db),
+            error=json.dumps(self._error_db) if self._error_db else None,
         )
-        
-        # Como WSQLite no devuelve ID fiable en todas las versiones, 
+
+        # Como WSQLite no devuelve ID fiable en todas las versiones,
         # usamos una lógica de 'Upsert' basada en la memoria del objeto.
         existing = self.db.get_all()
         # Si es la primera vez que guardamos algo en este 'with', insertamos.
@@ -86,24 +92,46 @@ class Wsqlite:
         if not hasattr(self, "_last_id") or self._last_id is None:
             # Simulamos el insert con SQL puro a través del motor parcheado para recuperar el ID
             table = self.db.table_name
-            query = f"INSERT INTO {table} (input, output, details, datetime) VALUES (?, ?, ?, ?)"
+            query = f"INSERT INTO {table} (input, output, details, error, datetime) VALUES (?, ?, ?, ?, ?)"
             conn = self.db._get_connection()
             cursor = conn.cursor()
-            cursor.execute(query, (model.input, model.output, model.details, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            cursor.execute(
+                query,
+                (
+                    model.input,
+                    model.output,
+                    model.details,
+                    model.error,
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                ),
+            )
             conn.commit()
             self._last_id = cursor.lastrowid
         else:
             # Actualizamos la fila que acabamos de crear
             table = self.db.table_name
-            query = f"UPDATE {table} SET input=?, output=?, details=? WHERE rowid=?"
+            query = f"UPDATE {table} SET input=?, output=?, details=?, error=? WHERE rowid=?"
             conn = self.db._get_connection()
-            conn.execute(query, (model.input, model.output, model.details, self._last_id))
+            conn.execute(
+                query, (model.input, model.output, model.details, model.error, self._last_id)
+            )
             conn.commit()
+
+    @property
+    def error(self) -> dict:
+        return self._error_db
+
+    @error.setter
+    def error(self, value: dict) -> None:
+        self._error_db = value
+        self._save_state()
 
     def count_records(self) -> int:
         return len(self.db.get_all())
 
-    def __enter__(self) -> "Wsqlite": return self
+    def __enter__(self) -> "Wsqlite":
+        return self
+
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self._save_state()
 
@@ -116,11 +144,18 @@ class SQLite:
         self.executor = ThreadPoolExecutor(max_workers=10)
         self.db = PatchedWSQLite(RecordModel, db_name)
 
-    def write(self, input_data=None, output=None, details=None, record_id=None) -> Optional[int]:
-        input_str = json.dumps(input_data) if isinstance(input_data, dict) else input_data
-        if isinstance(output, dict): output_str = json.dumps(output)
-        elif isinstance(output, str): output_str = json.dumps({"output": output})
-        else: output_str = None
+    def write(
+        self, input_data=None, output=None, details=None, record_id=None
+    ) -> Optional[int]:
+        input_str = (
+            json.dumps(input_data) if isinstance(input_data, dict) else input_data
+        )
+        if isinstance(output, dict):
+            output_str = json.dumps(output)
+        elif isinstance(output, str):
+            output_str = json.dumps({"output": output})
+        else:
+            output_str = None
         details_str = json.dumps(details) if isinstance(details, dict) else details
 
         table = self.db.table_name
@@ -133,7 +168,15 @@ class SQLite:
         else:
             query = f"INSERT INTO {table} (input, output, details, datetime) VALUES (?, ?, ?, ?)"
             cursor = conn.cursor()
-            cursor.execute(query, (input_str, output_str, details_str, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            cursor.execute(
+                query,
+                (
+                    input_str,
+                    output_str,
+                    details_str,
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                ),
+            )
             conn.commit()
             return cursor.lastrowid
 
@@ -144,12 +187,20 @@ class SQLite:
         row = cursor.fetchone()
         if row:
             # Mapeo manual simple para compatibilidad
-            return {"id": record_id, "input": row[1], "output": row[2], "details": row[3]}
+            return {
+                "id": record_id,
+                "input": row[1],
+                "output": row[2],
+                "details": row[3],
+            }
         return None
 
     def count_records(self) -> int:
         return len(self.db.get_all())
 
-    def __enter__(self) -> "SQLite": return self
+    def __enter__(self) -> "SQLite":
+        return self
+
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        if self.executor: self.executor.shutdown(wait=True)
+        if self.executor:
+            self.executor.shutdown(wait=True)

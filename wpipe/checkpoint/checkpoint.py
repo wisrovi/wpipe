@@ -47,7 +47,7 @@ class CheckpointManager:
         """
         serializable_data = object_to_dict(data) if data else None
         data_json = json.dumps(serializable_data) if serializable_data else None
-        
+
         checkpoint = CheckpointModel(
             pipeline_id=pipeline_id,
             step_order=step_order,
@@ -55,7 +55,7 @@ class CheckpointManager:
             status=status,
             data=data_json
         )
-        
+
         # Check if already exists for this pipeline and step
         existing = self.db.get_by_field(pipeline_id=pipeline_id, step_order=step_order)
         if existing:
@@ -77,7 +77,7 @@ class CheckpointManager:
         checkpoints = self.db.get_by_field(pipeline_id=pipeline_id, status='success')
         if not checkpoints:
             return None
-        
+
         # Sort by step_order descending
         checkpoints.sort(key=lambda x: x.step_order, reverse=True)
         row = checkpoints[0]
@@ -132,7 +132,7 @@ class CheckpointManager:
                 "failed": 0,
                 "last_checkpoint": None,
             }
-            
+
         successful = sum(1 for cp in checkpoints if cp.status == 'success')
         failed = sum(1 for cp in checkpoints if cp.status == 'failed')
         last_cp = max(cp.created_at for cp in checkpoints) if checkpoints else None

@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
-from wsqlite import WSQLite
 
 
 class WsqliteModel(BaseModel):
@@ -14,6 +13,7 @@ class WsqliteModel(BaseModel):
     details: Optional[str] = Field(
         None, description="Additional details as JSON string"
     )
+    error: Optional[str] = Field(None, description="Error message if any")
     datetime: Optional[str] = Field(
         default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )

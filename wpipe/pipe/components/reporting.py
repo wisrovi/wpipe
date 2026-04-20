@@ -2,11 +2,10 @@
 Unified API reporting and metrics logic for synchronous and asynchronous pipelines.
 """
 
-import json
 import traceback
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
+
 from wpipe.api_client import APIClient
-from .constants import Codes
 
 
 class ReportingMixin:

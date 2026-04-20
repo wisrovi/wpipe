@@ -5,6 +5,15 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.15] - 2026-04-20
+
+### Added
+- **Robustez en Tracking**: Soporte para objetos complejos y resiliencia ante referencias circulares en el contexto del pipeline.
+- **Sincronización Thread-safe**: Implementación de bloqueos y manejo de conexiones seguras para SQLite en ejecuciones paralelas de alta intensidad.
+
+### Fixed
+- Resiliencia ante objetos no serializables en el contexto, permitiendo guardar checkpoints incluso con datos técnicos complejos.
+
 ## [1.6.3] - 2026-04-20
 ### Fixed
 - Fixed critical bug in `CheckpointManager` where progress could not be saved if the context contained non-serializable objects (like `rich.progress.Progress`).
