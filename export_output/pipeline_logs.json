@@ -1,0 +1,34 @@
+[
+  {
+    "id": "PIPE-753918A5",
+    "name": "viaje",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-20T07:00:12.986251",
+    "completed_at": "2026-04-20T07:00:13.086960",
+    "total_duration_ms": 100.664,
+    "input_data": "{\"marca\": \"Toyota\", \"modelo\": \"Corolla\", \"ano\": 2020, \"color\": \"Rojo\", \"nivel_gasolina\": \"Medio\", \"nivel_aceite\": \"Medio\", \"nivel_neumaticos\": \"Medio\", \"extras\": {\"aire_acondicionado\": true, \"radio\": true, \"gps\": true, \"asientos_calefaccionados\": false, \"techo_solar\": false}}",
+    "output_data": null,
+    "error_message": "Execution error: bad parameter or other API misuse",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f4411fcca50>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje.yaml"
+  },
+  {
+    "id": "PIPE-364E1F99",
+    "name": "viaje",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-20T06:59:52.294240",
+    "completed_at": "2026-04-20T06:59:52.433933",
+    "total_duration_ms": 139.638,
+    "input_data": "{\"marca\": \"Toyota\", \"modelo\": \"Corolla\", \"ano\": 2020, \"color\": \"Rojo\", \"nivel_gasolina\": \"Medio\", \"nivel_aceite\": \"Medio\", \"nivel_neumaticos\": \"Medio\", \"extras\": {\"aire_acondicionado\": true, \"radio\": true, \"gps\": true, \"asientos_calefaccionados\": false, \"techo_solar\": false}}",
+    "output_data": null,
+    "error_message": "[Error Code: 502] hechar_gasolina() got an unexpected keyword argument 'parent_step_id' | [Error Code: 502] revisar_luces() got an unexpected keyword argument 'parent_step_id' | [Error Code: 502] cambiar_aceite() got an unexpected keyword argument 'parent_step_id'",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f235fc64a50>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje.yaml"
+  }
+]

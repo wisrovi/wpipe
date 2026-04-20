@@ -873,6 +873,11 @@ class Pipeline(APIClient):
             if _get_val(step_meta, "retry_on_exceptions") is not None:
                 retry_on_exceptions = _get_val(step_meta, "retry_on_exceptions")
 
+        # 3. Limpiar argumentos internos de tracking para no pasarlos a la función del usuario
+        # que podría no aceptarlos (unexpected keyword argument)
+        kwargs.pop("parent_step_id", None)
+        kwargs.pop("parallel_group", None)
+
         last_exception = None
         for attempt in range(max_retries + 1):
             try:

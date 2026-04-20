@@ -385,32 +385,38 @@ class PipelineTracker:
             }
             nodes.append(node)
 
-            # Lógica de conexión de bordes
-            if i > 0:
-                prev_step = steps_list[i - 1]
-                # Si el anterior no es una condición, conexión simple
-                if prev_step["step_type"] != "condition":
-                    edges.append(
-                        {
-                            "from": f"step_{prev_step['id']}",
-                            "to": f"step_{step['id']}",
-                            "label": "next",
-                        }
-                    )
-                else:
-                    # Si el anterior fue una condición, marcamos si este paso fue tomado o saltado
-                    is_skipped = (
-                        step["status"] == "skipped" or step["step_type"] == "skipped"
-                    )
-                    edges.append(
-                        {
-                            "from": f"step_{prev_step['id']}",
-                            "to": f"step_{step['id']}",
-                            "label": "taken" if not is_skipped else "skipped",
-                            "style": "solid" if not is_skipped else "dashed",
-                            "color": "#10b981" if not is_skipped else "#6b7280",
-                        }
-                    )
+            # --- Lógica de conexión de bordes ---
+            parent_id = step.get("parent_step_id")
+            
+            if parent_id:
+                # Conexión desde el bloque padre al sub-paso
+                edges.append({
+                    "from": f"step_{parent_id}",
+                    "to": f"step_{step['id']}",
+                    "label": "parallel",
+                    "style": "dashed" if step["status"] == "skipped" else "solid"
+                })
+            elif i > 0:
+                # Conexión secuencial normal, buscando el último paso real que NO tenga un padre
+                # (para no conectar un paso secuencial con un sub-paso de un paralelo)
+                j = i - 1
+                found_prev = None
+                while j >= 0:
+                    cand = steps_list[j]
+                    if not cand.get("parent_step_id"):
+                        found_prev = cand
+                        break
+                    j -= 1
+                
+                if found_prev:
+                    is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
+                    edges.append({
+                        "from": f"step_{found_prev['id']}",
+                        "to": f"step_{step['id']}",
+                        "label": "next" if found_prev["step_type"] != "condition" else ("taken" if not is_skipped else "skipped"),
+                        "style": "solid" if not is_skipped else "dashed",
+                        "color": "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped) else None
+                    })
 
         return {
             "pipeline_id": pipeline_id,

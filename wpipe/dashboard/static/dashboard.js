@@ -473,21 +473,72 @@ function renderGraph(graph) {
     edgesG.innerHTML = '';
     nodesG.innerHTML = '';
     
-    // Calculate dimensions based on node count
-    const nodeCount = graph.nodes.length;
-    const spacing = 150;
-    const svgW = Math.max(1200, 80 + nodeCount * spacing + 100);
-    const svgH = 500;
-    const centerY = svgH / 2;
+    // --- NUEVO ALGORITMO DE LAYOUT ---
+    // Agrupamos nodos por nivel jerárquico y parent_step_id
+    const nodesMap = {};
+    graph.nodes.forEach(n => nodesMap[n.id] = n);
+    
+    const levels = {}; // Nivel horizontal -> Lista de nodos
+    const nodePositions = {}; // node.id -> {level, offset}
+    
+    // Asignar niveles basándose en el flujo secuencial y jerarquía
+    let currentLevel = 0;
+    
+    graph.nodes.forEach(node => {
+        if (!node.parent_step_id) {
+            // Nodos principales (sin padre) se ponen secuencialmente
+            nodePositions[node.id] = { level: currentLevel, offset: 0 };
+            if (!levels[currentLevel]) levels[currentLevel] = [];
+            levels[currentLevel].push(node.id);
+            currentLevel++;
+        } else {
+            // Sub-nodos (paralelos) se ponen en el mismo nivel que su padre pero con offset
+            const parentId = `step_${node.parent_step_id}`;
+            const parentPos = nodePositions[parentId];
+            
+            if (parentPos) {
+                const subLevel = parentPos.level + 1;
+                if (!levels[subLevel]) levels[subLevel] = [];
+                
+                // Determinamos offset vertical (cuántos sub-nodos hay ya en este nivel para este padre)
+                const siblings = levels[subLevel].filter(id => nodesMap[id].parent_step_id === node.parent_step_id);
+                nodePositions[node.id] = { level: subLevel, offset: siblings.length };
+                levels[subLevel].push(node.id);
+            } else {
+                // Fallback si no encontramos al padre
+                nodePositions[node.id] = { level: currentLevel, offset: 0 };
+                if (!levels[currentLevel]) levels[currentLevel] = [];
+                levels[currentLevel].push(node.id);
+                currentLevel++;
+            }
+        }
+    });
+
+    const spacingX = 180;
+    const spacingY = 120;
+    const startX = 100;
+    const centerY = 250;
+    
+    // Calculamos coordenadas X, Y para cada nodo
+    graph.nodes.forEach(nd => {
+        const pos = nodePositions[nd.id];
+        nd.x = startX + (pos.level * spacingX);
+        
+        // El offset vertical centra los nodos paralelos alrededor del centro
+        const siblingsInLevel = levels[pos.level].length;
+        if (siblingsInLevel > 1) {
+            const totalH = (siblingsInLevel - 1) * spacingY;
+            nd.y = (centerY - totalH/2) + (levels[pos.level].indexOf(nd.id) * spacingY);
+        } else {
+            nd.y = centerY;
+        }
+    });
+    
+    const svgW = Math.max(1200, startX + (Object.keys(levels).length * spacingX) + 100);
+    const svgH = 600;
     
     svg.setAttribute('width', svgW);
     svg.setAttribute('height', svgH);
-    
-    // Position nodes
-    graph.nodes.forEach((nd, idx) => {
-        nd.x = 80 + idx * spacing;
-        nd.y = centerY;
-    });
     
     // Reset transform state
     graphState.scale = 1;
@@ -497,7 +548,7 @@ function renderGraph(graph) {
     // Add zoom/pan handlers to container
     setupGraphPanZoom(container, svg);
     
-    // Draw edges first (so they appear behind nodes)
+    // Draw edges
     const statusColors = {
         completed: '#10b981',
         error: '#ef4444',
@@ -510,54 +561,50 @@ function renderGraph(graph) {
         const t = graph.nodes.find(n => n.id === e.to);
         if (!f || !t) return;
         
-        const color = statusColors[f.status] || '#64748b';
+        const color = e.color || statusColors[f.status] || '#64748b';
+        const isParallel = e.label === 'parallel';
+        const isSkipped = e.label === 'skipped';
         
-        edgesG.innerHTML += `
-            <line x1="${f.x}" y1="${f.y}" x2="${t.x}" y2="${t.y}"
-                  stroke="${color}" stroke-width="2" stroke-linecap="round"/>
-        `;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', f.x);
+        line.setAttribute('y1', f.y);
+        line.setAttribute('x2', t.x);
+        line.setAttribute('y2', t.y);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', isParallel ? '1.5' : '2.5');
+        if (isParallel || isSkipped) line.setAttribute('stroke-dasharray', '5,5');
+        line.setAttribute('stroke-linecap', 'round');
+        edgesG.appendChild(line);
     });
     
-    // Draw nodes with hover
+    // Draw nodes
     graph.nodes.forEach(nd => {
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         g.setAttribute('transform', `translate(${nd.x},${nd.y})`);
         g.style.cursor = 'pointer';
         g.setAttribute('data-node-id', nd.id);
         
-        // Mouse events for hover
         g.addEventListener('mouseenter', (e) => showNodeTooltip(e, nd));
         g.addEventListener('mouseleave', hideNodeTooltip);
         g.addEventListener('click', () => selectNode(nd));
         
         const color = statusColors[nd.status] || '#64748b';
+        const isParallel = nd.step_type === 'parallel';
         
-        // Detect if node is a pipeline (nested pipeline call)
-        const isPipeline = nd.type === 'pipeline' || nd.name?.includes('Pipeline') || nd.step_type === 'pipeline';
-        
-        if (nd.type === 'condition') {
+        if (isParallel) {
+            // Nodo especial para el bloque Parallel (Caja)
+            g.innerHTML = `
+                <rect x="-40" y="-30" width="80" height="60" rx="8" fill="#1e293b" stroke="${color}" stroke-width="3"/>
+                <path d="M-15,-10 L15,-10 M-15,0 L15,0 M-15,10 L15,10" stroke="${color}" stroke-width="3" stroke-linecap="round"/>
+                <rect x="-55" y="35" width="110" height="22" rx="5" fill="rgba(15,23,42,0.95)"/>
+                <text y="51" text-anchor="middle" fill="#00f2fe" font-size="11" font-weight="bold">${nd.name.toUpperCase()}</text>
+            `;
+        } else if (nd.type === 'condition') {
             g.innerHTML = `
                 <polygon points="0,-30 30,0 0,30 -30,0" fill="#8b5cf6" stroke="${color}" stroke-width="3"/>
                 <text text-anchor="middle" dominant-baseline="central" fill="white" font-size="18" font-weight="bold">${nd.branch_taken === 'true' ? '✓' : '✗'}</text>
                 <rect x="-50" y="35" width="100" height="20" rx="4" fill="rgba(15,23,42,0.9)"/>
                 <text y="50" text-anchor="middle" fill="#fff" font-size="11">${nd.name.substring(0,12)}</text>
-            `;
-        } else if (nd.type === 'skipped') {
-            g.innerHTML = `
-                <circle r="25" fill="#374151" stroke="#4b5563" stroke-width="2" stroke-dasharray="4,2"/>
-                <text text-anchor="middle" dominant-baseline="central" fill="#9ca3af" font-size="16">⊘</text>
-                <rect x="-45" y="30" width="90" height="18" rx="4" fill="rgba(30,41,59,0.9)"/>
-                <text y="43" text-anchor="middle" fill="#9ca3af" font-size="10">${nd.name.substring(0,10)}</text>
-            `;
-        } else if (isPipeline) {
-            // Render pipeline nodes with double circle and special styling
-            const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
-            g.innerHTML = `
-                <circle r="28" fill="${color}" stroke="${color}" stroke-width="2"/>
-                <circle r="22" fill="none" stroke="${color}" stroke-width="2" opacity="0.6"/>
-                <text text-anchor="middle" dominant-baseline="central" fill="white" font-size="18" font-weight="bold">⊕</text>
-                <rect x="-55" y="35" width="110" height="22" rx="5" fill="rgba(15,23,42,0.95)"/>
-                <text y="51" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">${nd.name.substring(0,12)}</text>
             `;
         } else {
             const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
