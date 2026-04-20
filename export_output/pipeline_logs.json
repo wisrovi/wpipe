@@ -1,5 +1,37 @@
 [
   {
+    "id": "PIPE-6BA8F5F6",
+    "name": "viaje",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-20T07:08:11.993794",
+    "completed_at": "2026-04-20T07:08:12.152656",
+    "total_duration_ms": 158.808,
+    "input_data": "{\"marca\": \"Toyota\", \"modelo\": \"Corolla\", \"ano\": 2020, \"color\": \"Rojo\", \"nivel_gasolina\": \"Medio\", \"nivel_aceite\": \"Medio\", \"nivel_neumaticos\": \"Medio\", \"extras\": {\"aire_acondicionado\": true, \"radio\": true, \"gps\": true, \"asientos_calefaccionados\": false, \"techo_solar\": false}}",
+    "output_data": null,
+    "error_message": "Execution error: bad parameter or other API misuse",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f9059308910>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje.yaml"
+  },
+  {
+    "id": "PIPE-A90A6809",
+    "name": "viaje",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-20T07:00:35.375615",
+    "completed_at": "2026-04-20T07:00:35.516025",
+    "total_duration_ms": 140.365,
+    "input_data": "\"{'marca': 'Toyota', 'modelo': 'Corolla', 'ano': 2020, 'color': 'Rojo', 'nivel_gasolina': 'Medio', 'nivel_aceite': 'Medio', 'nivel_neumaticos': 'Medio', 'extras': Extras(aire_acondicionado=True, radio=True, gps=True, asientos_calefaccionados=False, techo_solar=False)}\"",
+    "output_data": null,
+    "error_message": "Execution error: bad parameter or other API misuse",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f59c7a6c7d0>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje.yaml"
+  },
+  {
     "id": "PIPE-E185A926",
     "name": "viaje",
     "worker_id": null,

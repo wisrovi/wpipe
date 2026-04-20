@@ -321,6 +321,7 @@ async function loadPipelines() {
 }
 
 function renderPipelineList(pipelines) {
+    console.log('Rendering pipelines:', pipelines?.length);
     const list = document.getElementById('pipeline-list');
     if (!pipelines || pipelines.length === 0) {
         list.innerHTML = '<div class="empty-state"><p>No pipelines</p></div>';
@@ -1337,6 +1338,3 @@ function renderTimelineChart(data) {
         }
     });
 }
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', init);

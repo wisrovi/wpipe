@@ -457,21 +457,22 @@ class PipelineTracker:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            # Check for parent_step_id and parallel_group in stepmodel
-            cursor.execute("PRAGMA table_info(stepmodel)")
-            columns = [info[1] for info in cursor.fetchall()]
-            
-            if columns: # Only if table exists
-                modified = False
-                if "parent_step_id" not in columns:
-                    cursor.execute("ALTER TABLE stepmodel ADD COLUMN parent_step_id INTEGER")
-                    modified = True
-                if "parallel_group" not in columns:
-                    cursor.execute("ALTER TABLE stepmodel ADD COLUMN parallel_group TEXT")
-                    modified = True
-                    
-                if modified:
-                    conn.commit()
+            # Check for parent_step_id and parallel_group in common table names
+            for table in ["steps", "stepmodel"]:
+                cursor.execute(f"PRAGMA table_info({table})")
+                columns = [info[1] for info in cursor.fetchall()]
+                
+                if columns: # If table exists
+                    modified = False
+                    if "parent_step_id" not in columns:
+                        cursor.execute(f"ALTER TABLE {table} ADD COLUMN parent_step_id INTEGER")
+                        modified = True
+                    if "parallel_group" not in columns:
+                        cursor.execute(f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT")
+                        modified = True
+                        
+                    if modified:
+                        conn.commit()
             conn.close()
         except Exception:
             # We don't want to crash the whole app if migration fails
