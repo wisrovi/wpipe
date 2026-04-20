@@ -1319,8 +1319,13 @@ class Pipeline(APIClient):
                     name = getattr(
                         item, "NAME", getattr(item, "__name__", f"step_{advance_id}")
                     )
+                    
+                    # Limpiamos el contexto de objetos no serializables antes de guardar
+                    checkpoint_data = data.copy()
+                    checkpoint_data.pop("progress_rich", None)
+                    
                     checkpoint_mgr.save_checkpoint(
-                        checkpoint_id, advance_id, name, "success", data
+                        checkpoint_id, advance_id, name, "success", checkpoint_data
                     )
 
                 if "error" in data:

@@ -9,6 +9,7 @@ The dashboard is modularized into:
 - templates/: HTML template views
 """
 
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -43,14 +44,14 @@ def start_dashboard(
 
     if open_browser:
         import threading
+        import time
 
         def open_browser_delay():
-            import time
-
-            time.sleep(1.5)
+            time.sleep(2.0)
             open_url(f"http://{host}:{port}")
 
-        threading.Thread(target=open_browser_delay, daemon=True).start()
+        thread = threading.Thread(target=open_browser_delay, daemon=True)
+        thread.start()
 
     uvicorn.run(app, host=host, port=port)
 
@@ -73,12 +74,12 @@ def create_app(
 
     @app.get("/api/stats")
     async def get_stats():
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_stats()
 
     @app.get("/api/pipelines")
     async def get_pipelines(status: Optional[str] = None):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_pipelines(status=status)
 
     @app.get("/api/data/{table}")
@@ -89,7 +90,7 @@ def create_app(
         search: Optional[str] = None,
         status: Optional[str] = None,
     ):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_table_data(
             table=table,
             page=page,
@@ -100,34 +101,23 @@ def create_app(
 
     @app.get("/api/pipelines/{pipeline_id}")
     async def get_pipeline(pipeline_id: str):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_pipeline(pipeline_id)
 
     @app.get("/api/pipelines/by-name/{pipeline_name}")
-<<<<<<< HEAD
     async def get_pipeline_executions(pipeline_name: str, limit: int = 100, offset: int = 0):
         """Get all executions of a pipeline by name."""
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_pipeline_executions(pipeline_name, limit=limit, offset=offset)
-=======
-    async def get_pipeline_executions(
-        pipeline_name: str, limit: int = 100, offset: int = 0
-    ):
-        """Get all executions of a pipeline by name."""
-        tracker = PipelineTracker(db_path, config_dir)
-        return tracker.get_pipeline_executions(
-            pipeline_name, limit=limit, offset=offset
-        )
->>>>>>> DEV-WSRV/changes_for_future_LTS_v1.5
 
     @app.get("/api/pipelines/{pipeline_id}/graph")
     async def get_pipeline_graph(pipeline_id: str):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_pipeline_graph(pipeline_id)
 
     @app.get("/api/pipelines/{pipeline_id}/yaml")
     async def get_pipeline_yaml(pipeline_id: str):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         pipeline = tracker.get_pipeline(pipeline_id)
         if pipeline and pipeline.get("config_yaml"):
             yaml_path = Path(pipeline["config_yaml"])
@@ -141,42 +131,42 @@ def create_app(
 
     @app.get("/api/trends")
     async def get_trends(days: int = 7, pipeline_name: Optional[str] = None):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_trend_data(days=days, pipeline_name=pipeline_name)
 
     @app.get("/api/alerts")
     async def get_alerts(limit: int = 50, severity: Optional[str] = None):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_fired_alerts(limit=limit, severity=severity)
 
     @app.get("/api/alerts/config")
     async def get_alert_config():
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_alert_thresholds()
 
     @app.get("/api/events")
     async def get_events(pipeline_id: Optional[str] = None, limit: int = 50):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_events(pipeline_id=pipeline_id, limit=limit)
 
     @app.get("/api/slow-steps")
     async def get_slow_steps(limit: int = 10):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_top_slow_steps(limit=limit)
 
     @app.get("/api/analysis/states")
     async def get_states_analysis():
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_states_analysis()
 
     @app.get("/api/analysis/pipelines")
     async def get_pipelines_analysis():
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_pipelines_analysis()
 
     @app.post("/api/alerts/{alert_id}/acknowledge")
     async def acknowledge_alert(alert_id: int):
-        tracker = PipelineTracker(db_path, config_dir)
+        tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.acknowledge_alert(alert_id)
 
     @app.get("/api/health")

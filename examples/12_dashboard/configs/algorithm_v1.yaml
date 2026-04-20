@@ -1,0 +1,16 @@
+name: algorithm_v1
+registered_at: '2026-04-20T06:54:34.718278'
+step_count: 3
+steps:
+- func: <function load_data_fast at 0x7fdbf66bd120>
+  name: load
+  type: task
+  version: v1.0
+- func: <function process_fast at 0x7fdbcf17c860>
+  name: process
+  type: task
+  version: v1.0
+- func: <function output_result at 0x7fdbcf17cf40>
+  name: output
+  type: task
+  version: v1.0

@@ -1,4 +1,4 @@
-# 🚀 WPipe v1.6.2
+# 🚀 WPipe v1.6.3
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 

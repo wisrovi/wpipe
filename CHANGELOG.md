@@ -5,6 +5,12 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2026-04-20
+### Fixed
+- Fixed critical bug in `CheckpointManager` where progress could not be saved if the context contained non-serializable objects (like `rich.progress.Progress`).
+- Improved `Pipeline.run` to clean technical data before saving checkpoints.
+- Fixed `step_name` retrieval in `save_checkpoint` for decorated steps.
+
 ## [1.6.2] - 2026-04-19
 
 ### Documentation and Example Refinement

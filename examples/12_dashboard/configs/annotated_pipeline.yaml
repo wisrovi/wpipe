@@ -1,0 +1,24 @@
+name: annotated_pipeline
+registered_at: '2026-04-20T06:54:36.760679'
+step_count: 5
+steps:
+- func: <function initialize at 0x7f1ac589b740>
+  name: initialize
+  type: task
+  version: v1.0
+- func: <function process_batch_1 at 0x7f1a9e3b07c0>
+  name: process_batch_1
+  type: task
+  version: v1.0
+- func: <function checkpoint at 0x7f1a9e3b09a0>
+  name: checkpoint
+  type: task
+  version: v1.0
+- func: <function process_batch_2 at 0x7f1a9e3b0fe0>
+  name: process_batch_2
+  type: task
+  version: v1.0
+- func: <function finalize at 0x7f1a9e3b0ea0>
+  name: finalize
+  type: task
+  version: v1.0

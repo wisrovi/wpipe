@@ -1,0 +1,28 @@
+name: weather_normal
+registered_at: '2026-04-20T06:54:32.606197'
+step_count: 3
+steps:
+- func: <function read_temp at 0x7f0ee62c62a0>
+  name: read_temp
+  type: task
+  version: v1.0
+- branch_false:
+  - meta: {}
+    name: heating_on
+    type: task
+    version: v1.0
+  branch_true:
+  - meta: {}
+    name: cooling_on
+    type: task
+    version: v1.0
+  - meta: {}
+    name: fan_high
+    type: task
+    version: v1.0
+  expression: temp > 30
+  type: condition
+- func: <function log_action at 0x7f0ee62c5800>
+  name: log_action
+  type: task
+  version: v1.0
