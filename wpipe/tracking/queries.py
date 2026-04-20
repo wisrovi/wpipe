@@ -22,7 +22,11 @@ class QueryManager:
         self, limit: int = 50, offset: int = 0, status: Optional[str] = None
     ) -> List[dict]:
         """Get list of pipelines for the dashboard."""
-        all_pipelines = self.db_pipelines.get_all()
+        try:
+            all_pipelines = self.db_pipelines.get_all()
+        except Exception:
+            return []
+
         all_pipelines.sort(key=lambda x: x.started_at or "", reverse=True)
 
         if status:
@@ -32,23 +36,34 @@ class QueryManager:
 
         result = []
         for p in paged:
-            d = p.model_dump()
-            for field in ["input_data", "output_data"]:
-                if d.get(field):
-                    try:
-                        d[field] = json.loads(d[field])
-                    except:
-                        pass
-            result.append(d)
+            try:
+                d = p.model_dump()
+                for field in ["input_data", "output_data"]:
+                    if d.get(field):
+                        try:
+                            d[field] = json.loads(d[field])
+                        except:
+                            pass
+                result.append(d)
+            except Exception:
+                continue
         return result
 
     def get_pipeline(self, pipeline_id: str) -> Optional[dict]:
         """Get detailed pipeline data including steps."""
-        pipelines = self.db_pipelines.get_by_field(id=pipeline_id)
+        try:
+            pipelines = self.db_pipelines.get_by_field(id=pipeline_id)
+        except Exception:
+            return None
+
         if not pipelines:
             return None
 
-        pipeline = pipelines[0].model_dump()
+        try:
+            pipeline = pipelines[0].model_dump()
+        except Exception:
+            return None
+
         for field in ["input_data", "output_data"]:
             if pipeline.get(field):
                 try:
@@ -56,19 +71,25 @@ class QueryManager:
                 except:
                     pass
 
-        steps = self.db_steps.get_by_field(pipeline_id=pipeline_id)
-        steps.sort(key=lambda x: x.step_order)
+        try:
+            steps = self.db_steps.get_by_field(pipeline_id=pipeline_id)
+            steps.sort(key=lambda x: x.step_order)
+        except Exception:
+            steps = []
 
         pipeline["steps"] = []
         for s in steps:
-            sd = s.model_dump()
-            for field in ["input_data", "output_data"]:
-                if sd.get(field):
-                    try:
-                        sd[field] = json.loads(sd[field])
-                    except:
-                        pass
-            pipeline["steps"].append(sd)
+            try:
+                sd = s.model_dump()
+                for field in ["input_data", "output_data"]:
+                    if sd.get(field):
+                        try:
+                            sd[field] = json.loads(sd[field])
+                        except:
+                            pass
+                pipeline["steps"].append(sd)
+            except Exception:
+                continue
 
         return pipeline
 
