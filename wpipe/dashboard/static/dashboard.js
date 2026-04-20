@@ -420,12 +420,16 @@ window.togglePipelineGroup = function(name, evt) {
 }
 
 async function selectPipeline(id) {
+    console.log('Selecting pipeline:', id);
     try {
         const pRes = await fetch('/api/pipelines/' + id);
+        if (!pRes.ok) throw new Error('Pipeline fetch failed');
         const pipeline = await pRes.json();
         
+        if (!pipeline) return;
+
         currentPipelineId = id;
-        currentPipelineName = pipeline.name;
+        currentPipelineName = pipeline.name || id;
         
         // Mark execution as active in the list
         document.querySelectorAll('.pipeline-execution').forEach(el => {
@@ -433,18 +437,28 @@ async function selectPipeline(id) {
         });
         document.querySelector(`.pipeline-execution[onclick="selectPipeline('${id}')"]`)?.classList.add('active');
         
-        const res = await fetch('/api/pipelines/' + id + '/graph');
-        const graph = await res.json();
-        graphState.currentGraph = graph;
-        renderGraph(graph);
+        const gRes = await fetch('/api/pipelines/' + id + '/graph');
+        if (gRes.ok) {
+            const graph = await gRes.json();
+            graphState.currentGraph = graph;
+            try {
+                renderGraph(graph);
+            } catch (ge) {
+                console.error('Render graph error:', ge);
+            }
+        }
         
-        renderSteps(pipeline);
+        try {
+            renderSteps(pipeline);
+        } catch (se) {
+            console.error('Render steps error:', se);
+        }
         
         // Update pipeline info in header
         const info = document.getElementById('graph-pipeline-info');
         if (info) {
             info.innerHTML = `
-                <span style="font-size:0.8rem;color:var(--text-muted)">${pipeline.name}</span>
+                <span style="font-size:0.8rem;color:var(--text-muted)">${currentPipelineName}</span>
                 <button onclick="showCurrentPipelineHistory()" style="margin-left:0.5rem;padding:2px 8px;font-size:0.7rem" class="btn btn-ghost">
                     <i class="fas fa-history"></i> History
                 </button>
@@ -502,11 +516,11 @@ function renderGraph(graph) {
                 if (!levels[subLevel]) levels[subLevel] = [];
                 
                 // Determinamos offset vertical (cuántos sub-nodos hay ya en este nivel para este padre)
-                const siblings = levels[subLevel].filter(id => nodesMap[id].parent_step_id === node.parent_step_id);
+                const siblings = levels[subLevel].filter(id => nodesMap[id] && nodesMap[id].parent_step_id === node.parent_step_id);
                 nodePositions[node.id] = { level: subLevel, offset: siblings.length };
                 levels[subLevel].push(node.id);
             } else {
-                // Fallback si no encontramos al padre
+                // Fallback si no encontramos al padre o el padre no ha sido posicionado aún
                 nodePositions[node.id] = { level: currentLevel, offset: 0 };
                 if (!levels[currentLevel]) levels[currentLevel] = [];
                 levels[currentLevel].push(node.id);
