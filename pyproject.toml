@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "wpipe"
-version = "1.6.3"
+version = "1.6.10"
 authors = [
     { name = "William Steve Rodriguez Villamizar", email = "wisrovi.rodriguez@gmail.com" }
 ]
@@ -44,6 +44,8 @@ dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.23.0",
     "wsqlite>=0.1.0",
+    "psutil>=5.9.0",
+    "jinja2>=3.0.0",
 ]
 
 [project.optional-dependencies]
@@ -73,6 +75,7 @@ Changelog = "https://github.com/wisrovi/wpipe/blob/main/CHANGELOG.md"
 [tool.hatch.build.targets.sdist]
 include = [
     "/wpipe",
+    "/wpipe/sqlite/tables_dto",
     "/examples/01_basic_pipeline",
     "/examples/02_api_pipeline",
     "/examples/11_checkpointing",
@@ -95,6 +98,10 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["wpipe"]
+include = [
+    "/wpipe",
+    "/wpipe/sqlite/tables_dto",
+]
 exclude = [
     "**/*.db",
     "**/*.log",
