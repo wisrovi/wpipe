@@ -1,5 +1,5 @@
 from dto.car import Car, Niveles
-from wpipe import Condition, For, Pipeline, state, timeout_sync, to_obj, step, PipelineContext
+from wpipe import Condition, For, Pipeline, timeout_sync, to_obj, step, PipelineContext
 
 # Esquema dummy para evitar errores de importación
 class ViajeContext(PipelineContext):

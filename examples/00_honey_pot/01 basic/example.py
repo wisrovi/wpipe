@@ -1,7 +1,10 @@
+import json
 import os
 import random
-import json
+import tempfile
+import threading
 from pathlib import Path
+
 from dto.car import Car
 from states import (
     Print_info,
@@ -11,34 +14,34 @@ from states import (
     fase_preparacion,
     hechar_gasolina,
     inflar_neumaticos,
+    nested,
     print_gasolina,
-    nested
 )
 
 from wpipe import (
-    Condition, 
-    For, 
-    Metric, 
-    Pipeline, 
-    Severity, 
-    auto_dict_input, 
-    PipelineExporter, 
-    TaskTimer, 
-    ResourceMonitor,
-    step,
+    Condition,
+    For,
+    Metric,
     Parallel,
+    Pipeline,
     PipelineContext,
-    object_to_dict
+    PipelineExporter,
+    ResourceMonitor,
+    Severity,
+    TaskTimer,
+    auto_dict_input,
+    object_to_dict,
+    step,
 )
+from wpipe.sqlite import Wsqlite
 
+# ToDo:  APIClient AnalysisManager,
 
-
-# ToDo:  APIClient AnalysisManager, 
 
 # Definimos revisar_luces para que el bloque Parallel no falle por NameError
 @step(name="revisar_luces", version="v1.0")
-def revisar_luces(d): 
-    print("     * Revisando luces traseras y delanteras... OK")
+def revisar_luces(d):
+    # print("     * Revisando luces traseras y delanteras... OK")
     return d
 
 
@@ -47,8 +50,6 @@ def pinchazo_aleatorio(d):
     if random.random() < 0.5:
         raise RuntimeError("Pinchazo aleatorio")
     return d
-
-
 
 
 @step(name="notificar_telegram_error", version="v1.0")
@@ -65,9 +66,11 @@ def notificar_telegram_error(context, error):
     print(f"🔢 LÍNEA: {error['line_number']}")
     print(f"⚠️ MENSAJE: {error['error_message']}")
     print("-" * 60)
-    print("🔍 INFO DE LA BODEGA (CONTEXTO):")
-    print(f"   Modelo: {context.get('modelo')} | Gasolina: {context.get('nivel_gasolina')}")
-    print("-" * 60)
+    # print("🔍 INFO DE LA BODEGA (CONTEXTO):")
+    # print(
+    #     f"   Modelo: {context.get('modelo')} | Gasolina: {context.get('nivel_gasolina')}"
+    # )
+    # print("-" * 60)
     # Aquí podrías usar requests.post para enviar el mensaje real
     return context
 
@@ -86,7 +89,7 @@ def get_viaje_pipeline():
         retry_on_exceptions=(RuntimeError,),
         #
         collect_system_metrics=True,
-        # 
+        #
         show_progress=True,
     )
 
@@ -120,7 +123,7 @@ def get_viaje_pipeline():
 
     viaje.add_checkpoint(
         checkpoint_name="inicio_viaje",
-        expression="True", # Se dispara al arrancar
+        expression="True",  # Se dispara al arrancar
         steps=[
             Print_info(">>> [CHECKPOINT] Inicio del viaje"),
         ],
@@ -128,7 +131,7 @@ def get_viaje_pipeline():
 
     viaje.add_checkpoint(
         checkpoint_name="combustible_bajo",
-        expression="nivel_gasolina == 'Bajo'", # Se dispara cuando baje el nivel
+        expression="nivel_gasolina == 'Bajo'",  # Se dispara cuando baje el nivel
         steps=[
             Print_info(">>> [CHECKPOINT] Alerta de combustible bajo detectada"),
         ],
@@ -144,14 +147,14 @@ def get_viaje_pipeline():
                     Parallel(
                         steps=[
                             hechar_gasolina,  # Se ejecuta en hilo A
-                            cambiar_aceite,    # Se ejecuta en hilo B
-                            revisar_luces      # Se ejecuta en hilo C
+                            cambiar_aceite,  # Se ejecuta en hilo B
+                            revisar_luces,  # Se ejecuta en hilo C
                         ],
                         max_workers=3,
                         # use_processes=False  # Cambiado a False para evitar errores de pickling con objetos complejos
                     ),
                     Print_info("Resumen post-paralelo"),
-                    (print_gasolina, "Mostrar gasolina", "v1.0"),
+                    # (print_gasolina, "Mostrar gasolina", "v1.0"),
                     For(
                         validation_expression="nivel_gasolina != 'Vacío'",
                         steps=[
@@ -164,11 +167,11 @@ def get_viaje_pipeline():
                                 ],
                                 branch_false=[desinflar_neumaticos],
                             ),
-                            (print_gasolina, "Mostrar gasolina", "v1.0"),
+                            # (print_gasolina, "Mostrar gasolina", "v1.0"),
                             pinchazo_aleatorio,
                         ],
                     ),
-                ],
+                    (lambda c: print(f"[non_serializable_obj]: {c.get('non_serializable_obj')}", "non_serializable_obj", "v"))               ],
             ),
         ],
     )
@@ -290,6 +293,26 @@ def exporter_data():
     print("\n✓ Export demo completed!")
 
 
+def create_complex_handler():
+    class InternalSystemHandler:
+        """
+        A class defined inside a function scope.
+        It manages a threading lock and an open temporary file.
+        """
+
+        def __init__(self):
+            # Reason 1: Locks are tied to the OS process state
+            self.lock = threading.Lock()
+            # Reason 2: File handles are specific OS descriptors
+            self.resource = tempfile.NamedTemporaryFile(mode="w+")
+            self.data = "Sensitive Runtime State"
+
+        def __repr__(self):
+            return "<InternalSystemHandler active>"
+
+    return InternalSystemHandler()
+
+
 def main():
     # Usamos ResourceMonitor para medir el consumo de hardware (RAM/CPU)
     with ResourceMonitor("Viaje_Completo") as monitor:
@@ -299,15 +322,22 @@ def main():
 
             @auto_dict_input
             def run_pipeline(car_dict):
+
+                # This instance is complex because it is locally scoped and holds system resources
+                complex_obj = create_complex_handler()
+                car_dict["non_serializable_obj"] = complex_obj
+
                 return viaje.run(car_dict)
 
             car = Car(marca="Toyota", modelo="Corolla")
-            print(f"Carro inicial: {car.nivel_gasolina}\n")
+            # print(f"Carro inicial: {car.nivel_gasolina}\n")
             results = run_pipeline(car)
             if timer.exceeded_timeout():
-                print("⚠ Work exceeded timeout!")
+                # print("⚠ Work exceeded timeout!")
+                pass
             else:
-                print("✓ Work completed within timeout")
+                # print("✓ Work completed within timeout")
+                pass
 
     # Resumen de recursos al terminar
     print(f"\nResource Summary:")
@@ -316,49 +346,65 @@ def main():
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
     print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
 
-    print(f"\nViajes completados: {results.get('_loop_iteration')}")
-    print(f"Gasolina final: {results.get('nivel_gasolina')}")
-    print(f"Aceite final: {results.get('nivel_aceite')}")
+    # print(f"\nViajes completados: {results.get('_loop_iteration')}")
+    # print(f"Gasolina final: {results.get('nivel_gasolina')}")
+    # print(f"Aceite final: {results.get('nivel_aceite')}")
 
     if "error" in results:
         print(f"Error detectado: {results.get('error')}")
 
     # Show fired alerts
-    print("\nFired Alerts:")
+    # print("\nFired Alerts:")
     fired = viaje.tracker.get_fired_alerts(limit=10)
-    for alert in fired:
-        print(
-            f"  - [{alert['severity'].upper()}] {alert.get('alert_name', 'Unknown')}: {alert['message']}"
-        )
+    # for alert in fired:
+    #     print(
+    #         f"  - [{alert['severity'].upper()}] {alert.get('alert_name', 'Unknown')}: {alert['message']}"
+    #     )
 
     # Initialize exporter
-    exporter_data()
+    # exporter_data()
 
     # --- ANÁLISIS DE DATOS INTELIGENTE ---
-    print("\n" + "=" * 70)
-    print("📊 ANÁLISIS DE RENDIMIENTO (AnalysisManager)")
-    print("=" * 70)
-    
+    # print("\n" + "=" * 70)
+    # print("📊 ANÁLISIS DE RENDIMIENTO (AnalysisManager)")
+    # print("=" * 70)
+
     analysis = viaje.tracker.analysis
     stats = analysis.get_stats()
-    
-    print(f"\nResumen Global:")
-    print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
-    print(f"  - Tasa de Éxito: {stats['success_rate']}%")
-    print(f"  - Duración Media: {stats['avg_duration_ms']:.2f} ms")
-    
+
+    # print(f"\nResumen Global:")
+    # print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
+    # print(f"  - Tasa de Éxito: {stats['success_rate']}%")
+    # print(f"  - Duración Media: {stats['avg_duration_ms']:.2f} ms")
+
     slow_steps = analysis.get_top_slow_steps(limit=3)
-    if slow_steps:
-        print(f"\nPasos más lentos (Cuellos de botella):")
-        for step in slow_steps:
-            print(f"  - {step['step_name']}: {step['avg_duration_ms']:.2f} ms")
-            
+    # if slow_steps:
+    #     print(f"\nPasos más lentos (Cuellos de botella):")
+    #     for step in slow_steps:
+    #         print(f"  - {step['step_name']}: {step['avg_duration_ms']:.2f} ms")
+
     trends = analysis.get_trend_data(days=1)
-    if trends:
-        print(f"\nTendencia de Hoy:")
-        print(f"  - Ejecuciones realizadas: {trends[0]['count']}")
-        print(f"  - Éxitos: {trends[0]['success']}")
+    # if trends:
+    #     print(f"\nTendencia de Hoy:")
+    #     print(f"  - Ejecuciones realizadas: {trends[0]['count']}")
+    #     print(f"  - Éxitos: {trends[0]['success']}")
 
 
 if __name__ == "__main__":
-    main()
+    with Wsqlite(db_name="demo.db") as db:
+        args_dict = {
+            "inference": {
+                "source": "<image>",
+            },
+            "conf": 0.5,
+        }
+
+        db.input = args_dict
+
+        db.details = {"info": "Starting the process..."}
+
+        db.output = {"queso": "delicioso"}
+        
+        db.error = {"simulated_error": "error "}
+
+        main()

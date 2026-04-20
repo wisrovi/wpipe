@@ -1,9 +1,9 @@
 from dto.car import Car, Niveles
 
-from wpipe import state, to_obj
+from wpipe import step, to_obj
 
 
-@state(name="desinflar_neumaticos", version="v1.0")
+@step(name="desinflar_neumaticos", version="v1.0")
 @to_obj
 def desinflar_neumaticos(my_car: Car):
     if my_car.nivel_neumaticos == Niveles.alto:
