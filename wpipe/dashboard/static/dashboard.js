@@ -808,8 +808,12 @@ function renderSteps(pipeline) {
         <div class="step-card" onclick="toggleStepDetails(${idx})" style="cursor:pointer">
             <div class="step-header" style="display:flex;align-items:center;gap:0.75rem">
                 <div class="step-icon ${escapeHtml(s.status)}">${getStepIcon(s.status)}</div>
-                <div class="step-name" style="flex:1">${escapeHtml(s.step_name)}</div>
+                <div class="step-name" style="flex:1">
+                    <div>${escapeHtml(s.step_name)}</div>
+                    <div style="font-size:0.7rem;color:var(--text-muted)">${s.step_type} • ${s.step_version || 'v?'} ${s.parallel_group ? '⫝ ' + s.parallel_group : ''}</div>
+                </div>
                 <div class="step-meta">
+                    #${s.step_order}
                     ${s.duration_ms ? fmtDuration(s.duration_ms) : ''}
                     <i class="fas fa-chevron-down step-chevron" style="margin-left:0.5rem;font-size:0.7rem"></i>
                 </div>
@@ -829,10 +833,19 @@ function getStepIcon(status) {
 function renderStepDetails(step) {
     let html = '';
     
+    // Basic info
     if (step.status) {
         html += `<div style="margin-bottom:0.5rem"><strong>Status:</strong> <span class="status-badge ${step.status}">${step.status}</span></div>`;
     }
     
+    // Type and Version
+    html += `<div style="margin-bottom:0.5rem;font-size:0.85rem">`;
+    if (step.step_type) html += `<div><strong>Type:</strong> ${step.step_type}</div>`;
+    if (step.step_version) html += `<div><strong>Version:</strong> ${step.step_version}</div>`;
+    if (step.step_order) html += `<div><strong>Order:</strong> #${step.step_order}</div>`;
+    html += `</div>`;
+    
+    // Timing
     const startTime = step.started_at || step.start_time;
     const endTime = step.completed_at || step.end_time;
     if (startTime || endTime) {
@@ -843,19 +856,36 @@ function renderStepDetails(step) {
         html += `</div>`;
     }
     
+    // Hierarchy
+    if (step.parent_step_id || step.parallel_group) {
+        html += `<div style="margin-bottom:0.5rem;font-size:0.85rem;color:var(--text-muted)">`;
+        if (step.parent_step_id) html += `<div>Parent Step: #${step.parent_step_id}</div>`;
+        if (step.parallel_group) html += `<div>Parallel Group: ${step.parallel_group}</div>`;
+        html += `</div>`;
+    }
+    
+    // Input
     if (step.input_data) {
         html += `<div style="margin-bottom:0.5rem"><strong>Input:</strong></div>`;
-        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto">${formatJSON(step.input_data)}</pre>`;
+        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.input_data)}</pre>`;
     }
     
+    // Output
     if (step.output_data) {
         html += `<div style="margin-bottom:0.5rem;margin-top:0.5rem"><strong>Output:</strong></div>`;
-        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto">${formatJSON(step.output_data)}</pre>`;
+        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.output_data)}</pre>`;
     }
     
+    // Error
     if (step.error_message) {
         html += `<div style="margin-top:0.5rem"><strong>Error:</strong></div>`;
         html += `<pre style="background:rgba(239,68,68,0.1);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;color:#ef4444">${step.error_message}</pre>`;
+    }
+    
+    // Error Traceback
+    if (step.error_traceback) {
+        html += `<div style="margin-top:0.5rem"><strong>Traceback:</strong></div>`;
+        html += `<pre style="background:rgba(239,68,68,0.1);padding:0.5rem;border-radius:4px;font-size:0.75rem;overflow-x:auto;color:#ef4444;white-space:pre-wrap">${step.error_traceback}</pre>`;
     }
     
     return html || '<div style="color:var(--text-muted);font-size:0.85rem">No details available</div>';

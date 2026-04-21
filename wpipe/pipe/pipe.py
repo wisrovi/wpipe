@@ -1237,6 +1237,10 @@ class Pipeline(APIClient):
 
     def _pipeline_run(self, *args: Any, **kwargs: Any) -> dict:
         data = args[0].copy() if args else {}
+        # Record pipeline start time using datetime
+        pipeline_start_time = datetime.now()
+        data["_pipeline_start_time"] = pipeline_start_time.isoformat()
+        
         checkpoint_mgr = kwargs.get("checkpoint_mgr")
         checkpoint_id = kwargs.get("checkpoint_id")
 
@@ -1377,9 +1381,23 @@ class Pipeline(APIClient):
                 metrics_collector.stop()
             if self.tracker and self.pipeline_id:
                 try:
+                    # Prepare output data with timing information
+                    output_data = data if not error_message else None
+                    if output_data is None:
+                        output_data = {}
+                    
+                    # Add timing information to output data
+                    output_data["pipeline_start_time"] = data.get("_pipeline_start_time")
+                    output_data["pipeline_end_time"] = datetime.now().isoformat()
+                    start_time = datetime.fromisoformat(data.get("_pipeline_start_time")) if data.get("_pipeline_start_time") else None
+                    if start_time:
+                        end_time = datetime.now()
+                        elapsed_time_ms = (end_time - start_time).total_seconds() * 1000
+                        output_data["pipeline_elapsed_time_ms"] = elapsed_time_ms
+                    
                     alert_hooks = self.tracker.complete_pipeline(
                         pipeline_id=self.pipeline_id,
-                        output_data=data if not error_message else None,
+                        output_data=output_data,
                         error_message=error_message,
                         error_step=error_step,
                     )

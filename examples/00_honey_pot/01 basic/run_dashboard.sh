@@ -18,5 +18,5 @@ echo ""
 python -m wpipe.dashboard \
     --db output/wpipe_dashboard.db \
     --config-dir configs \
-    --port 8036 \
+    --port 8035 \
     --open

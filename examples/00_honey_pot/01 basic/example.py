@@ -1,11 +1,11 @@
 import json
 import os
-import cv2
 import random
 import tempfile
 import threading
 from pathlib import Path
 
+import cv2
 from dto.car import Car
 from states import (
     Print_info,
@@ -172,13 +172,13 @@ def get_viaje_pipeline():
                             pinchazo_aleatorio,
                         ],
                     ),
-                    # (
-                    #     lambda c: print(
-                    #         f"[non_serializable_obj]: {c.get('non_serializable_obj')}",
-                    #         "non_serializable_obj",
-                    #         "v1.0",
-                    #     )
-                    # ),
+                    (
+                        lambda c: print(
+                            f"[non_serializable_obj]: {c.get('non_serializable_obj')}",
+                            "non_serializable_obj",
+                            "v1.0",
+                        )
+                    ),
                 ],
             ),
         ],
@@ -354,49 +354,69 @@ def main():
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
     print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
 
-    # print(f"\nViajes completados: {results.get('_loop_iteration')}")
-    # print(f"Gasolina final: {results.get('nivel_gasolina')}")
-    # print(f"Aceite final: {results.get('nivel_aceite')}")
+    print(f"\nViajes completados: {results.get('_loop_iteration')}")
+    print(f"Gasolina final: {results.get('nivel_gasolina')}")
+    print(f"Aceite final: {results.get('nivel_aceite')}")
 
     if "error" in results:
         print(f"Error detectado: {results.get('error')}")
 
     # Show fired alerts
-    # print("\nFired Alerts:")
+    print("\nFired Alerts:")
     fired = viaje.tracker.get_fired_alerts(limit=10)
-    # for alert in fired:
-    #     print(
-    #         f"  - [{alert['severity'].upper()}] {alert.get('alert_name', 'Unknown')}: {alert['message']}"
-    #     )
+    for alert in fired:
+        print(
+            f"  - [{alert['severity'].upper()}] {alert.get('alert_name', 'Unknown')}: {alert['message']}"
+        )
 
     # Initialize exporter
-    # exporter_data()
+    exporter_data()
 
     # --- ANÁLISIS DE DATOS INTELIGENTE ---
-    # print("\n" + "=" * 70)
-    # print("📊 ANÁLISIS DE RENDIMIENTO (AnalysisManager)")
-    # print("=" * 70)
+    print("\n" + "=" * 70)
+    print("📊 ANÁLISIS DE RENDIMIENTO (AnalysisManager)")
+    print("=" * 70)
 
     analysis = viaje.tracker.analysis
     stats = analysis.get_stats()
 
-    # print(f"\nResumen Global:")
-    # print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
-    # print(f"  - Tasa de Éxito: {stats['success_rate']}%")
-    # print(f"  - Duración Media: {stats['avg_duration_ms']:.2f} ms")
+    print(f"\nResumen Global:")
+    print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
+    print(f"  - Tasa de Éxito: {stats['success_rate']}%")
+    print(f"  - Duración Media: {stats['avg_duration_ms']:.2f} ms")
 
     slow_steps = analysis.get_top_slow_steps(limit=3)
-    # if slow_steps:
-    #     print(f"\nPasos más lentos (Cuellos de botella):")
-    #     for step in slow_steps:
-    #         print(f"  - {step['step_name']}: {step['avg_duration_ms']:.2f} ms")
+    if slow_steps:
+        print(f"\nPasos más lentos (Cuellos de botella):")
+        for step in slow_steps:
+            print(f"  - {step['step_name']}: {step['avg_duration_ms']:.2f} ms")
 
     trends = analysis.get_trend_data(days=1)
-    # if trends:
-    #     print(f"\nTendencia de Hoy:")
-    #     print(f"  - Ejecuciones realizadas: {trends[0]['count']}")
-    #     print(f"  - Éxitos: {trends[0]['success']}")
+    if trends:
+        print(f"\nTendencia de Hoy:")
+        print(f"  - Ejecuciones realizadas: {trends[0]['count']}")
+        print(f"  - Éxitos: {trends[0]['success']}")
+
+
+def test_Wsqlite():
+    image = cv2.imread("images.jpeg")
+
+    with Wsqlite(db_name="output/demo.db") as db:
+
+        args_dict = {
+            "inference": {
+                "source": image,
+            },
+            "conf": 0.5,
+        }
+
+        db.input = args_dict
+
+        db.details = {"info": "Starting the process..."}
+
+        db.output = {"queso": "delicioso"}
 
 
 if __name__ == "__main__":
+    test_Wsqlite()
     main()
