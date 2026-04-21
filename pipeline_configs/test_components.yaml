@@ -1,0 +1,25 @@
+name: test_components
+registered_at: '2026-04-20T22:41:44.327003'
+step_count: 4
+steps:
+- func: <function add_one at 0x7fc8355737e0>
+  name: add_one
+  type: task
+  version: v1.0
+- branch_false:
+  - <function add_one at 0x7fc8355737e0>
+  branch_true:
+  - <function multiply_two at 0x7fc834e10ea0>
+  expression: counter > 0
+  type: condition
+- expression: null
+  iterations: 3
+  steps:
+  - <function loop_step at 0x7fc834e11300>
+  type: for
+- max_workers: null
+  steps:
+  - <function add_one at 0x7fc8355737e0>
+  - <function multiply_two at 0x7fc834e10ea0>
+  type: parallel
+  use_processes: false
