@@ -20,7 +20,6 @@ def better_get_connection(self):
 
 WSQLite._get_connection = better_get_connection
 
-@step()
 async def async_add_one(data):
     await asyncio.sleep(0.01)
     n = data.get("n", 0)

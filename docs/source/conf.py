@@ -15,7 +15,7 @@ project = "wpipe"
 copyright = f"2024-{datetime.now().year}, William Steve Rodriguez Villamizar"
 author = "William Steve Rodriguez Villamizar"
 author_url = "https://github.com/wisrovi"
-version = "1.6.18"
+version = "1.7.0"
 release = "1.6.18"
 
 extensions = [

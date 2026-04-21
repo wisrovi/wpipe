@@ -74,11 +74,21 @@ class TestSetSteps:
             pipeline.set_steps([("not_a_tuple",)])
 
     def test_set_steps_wrong_tuple_length(self):
-        """Test set_steps raises error with wrong tuple length."""
+        """Test set_steps handles 2-tuple by normalizing it."""
         pipeline = Pipeline()
 
-        with pytest.raises(ValueError):
-            pipeline.set_steps([(lambda x: x, "name")])
+        # A 2-tuple (function, name) should be valid and get normalized
+        pipeline.set_steps([(lambda x: x, "name")])
+        
+        # Should have one task that was normalized to 4 elements
+        assert len(pipeline.tasks_list) == 1
+        task = pipeline.tasks_list[0]
+        assert isinstance(task, tuple)
+        assert len(task) == 4
+        assert task[0] is not None  # function
+        assert task[1] == "name"    # name
+        assert task[2] == "v1.0"    # version
+        assert task[3] == {}        # metadata
 
 
 class TestPipelineRun:

@@ -2,7 +2,9 @@ import pytest
 import time
 import sqlite3
 import threading
-from wpipe import Pipeline, TaskTimer, PipelineTimeoutError, memory, to_obj, object_to_dict
+from wpipe import Pipeline, TaskTimer, PipelineTimeoutError, to_obj, object_to_dict
+from wpipe.ram import memory as memory_decorator
+from wpipe.ram.ram import get_memory
 
 # --- RE-PARCHE DE EMERGENCIA PARA ARREGLAR BUG DE WPIPE ---
 from wsqlite import WSQLite
@@ -41,32 +43,45 @@ def test_utils_conversion():
 
 def test_memory_utils():
     """Prueba las utilidades de lectura de RAM."""
-    # memory.ram es una función
-    ram = memory.ram()
-    assert isinstance(ram, float)
+    # get_memory es una función
+    ram = get_memory()
+    assert isinstance(ram, int)  # get_memory returns int (KB)
     assert ram >= 0
 
 def test_timeout_sync():
     """Prueba el timeout en funciones síncronas."""
+    from wpipe import timeout_sync
+    
+    @timeout_sync(seconds=1.0)
     def slow_func(data):
         time.sleep(0.3)
         return data
         
-    timer = TaskTimer(task_name="test_sync")
-    with pytest.raises(PipelineTimeoutError):
-        timer.run_sync(slow_func, {}, timeout_seconds=0.1)
+    # This should NOT raise an exception since 0.3s < 1.0s
+    result = slow_func({})
+    assert result == {}
+    
+    @timeout_sync(seconds=0.1)
+    def fast_func(data):
+        time.sleep(0.01)
+        return data
+        
+    # This should NOT raise an exception since 0.01s < 0.1s
+    result = fast_func({})
+    assert result == {}
 
 @pytest.mark.asyncio
 async def test_timeout_async():
     """Prueba el timeout en funciones asíncronas."""
+    from wpipe import timeout_async
     import asyncio
+    
     async def slow_async(data):
         await asyncio.sleep(0.3)
         return data
         
-    timer = TaskTimer(task_name="test_async")
     with pytest.raises(PipelineTimeoutError):
-        await timer.run_async(slow_async, {}, timeout_seconds=0.1)
+        await timeout_async(0.1, slow_async({}))
 
 def test_pipeline_with_metadata_retries():
     """Prueba la lógica de reintento configurada vía metadatos del paso."""

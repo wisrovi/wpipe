@@ -44,6 +44,34 @@ class ResourceMonitor:
         self._monitoring = False
         self._monitor_thread: Optional[threading.Thread] = None
 
+    @property
+    def is_running(self) -> bool:
+        """Check if monitoring is currently active."""
+        return self._monitoring
+
+    def get_current_reading(self) -> Dict[str, float]:
+        """
+        Get current resource usage.
+
+        Returns:
+            Dictionary with current CPU and RAM usage
+        """
+        try:
+            cpu_percent = self.process.cpu_percent(interval=None)
+            ram_mb = self.process.memory_info().rss / (1024 * 1024)
+            # Calculate RAM percentage based on total available memory
+            ram_percent = (ram_mb / (psutil.virtual_memory().total / (1024 * 1024))) * 100
+            return {
+                "cpu_percent": cpu_percent,
+                "ram_percent": ram_percent
+            }
+        except Exception:
+            # Return zeros if we can't get readings
+            return {
+                "cpu_percent": 0.0,
+                "ram_percent": 0.0
+            }
+
     def __enter__(self) -> "ResourceMonitor":
         """Enter context manager."""
         self.start()
