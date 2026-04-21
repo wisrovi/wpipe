@@ -1,0 +1,32 @@
+name: viaje
+registered_at: '2026-04-20T09:26:24.830159'
+step_count: 2
+steps:
+- func: <function fase_preparacion at 0x7ce55b877740>
+  name: fase_preparacion
+  type: task
+  version: v1.1
+- expression: null
+  iterations: 3
+  steps:
+  - <states.print_info.Print_info object at 0x7ce55b89cdd0>
+  - max_workers: 3
+    steps:
+    - <function hechar_gasolina at 0x7ce55b876ca0>
+    - <function cambiar_aceite at 0x7ce55b8765c0>
+    - <function revisar_luces at 0x7ce55b877100>
+    type: parallel
+    use_processes: false
+  - expression: "nivel_gasolina != 'Vac\xEDo'"
+    iterations: null
+    steps:
+    - <function conducir at 0x7ce55b8767a0>
+    - branch_false:
+      - <function desinflar_neumaticos at 0x7ce55b876b60>
+      branch_true:
+      - <wpipe.pipe.pipe.Pipeline object at 0x7ce55b8634a0>
+      - <function inflar_neumaticos at 0x7ce55b876fc0>
+      expression: nivel_neumaticos == 'Bajo'
+      type: condition
+    type: for
+  type: for

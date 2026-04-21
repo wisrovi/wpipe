@@ -16,7 +16,7 @@ echo "Dashboard will open at: http://127.0.0.1:8035"
 echo ""
 
 python -m wpipe.dashboard \
-    --db wpipe_dashboard.db \
+    --db output/wpipe_dashboard.db \
     --config-dir configs \
     --port 8036 \
     --open

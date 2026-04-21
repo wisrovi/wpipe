@@ -1,0 +1,48 @@
+name: eyesdcar_pipeline
+registered_at: '2026-04-20T15:49:20.292253'
+step_count: 7
+steps:
+- func: <function check_requirements at 0x7276826ef740>
+  name: check_requirements
+  type: task
+  version: v1.0
+- func: <function clean_folder at 0x727682dfe480>
+  name: clean_folder
+  type: task
+  version: v1.0
+- func: <function reset_part_model at 0x7276832ea660>
+  name: parts_segmentator_reset
+  type: task
+  version: v1.0
+- func: <function reset_damage_search at 0x7276832ea840>
+  name: damage_search_reset
+  type: task
+  version: v1.0
+- func: <function open_video_capture at 0x7276826eeca0>
+  name: open_video_capture
+  type: task
+  version: v1.0
+- expression: process_completed == 0
+  iterations: null
+  steps:
+  - <function create_batch_frames at 0x727682dfee80>
+  - branch_false: []
+    branch_true:
+    - <function filter_by_car at 0x727682dfd1c0>
+    expression: active_background_extractor == 1
+    type: condition
+  - <function add_watermark at 0x7277495737e0>
+  - <function save_video_report at 0x7276826ef1a0>
+  type: for
+- branch_false: []
+  branch_true:
+  - meta: {}
+    name: damage_tracker
+    type: task
+    version: v1.0
+  - meta: {}
+    name: parts_tracker
+    type: task
+    version: v1.0
+  expression: tracker_external == 1
+  type: condition
