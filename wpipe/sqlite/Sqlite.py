@@ -50,7 +50,7 @@ class Wsqlite:
 
     @input.setter
     def input(self, value: dict) -> None:
-        self._input_db = value
+        self._input_db = self._serialize_dict(value)
         self._save_state()
 
     @property
@@ -59,7 +59,7 @@ class Wsqlite:
 
     @output.setter
     def output(self, value: dict) -> None:
-        self._output_db = value
+        self._output_db = self._serialize_dict(value)
         self._save_state()
 
     @property
@@ -68,8 +68,28 @@ class Wsqlite:
 
     @details.setter
     def details(self, value: dict) -> None:
-        self._details_db = value
+        self._details_db = self._serialize_dict(value)
         self._save_state()
+
+    def _serialize_dict(self, data: dict) -> dict:
+        """Convierte objetos no serializables a strings."""
+        import numpy as np
+
+        def convert(obj):
+            if isinstance(obj, dict):
+                return {k: convert(v) for k, v in obj.items()}
+            elif isinstance(obj, (list, tuple)):
+                return [convert(i) for i in obj]
+            elif isinstance(obj, np.ndarray):
+                return f"<np.array shape={obj.shape} dtype={obj.dtype}>"
+            elif hasattr(obj, '__dict__'):
+                return f"<{obj.__class__.__name__}>"
+            elif obj is None or isinstance(obj, (str, int, float, bool)):
+                return obj
+            else:
+                return str(obj)
+
+        return convert(data)
 
     def _save_state(self) -> None:
         """Guarda o actualiza el estado actual en la base de datos."""
@@ -123,7 +143,7 @@ class Wsqlite:
 
     @error.setter
     def error(self, value: dict) -> None:
-        self._error_db = value
+        self._error_db = self._serialize_dict(value)
         self._save_state()
 
     def count_records(self) -> int:

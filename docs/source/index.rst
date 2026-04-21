@@ -296,7 +296,7 @@ Your First Pipeline
         </div>
         <div class="stat-box">
             <div class="value">LTS</div>
-            <div class="label">1.6.15</div>
+            <div class="label">1.6.16</div>
         </div>
     </div>
 

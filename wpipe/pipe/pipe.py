@@ -1299,17 +1299,18 @@ class Pipeline(APIClient):
             try:
                 from wpipe.pipe.pipe import ProgressManager
 
+                progress_name = f"{self.pipeline_name} - {self.task_name}"
                 progress_manager = ProgressManager()
                 with progress_manager as progress_rich_instance:
                     self.progress_rich = progress_rich_instance
                     task = progress_rich_instance.add_task(
-                        f"[cyan][{self.worker_name}]{self.task_name}", total=size
+                        f"[cyan]{progress_name}", total=size
                     )
                     for i in range(size):
                         yield i, progress_rich_instance
                         progress_rich_instance.update(task, advance=1)
             except (LiveError, ImportError):
-                for i in tqdm(range(size), desc=self.task_name):
+                for i in tqdm(range(size), desc=f"{self.pipeline_name} - {self.task_name}"):
                     yield i, None
 
         # Limpiamos kwargs de parámetros técnicos antes de ejecutar pasos

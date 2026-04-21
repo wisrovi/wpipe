@@ -5,6 +5,15 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.16] - 2026-04-21
+
+### Added
+- ** serialización de objetos no serializables**: Los objetos como numpy arrays, objetos complejos, etc., ahora se convierten automáticamente a strings representativos antes de guardar en SQLite, evitando errores de serialización.
+
+### Fixed
+- **Barra de progreso**: Ahora muestra el formato `pipeline_name - task_name` en lugar de solo el nombre del paso.
+- **Import duplicate**: Corregido error de importación duplicada de `nested` en example.py.
+
 ## [1.6.15] - 2026-04-20
 
 ### Added
