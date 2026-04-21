@@ -1,5 +1,6 @@
 import json
 import os
+import cv2
 import random
 import tempfile
 import threading
@@ -75,13 +76,13 @@ def notificar_telegram_error(context, error):
     return context
 
 
-db_path = "wpipe_dashboard.db"
+db_path = "output/wpipe_dashboard.db"
 
 
 def get_viaje_pipeline():
     viaje = Pipeline(
         pipeline_name="viaje",
-        verbose=True,
+        verbose=False,
         tracking_db=db_path,
         #
         max_retries=3,
@@ -153,7 +154,7 @@ def get_viaje_pipeline():
                         max_workers=3,
                         # use_processes=False  # Cambiado a False para evitar errores de pickling con objetos complejos
                     ),
-                    Print_info("Resumen post-paralelo"),
+                    nested,
                     # (print_gasolina, "Mostrar gasolina", "v1.0"),
                     For(
                         validation_expression="nivel_gasolina != 'Vacío'",
@@ -171,7 +172,14 @@ def get_viaje_pipeline():
                             pinchazo_aleatorio,
                         ],
                     ),
-                    (lambda c: print(f"[non_serializable_obj]: {c.get('non_serializable_obj')}", "non_serializable_obj", "v"))               ],
+                    # (
+                    #     lambda c: print(
+                    #         f"[non_serializable_obj]: {c.get('non_serializable_obj')}",
+                    #         "non_serializable_obj",
+                    #         "v1.0",
+                    #     )
+                    # ),
+                ],
             ),
         ],
     )
@@ -245,7 +253,7 @@ def exporter_data():
     print("  - Best for tabular data")
     print("  - Supported by: Excel, Google Sheets, Pandas")
     print("  - Usage: exporter.export_pipeline_logs(format='csv')\n")
-    output_dir = "export_output"
+    output_dir = "output/export_output"
 
     # Create output directory
     Path(output_dir).mkdir(exist_ok=True)
@@ -391,20 +399,4 @@ def main():
 
 
 if __name__ == "__main__":
-    with Wsqlite(db_name="demo.db") as db:
-        args_dict = {
-            "inference": {
-                "source": "<image>",
-            },
-            "conf": 0.5,
-        }
-
-        db.input = args_dict
-
-        db.details = {"info": "Starting the process..."}
-
-        db.output = {"queso": "delicioso"}
-        
-        db.error = {"simulated_error": "error "}
-
-        main()
+    main()

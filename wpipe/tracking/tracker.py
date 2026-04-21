@@ -370,8 +370,11 @@ class PipelineTracker:
             output_data = step.get("output_data") or {}
             input_data = step.get("input_data") or {}
 
+            step_id = step.get("id")
+            if not step_id or step_id == "None" or step_id == "":
+                step_id = step.get("step_order")
             node = {
-                "id": f"step_{step['id']}",
+                "id": f"step_{step_id}",
                 "name": step["step_name"],
                 "type": step["step_type"],
                 "status": step["status"],
@@ -398,18 +401,16 @@ class PipelineTracker:
 
             # --- Lógica de conexión de bordes ---
             parent_id = step.get("parent_step_id")
+            step_order = step.get("step_order")
 
             if parent_id:
-                # Conexión desde el bloque padre al sub-paso
                 edges.append({
-                    "from": f"step_{parent_id}",
-                    "to": f"step_{step['id']}",
+                    "from": f"step_{parent_id}" if parent_id else f"step_{step_order}",
+                    "to": f"step_{step_id}",
                     "label": "parallel",
                     "style": "dashed" if step["status"] == "skipped" else "solid"
                 })
             elif i > 0:
-                # Conexión secuencial normal, buscando el último paso real que NO tenga un padre
-                # (para no conectar un paso secuencial con un sub-paso de un paralelo)
                 j = i - 1
                 found_prev = None
                 while j >= 0:
@@ -420,10 +421,12 @@ class PipelineTracker:
                     j -= 1
 
                 if found_prev:
+                    prev_id = found_prev.get("id") or found_prev.get("step_order")
+                    prev_order = found_prev.get("step_order")
                     is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
                     edges.append({
-                        "from": f"step_{found_prev['id']}",
-                        "to": f"step_{step['id']}",
+                        "from": f"step_{prev_id}" if prev_id else f"step_{prev_order}",
+                        "to": f"step_{step_id}",
                         "label": "next" if found_prev["step_type"] != "condition" else ("taken" if not is_skipped else "skipped"),
                         "style": "solid" if not is_skipped else "dashed",
                         "color": "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped) else None
