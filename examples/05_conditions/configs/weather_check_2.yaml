@@ -1,0 +1,32 @@
+name: weather_check_2
+registered_at: '2026-04-20T06:53:57.759410'
+step_count: 3
+steps:
+- func: <function read_temperature at 0x7f7a1565b600>
+  name: read_temperature
+  type: task
+  version: v1.0
+- branch_false:
+  - branch_false:
+    - meta: {}
+      name: normal_operation
+      type: task
+      version: v1.0
+    branch_true:
+    - meta: {}
+      name: activate_heating
+      type: task
+      version: v1.0
+    expression: temperature < 10
+    type: condition
+  branch_true:
+  - meta: {}
+    name: activate_cooling
+    type: task
+    version: v1.0
+  expression: temperature > 30
+  type: condition
+- func: <function log_result at 0x7f79ee178cc0>
+  name: log_result
+  type: task
+  version: v1.0

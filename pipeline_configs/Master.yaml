@@ -1,0 +1,34 @@
+name: Master
+registered_at: '2026-04-20T02:14:49.503400'
+step_count: 5
+steps:
+- func: <function step_a at 0x7f5576069080>
+  name: StepA
+  type: task
+  version: v1.0
+- branch_false:
+  - <function TestMasterCoverage.test_pipeline_ultimate_flow.<locals>.<lambda> at
+    0x7f549ddfb9c0>
+  branch_true:
+  - <function TestMasterCoverage.test_pipeline_ultimate_flow.<locals>.<lambda> at
+    0x7f549ddf80e0>
+  expression: count > 0
+  type: condition
+- expression: null
+  iterations: 2
+  steps:
+  - <function TestMasterCoverage.test_pipeline_ultimate_flow.<locals>.<lambda> at
+    0x7f549ddf8ae0>
+  type: for
+- max_workers: 2
+  steps:
+  - <function TestMasterCoverage.test_pipeline_ultimate_flow.<locals>.<lambda> at
+    0x7f549ddfafc0>
+  - <function TestMasterCoverage.test_pipeline_ultimate_flow.<locals>.<lambda> at
+    0x7f549d3cd120>
+  type: parallel
+  use_processes: false
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7f549b39c750>>
+  name: SubRun
+  type: task
+  version: '1.0'

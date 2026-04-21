@@ -1,0 +1,16 @@
+name: Pipeline
+registered_at: '2026-04-20T06:53:37.198513'
+step_count: 3
+steps:
+- func: <function fetch_data at 0x7f44948e5080>
+  name: Fetch Data
+  type: task
+  version: v1.0
+- func: <function process_records at 0x7f44948e6840>
+  name: Process Records
+  type: task
+  version: v1.0
+- func: <function calculate_stats at 0x7f44948e4180>
+  name: Calculate Stats
+  type: task
+  version: v1.0

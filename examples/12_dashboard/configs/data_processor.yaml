@@ -1,0 +1,16 @@
+name: data_processor
+registered_at: '2026-04-20T06:56:06.355146'
+step_count: 3
+steps:
+- func: <function transform_data at 0x7fdd2de14ae0>
+  name: transform
+  type: task
+  version: v1.0
+- func: <function enrich_data at 0x7fdd2de15120>
+  name: enrich
+  type: task
+  version: v1.0
+- func: <function aggregate_data at 0x7fdd2de14fe0>
+  name: aggregate
+  type: task
+  version: v1.0

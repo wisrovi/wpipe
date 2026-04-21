@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(\"=== tag git ===\")",
+      "Bash(\"=== tests lts ===\")",
+      "Bash(rm *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(sed *)",
+      "Bash(timeout *)",
+      "Bash(pip install *)",
+      "Bash(twine *)"
+    ]
+  },
+  "$version": 3
+}

@@ -1,0 +1,9 @@
+name: Alert
+registered_at: '2026-04-20T05:19:33.401147'
+step_count: 1
+steps:
+- func: <function TestLTS95Definitive.test_pipeline_alerts_v3.<locals>.<lambda> at
+    0x7f96825e31a0>
+  name: <lambda>
+  type: task
+  version: v1.0

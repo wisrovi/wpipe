@@ -5,6 +5,72 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.15] - 2026-04-20
+
+### Added
+- **Robustez en Tracking**: Soporte para objetos complejos y resiliencia ante referencias circulares en el contexto del pipeline.
+- **Sincronización Thread-safe**: Implementación de bloqueos y manejo de conexiones seguras para SQLite en ejecuciones paralelas de alta intensidad.
+
+### Fixed
+- Resiliencia ante objetos no serializables en el contexto, permitiendo guardar checkpoints incluso con datos técnicos complejos.
+
+## [1.6.3] - 2026-04-20
+### Fixed
+- Fixed critical bug in `CheckpointManager` where progress could not be saved if the context contained non-serializable objects (like `rich.progress.Progress`).
+- Improved `Pipeline.run` to clean technical data before saving checkpoints.
+- Fixed `step_name` retrieval in `save_checkpoint` for decorated steps.
+
+## [1.6.2] - 2026-04-19
+
+### Documentation and Example Refinement
+
+Fixed critical missing decorator in README examples and synced version across all platforms.
+
+### Fixed
+- **README Example**: Added missing `@to_obj(Context)` decorator in the "Example of Power" to correctly show how data validation and object conversion is triggered.
+- **Parity**: Ensured `to_obj` and `step` decorators are shown working together for best practices.
+
+---
+
+## [1.6.1] - 2026-04-19
+
+### Stability and Persistence Refinement
+
+This patch release resolves critical persistence issues in the LogGestor and unifies the internal database engine.
+
+### Added
+- **Native ID Tracking**: Implemented direct `rowid` capture for all SQLite operations, ensuring reliable record updates.
+
+### Fixed
+- **LogGestor Data Loss**: Fixed a bug where `output` and `details` were not persisted correctly due to ID synchronization issues.
+- **Circular Imports**: Resolved module dependency conflicts between core components and SQLite wrappers.
+- **Database Connector Robustness**: Improved connection pooling and thread safety for the internal WSQLite driver.
+
+---
+
+## [1.6.0] - 2026-04-19
+
+### Persistence and Reliability Overhaul (Major Update)
+
+This release focuses on architectural purity and reliability, unifying all persistence under `wsqlite` and enhancing the pipeline orchestration engine.
+
+### Added
+- **Intelligent Checkpoints**: New `add_checkpoint` method with expression evaluation for real-time milestone tracking.
+- **Forensic Error Capture**: New `add_error_capture` system that provides file path and line number for easier debugging.
+- **Unified WSQLite Persistence**: Removed all direct `sqlite3` dependencies in favor of `wsqlite` and Pydantic models.
+- **High Resolution Resource Monitoring**: Enhanced CPU measurement for short-lived tasks.
+- **PipelineAsync Parity**: Full feature parity between synchronous and asynchronous pipelines.
+- **Progress Visibility Control**: New `show_progress` flag to toggle Rich progress bars.
+
+### Changed
+- **Turbo Mode Persistence**: Enabled WAL (Write-Ahead Logging) and connection pooling by default for massive performance gains.
+- **Retry Hierarchy**: Step-level retry settings now correctly override global pipeline settings.
+
+### Fixed
+- **Database Locks**: Resolved 'database is locked' errors during high-concurrency executions.
+- **Serialization Issues**: Fixed 'Pickle' errors when using complex objects in parallel blocks.
+- **Exporting desynchronization**: PipelineExporter now correctly identifies system-defined table names.
+
 ---
 
 ## [1.5.6] - 2026-04-14

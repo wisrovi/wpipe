@@ -145,31 +145,6 @@
             opacity: 0.9;
             margin-top: 5px;
         }
-        .quick-start {
-            background: #f0f4f8;
-            border-radius: 12px;
-            padding: 40px;
-            margin: 40px 0;
-        }
-        .quick-start h2 {
-            margin-bottom: 30px;
-        }
-        .example-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .example-tab {
-            padding: 10px 20px;
-            background: #e2e8f0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .example-tab.active {
-            background: #667eea;
-            color: white;
-        }
         @media (max-width: 768px) {
             .stat-grid { grid-template-columns: repeat(2, 1fr); }
             .hero-section { padding: 40px 20px; }
@@ -182,10 +157,10 @@
 
     <div class="hero-section">
         <h1><span class="logo">wpipe</span></h1>
-        <p class="lead">Python Pipeline Library for Sequential Data Processing</p>
+        <p class="lead">Python Pipeline Library for Industrial-Grade Orchestration</p>
         <p style="font-size: 1.15em; color: #cbd5e0; max-width: 800px; margin: 0 auto; position: relative;">
-            Build powerful, production-ready data processing pipelines with a simple, elegant API.<br>
-            <strong>No web UI</strong> | <strong>No complex setup</strong> | <strong>Just Python code</strong>
+            Build powerful, production-ready data processing pipelines with native parallelism, intelligent recovery, and deep observability.<br>
+            <strong>No web UI required</strong> | <strong>High-Performance</strong> | <strong>Resilient by Design</strong>
         </p>
         <div class="hero-buttons">
             <a href="getting_started.html" class="btn-primary">🚀 Get Started</a>
@@ -207,16 +182,16 @@
    :target: https://github.com/wisrovi/wpipe/blob/main/LICENSE
    :alt: License
 
-.. image:: https://img.shields.io/badge/tests-106%20passing-10b981
+.. image:: https://img.shields.io/badge/tests-625%20passing-10b981
    :alt: Tests
 
-.. image:: https://img.shields.io/badge/LTS-1.5.3-green
+.. image:: https://img.shields.io/badge/LTS-1.6.1-green
    :alt: LTS
 
 wpipe |version| Documentation
 =============================
 
-**wpipe** is a powerful, lightweight Python library for creating and executing sequential and parallel data processing pipelines.
+**wpipe** is a powerful, industrial-grade Python library for orchestrating high-performance data processing pipelines with native support for parallelism, intelligent recovery, and deep observability.
 
 .. toctree::
    :maxdepth: 2
@@ -240,65 +215,34 @@ wpipe |version| Documentation
 🎯 Why wpipe?
 --------------
 
-Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellent but often introduce **significant complexity**:
-
-- ❌ Complex setup requiring web servers, databases, and multiple services
-- ❌ Heavy dependencies that impact deployment and maintenance
-- ❌ YAML/JSON configuration that separates logic from code
-- ❌ Overkill for simple tasks when you just need sequential processing
-
-**wpipe** provides a refreshing alternative:
+Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellent but often introduce **significant complexity**. **wpipe** provides a refreshing alternative for high-performance engineering:
 
 .. raw:: html
 
     <div class="feature-grid">
         <div class="feature-card">
-            <h3><span>⚡</span> Quick Start</h3>
-            <p>Just <code>pip install wpipe</code> and you're ready. No web servers, no databases required.</p>
+            <h3><span>⚡</span> Lightning Mode</h3>
+            <p>Optimized SQLite architecture with WAL mode and non-blocking monitoring. Designed for high-frequency bursts.</p>
         </div>
         <div class="feature-card">
-            <h3><span>🐍</span> Pure Python</h3>
-            <p>Define your pipelines entirely in Python code. No YAML, no JSON configuration files.</p>
+            <h3><span>🧵</span> Native Parallelism</h3>
+            <p>Execute steps using Threading or Process pooling with a single command. Full GIL bypass for CPU-heavy tasks.</p>
         </div>
         <div class="feature-card">
-            <h3><span>🔀</span> Parallel Execution</h3>
-            <p>Execute steps in parallel using Threading or Process pooling with automatic dependency resolution.</p>
+            <h3><span>🛡️</span> Intelligent Checkpoints</h3>
+            <p>Define milestones using logical expressions. Auto-resume exactly where you left off after system failures.</p>
         </div>
         <div class="feature-card">
-            <h3><span>🧩</span> Pipeline Composition</h3>
-            <p>Nest pipelines within other pipelines to create complex, reusable workflow hierarchies.</p>
+            <h3><span>🔍</span> Forensic Error Capture</h3>
+            <p>Get the exact file path and line number of any failure with automatic notification hooks (Telegram/Slack ready).</p>
         </div>
         <div class="feature-card">
-            <h3><span>🎯</span> Step Decorators</h3>
-            <p>Define pipeline steps easily using the <code>@step</code> decorator for functions and classes.</p>
+            <h3><span>🧬</span> Data Contracts</h3>
+            <p>Strict schema validation for your data context using <code>PipelineContext</code> and <code>TypeValidator</code>.</p>
         </div>
         <div class="feature-card">
-            <h3><span>💾</span> Checkpointing</h3>
-            <p>Save pipeline state and resume from specific steps, perfect for long-running workflows.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>📈</span> Resource Monitoring</h3>
-            <p>Track CPU and RAM usage for each step automatically during pipeline execution.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>🚀</span> SQLite Performance</h3>
-            <p>Ultra-fast tracking with shared connections and WAL mode. 99% faster than version 1.0.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>🌐</span> API Integration</h3>
-            <p>Connect pipelines to external APIs for tracking and monitoring workers and processes.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>🔄</span> Retry Logic</h3>
-            <p>Automatic retries with configurable backoff strategies for failed operations.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>🌳</span> Conditional Branching</h3>
-            <p>Execute different paths based on data conditions with the Condition class.</p>
-        </div>
-        <div class="feature-card">
-            <h3><span>📊</span> 100% Type Hints</h3>
-            <p>Full type annotations for excellent IDE support and better developer experience.</p>
+            <h3><span>🔄</span> Async/Sync Parity</h3>
+            <p>Choose between <code>Pipeline</code> or <code>PipelineAsync</code> with 100% feature parity and coroutine support.</p>
         </div>
     </div>
 
@@ -315,59 +259,22 @@ Installation
     # Install wpipe from PyPI
     pip install wpipe
 
-    # Or install with development dependencies
-    pip install -e ".[dev]"
-
 Your First Pipeline
 ~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from wpipe import Pipeline
+    from wpipe import Pipeline, step
 
-    # Define your processing steps
-    def fetch_data(data):
-        """Fetch data from a source."""
-        return {"users": [{"name": "Alice"}, {"name": "Bob"}, {"name": "Charlie"}]}
+    @step(name="Process", retry_count=3)
+    def my_step(data):
+        return {"result": data.get("x", 0) * 2}
 
-    def process_data(data):
-        """Process the fetched data."""
-        users = data["users"]
-        return {"count": len(users), "names": [u["name"] for u in users]}
-
-    def save_data(data):
-        """Save results."""
-        return {"status": "saved", "processed": data["count"]}
-
-    # Create and configure your pipeline
     pipeline = Pipeline(verbose=True)
-    pipeline.set_steps([
-        (fetch_data, "Fetch Data", "v1.0"),
-        (process_data, "Process Data", "v1.0"),
-        (save_data, "Save Data", "v1.0"),
-    ])
+    pipeline.set_steps([my_step])
 
-    # Run the pipeline
-    result = pipeline.run({})
-
-    # Output: {'users': [...], 'count': 3, 'names': [...], 'status': 'saved', 'processed': 3}
-
-Data Flow Visualization
-~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-    ┌───────────────────────────────────────────────────────────────────────────┐
-    │                        PIPELINE EXECUTION FLOW                            │
-    └───────────────────────────────────────────────────────────────────────────┘
-    
-    Input          Step 1            Step 2            Step 3            Output
-    ─────          ──────            ──────            ──────            ──────
-    ┌─────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐
-    │  {}  │────▶│  Fetch  │────▶│ Process │────▶│  Save   │────▶│ Result  │
-    └─────┘      │  Data   │      │  Data   │      │  Data   │      └─────────┘
-                 └─────────┘      └─────────┘      └─────────┘
-                 {users: [...]}   {users, count}   {count, status}
+    result = pipeline.run({"x": 10})
+    # Output: {'x': 10, 'result': 20}
 
 📊 Key Statistics
 -----------------
@@ -376,12 +283,12 @@ Data Flow Visualization
 
     <div class="stat-grid">
         <div class="stat-box">
-            <div class="value">106</div>
+            <div class="value">625</div>
             <div class="label">Tests Passing</div>
         </div>
         <div class="stat-box">
-            <div class="value">100+</div>
-            <div class="label">Examples</div>
+            <div class="value">200+</div>
+            <div class="label">Verified Examples</div>
         </div>
         <div class="stat-box">
             <div class="value">100%</div>
@@ -389,122 +296,18 @@ Data Flow Visualization
         </div>
         <div class="stat-box">
             <div class="value">LTS</div>
-            <div class="label">1.0.0</div>
+            <div class="label">1.6.15</div>
         </div>
     </div>
-
-🔧 Use Cases
-------------
-
-ETL Pipelines
-~~~~~~~~~~~~~
-
-Extract, Transform, Load workflows:
-
-.. code-block:: python
-
-    def extract(data):
-        return {"raw_data": fetch_from_api()}
-
-    def transform(data):
-        cleaned = clean_data(data["raw_data"])
-        enriched = enrich_data(cleaned)
-        return {"transformed": enriched}
-
-    def load(data):
-        save_to_database(data["transformed"])
-        return {"status": "loaded", "records": len(data["transformed"])}
-
-Data Validation
-~~~~~~~~~~~~~~
-
-Input validation with error handling:
-
-.. code-block:: python
-
-    from wpipe.exception import TaskError, Codes
-
-    def validate_input(data):
-        required_fields = ["email", "name", "age"]
-        for field in required_fields:
-            if field not in data:
-                raise TaskError(f"Missing required field: {field}", Codes.TASK_FAILED)
-        return {"validated": True}
-
-API Workflows
-~~~~~~~~~~~~
-
-Multi-step API processing:
-
-.. code-block:: python
-
-    api_config = {
-        "base_url": "https://api.example.com",
-        "token": os.environ["API_TOKEN"]
-    }
-
-    pipeline = Pipeline(api_config=api_config)
-    pipeline.worker_register(name="processor", version="1.0.0")
-
-📁 Project Structure
--------------------
-
-::
-
-    wpipe/
-    ├── __init__.py           # Main exports (Pipeline, Condition, APIClient, Wsqlite)
-    ├── pipe/
-    │   └── pipe.py           # Pipeline, Condition, ProgressManager
-    ├── api_client/
-    │   └── api_client.py     # APIClient for API integration
-    ├── sqlite/
-    │   ├── Sqlite.py         # Core SQLite operations
-    │   └── Wsqlite.py        # Simplified context manager wrapper
-    ├── log/
-    │   └── log.py            # Logging utilities (loguru)
-    ├── ram/
-    │   └── ram.py            # Memory control utilities
-    ├── util/
-    │   └── utils.py          # YAML utilities (leer_yaml, escribir_yaml)
-    └── exception/
-        └── api_error.py      # TaskError, ApiError, ProcessError, Codes
-
-🔗 Resources
--------------
-
-- **Documentation**: https://wpipe.readthedocs.io/
-- **GitHub**: https://github.com/wisrovi/wpipe
-- **PyPI**: https://pypi.org/project/wpipe/
-- **Live Demo**: https://wisrovi.github.io/wpipe/
-- **Issues**: https://github.com/wisrovi/wpipe/issues
-
-🧪 Testing & Quality
---------------------
-
-.. code-block:: bash
-
-    # Run all tests
-    pytest
-
-    # Run with coverage
-    pytest --cov=wpipe --cov-report=html
-
-    # Lint with ruff
-    ruff check wpipe/
-
-    # Type check with mypy
-    mypy wpipe/
 
 📝 License & Author
 -------------------
 
 **License**: MIT License
-
 **Author**: William Steve Rodriguez Villamizar
 
 - GitHub: https://github.com/wisrovi
 - LinkedIn: https://linkedin.com/in/wisrovi-rodriguez
-- Portfolio: https://wisrovi.github.io
 
 If you find wpipe useful, please ⭐ star the repository on GitHub!
 

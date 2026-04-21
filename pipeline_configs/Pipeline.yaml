@@ -1,0 +1,8 @@
+name: Pipeline
+registered_at: '2026-04-20T01:57:20.869116'
+step_count: 1
+steps:
+- func: <function milestone_task at 0x7f74ec0ea7a0>
+  name: MilestoneTask
+  type: task
+  version: v1.0

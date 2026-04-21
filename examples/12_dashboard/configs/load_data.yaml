@@ -1,0 +1,16 @@
+name: load_data
+registered_at: '2026-04-20T06:54:37.838796'
+step_count: 3
+steps:
+- func: <function prepare_target at 0x7f9a9bb09440>
+  name: prepare_target
+  type: task
+  version: v1.0
+- func: <function insert_records at 0x7f9a9bb094e0>
+  name: insert_records
+  type: task
+  version: v1.0
+- func: <function verify_load at 0x7f9a9bb09580>
+  name: verify_load
+  type: task
+  version: v1.0

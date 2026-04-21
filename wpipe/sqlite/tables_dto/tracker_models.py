@@ -35,6 +35,8 @@ class StepModel(BaseModel):
     step_version: Optional[str] = None
     step_type: str = "task"
     status: str = "running"
+    parent_step_id: Optional[int] = None
+    parallel_group: Optional[str] = None
     started_at: Optional[str] = Field(
         default_factory=lambda: datetime.now().isoformat()
     )
@@ -150,6 +152,35 @@ class SystemMetricsModel(BaseModel):
     disk_io_read_mb: Optional[float] = None
     disk_io_write_mb: Optional[float] = None
     recorded_at: Optional[str] = Field(
+        default_factory=lambda: datetime.now().isoformat()
+    )
+
+
+class ResourceMetricsModel(BaseModel):
+    """DTO for the resource_metrics table."""
+
+    id: Optional[int] = Field(None, description="Primary Key")
+    task_name: str
+    start_ram_mb: Optional[float] = None
+    peak_ram_mb: Optional[float] = None
+    end_ram_mb: Optional[float] = None
+    avg_cpu_percent: Optional[float] = None
+    elapsed_seconds: Optional[float] = None
+    created_at: Optional[str] = Field(
+        default_factory=lambda: datetime.now().isoformat()
+    )
+
+
+class CheckpointModel(BaseModel):
+    """DTO for the checkpoints table."""
+
+    id: Optional[int] = Field(None, description="Primary Key")
+    pipeline_id: str
+    step_order: int
+    step_name: str
+    status: str
+    data: Optional[str] = None  # JSON string
+    created_at: Optional[str] = Field(
         default_factory=lambda: datetime.now().isoformat()
     )
 

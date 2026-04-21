@@ -1,0 +1,7 @@
+name: honey_pot_reporter
+registered_at: '2026-04-14T01:39:23.962923'
+step_count: 2
+steps:
+- (<bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7f5409dd3230>>,
+  'Inference', 'v1.0', '')
+- <wpipe.pipe.pipe.Condition object at 0x7f5406ff79d0>

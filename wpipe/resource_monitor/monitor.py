@@ -4,13 +4,15 @@ Resource monitoring for pipeline task execution.
 Tracks RAM, CPU, and other system metrics during pipeline execution.
 """
 
-import sqlite3
 import threading
 import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import psutil
+from wsqlite import WSQLite
+
+from wpipe.sqlite.tables_dto.tracker_models import ResourceMetricsModel
 
 
 class ResourceMonitor:
@@ -56,7 +58,10 @@ class ResourceMonitor:
         self.start_time = time.time()
         self.start_ram_mb = self.process.memory_info().rss / (1024 * 1024)
         self.peak_ram_mb = self.start_ram_mb
-        self.start_cpu_percent = self.process.cpu_percent(interval=0.1)
+
+        # Guardamos los tiempos iniciales de CPU (user + system)
+        cpu_times = self.process.cpu_times()
+        self.start_cpu_total = cpu_times.user + cpu_times.system
 
         self._monitoring = True
         self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True)
@@ -66,16 +71,21 @@ class ResourceMonitor:
         """Stop resource monitoring."""
         self._monitoring = False
 
-        if self._monitor_thread:
-            self._monitor_thread.join(timeout=2)
-
         self.end_time = time.time()
         self.end_ram_mb = self.process.memory_info().rss / (1024 * 1024)
 
-        if self.metrics:
-            self.avg_cpu_percent = sum(m["cpu_percent"] for m in self.metrics) / len(
-                self.metrics
-            )
+        # Calculamos el consumo de CPU real basado en tiempos acumulados
+        cpu_times = self.process.cpu_times()
+        end_cpu_total = cpu_times.user + cpu_times.system
+
+        delta_cpu = end_cpu_total - self.start_cpu_total
+        duration = self.end_time - self.start_time
+
+        if duration > 0:
+            # Porcentaje = (tiempo_cpu_usado / tiempo_real) * 100
+            self.avg_cpu_percent = (delta_cpu / duration) * 100
+        else:
+            self.avg_cpu_percent = 0.0
 
         if self.db_path:
             self._save_to_db()
@@ -85,7 +95,7 @@ class ResourceMonitor:
         while self._monitoring:
             try:
                 ram_mb = self.process.memory_info().rss / (1024 * 1024)
-                cpu_percent = self.process.cpu_percent(interval=0.1)
+                cpu_percent = self.process.cpu_percent(interval=None)
 
                 self.peak_ram_mb = max(self.peak_ram_mb, ram_mb)
 
@@ -137,46 +147,23 @@ class ResourceMonitor:
         }
 
     def _save_to_db(self) -> None:
-        """Save metrics to SQLite database."""
+        """Save metrics to SQLite database using WSQLite."""
         if not self.db_path:
             return
 
         try:
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
+            db = WSQLite(ResourceMetricsModel, self.db_path)
 
-                cursor.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS resource_metrics (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        task_name TEXT NOT NULL,
-                        start_ram_mb REAL,
-                        peak_ram_mb REAL,
-                        end_ram_mb REAL,
-                        avg_cpu_percent REAL,
-                        elapsed_seconds REAL,
-                        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-                    )
-                """
-                )
+            metric_data = ResourceMetricsModel(
+                task_name=self.task_name,
+                start_ram_mb=self.start_ram_mb,
+                peak_ram_mb=self.peak_ram_mb,
+                end_ram_mb=self.end_ram_mb,
+                avg_cpu_percent=self.avg_cpu_percent,
+                elapsed_seconds=self.elapsed_seconds
+            )
 
-                cursor.execute(
-                    """
-                    INSERT INTO resource_metrics 
-                    (task_name, start_ram_mb, peak_ram_mb, end_ram_mb, avg_cpu_percent, elapsed_seconds)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                    (
-                        self.task_name,
-                        self.start_ram_mb,
-                        self.peak_ram_mb,
-                        self.end_ram_mb,
-                        self.avg_cpu_percent,
-                        self.elapsed_seconds,
-                    ),
-                )
-
-                conn.commit()
+            db.insert(metric_data)
         except Exception as e:
             print(f"Warning: Could not save metrics to DB: {e}")
 

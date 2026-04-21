@@ -21,7 +21,9 @@ class StepMetadata:
     version: str = "v1.0"
     timeout: Optional[float] = None
     depends_on: List[str] = field(default_factory=list)
-    retry_count: int = 0
+    retry_count: Optional[int] = None
+    retry_delay: Optional[float] = None
+    retry_on_exceptions: Optional[tuple] = None
     parallel: bool = False
     description: str = ""
     tags: List[str] = field(default_factory=list)
@@ -37,7 +39,9 @@ class DecoratedStep:
         version: str = "v1.0",
         timeout: Optional[float] = None,
         depends_on: Optional[List[str]] = None,
-        retry_count: int = 0,
+        retry_count: Optional[int] = None,
+        retry_delay: Optional[float] = None,
+        retry_on_exceptions: Optional[tuple] = None,
         parallel: bool = False,
         description: str = "",
         tags: Optional[List[str]] = None,
@@ -50,6 +54,8 @@ class DecoratedStep:
             timeout=timeout,
             depends_on=depends_on or [],
             retry_count=retry_count,
+            retry_delay=retry_delay,
+            retry_on_exceptions=retry_on_exceptions,
             description=description,
             tags=tags or [],
         )
@@ -83,7 +89,9 @@ def step(
     version: str = "v1.0",
     timeout: Optional[float] = None,
     depends_on: Optional[List[str]] = None,
-    retry_count: int = 0,
+    retry_count: Optional[int] = None,
+    retry_delay: Optional[float] = None,
+    retry_on_exceptions: Optional[tuple] = None,
     parallel: bool = False,
     description: str = "",
     tags: Optional[List[str]] = None,
@@ -97,6 +105,8 @@ def step(
         timeout: Timeout in seconds
         depends_on: List of step names this depends on
         retry_count: Number of retries on failure
+        retry_delay: Delay between retries
+        retry_on_exceptions: Exceptions to retry on
         parallel: Whether this step can run in parallel
         description: Step description
         tags: List of tags for step
@@ -121,6 +131,8 @@ def step(
             timeout=timeout,
             depends_on=depends_on,
             retry_count=retry_count,
+            retry_delay=retry_delay,
+            retry_on_exceptions=retry_on_exceptions,
             parallel=parallel,
             description=description,
             tags=tags,

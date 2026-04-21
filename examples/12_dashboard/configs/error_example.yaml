@@ -1,0 +1,16 @@
+name: error_example
+registered_at: '2026-04-20T06:54:33.710255'
+step_count: 3
+steps:
+- func: <function validate_input at 0x7fa66763b740>
+  name: validate_input
+  type: task
+  version: v1.0
+- func: <function process_data at 0x7fa6441447c0>
+  name: process_data
+  type: task
+  version: v1.0
+- func: <function finalize at 0x7fa6441449a0>
+  name: finalize
+  type: task
+  version: v1.0

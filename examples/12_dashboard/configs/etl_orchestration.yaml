@@ -1,0 +1,20 @@
+name: etl_orchestration
+registered_at: '2026-04-20T06:54:37.822209'
+step_count: 4
+steps:
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7f9a9bc34830>>
+  name: extract_phase
+  type: task
+  version: v1.0
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7f9a9bc27610>>
+  name: transform_phase
+  type: task
+  version: v1.0
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x7f9a9bc27d90>>
+  name: load_phase
+  type: task
+  version: v1.0
+- func: <function generate_report at 0x7f9a9bb09620>
+  name: generate_report
+  type: task
+  version: v1.0

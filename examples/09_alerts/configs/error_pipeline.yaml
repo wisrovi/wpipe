@@ -1,0 +1,8 @@
+name: error_pipeline
+registered_at: '2026-04-20T06:56:38.597308'
+step_count: 1
+steps:
+- func: <function failing_step at 0x7fee704287c0>
+  name: fail
+  type: task
+  version: v1.0

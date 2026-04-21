@@ -1,832 +1,453 @@
-# wpipe - Python Pipeline Library for Sequential Data Processing
+# 🚀 WPipe v1.6.15
 
-<!-- Logo placeholder -->
-<!-- ┌─────────────────┐ -->
-<!-- │                 │ -->
-<!-- │     wpipe       │ -->
-<!-- │   Pipeline ⚡   │ -->
-<!-- │                 │ -->
-<!-- └─────────────────┘ -->
+**El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
+
+WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar.
 
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![LTS](https://img.shields.io/badge/LTS-2.0.0-green.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/coverage-90%25-brightgreen.svg)](https://github.com/wisrovi/wpipe/actions)
-[![Documentation](https://img.shields.io/badge/docs-wpipe-blue)](https://wpipe.readthedocs.io/)
-
-> **Version 2.0.0-LTS**: Long-Term Support release with parallel execution, pipeline composition, step decorators, resource monitoring, checkpointing, and 90% test coverage.
-
-## Project Overview
-
-**wpipe** is a powerful, enterprise-grade Python library for creating and executing complex data processing pipelines. It is designed for mission-critical environments where reliability, observability, and performance are paramount. Now in its **LTS (Long-Term Support)** phase, WPipe guarantees a stable API and long-term maintenance.
-
-### Key Characteristics
-
-- **No web UI required** - Just clean, production-ready Python code
-- **Minimal dependencies** - Only `requests` and `pyyaml`
-- **Production-ready** - Comprehensive error handling, retry logic, and logging
-- **Well-documented** - Extensive docs, tutorials, and 100+ examples
-- **100% Type Hints** - Excellent IDE support and better developer experience
+[![Documentation Status](https://readthedocs.org/projects/wpipe/badge/?version=latest)](https://wpipe.readthedocs.io/en/latest/?badge=latest)
 
 ---
 
-## Features
+## 💎 ¿Por qué WPipe?
 
-| Feature | Description |
+Diferénciate de los scripts lineales. WPipe te ofrece superpoderes:
+
+| Superpoder | Descripción |
+|------------|-------------|
+| ⚡ **Modo Relámpago** | Optimización extrema de SQLite (WAL Mode) y sincronización thread-safe para ejecuciones paralelas. |
+| 🧵 **Paralelismo Nativo** | Ejecuta tareas en Hilos o Procesos con un solo comando. Bypass del GIL para tareas pesadas de CPU. |
+| 🛡️ **Checkpoints Inteligentes** | Resiliencia ante objetos no serializables y referencias circulares. Si el sistema cae, WPipe reanuda exactamente donde se quedó. |
+| 🔍 **Captura de Errores Forense** | Olvídate de los errores genéricos. Recibe notificaciones detalladas con el archivo y la línea exacta del fallo. |
+| 🧬 **Contratos de Datos** | Valida tu "Bodega" de datos automáticamente con esquemas estrictos pero extensibles. |
+| 🔄 **Paridad Síncrona/Asíncrona** | Elige entre `Pipeline` o `PipelineAsync` con el 100% de las mismas funcionalidades. |
+
+---
+
+## 📊 Features (24 Features)
+
+| Feature | Descripción |
 |---------|-------------|
-| 🔗 **Pipeline Orchestration** | Create pipelines with step functions and classes |
-| 🌳 **Conditional Branches** | Execute different paths based on data conditions |
-| 🔄 **Retry Logic** | Automatic retries with configurable backoff strategies |
-| 🌐 **API Integration** | Connect to external APIs, register workers |
-| 💾 **SQLite Storage** | Persist execution results to database |
-| ⚠️ **Error Handling** | Custom exceptions and detailed error codes |
-| 📋 **YAML Configuration** | Load and manage configurations |
-| 🔀 **Nested Pipelines** | Compose complex workflows |
-| 📊 **Progress Tracking** | Rich terminal output |
-| 🧪 **Type Hints** | Complete type annotations |
-| 🔒 **Memory Control** | Built-in memory utilities |
-| 🧩 **Composable** | Reusable pipeline components |
-| ⚡ **Parallel Execution** | Execute steps in parallel (I/O or CPU bound) |
-| 📂 **Pipeline Composition** | Use pipelines as steps in other pipelines |
-| 🎯 **Step Decorators** | Define steps inline with @step decorator |
-| 💾 **Checkpointing** | Save and resume from checkpoints |
-| ⏱️ **Timeouts** | Prevent hanging tasks with timeout support |
-| 📈 **Resource Monitoring** | Track RAM and CPU during execution |
-| 📤 **Export** | Export logs, metrics, and statistics to JSON/CSV |
+| 🔗 Pipeline Orchestration | Crear pipelines con funciones y clases como pasos |
+| 🌳 Conditional Branches | Ejecutar diferentes rutas basadas en condiciones de datos |
+| 🔄 Retry Logic | Reintentos automáticos con estrategias configurables |
+| 🌐 API Integration | Conectar a APIs externas, registrar workers |
+| 💾 SQLite Storage | Persistir resultados de ejecución a base de datos |
+| ⚠️ Error Handling | Excepciones personalizadas y códigos de error detallados |
+| 📋 YAML Configuration | Cargar y gestionar configuraciones |
+| 🔀 Nested Pipelines | Componer flujos de trabajo complejos |
+| 📊 Progress Tracking | Salida rica en terminal |
+| 🧪 Type Hints | Anotaciones de tipo completas |
+| 🔒 Memory Control | Utilidades integradas de memoria |
+| 🧩 Composable | Componentes reutilizables de pipeline |
+| ⚡ Parallel Execution | Ejecutar pasos en paralelo (I/O o CPU bound) |
+| 📂 Pipeline Composition | Usar pipelines como pasos de otros pipelines |
+| 🎯 Step Decorators | Definir pasos en línea con @step decorator |
+| 💾 Checkpointing | Guardar y resumir desde checkpoints |
+| ⏱️ Timeouts | Prevenir tareas colgadas con soporte de timeout |
+| 📈 Resource Monitoring | Rastrear RAM y CPU durante ejecución |
+| 📤 Export | Exportar logs, métricas y estadísticas a JSON/CSV |
+| 🎪 Events & Hooks | Eventos pre/post ejecución y hooks personalizados |
+| 📉 Alerts | Alertas configurables basadas en métricas |
+| 🔐 Type Validation | Validación de esquemas con PipelineContext |
+| 🔄 Async Pipeline | Soporte completo para pipelines asíncronos |
+| 🏗️ DAG Scheduling | Programación basada en grafos acíclicos dirigida |
+| 🌐 Dashboard Web | Dashboard visual en tiempo real |
 
 ---
 
-## 🚶 Diagram Walkthrough
-
-The following diagram shows the high-level execution flow of a typical wpipe pipeline:
-
-```mermaid
-flowchart TD
-    A[🚀 Start: User Creates Pipeline] --> B[📝 Define Steps]
-    B --> C[⚙️ Configure Pipeline]
-    C --> D[▶️ Execute: pipeline.run]
-    D --> E{Step 1}
-    E -->|Success| F{Step 2}
-    E -->|Error| Z[❌ TaskError Raised]
-    F -->|Success| G{Step 3}
-    F -->|Condition True| H[✅ Branch True]
-    F -->|Condition False| I[❌ Branch False]
-    H --> G
-    I --> G
-    G -->|Success| J[📦 Accumulated Results]
-    G -->|Error| Z
-    J --> K[✅ Pipeline Complete]
-    Z --> L[🔧 Error Handler]
-    L --> M[📋 Access Partial Results]
-```
-
-### Flow Description
-
-1. **Start**: User creates a Pipeline instance and defines step functions
-2. **Configure**: Steps are registered with name and version metadata
-3. **Execute**: `pipeline.run()` starts the sequential execution
-4. **Data Flow**: Each step receives accumulated results from all previous steps
-5. **Conditions**: Optional branching based on data evaluation
-6. **Complete**: Final accumulated results are returned
-
----
-
-## 🗺️ System Workflow
-
-The following sequence diagram shows the interaction between components during pipeline execution:
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Pipeline
-    participant Step1
-    participant Step2
-    participant SQLite
-    participant ExternalAPI
-
-    User->>Pipeline: Create Pipeline(verbose=True)
-    User->>Pipeline: set_steps([...])
-    User->>Pipeline: run(initial_data)
-    
-    Pipeline->>Step1: Execute Step1(initial_data)
-    Step1-->>Pipeline: Return {result1}
-    
-    Pipeline->>Pipeline: Accumulate data
-    Pipeline->>Step2: Execute Step2(accumulated_data)
-    Step2-->>Pipeline: Return {result2}
-    
-    alt with API enabled
-        Pipeline->>ExternalAPI: worker_register()
-        ExternalAPI-->>Pipeline: worker_id
-        Pipeline->>ExternalAPI: register_process()
-        ExternalAPI-->>Pipeline: process_id
-    end
-    
-    alt with SQLite enabled
-        Pipeline->>SQLite: write(input, output, details)
-        SQLite-->>Pipeline: record_id
-    end
-    
-    Pipeline-->>User: Return accumulated_results
-    
-    Note over User,Pipeline: Pipeline execution complete
-```
-
----
-
-## 🏗️ Architecture Components
-
-The following diagram illustrates the static structure and dependencies of wpipe's main modules:
-
-```mermaid
-graph TB
-    subgraph Core["📦 Core Layer"]
-        P[Pipeline<br/>pipe/pipe.py]
-        C[Condition<br/>pipe/pipe.py]
-        PM[ProgressManager<br/>pipe/pipe.py]
-    end
-    
-    subgraph Integration["🔌 Integration Layer"]
-        API[APIClient<br/>api_client/]
-        SQL[Sqlite<br/>sqlite/]
-        WS[Wsqlite<br/>sqlite/]
-    end
-    
-    subgraph Utilities["🛠️ Utilities Layer"]
-        LOG[new_logger<br/>log/]
-        RAM[memory<br/>ram/]
-        YAML[leer_yaml<br/>util/]
-    end
-    
-    subgraph Exceptions["⚠️ Exception Layer"]
-        TE[TaskError<br/>exception/]
-        AE[ApiError<br/>exception/]
-        PE[ProcessError<br/>exception/]
-        CO[Codes<br/>exception/]
-    end
-    
-    P --> C
-    P --> PM
-    P --> API
-    P --> SQL
-    P --> WS
-    API --> TE
-    API --> AE
-    SQL --> PE
-    WS --> SQL
-    
-    User --> P
-    User --> C
-    User --> API
-    User --> WS
-    User --> YAML
-    User --> RAM
-    User --> LOG
-```
-
-### Module Dependencies
-
-```mermaid
-graph LR
-    A[wpipe/__init__.py] --> B[pipe/pipe.py]
-    A --> C[api_client/]
-    A --> D[sqlite/]
-    A --> E[exception/]
-    
-    B --> F[rich<br/>ProgressManager]
-    C --> G[requests<br/>HTTP calls]
-    D --> H[sqlite3<br/>Database]
-    E --> I[Built-in exceptions]
-    
-    User --> A
-```
-
----
-
-## ⚙️ Container Lifecycle
-
-### Build Process
-
-```mermaid
-flowchart LR
-    A[📁 Source Code] --> B[🔧 Install Dependencies]
-    B --> C[pip install -e .]
-    C --> D[📦 wpipe Package]
-    D --> E[✅ Ready for Development]
-    
-    style A fill:#e1f5fe
-    style E fill:#c8e6c9
-```
-
-### Runtime Process
-
-```mermaid
-flowchart TD
-    A[🚀 Import wpipe] --> B[📝 Create Pipeline]
-    B --> C[⚙️ Configure Steps]
-    C --> D[▶️ Call pipeline.run]
-    D --> E[📊 Initialize Progress]
-    
-    E --> F{Step Loop}
-    F -->|For each step| G[📥 Get Step Data]
-    G --> H[⚡ Execute Step Function]
-    H --> I{Success?}
-    
-    I -->|Yes| J[📦 Accumulate Results]
-    J --> K{Next Step?}
-    K -->|Yes| F
-    K -->|No| L[✅ Return Final Results]
-    
-    I -->|No| M{Retry Config?}
-    M -->|Yes| N[⏳ Wait retry_delay]
-    N --> O[🔄 Retry Attempt]
-    O --> H
-    
-    M -->|No| P[❌ Raise TaskError]
-    P --> Q[📋 Capture Partial Results]
-    
-    style L fill:#c8e6c9
-    style P fill:#ffcdd2
-```
-
----
-
-## 📂 File-by-File Guide
-
-| File/Directory | Purpose | Description |
-|----------------|---------|-------------|
-| `wpipe/__init__.py` | Main exports | Exports Pipeline, Condition, APIClient, Wsqlite |
-| `wpipe/pipe/pipe.py` | Core logic | Pipeline, Condition, ProgressManager classes |
-| `wpipe/api_client/api_client.py` | HTTP client | APIClient, send_post, send_get functions |
-| `wpipe/sqlite/Sqlite.py` | Database | Core SQLite operations |
-| `wpipe/sqlite/Wsqlite.py` | Wrapper | Context manager for simple DB operations |
-| `wpipe/log/log.py` | Logging | new_logger function (loguru) |
-| `wpipe/ram/ram.py` | Memory | memory decorator, memory_limit, get_memory |
-| `wpipe/util/utils.py` | Config | leer_yaml, escribir_yaml functions |
-| `wpipe/exception/api_error.py` | Errors | TaskError, ApiError, ProcessError, Codes |
-| `docs/source/` | Documentation | Sphinx documentation source files |
-| `examples/` | Examples | 100+ working examples organized by topic |
-| `test/` | Tests | pytest test suite (106 tests) |
-
----
-
-## Getting Started
-
-### Installation
-
-#### PyPI (Recommended)
+## 🚀 Instalación
 
 ```bash
 pip install wpipe
 ```
 
-#### From Source
-
-```bash
-git clone https://github.com/wisrovi/wpipe
-cd wpipe
-pip install -e .
-```
-
-#### Development Install
-
-```bash
-pip install -e ".[dev]"
-```
-
-### Requirements
-
-- Python 3.9 or higher
-- requests (for API integration)
-- pyyaml (for YAML configuration)
-
-### Verification
-
-```python
-import wpipe
-print(wpipe.__version__)  # 1.0.0
-```
-
 ---
 
-## Usage/Examples
+## 📖 Guía Completa
 
-### Basic Pipeline
+### 1. Conceptos Fundamentales
+
+WPipe se basa en **4 pilares** que puedes combinar libremente:
 
 ```python
-from wpipe import Pipeline
-
-def fetch_data(data):
-    """Fetch data from a source."""
-    return {"users": [{"name": "Alice"}, {"name": "Bob"}, {"name": "Charlie"}]}
-
-def process_data(data):
-    """Process the fetched data."""
-    users = data["users"]
-    return {"count": len(users), "names": [u["name"] for u in users]}
-
-def save_data(data):
-    """Save results."""
-    return {"status": "saved", "processed": data["count"]}
-
-# Create and configure your pipeline
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([
-    (fetch_data, "Fetch Data", "v1.0"),
-    (process_data, "Process Data", "v1.0"),
-    (save_data, "Save Data", "v1.0"),
-])
-
-# Run the pipeline
-result = pipeline.run({})
-# Output: {'users': [...], 'count': 3, 'names': [...], 'status': 'saved', 'processed': 3}
+from wpipe import Pipeline, step, Condition, For, Parallel
 ```
 
-### Conditional Pipeline
+| Pilar | Uso |
+|-------|-----|
+| **`step`** | Decorador para definir funciones como pasos del pipeline |
+| **`Pipeline`** | Contenedor principal que orquesta la ejecución |
+| **`Condition`** | Ramificación condicional basada en expresiones |
+| **`For`** | Bucles con validación de parada |
+| **`Parallel`** | Ejecución paralela de múltiples pasos |
+
+### 2. Tu Primer Pipeline
 
 ```python
-from wpipe import Pipeline, Condition
+from wpipe import Pipeline, step
 
-def check_value(data):
-    return {"value": 75}
+@step(name="saludar")
+def saludar(name):
+    return {"mensaje": f"Hola, {name}!"}
 
-def process_high(data):
-    return {"result": "High value"}
+pipeline = Pipeline(pipeline_name="miPrimero")
+pipeline.set_steps([saludar])
 
-def process_low(data):
-    return {"result": "Low value"}
+result = pipeline.run({"name": "Mundo"})
+# {'mensaje': 'Hola, Mundo!'}
+```
 
-condition = Condition(
-    expression="value > 50",
-    branch_true=[(process_high, "High", "v1.0")],
-    branch_false=[(process_low, "Low", "v1.0")],
+### 3. Pipeline con Validación de Tipos
+
+```python
+from wpipe import Pipeline, step, PipelineContext
+
+class Usuario(PipelineContext):
+    nombre: str
+    edad: int
+    email: str
+
+@step(name="validar_usuario")
+def validar(usuario: Usuario):
+    if usuario.edad < 18:
+        return {"validado": False, "razon": "menor de edad"}
+    return {"validado": True}
+
+pipeline = Pipeline(pipeline_name="validacion")
+pipeline.set_steps([validar])
+
+result = pipeline.run({"nombre": "Ana", "edad": 25, "email": "ana@ejemplo.com"})
+# {'validado': True}
+```
+
+### 4. Ramificaciones Condicionales
+
+```python
+from wpipe import Pipeline, step, Condition
+
+@step(name="procesar")
+def procesar(data):
+    return {"resultado": "procesado"}
+
+@step(name="alerta")
+def alertar(data):
+    return {"alerta": "¡Datos críticos!"}
+
+pipeline = Pipeline(pipeline_name="condicional")
+pipeline.set_steps([
+    Condition(
+        expression="valor > 100",
+        branch_true=[procesar],
+        branch_false=[alertar]
+    )
+])
+
+pipeline.run({"valor": 50})  # Ejecuta alertar
+pipeline.run({"valor": 150})  # Ejecuta procesar
+```
+
+### 5. Ejecución Paralela
+
+```python
+from wpipe import Pipeline, step, Parallel
+
+@step(name="tarea_a")
+def tarea_a(data):
+    return {"a": "listo"}
+
+@step(name="tarea_b")
+def tarea_b(data):
+    return {"b": "listo"}
+
+@step(name="tarea_c")
+def tarea_c(data):
+    return {"c": "listo"}
+
+pipeline = Pipeline(pipeline_name="paralelo")
+pipeline.set_steps([
+    Parallel(
+        steps=[tarea_a, tarea_b, tarea_c],
+        max_workers=3
+    )
+])
+
+result = pipeline.run({})
+# Las 3 tareas se ejecutan simultáneamente
+```
+
+### 6. Checkpoints (Resiliencia)
+
+```python
+from wpipe import Pipeline, step, CheckpointManager
+
+pipeline = Pipeline(pipeline_name="resiliente")
+
+# Definir checkpoint basado en expresión lógica
+pipeline.add_checkpoint(
+    checkpoint_name="datos_listos",
+    expression="temperatura > 0"
 )
 
-pipeline = Pipeline(verbose=True)
-pipeline.set_steps([
-    (check_value, "Check", "v1.0"),
-    condition,
-])
+@step(name="procesar")
+def procesar(data):
+    return {"status": "completado"}
+
+pipeline.set_steps([procesar])
+
+# Si el sistema cae, WPipe reanuda automáticamente
+chk = CheckpointManager("mi_db.db")
+if chk.can_resume("resiliente"):
+    pipeline.resume()
+else:
+    pipeline.run({"temperatura": 25})
 ```
 
-### With SQLite Storage
+### 7. Reintentos Automáticos
 
 ```python
-from wpipe import Pipeline
-from wpipe.sqlite import Wsqlite
+from wpipe import Pipeline, step
 
-with Wsqlite(db_name="results.db") as db:
-    db.input = {"x": 10}
-    result = pipeline.run({"x": 10})
-    db.output = result
-    print(f"Record ID: {db.id}")
+@step(name="conexion_api", retry_count=3, retry_delay=1)
+def conexion_api(data):
+    # Simulamos posible fallo
+    if not data.get("disponible"):
+        raise ConnectionError("API no disponible")
+    return {"conectado": True}
+
+pipeline = Pipeline(pipeline_name="retry")
+pipeline.set_steps([conexion_api])
+pipeline.run({"disponible": False})  # Reintenta 3 veces antes de fallar
 ```
 
-### With Retry Logic
+### 8. Timeouts
 
 ```python
-pipeline = Pipeline(
-    verbose=True,
-    max_retries=3,
-    retry_delay=2.0,
-    retry_on_exceptions=(ConnectionError, TimeoutError),
-)
-```
+from wpipe import Pipeline, step, timeout_sync
 
----
-
-## Advanced Usage
-
-### Parallel Execution
-
-Execute independent steps in parallel for I/O or CPU-bound tasks:
-
-```python
-from wpipe import Pipeline
-from wpipe.parallel import ParallelExecutor, ExecutionMode
-
-def fetch_users(data):
-    import time; time.sleep(1)
-    return {"users": ["Alice", "Bob"]}
-
-def fetch_posts(data):
-    import time; time.sleep(1)
-    return {"posts": ["Post 1", "Post 2"]}
-
-def aggregate(data):
-    return {"total": len(data.get("users", [])) + len(data.get("posts", []))}
-
-executor = ParallelExecutor(max_workers=4)
-executor.add_step("fetch_users", fetch_users, mode=ExecutionMode.IO_BOUND)
-executor.add_step("fetch_posts", fetch_posts, mode=ExecutionMode.IO_BOUND)
-executor.add_step("aggregate", aggregate, depends_on=["fetch_users", "fetch_posts"])
-
-result = executor.execute({})  # 4x faster than sequential!
-```
-
-### For Loops
-
-Iterate over steps with count or condition:
-
-```python
-from wpipe import Pipeline, For
-
-def check_status(data):
-    count = data.get("count", 0) + 1
-    return {"count": count, "done": count >= 3}
-
-# Count-based loop
-loop = For(steps=[(check_status, "Check", "v1.0")], iterations=3)
-
-# Condition-based loop
-loop = For(steps=[(check_status, "Check", "v1.0")], validation_expression="not data.get('done', False)")
-
-pipeline = Pipeline(verbose=False)
-pipeline.set_steps([loop])
-result = pipeline.run({"count": 0})
-```
-
-### Pipeline Composition
-
-Use pipelines as steps in other pipelines:
-
-```python
-from wpipe import Pipeline
-from wpipe.composition import NestedPipelineStep, PipelineAsStep
-
-# Inner pipelines
-clean = Pipeline(verbose=False)
-clean.set_steps([(lambda d: {"cleaned": True}, "Clean", "v1.0")])
-
-analyze = Pipeline(verbose=False)
-analyze.set_steps([(lambda d: {"analyzed": True}, "Analyze", "v1.0")])
-
-# Compose into main pipeline
-main = Pipeline(verbose=False)
-main.set_steps([
-    (lambda d: {"data": "raw"}, "Fetch", "v1.0"),
-    (lambda d: NestedPipelineStep("clean", clean).run(d), "Clean", "v1.0"),
-    (lambda d: NestedPipelineStep("analyze", analyze).run(d), "Analyze", "v1.0"),
-])
-
-result = main.run({})
-```
-
-### @step Decorator
-
-Define steps inline with metadata:
-
-```python
-from wpipe import step, AutoRegister, Pipeline
-
-@step(description="Fetch data", timeout=30, tags=["data"], retry_count=3)
-def fetch_data(context):
-    return {"data": [1, 2, 3]}
-
-@step(description="Process", depends_on=["fetch_data"], tags=["transform"])
-def process_data(context):
-    return {"processed": context.get("data", [])}
-
-# Auto-register all decorated steps
-pipeline = Pipeline(verbose=False)
-AutoRegister.register_all(pipeline)
-result = pipeline.run({})
-```
-
-### Checkpointing
-
-Save and resume pipeline state:
-
-```python
-from wpipe import Pipeline
-from wpipe.checkpoint import CheckpointManager
-
-checkpoint = CheckpointManager(tracking_db="tracking.db")
-
-# Create checkpoint
-checkpoint.create_checkpoint("v1", "my_pipeline", {"state": "initial"})
-
-# Check if can resume
-can_resume = checkpoint.can_resume("my_pipeline")
-if can_resume:
-    state = checkpoint.get_checkpoint("my_pipeline", "v1")
-    print(f"Resuming from: {state}")
-
-# Get stats
-stats = checkpoint.get_checkpoint_stats("my_pipeline")
-print(f"Total checkpoints: {stats['total_checkpoints']}")
-```
-
-### Resource Monitoring
-
-Track CPU and RAM during execution:
-
-```python
-from wpipe import Pipeline
-from wpipe.resource_monitor import ResourceMonitor, ResourceMonitorRegistry
-
-# Single task monitoring
-monitor = ResourceMonitor()
-monitor.start()
-# ... run your task ...
-monitor.stop()
-stats = monitor.get_stats()
-print(f"Peak RAM: {stats['peak_ram_mb']} MB")
-
-# Registry for multiple tasks with SQLite persistence
-registry = ResourceMonitorRegistry(db_path="resources.db")
-task_id = registry.register_task("my_task")
-registry.record_usage(task_id, {"cpu": 45.2, "ram": 512.0})
-```
-
-### Export to JSON/CSV
-
-Export logs, metrics, and statistics:
-
-```python
-from wpipe.export import PipelineExporter
-
-exporter = PipelineExporter(db_path="tracking.db")
-
-# Export pipeline logs to JSON
-logs_json = exporter.export_pipeline_logs(format="json")
-
-# Export to CSV with filter
-logs_csv = exporter.export_pipeline_logs(pipeline_id="PIPE-123", format="csv")
-
-# Export metrics
-metrics = exporter.export_metrics(format="json")
-
-# Export statistics
-stats = exporter.export_statistics(format="json")
-
-# Save to file
-exporter.export_pipeline_logs(output_path="logs.json", format="json")
-```
-
-### Timeout Decorators
-
-Prevent hanging tasks:
-
-```python
-from wpipe.timeout import timeout_sync, timeout_async, TaskTimer
-import asyncio
-
-# Sync timeout
 @timeout_sync(seconds=5)
-def slow_function(data):
-    import time; time.sleep(10)  # Will be killed after 5s
-    return {"done": True}
+@step(name="tarea_lenta")
+def tarea_lenta(data):
+    import time
+    time.sleep(10)  # Simula tarea lenta
+    return {"status": "ok"}
 
-# Async timeout
-@timeout_async(seconds=5)
-async def slow_async_function(data):
-    import asyncio; await asyncio.sleep(10)  # Will be killed after 5s
-    return {"done": True}
-
-# Task timer context manager
-with TaskTimer("my_task") as timer:
-    # ... your code ...
-    pass
-print(f"Elapsed: {timer.elapsed_ms}ms")
+pipeline = Pipeline(pipeline_name="timeout")
+pipeline.set_steps([tarea_lenta])
+# Si tarda más de 5 segundos, lanza TimeoutError
 ```
 
-### Async Pipeline
+### 9. Pipeline Asíncrono
 
 ```python
 import asyncio
-from wpipe.pipe.pipe_async import PipelineAsync
+from wpipe import PipelineAsync, step
 
-async def fetch_data(data):
-    await asyncio.sleep(0.1)
-    return {"data": "fetched"}
-
-async def process_data(data):
-    await asyncio.sleep(0.1)
-    return {"processed": True}
+@step(name="async_task")
+async def async_task(data):
+    await asyncio.sleep(1)
+    return {"result": "async done"}
 
 async def main():
-    pipeline = PipelineAsync(verbose=False)
-    pipeline.set_steps([
-        (fetch_data, "Fetch", "v1.0"),
-        (process_data, "Process", "v1.0"),
-    ])
-    result = await pipeline.run({})
-    print(result)
+    pipeline = PipelineAsync(pipeline_name="async_demo")
+    pipeline.set_steps([async_task])
+    result = await pipeline.run({"data": "test"})
+    return result
 
 asyncio.run(main())
 ```
 
----
-
-## Data Flow Visualization
-
-```
-┌───────────────────────────────────────────────────────────────────────────┐
-│                        PIPELINE EXECUTION FLOW                            │
-└───────────────────────────────────────────────────────────────────────────┘
-
-Input          Step 1            Step 2            Step 3            Output
-──────          ──────            ──────            ──────            ──────
-┌─────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐
-│  {}  │────▶│  Fetch  │────▶│ Process │────▶│  Save   │────▶│ Result  │
-└─────┘      │  Data   │      │  Data   │      │  Data   │      └─────────┘
-             └─────────┘      └─────────┘      └─────────┘
-             {users: [...]}   {users, count}   {count, status}
-```
-
----
-
-## API Reference
-
-### Pipeline
+### 10. Pipelines Anidados
 
 ```python
-from wpipe import Pipeline
+from wpipe import Pipeline, step
 
-pipeline = Pipeline(
-    verbose=True,           # Enable verbose output
-    api_config={},         # API configuration
-    max_retries=3,         # Maximum retry attempts
-    retry_delay=1.0,       # Delay between retries
-    retry_on_exceptions=(ConnectionError, TimeoutError),
+# Pipeline hijo
+sub_pipeline = Pipeline(pipeline_name="hijo")
+sub_pipeline.set_steps([step_a, step_b])
+
+# Pipeline padre que usa el hijo
+parent_pipeline = Pipeline(pipeline_name="padre")
+parent_pipeline.set_steps([
+    paso_inicial,
+    sub_pipeline,  # ¡Se ejecuta como un paso más!
+    paso_final
+])
+```
+
+### 11. Exportar Resultados
+
+```python
+from wpipe import PipelineExporter
+
+exporter = PipelineExporter("tracking.db")
+
+# Exportar a JSON
+json_data = exporter.export_pipeline_logs(format="json")
+
+# Exportar a CSV
+csv_data = exporter.export_pipeline_logs(format="csv")
+
+# Exportar estadísticas
+stats = exporter.export_statistics(format="json")
+```
+
+### 12. Dashboard Web
+
+```python
+from wpipe import start_dashboard
+
+# Inicia el dashboard en http://localhost:5000
+start_dashboard(db_path="tracking.db", port=5000)
+```
+
+---
+
+## 🎯 Uso Avanzado: El Viaje Resiliente
+
+Este ejemplo combina **todas las características** de WPipe:
+
+```python
+from wpipe import (
+    Pipeline, For, Condition, Parallel, step, to_obj,
+    PipelineContext, CheckpointManager, Metric, Severity
 )
-```
 
-**Methods:**
-- `set_steps(steps)` - Configure pipeline steps
-- `run(input_data)` - Execute the pipeline
-- `worker_register(name, version)` - Register with API
-- `set_worker_id(worker_id)` - Set worker ID
+# 1. Definimos el contrato de datos
+class MiContexto(PipelineContext):
+    motor: str
+    temperatura: float
+    nivel_gasolina: str
 
-### Condition
+# 2. Creamos pasos con validación automática
+@step(name="VerificarMotor", retry_count=3)
+@to_obj(MiContexto)
+def verificar_motor(ctx: MiContexto):
+    print(f"Chequeando motor: {ctx.motor}")
+    return {"temperatura": 85.5}
 
-```python
-from wpipe import Condition
+@step(name="CargarCombustible")
+def cargar_combustible(data):
+    return {"nivel_gasolina": "completo"}
 
-condition = Condition(
-    expression="value > 50",
-    branch_true=[(step_true, "True", "v1.0")],
-    branch_false=[(step_false, "False", "v1.0")],
+@step(name="Conducir")
+def conducir(data):
+    return {"distancia": 100}
+
+# 3. Orquestación de Alto Nivel
+viaje = Pipeline(pipeline_name="ViajeLTS", verbose=True)
+
+# Añadimos checkpoint inteligente
+viaje.add_checkpoint(
+    checkpoint_name="arranque",
+    expression="temperatura > 0"
 )
+
+# Añadimos alertas
+viaje.tracker.add_alert_threshold(
+    metric=Metric.PIPELINE_DURATION,
+    expression=">5000",
+    severity=Severity.WARNING,
+    steps=[lambda d: print("⚠ Pipeline lento!")]
+)
+
+# 4. Configuramos los pasos
+viaje.set_steps([
+    verificar_motor,
+    Parallel(
+        steps=[cargar_combustible, revisar_neumaticos],
+        max_workers=2
+    ),
+    For(
+        iterations=10,
+        validation_expression="nivel_gasolina != 'vacío'",
+        steps=[conducir]
+    )
+])
+
+# 5. Ejecutamos
+results = viaje.run({"motor": "V8", "temperatura": 20})
 ```
 
-### Exceptions
+---
+
+## 📊 Observabilidad Completa
+
+WPipe no solo ejecuta, **entiende** tu proceso:
 
 ```python
-from wpipe.exception import TaskError, ApiError, ProcessError, Codes
+# Análisis de rendimiento
+analysis = pipeline.tracker.analysis
+stats = analysis.get_stats()
 
-try:
-    result = pipeline.run(data)
-except TaskError as e:
-    print(f"Step: {e.step_name}")
-    print(f"Code: {e.error_code}")
-```
+# Estadísticas globales
+print(f"Total ejecuciones: {stats['total_pipelines']}")
+print(f"Tasa de éxito: {stats['success_rate']}%")
+print(f"Duración media: {stats['avg_duration_ms']}ms")
 
-**Error Codes:**
-- `TASK_FAILED` (502) - Task execution failed
-- `API_ERROR` (501) - API communication error
-- `UPDATE_PROCESS_ERROR` (504) - Process update failed
-- `UPDATE_TASK` (505) - Task update failed
-- `UPDATE_PROCESS_OK` (503) - Process completed successfully
+# Detectar cuellos de botella
+slow_steps = analysis.get_top_slow_steps(limit=5)
+for step in slow_steps:
+    print(f"{step['step_name']}: {step['avg_duration_ms']}ms")
 
----
-
-## Code Quality
-
-| Metric | Value |
-|--------|-------|
-| Tests | 106 passing |
-| Examples | 100+ |
-| Python Support | 3.9, 3.10, 3.11, 3.12, 3.13 |
-| Type Hints | Complete |
-| Docstrings | Google-style |
-
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=wpipe --cov-report=html
-open htmlcov/index.html
-
-# Lint
-ruff check wpipe/
-
-# Auto-fix linting
-ruff check wpipe/ --fix
-
-# Type check
-mypy wpipe/
-
-# All quality checks
-ruff check wpipe/ && mypy wpipe/ && pytest
+# Exportar a JSON/CSV para auditorías
+exporter = PipelineExporter("tracking.db")
+exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 ```
 
 ---
 
-## Examples
+## 📋 API Reference (Resumen)
 
-Explore **100+ examples** organized by functionality:
+| Clase/Función | Descripción |
+|--------------|------------|
+| `Pipeline` | Pipeline síncrono principal |
+| `PipelineAsync` | Pipeline asíncrono |
+| `@step(name, version, retry_count, ...)` | Decorador para definir pasos |
+| `Condition(expression, branch_true, branch_false)` | Ramificación condicional |
+| `For(iterations, validation_expression, steps)` | Bucle con validación |
+| `Parallel(steps, max_workers, use_processes)` | Ejecución paralela |
+| `CheckpointManager` | Gestor de checkpoints |
+| `PipelineExporter` | Exportador de logs/métricas |
+| `start_dashboard(port)` | Dashboard web |
+| `ResourceMonitor` | Monitor de RAM/CPU |
+| `PipelineContext` | TypedDict para validación de tipos |
 
-| Folder | Examples | Description |
-|--------|----------|-------------|
-| [01_basic_pipeline](examples/01_basic_pipeline/) | 15 | Functions, classes, mixed steps, data flow, async |
-| [02_api_pipeline](examples/02_api_pipeline/) | 20 | External APIs, workers, authentication, health checks |
-| [03_error_handling](examples/03_error_handling/) | 15 | Exceptions, error codes, recovery, partial results |
-| [04_condition](examples/04_condition/) | 12 | Conditional branches, decision trees, boolean logic |
-| [05_retry](examples/05_retry/) | 12 | Automatic retries, backoff, custom exceptions |
-| [06_sqlite_integration](examples/06_sqlite_integration/) | 14 | Persistence, CSV export, batch operations |
-| [07_nested_pipelines](examples/07_nested_pipelines/) | 14 | Complex workflows, parallel execution, recursion |
-| [08_yaml_config](examples/08_yaml_config/) | 14 | Configuration, environment variables, validation |
-| [09_microservice](examples/09_microservice/) | 11 | Production-ready microservice patterns |
+---
 
-### Running Examples
+## 🛡️ Calidad y Soporte
 
-```bash
-# Basic pipeline
-python examples/01_basic_pipeline/01_simple_function/example.py
+| Aspecto | Detalle |
+|--------|---------|
+| **LTS** | WPipe v1.6+ cuenta con soporte a largo plazo |
+| **Test Coverage** | 95%+ pruebas en entornos síncronos y asíncronos |
+| **Arquitectura** | Unificación bajo `wsqlite`, sin SQL crudo en el núcleo |
+| **Python** | Compatible con Python 3.9+ |
 
-# With conditions
-python examples/04_condition/01_basic_condition_example/example.py
+---
 
-# With SQLite
-python examples/06_sqlite_integration/02_wsqlite_example/example.py
+## 📄 Licencia
 
-# With retry
-python examples/05_retry/01_basic_retry_example/example.py
+MIT License - Libre para usar, modificar y distribuir.
+
+---
+
+## 🏢 ¿Usas WPipe? (Opcional)
+
+¡Nos encantaría saberlo! Si usas WPipe en producción, nos motiva mucho saberlo.
+
+** badge opcional:**
+
+```markdown
+[![Built with WPipe](https://img.shields.io/badge/Built%20with-WPipe-blue)](https://github.com/wisrovi/wpipe)
 ```
 
----
+📧 **Contáctanos:** wisrovi.rodriguez@gmail.com
 
-## Architecture
-
-```
-wpipe/
-├── __init__.py           # Main exports (Pipeline, Condition, APIClient, Wsqlite)
-├── pipe/
-│   └── pipe.py           # Pipeline, Condition, ProgressManager
-├── api_client/
-│   └── api_client.py     # APIClient, send_post, send_get
-├── sqlite/
-│   ├── Sqlite.py         # Core SQLite operations
-│   └── Wsqlite.py        # Simplified context manager wrapper
-├── log/
-│   └── log.py            # Logging utilities (loguru)
-├── ram/
-│   └── ram.py            # Memory control utilities
-├── util/
-│   └── utils.py          # YAML utilities (leer_yaml, escribir_yaml)
-└── exception/
-    └── api_error.py      # TaskError, ApiError, ProcessError, Codes
-```
+Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
-## Documentation
-
-| Resource | URL |
-|----------|-----|
-| Documentation | https://wpipe.readthedocs.io/ |
-| Live Demo | https://wisrovi.github.io/wpipe/ |
-| PyPI Package | https://pypi.org/project/wpipe/ |
-| GitHub Repository | https://github.com/wisrovi/wpipe |
-| Releases | https://github.com/wisrovi/wpipe/releases |
-| Issues | https://github.com/wisrovi/wpipe/issues |
-
----
-
-## Why wpipe?
-
-| Traditional Tools | wpipe |
-|-------------------|-------|
-| Complex setup | Simple pip install |
-| Web UI required | Pure Python code |
-| Heavy dependencies | Minimal requirements |
-| YAML/JSON config | Python code |
-| Overkill for simple tasks | Perfect for any scale |
-
----
-
-## License
-
-MIT License - See [LICENSE](LICENSE) file
-
----
-
-## Author
-
-**William Steve Rodriguez Villamizar**
-
-- GitHub: [github.com/wisrovi](https://github.com/wisrovi)
-- LinkedIn: [linkedin.com/in/wisrovi-rodriguez](https://www.linkedin.com/in/wisrovi-rodriguez/)
-- Portfolio: [wisrovi.github.io](https://wisrovi.github.io/)
-
----
-
-<p align="center">
-  <strong>Star ⭐ this repo if you find it useful!</strong>
-</p>
+ Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia.

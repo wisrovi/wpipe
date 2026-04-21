@@ -4,7 +4,7 @@ from wpipe.parallel import ExecutionMode, ParallelExecutor
 
 @step(name="A_abrir_coche", version="v1.1", tags=["preparacion"])
 def A_abrir_coche(context):
-    print("    [A] Abriendo el coche...")
+    # print("    [A] Abriendo el coche...")
     return {}
 
 
@@ -15,7 +15,7 @@ def A_abrir_coche(context):
     parallel=True,
 )
 def B_inflar_neumaticos(context):
-    print("    [B] Inflando neumáticos (en paralelo)...")
+    # print("    [B] Inflando neumáticos (en paralelo)...")
     return {"neumaticos": "OK"}
 
 
@@ -26,7 +26,7 @@ def B_inflar_neumaticos(context):
     parallel=True,
 )
 def C_limpiar_parabrisas(context):
-    print("    [C] Limpiando parabrisas (en paralelo)...")
+    # print("    [C] Limpiando parabrisas (en paralelo)...")
     return {"parabrisas": "Limpio"}
 
 
@@ -36,7 +36,7 @@ def C_limpiar_parabrisas(context):
     depends_on=["B_inflar_neumaticos", "C_limpiar_parabrisas"],
 )
 def D_arrancar_motor(context):
-    print("    [D] Arrancando motor... ¡Todo listo!")
+    # print("    [D] Arrancando motor... ¡Todo listo!")
     return {"motor": "ON"}
 
 
@@ -46,7 +46,7 @@ def fase_preparacion(data):
     Encapsula una ejecución en paralelo dentro de un paso del pipeline.
     Utiliza AutoRegister para cargar automáticamente los pasos decorados.
     """
-    print("\n--- Iniciando Fase de Preparación Paralela (DAG) ---")
+    # print("\n--- Iniciando Fase de Preparación Paralela (DAG) ---")
 
     # El ParallelExecutor es capaz de orquestar basándose en las dependencias de los @step
     executor = ParallelExecutor(max_workers=4)
@@ -64,5 +64,5 @@ def fase_preparacion(data):
 
     # El ejecutor resuelve el grafo y corre B y C simultáneamente
     result = executor.execute(data)
-    print("--- Fase de Preparación Completada ---\n")
+    # print("--- Fase de Preparación Completada ---\n")
     return result

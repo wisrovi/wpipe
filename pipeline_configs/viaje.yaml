@@ -1,5 +1,35 @@
 name: viaje
-registered_at: '2026-04-09T22:29:21.473477'
-step_count: 1
+registered_at: '2026-04-19T22:12:57.955969'
+step_count: 2
 steps:
-- <wpipe.pipe.pipe.For object at 0x7f2662922210>
+- func: <function fase_preparacion at 0x7f0edcd2cb80>
+  name: fase_preparacion
+  type: task
+  version: v1.1
+- expression: null
+  iterations: 3
+  steps:
+  - <states.print_info.Print_info object at 0x7f0edcea22c0>
+  - max_workers: 3
+    steps:
+    - <function hechar_gasolina at 0x7f0edcd1bd80>
+    - '<State: cambiar_aceite v1.0>'
+    - <function revisar_luces at 0x7f0eff4de340>
+    type: parallel
+    use_processes: false
+  - <states.print_info.Print_info object at 0x7f0edcea23f0>
+  - (<function print_gasolina at 0x7f0edcd2cf40>, 'Mostrar gasolina', 'v1.0', '')
+  - expression: "nivel_gasolina != 'Vac\xEDo'"
+    iterations: null
+    steps:
+    - <function conducir at 0x7f0edcd1b060>
+    - branch_false:
+      - '<State: desinflar_neumaticos v1.0>'
+      branch_true:
+      - <wpipe.pipe.pipe.Pipeline object at 0x7f0edcfc6cf0>
+      - '<State: inflar_neumaticos v1.0>'
+      expression: nivel_neumaticos == 'Bajo'
+      type: condition
+    - (<function print_gasolina at 0x7f0edcd2cf40>, 'Mostrar gasolina', 'v1.0')
+    type: for
+  type: for

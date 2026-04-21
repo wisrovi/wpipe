@@ -1,0 +1,16 @@
+name: data_generation
+registered_at: '2026-04-20T06:56:05.413733'
+step_count: 3
+steps:
+- func: <function generate_numbers at 0x7f527d55f740>
+  name: generate_numbers
+  type: task
+  version: v1.0
+- func: <function double_values at 0x7f52560687c0>
+  name: double_values
+  type: task
+  version: v1.0
+- func: <function calculate_sum at 0x7f52560689a0>
+  name: calculate_sum
+  type: task
+  version: v1.0

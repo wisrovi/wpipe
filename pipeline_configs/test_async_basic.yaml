@@ -1,0 +1,6 @@
+name: test_async_basic
+registered_at: '2026-04-20T22:45:07.481387'
+step_count: 2
+steps:
+- <function add_one_async at 0x7fb89c326200>
+- <function multiply_two_async at 0x7fb89c326340>

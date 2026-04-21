@@ -1,0 +1,9 @@
+name: AlertTest
+registered_at: '2026-04-20T02:29:01.981695'
+step_count: 1
+steps:
+- func: <function TestFinalCoverage.test_pipeline_with_fast_alerts.<locals>.<lambda>
+    at 0x7f67fc7a4680>
+  name: <lambda>
+  type: task
+  version: v1.0

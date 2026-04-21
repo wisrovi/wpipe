@@ -1,0 +1,39 @@
+name: viaje_async
+registered_at: '2026-04-20T00:59:23.773940'
+step_count: 2
+steps:
+- <function fase_preparacion at 0x7f979a883920>
+- expression: null
+  iterations: 3
+  steps:
+  - <states.print_info.Print_info object at 0x7f979aa0dcd0>
+  - max_workers: 3
+    steps:
+    - <function hechar_gasolina at 0x7f979a882b60>
+    - '<State: cambiar_aceite v1.0>'
+    - <function revisar_luces at 0x7f97c08fc9a0>
+    type: parallel
+    use_processes: false
+  - <states.print_info.Print_info object at 0x7f979aa0de00>
+  - meta: {}
+    name: Mostrar gasolina
+    type: task
+    version: v1.0
+  - expression: "nivel_gasolina != 'Vac\xEDo'"
+    iterations: null
+    steps:
+    - <function conducir at 0x7f979a882160>
+    - branch_false:
+      - '<State: desinflar_neumaticos v1.0>'
+      branch_true:
+      - <wpipe.pipe.pipe.Pipeline object at 0x7f979a99ecf0>
+      - '<State: inflar_neumaticos v1.0>'
+      expression: nivel_neumaticos == 'Bajo'
+      type: condition
+    - meta: {}
+      name: Mostrar gasolina
+      type: task
+      version: v1.0
+    - <function pinchazo_aleatorio at 0x7f979a883d80>
+    type: for
+  type: for

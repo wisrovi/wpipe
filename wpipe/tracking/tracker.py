@@ -29,11 +29,20 @@ from .queries import QueryManager
 
 
 def _safe_json_dumps(data: Any) -> str:
-    """Safe JSON dump that handles non-serializable objects."""
+    """Safe JSON dump that handles non-serializable objects and circular references."""
+    from wpipe.util.transform import object_to_dict
+    
     try:
-        return json.dumps(data)
-    except (TypeError, OverflowError):
-        return json.dumps(str(data))
+        # Primero convertimos todo a una estructura de dicts/lists limpia
+        # object_to_dict ya maneja referencias circulares y tipos complejos
+        clean_data = object_to_dict(data)
+        return json.dumps(clean_data)
+    except (TypeError, OverflowError, ValueError):
+        try:
+            # Si falla (por ejemplo, por tipos exóticos no cubiertos), intentamos stringify individual
+            return json.dumps(str(data))
+        except Exception:
+            return '"<Unserializable Data>"'
 
 
 class Metric:
@@ -116,6 +125,8 @@ class PipelineTracker:
         self.db_system_metrics = WSQLite(system_metrics, db_path)
         self.db_comparisons = WSQLite(comparisons, db_path)
 
+        self._ensure_schema_up_to_date()
+
         self._alert_hooks = {}
 
         # Specialized Managers
@@ -189,11 +200,23 @@ class PipelineTracker:
         if not os.path.exists(yaml_path):
             import yaml
 
+            def _serialize_step(s):
+                if hasattr(s, "to_dict"):
+                    return s.to_dict()
+                if isinstance(s, tuple):
+                    return {
+                        "type": "task",
+                        "name": s[1] if len(s) > 1 else "unknown",
+                        "version": s[2] if len(s) > 2 else "v1.0",
+                        "func": str(s[0])
+                    }
+                return str(s)
+
             config = {
                 "name": name,
                 "registered_at": datetime.now().isoformat(),
                 "step_count": len(steps),
-                "steps": [str(s) for s in steps],
+                "steps": [_serialize_step(s) for s in steps],
             }
             with open(yaml_path, "w") as f:
                 yaml.dump(config, f)
@@ -249,6 +272,8 @@ class PipelineTracker:
             step_name=step_name,
             step_version=kwargs.get("step_version"),
             step_type=kwargs.get("step_type", "task"),
+            parent_step_id=kwargs.get("parent_step_id"),
+            parallel_group=kwargs.get("parallel_group"),
             input_data=(
                 _safe_json_dumps(kwargs.get("input_data"))
                 if kwargs.get("input_data")
@@ -307,8 +332,8 @@ class PipelineTracker:
             event_type=event_type,
             event_name=event_name,
             message=kwargs.get("message"),
-            data=json.dumps(kwargs.get("data")) if kwargs.get("data") else None,
-            tags=json.dumps(kwargs.get("tags")) if kwargs.get("tags") else None,
+            data=_safe_json_dumps(kwargs.get("data")) if kwargs.get("data") else None,
+            tags=_safe_json_dumps(kwargs.get("tags")) if kwargs.get("tags") else None,
         )
         self.db_events.insert(model)
 
@@ -354,6 +379,8 @@ class PipelineTracker:
                 "version": step.get("step_version"),
                 "error": step.get("error_message"),
                 "order": step["step_order"],
+                "parent_step_id": step.get("parent_step_id"),
+                "parallel_group": step.get("parallel_group"),
                 "branch_taken": (
                     output_data.get("branch_taken")
                     if isinstance(output_data, dict)
@@ -369,32 +396,38 @@ class PipelineTracker:
             }
             nodes.append(node)
 
-            # Lógica de conexión de bordes
-            if i > 0:
-                prev_step = steps_list[i - 1]
-                # Si el anterior no es una condición, conexión simple
-                if prev_step["step_type"] != "condition":
-                    edges.append(
-                        {
-                            "from": f"step_{prev_step['id']}",
-                            "to": f"step_{step['id']}",
-                            "label": "next",
-                        }
-                    )
-                else:
-                    # Si el anterior fue una condición, marcamos si este paso fue tomado o saltado
-                    is_skipped = (
-                        step["status"] == "skipped" or step["step_type"] == "skipped"
-                    )
-                    edges.append(
-                        {
-                            "from": f"step_{prev_step['id']}",
-                            "to": f"step_{step['id']}",
-                            "label": "taken" if not is_skipped else "skipped",
-                            "style": "solid" if not is_skipped else "dashed",
-                            "color": "#10b981" if not is_skipped else "#6b7280",
-                        }
-                    )
+            # --- Lógica de conexión de bordes ---
+            parent_id = step.get("parent_step_id")
+
+            if parent_id:
+                # Conexión desde el bloque padre al sub-paso
+                edges.append({
+                    "from": f"step_{parent_id}",
+                    "to": f"step_{step['id']}",
+                    "label": "parallel",
+                    "style": "dashed" if step["status"] == "skipped" else "solid"
+                })
+            elif i > 0:
+                # Conexión secuencial normal, buscando el último paso real que NO tenga un padre
+                # (para no conectar un paso secuencial con un sub-paso de un paralelo)
+                j = i - 1
+                found_prev = None
+                while j >= 0:
+                    cand = steps_list[j]
+                    if not cand.get("parent_step_id"):
+                        found_prev = cand
+                        break
+                    j -= 1
+
+                if found_prev:
+                    is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
+                    edges.append({
+                        "from": f"step_{found_prev['id']}",
+                        "to": f"step_{step['id']}",
+                        "label": "next" if found_prev["step_type"] != "condition" else ("taken" if not is_skipped else "skipped"),
+                        "style": "solid" if not is_skipped else "dashed",
+                        "color": "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped) else None
+                    })
 
         return {
             "pipeline_id": pipeline_id,
@@ -411,3 +444,45 @@ class PipelineTracker:
             self.db_steps.delete(s.id)
         for e in self.db_events.get_by_field(pipeline_id=pipeline_id):
             self.db_events.delete(e.id)
+
+    def _ensure_schema_up_to_date(self):
+        """Ensure the database schema is up to date with the latest models."""
+        try:
+            import os
+            import sqlite3
+
+            # Si el archivo no existe, WSQLite lo creará en la primera operación,
+            # pero necesitamos asegurarnos de que las columnas de paralelismo estén ahí
+            # si WSQLite crea una tabla basada en un modelo antiguo o simplificado.
+            # Forzamos una pequeña operación para asegurar que las tablas existan
+            try:
+                self.db_steps.get_all()
+            except Exception:
+                pass
+
+            if not os.path.exists(self.db_path):
+                return
+
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+
+            # Check for parent_step_id and parallel_group in common table names
+            for table in ["steps", "stepmodel"]:
+                cursor.execute(f"PRAGMA table_info({table})")
+                columns = [info[1] for info in cursor.fetchall()]
+
+                if columns: # If table exists
+                    modified = False
+                    if "parent_step_id" not in columns:
+                        cursor.execute(f"ALTER TABLE {table} ADD COLUMN parent_step_id INTEGER")
+                        modified = True
+                    if "parallel_group" not in columns:
+                        cursor.execute(f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT")
+                        modified = True
+
+                    if modified:
+                        conn.commit()
+            conn.close()
+        except Exception:
+            # We don't want to crash the whole app if migration fails
+            pass

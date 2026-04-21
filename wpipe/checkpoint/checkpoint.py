@@ -6,9 +6,11 @@ storing state in the tracking database.
 """
 
 import json
-import sqlite3
 from typing import Any, Dict, Optional
 
+from wsqlite import WSQLite
+
+from wpipe.sqlite.tables_dto.tracker_models import CheckpointModel
 from wpipe.util.transform import object_to_dict
 
 
@@ -23,27 +25,7 @@ class CheckpointManager:
             db_path: Path to the tracking database
         """
         self.db_path = db_path
-        self._ensure_checkpoint_table()
-
-    def _ensure_checkpoint_table(self) -> None:
-        """Create checkpoint table if it doesn't exist."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                CREATE TABLE IF NOT EXISTS checkpoints (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    pipeline_id TEXT NOT NULL,
-                    step_order INTEGER NOT NULL,
-                    step_name TEXT NOT NULL,
-                    status TEXT NOT NULL,
-                    data TEXT,
-                    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(pipeline_id, step_order)
-                )
-            """
-            )
-            conn.commit()
+        self.db = WSQLite(CheckpointModel, self.db_path)
 
     def save_checkpoint(
         self,
@@ -63,19 +45,24 @@ class CheckpointManager:
             status: Status ('pending', 'running', 'success', 'failed')
             data: Step output data to save
         """
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            serializable_data = object_to_dict(data) if data else None
-            data_json = json.dumps(serializable_data) if serializable_data else None
-            cursor.execute(
-                """
-                INSERT OR REPLACE INTO checkpoints 
-                (pipeline_id, step_order, step_name, status, data)
-                VALUES (?, ?, ?, ?, ?)
-            """,
-                (pipeline_id, step_order, step_name, status, data_json),
-            )
-            conn.commit()
+        serializable_data = object_to_dict(data) if data else None
+        data_json = json.dumps(serializable_data) if serializable_data else None
+
+        checkpoint = CheckpointModel(
+            pipeline_id=pipeline_id,
+            step_order=step_order,
+            step_name=step_name,
+            status=status,
+            data=data_json
+        )
+
+        # Check if already exists for this pipeline and step
+        existing = self.db.get_by_field(pipeline_id=pipeline_id, step_order=step_order)
+        if existing:
+            checkpoint.id = existing[0].id
+            self.db.update(checkpoint.id, checkpoint)
+        else:
+            self.db.insert(checkpoint)
 
     def get_last_checkpoint(self, pipeline_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -87,29 +74,20 @@ class CheckpointManager:
         Returns:
             Checkpoint data or None if no checkpoint exists
         """
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT step_order, step_name, status, data, created_at
-                FROM checkpoints
-                WHERE pipeline_id = ? AND status = 'success'
-                ORDER BY step_order DESC
-                LIMIT 1
-            """,
-                (pipeline_id,),
-            )
-            row = cursor.fetchone()
-
-        if not row:
+        checkpoints = self.db.get_by_field(pipeline_id=pipeline_id, status='success')
+        if not checkpoints:
             return None
 
+        # Sort by step_order descending
+        checkpoints.sort(key=lambda x: x.step_order, reverse=True)
+        row = checkpoints[0]
+
         return {
-            "step_order": row[0],
-            "step_name": row[1],
-            "status": row[2],
-            "data": json.loads(row[3]) if row[3] else None,
-            "created_at": row[4],
+            "step_order": row.step_order,
+            "step_name": row.step_name,
+            "status": row.status,
+            "data": json.loads(row.data) if row.data else None,
+            "created_at": row.created_at,
         }
 
     def can_resume(self, pipeline_id: str) -> bool:
@@ -132,12 +110,9 @@ class CheckpointManager:
         Args:
             pipeline_id: Unique pipeline identifier
         """
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "DELETE FROM checkpoints WHERE pipeline_id = ?", (pipeline_id,)
-            )
-            conn.commit()
+        checkpoints = self.db.get_by_field(pipeline_id=pipeline_id)
+        for cp in checkpoints:
+            self.db.delete(cp.id)
 
     def get_checkpoint_stats(self, pipeline_id: str) -> Dict[str, Any]:
         """
@@ -149,25 +124,22 @@ class CheckpointManager:
         Returns:
             Dictionary with checkpoint statistics
         """
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT 
-                    COUNT(*) as total,
-                    SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success,
-                    SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed,
-                    MAX(created_at) as last_checkpoint
-                FROM checkpoints
-                WHERE pipeline_id = ?
-            """,
-                (pipeline_id,),
-            )
-            row = cursor.fetchone()
+        checkpoints = self.db.get_by_field(pipeline_id=pipeline_id)
+        if not checkpoints:
+            return {
+                "total_checkpoints": 0,
+                "successful": 0,
+                "failed": 0,
+                "last_checkpoint": None,
+            }
+
+        successful = sum(1 for cp in checkpoints if cp.status == 'success')
+        failed = sum(1 for cp in checkpoints if cp.status == 'failed')
+        last_cp = max(cp.created_at for cp in checkpoints) if checkpoints else None
 
         return {
-            "total_checkpoints": row[0] or 0,
-            "successful": row[1] or 0,
-            "failed": row[2] or 0,
-            "last_checkpoint": row[3],
+            "total_checkpoints": len(checkpoints),
+            "successful": successful,
+            "failed": failed,
+            "last_checkpoint": last_cp,
         }
