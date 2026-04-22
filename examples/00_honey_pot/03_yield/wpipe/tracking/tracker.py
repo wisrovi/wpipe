@@ -137,6 +137,7 @@ class PipelineTracker:
     def __init__(self, db_path: str, config_dir: Optional[str] = None):
         self.db_path = db_path
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
+        self.pipeline_id: Optional[str] = None
 
         # Table instances with professional names
         self.db_pipelines = WSQLite(pipelines, db_path)

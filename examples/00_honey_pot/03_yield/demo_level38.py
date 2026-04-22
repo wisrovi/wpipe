@@ -9,7 +9,7 @@ DIAGRAMA:
 [Procesos] -> (IA de Reconocimiento de Objetos 4K)    -> Pesados
 """
 
-from wpipe import Pipeline, step, ParallelO
+from wpipe import Pipeline, step, Parallel
 import time
 
 
