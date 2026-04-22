@@ -1,4 +1,4 @@
-# 🚀 WPipe v1.6.4
+# 🚀 WPipe v2.1.0
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 
@@ -225,7 +225,7 @@ start_dashboard(db_path="mi_tracking.db", port=8000)
 
 ## 🛡️ Soporte y Calidad
 
-- **LTS Policy**: WPipe v1.6+ cuenta con soporte a largo plazo.
+- **LTS Policy**: WPipe v2.1+ cuenta con soporte a largo plazo.
 - **95% Test Coverage**: Probado rigurosamente en entornos síncronos y asíncronos.
 - **Arquitectura Pura**: Unificación total bajo `wsqlite`, eliminando SQL crudo del núcleo.
 

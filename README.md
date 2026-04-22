@@ -421,7 +421,7 @@ exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 
 | Aspecto | Detalle |
 |--------|---------|
-| **LTS** | WPipe v1.6+ cuenta con soporte a largo plazo |
+| **LTS** | WPipe v2.1+ cuenta con soporte a largo plazo |
 | **Test Coverage** | 95%+ pruebas en entornos síncronos y asíncronos |
 | **Arquitectura** | Unificación bajo `wsqlite`, sin SQL crudo en el núcleo |
 | **Python** | Compatible con Python 3.9+ |
