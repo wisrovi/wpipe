@@ -107,16 +107,14 @@ class Condition:
 
     def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
-
         def _ser(s):
-            if hasattr(s, "to_dict"):
-                return s.to_dict()
+            if hasattr(s, "to_dict"): return s.to_dict()
             if isinstance(s, tuple):
                 return {
                     "type": "task",
                     "name": s[1] if len(s) > 1 else "unknown",
                     "version": s[2] if len(s) > 2 else "v1.0",
-                    "meta": s[3] if len(s) > 3 else {},
+                    "meta": s[3] if len(s) > 3 else {}
                 }
             return str(s)
 
@@ -182,16 +180,14 @@ class For:
 
     def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
-
         def _ser(s):
-            if hasattr(s, "to_dict"):
-                return s.to_dict()
+            if hasattr(s, "to_dict"): return s.to_dict()
             if isinstance(s, tuple):
                 return {
                     "type": "task",
                     "name": s[1] if len(s) > 1 else "unknown",
                     "version": s[2] if len(s) > 2 else "v1.0",
-                    "meta": s[3] if len(s) > 3 else {},
+                    "meta": s[3] if len(s) > 3 else {}
                 }
             return str(s)
 
@@ -205,12 +201,10 @@ class For:
     def _evaluate_condition(self, data: dict) -> bool:
         if not self.validation_expression:
             return True
-        safe_globals = {"__builtins__": {"True": True, "False": False, "None": None}}
+        safe_globals = {"__builtins__": {}}
         safe_locals = data.copy()
         try:
             return eval(self.validation_expression, safe_globals, safe_locals)
-        except NameError:
-            return True
         except Exception as e:
             raise ValueError(
                 f"Invalid loop expression: {self.validation_expression}. Error: {e}"
@@ -240,16 +234,14 @@ class Parallel:
 
     def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
-
         def _ser(s):
-            if hasattr(s, "to_dict"):
-                return s.to_dict()
+            if hasattr(s, "to_dict"): return s.to_dict()
             if isinstance(s, tuple):
                 return {
                     "type": "task",
                     "name": s[1] if len(s) > 1 else "unknown",
                     "version": s[2] if len(s) > 2 else "v1.0",
-                    "meta": s[3] if len(s) > 3 else {},
+                    "meta": s[3] if len(s) > 3 else {}
                 }
             return str(s)
 
@@ -396,12 +388,7 @@ class Pipeline(APIClient):
         if steps:
             self._post_run_tasks.extend(steps)
 
-    def add_checkpoint(
-        self,
-        checkpoint_name: str,
-        expression: str = "True",
-        steps: Optional[list] = None,
-    ):
+    def add_checkpoint(self, checkpoint_name: str, expression: str = "True", steps: Optional[list] = None):
         """
         Add a checkpoint to the pipeline that triggers when expression is True.
         Args:
@@ -409,14 +396,12 @@ class Pipeline(APIClient):
             expression: Python expression to evaluate against context data.
             steps: List of steps to execute when this checkpoint is reached.
         """
-        self._checkpoints.append(
-            {
-                "name": checkpoint_name,
-                "expression": expression,
-                "steps": steps or [],
-                "fired": False,
-            }
-        )
+        self._checkpoints.append({
+            "name": checkpoint_name,
+            "expression": expression,
+            "steps": steps or [],
+            "fired": False
+        })
 
     def _evaluate_checkpoints(self, data: dict):
         """Evaluate and fire checkpoints based on current data."""
@@ -435,12 +420,11 @@ class Pipeline(APIClient):
                                 self.add_event(
                                     event_type="checkpoint",
                                     event_name=cp["name"],
-                                    message=f"Checkpoint reached: {cp['name']}",
+                                    message=f"Checkpoint reached: {cp['name']}"
                                 )
                                 break
                             except Exception:
-                                if db_try == max_db_tries - 1:
-                                    raise
+                                if db_try == max_db_tries - 1: raise
                                 time.sleep(0.05)
 
                         # Ejecutar pasos asociados
@@ -450,15 +434,13 @@ class Pipeline(APIClient):
                         cp["fired"] = True
                 except Exception as e:
                     if self.verbose:
-                        print(
-                            f"[CHECKPOINT INFO] Milestone '{cp['name']}' not registered yet or busy: {e}"
-                        )
+                        print(f"[CHECKPOINT INFO] Milestone '{cp['name']}' not registered yet or busy: {e}")
         return data
 
     def add_error_capture(self, steps: list):
         """
         Add steps to execute when an error occurs in the pipeline.
-
+        
         The steps will receive (context_data, error_info).
         """
         self._error_capture_tasks.extend(steps)
@@ -469,22 +451,13 @@ class Pipeline(APIClient):
             return data
 
         if self.verbose:
-            print(
-                f"\n[ERROR CAPTURE] Processing error in state '{error_info['step_name']}'..."
-            )
+            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info['step_name']}'...")
 
         for task in self._error_capture_tasks:
             try:
                 # Detectamos si la función acepta 2 argumentos (data, error_info)
                 func = task[0] if isinstance(task, tuple) else task
-                name = (
-                    task[1]
-                    if isinstance(task, tuple)
-                    else (
-                        getattr(func, "NAME", None)
-                        or getattr(func, "__name__", "error_handler")
-                    )
-                )
+                name = task[1] if isinstance(task, tuple) else (getattr(func, "NAME", None) or getattr(func, "__name__", "error_handler"))
 
                 sig = inspect.signature(func)
                 if len(sig.parameters) >= 2:
@@ -804,7 +777,7 @@ class Pipeline(APIClient):
             "timeout": timeout,
             "retry_count": retry_count,
             "retry_delay": retry_delay,
-            "retry_on_exceptions": retry_on_exceptions,
+            "retry_on_exceptions": retry_on_exceptions
         }
 
         # Merge with decorator metadata if exists
@@ -887,7 +860,6 @@ class Pipeline(APIClient):
 
         # 2. Aplicar desde metadatos explícitos (add_state o similar) - Manda sobre el decorador
         if step_meta:
-
             def _get_val(meta, key):
                 if isinstance(meta, dict):
                     return meta.get(key)
@@ -938,7 +910,7 @@ class Pipeline(APIClient):
                     "method": last_trace.name if last_trace else "unknown",
                     "timestamp": datetime.now().isoformat(),
                     "attempt": attempt + 1,
-                    "max_retries": max_retries,
+                    "max_retries": max_retries
                 }
 
                 # Ejecutar capturadores de error en CADA fallo
@@ -948,18 +920,12 @@ class Pipeline(APIClient):
 
                 if attempt < max_retries and isinstance(e, retry_on_exceptions):
                     if self.verbose:
-                        print(
-                            f"[RETRY] {name} failed (attempt {attempt + 1}/{max_retries + 1}): {e}"
-                        )
+                        print(f"[RETRY] {name} failed (attempt {attempt + 1}/{max_retries + 1}): {e}")
                     time.sleep(retry_delay)
                 else:
                     raise TaskError(str(e), Codes.TASK_FAILED) from e
 
-        raise (
-            last_exception
-            if last_exception
-            else TaskError("Unknown error", Codes.TASK_FAILED)
-        )
+        raise last_exception if last_exception else TaskError("Unknown error", Codes.TASK_FAILED)
 
     @staticmethod
     def _run_parallel_step(pipeline_instance, step_item, step_data, pipe_kwargs):
@@ -1000,23 +966,16 @@ class Pipeline(APIClient):
                         break
                 if "error" in loop_data:
                     break
-iteration += 1
-            for k, v in loop_data.items():
-                if k in data and isinstance(data[k], list) and isinstance(v, list):
-                    data[k].extend(v)
-                else:
-                    data[k] = v
+                iteration += 1
+            data.update(loop_data)
             return data
 
         if isinstance(item, Parallel):
             # Tracking del bloque Parallel como un nodo padre
             tracked_parallel_id = self._start_step_tracking(
-                "Parallel Block",
-                "v1.0",
-                "parallel",
-                data,
+                "Parallel Block", "v1.0", "parallel", data,
                 parent_step_id=parent_step_id,
-                parallel_group=parallel_group,
+                parallel_group=parallel_group
             )
 
             # Limpiamos el contexto de objetos no serializables
@@ -1028,19 +987,13 @@ iteration += 1
             errors = []
 
             # Decidimos el ejecutor de forma explícita
-            is_multiprocess = getattr(item, "use_processes", False)
-            ExecutorClass = (
-                ProcessPoolExecutor if is_multiprocess else ThreadPoolExecutor
-            )
+            is_multiprocess = getattr(item, 'use_processes', False)
+            ExecutorClass = ProcessPoolExecutor if is_multiprocess else ThreadPoolExecutor
 
             if self.verbose:
                 mode = "PROCESSES" if is_multiprocess else "THREADS"
-                print(
-                    f"\n[DEBUG] item.use_processes value: {getattr(item, 'use_processes', 'NOT_FOUND')}"
-                )
-                print(
-                    f"[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})"
-                )
+                print(f"\n[DEBUG] item.use_processes value: {getattr(item, 'use_processes', 'NOT_FOUND')}")
+                print(f"[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})")
 
             try:
                 # El group ID para que el dashboard sepa que van juntos
@@ -1050,36 +1003,16 @@ iteration += 1
                     if is_multiprocess:
                         # Para procesos usamos el método estático
                         futures = {
-                            executor.submit(
-                                self._run_parallel_step,
-                                self,
-                                step,
-                                loop_data.copy(),
-                                {
-                                    **kwargs,
-                                    "parent_step_id": tracked_parallel_id,
-                                    "parallel_group": current_group,
-                                },
-                            ): step
+                            executor.submit(self._run_parallel_step, self, step, loop_data.copy(), {**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group}): step
                             for step in item.steps
                         }
                     else:
                         # Para hilos, usamos una función local que captura self pero no requiere pickling
                         def _thread_worker(s, d):
-                            return self._execute_step(
-                                s,
-                                d,
-                                **{
-                                    **kwargs,
-                                    "parent_step_id": tracked_parallel_id,
-                                    "parallel_group": current_group,
-                                },
-                            )
+                            return self._execute_step(s, d, **{**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group})
 
                         futures = {
-                            executor.submit(
-                                _thread_worker, step, loop_data.copy()
-                            ): step
+                            executor.submit(_thread_worker, step, loop_data.copy()): step
                             for step in item.steps
                         }
 
@@ -1098,24 +1031,16 @@ iteration += 1
                 self._end_step_tracking(tracked_parallel_id, None, data["error"])
                 return data
 
-# Combinamos los resultados de todos los hilos/procesos
+            # Combinamos los resultados de todos los hilos/procesos
             for res in results:
                 if isinstance(res, dict):
-                    for k, v in res.items():
-                        if k == "progress_rich":
-                            continue
-                        if k in data and isinstance(data[k], list) and isinstance(v, list):
-                            data[k].extend(v)
-                        else:
-                            data[k] = v
+                    data.update({k: v for k, v in res.items() if k != "progress_rich"})
 
             if errors:
                 data["error"] = " | ".join(errors)
 
             # Finalizar tracking del bloque parallel
-            self._end_step_tracking(
-                tracked_parallel_id, data if not errors else None, data.get("error")
-            )
+            self._end_step_tracking(tracked_parallel_id, data if not errors else None, data.get("error"))
 
             return data
 
@@ -1147,12 +1072,9 @@ iteration += 1
             self.task_name = name
             self.task_id = step_id
             tracked_step_id = self._start_step_tracking(
-                name,
-                version,
-                "task",
-                data,
+                name, version, "task", data,
                 parent_step_id=parent_step_id,
-                parallel_group=parallel_group,
+                parallel_group=parallel_group
             )
             data["progress_rich"] = data.get("progress_rich") or self.progress_rich
 
@@ -1170,7 +1092,7 @@ iteration += 1
                 if not isinstance(result_data, dict):
                     raise TaskError(
                         f"[ERROR] Result of '{name}' must be dict or None, got {type(result_data).__name__}",
-                        Codes.TASK_FAILED,
+                        Codes.TASK_FAILED
                     )
 
                 data.update(result_data)
@@ -1318,7 +1240,7 @@ iteration += 1
         # Record pipeline start time using datetime
         pipeline_start_time = datetime.now()
         data["_pipeline_start_time"] = pipeline_start_time.isoformat()
-
+        
         checkpoint_mgr = kwargs.get("checkpoint_mgr")
         checkpoint_id = kwargs.get("checkpoint_id")
 
@@ -1392,9 +1314,7 @@ iteration += 1
                         yield i, progress_rich_instance
                         progress_rich_instance.update(task, advance=1)
             except (LiveError, ImportError):
-                for i in tqdm(
-                    range(size), desc=f"{self.pipeline_name} - {self.task_name}"
-                ):
+                for i in tqdm(range(size), desc=f"{self.pipeline_name} - {self.task_name}"):
                     yield i, None
 
         # Limpiamos kwargs de parámetros técnicos antes de ejecutar pasos
@@ -1465,22 +1385,16 @@ iteration += 1
                     output_data = data if not error_message else None
                     if output_data is None:
                         output_data = {}
-
+                    
                     # Add timing information to output data
-                    output_data["pipeline_start_time"] = data.get(
-                        "_pipeline_start_time"
-                    )
+                    output_data["pipeline_start_time"] = data.get("_pipeline_start_time")
                     output_data["pipeline_end_time"] = datetime.now().isoformat()
-                    start_time = (
-                        datetime.fromisoformat(data.get("_pipeline_start_time"))
-                        if data.get("_pipeline_start_time")
-                        else None
-                    )
+                    start_time = datetime.fromisoformat(data.get("_pipeline_start_time")) if data.get("_pipeline_start_time") else None
                     if start_time:
                         end_time = datetime.now()
                         elapsed_time_ms = (end_time - start_time).total_seconds() * 1000
                         output_data["pipeline_elapsed_time_ms"] = elapsed_time_ms
-
+                    
                     alert_hooks = self.tracker.complete_pipeline(
                         pipeline_id=self.pipeline_id,
                         output_data=output_data,
