@@ -1035,18 +1035,28 @@ class Pipeline(APIClient):
                 # El group ID para que el dashboard sepa que van juntos
                 current_group = f"group_{tracked_parallel_id or 'none'}"
 
+                if is_multiprocess:
+                    # SQLite connections cannot be pickled. We must remove the tracker 
+                    # from the instance sent to subprocesses.
+                    import copy
+                    clean_self = copy.copy(self)
+                    clean_self.tracker = None
+                    clean_self._metrics_collector = None
+                else:
+                    clean_self = self
+
                 with ExecutorClass(max_workers=max_workers) as executor:
                     # Capturamos las claves iniciales para poder extraer deltas después
                     initial_keys = set(loop_data.keys())
 
                     if is_multiprocess:
-                        # Para procesos usamos el método estático
+                        # Para procesos usamos el método estático y la instancia limpia
                         futures = {
-                            executor.submit(self._run_parallel_step, self, step, loop_data.copy(), {**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group}): step
+                            executor.submit(self._run_parallel_step, clean_self, step, loop_data.copy(), {**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group}): step
                             for step in item.steps
                         }
                     else:
-                        # Para hilos, usamos una función local
+                        # Para hilos, usamos una función local con self original
                         def _thread_worker(s, d):
                             return self._execute_step(s, d, **{**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group})
 
@@ -1055,20 +1065,21 @@ class Pipeline(APIClient):
                             for step in item.steps
                         }
 
-                    # Usamos una lista para mantener el orden de las tareas lanzadas
+                    # Usamos as_completed para obtener resultados a medida que terminen
                     for future in as_completed(futures):
                         try:
                             res = future.result()
                             if res and "error" in res:
                                 errors.append(res["error"])
-                            elif res:
-                                # EXTRAEMOS SOLO EL DELTA: Lo que este paso añadió o cambió
+                            elif res and isinstance(res, dict):
+                                # EXTRAEMOS EL DELTA: Lo que este paso añadió o cambió
                                 delta = {k: v for k, v in res.items() if k not in initial_keys and k != "progress_rich"}
-                                if not delta and isinstance(res, dict):
+                                # Si el paso no añadió nada nuevo pero devolvió algo, lo incluimos (fallback)
+                                if not delta:
                                     delta = {k: v for k, v in res.items() if k != "progress_rich"}
                                 results.append(delta)
                         except Exception as e:
-                            errors.append(f"Execution error ({futures[future]}): {str(e)}")
+                            errors.append(f"Execution error: {str(e)}")
             except Exception as e:
                 data["error"] = f"Executor failure: {str(e)}"
                 # Completar tracking con error
