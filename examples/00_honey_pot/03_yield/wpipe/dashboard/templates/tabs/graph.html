@@ -1,0 +1,110 @@
+<!-- Graph Tab -->
+<div id="tab-graph" class="tab-content">
+    <!-- Tooltip for graph nodes -->
+    <div id="tooltip" class="graph-tooltip"></div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-diagram-project"></i> <span data-i18n="executionGraph">Execution Graph</span></div>
+            <div class="pipeline-info" id="graph-pipeline-info"></div>
+        </div>
+        <div class="card-body" style="padding:0">
+            <div class="graph-wrapper" id="graph-wrapper">
+                <div class="graph-controls">
+                    <button onclick="graphZoomIn()" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+                    <button onclick="graphZoomOut()" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+                    <button onclick="graphReset()" title="Reset View"><i class="fas fa-compress-arrows-alt"></i></button>
+                    <button onclick="graphFit()" title="Fit to Screen"><i class="fas fa-expand-arrows-alt"></i></button>
+                    <button onclick="showCurrentPipelineHistory()" title="Pipeline History"><i class="fas fa-history"></i></button>
+                </div>
+                <div class="graph-container" id="graph-container">
+                    <svg class="graph-svg" id="graph-svg">
+                        <defs>
+                            <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                            </marker>
+                            <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+                            </marker>
+                            <linearGradient id="gSuccess" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/>
+                            </linearGradient>
+                            <linearGradient id="gError" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#dc2626"/>
+                            </linearGradient>
+                            <linearGradient id="gRunning" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#2563eb"/>
+                            </linearGradient>
+                            <linearGradient id="gPending" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+                            </linearGradient>
+                            <linearGradient id="gCondition" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#7c3aed"/>
+                            </linearGradient>
+                            <linearGradient id="gNested" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0891b2"/>
+                            </linearGradient>
+                            <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="blur"/>
+                                <feFlood flood-color="#10b981" flood-opacity="0.7"/>
+                                <feComposite in2="blur" operator="in"/>
+                                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                            <filter id="glow-purple" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="5" result="blur"/>
+                                <feFlood flood-color="#8b5cf6" flood-opacity="0.6"/>
+                                <feComposite in2="blur" operator="in"/>
+                                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                            <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.4"/>
+                            </filter>
+                            <filter id="node-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.5"/>
+                            </filter>
+                            <linearGradient id="cond-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#7c3aed"/>
+                            </linearGradient>
+                        </defs>
+                        <g id="graph-edges"></g>
+                        <g id="graph-nodes"></g>
+                    </svg>
+                    <div id="graph-empty" class="graph-empty">
+                        <i class="fas fa-diagram-project"></i>
+                        <p data-i18n="selectPipeline">Select a pipeline from the right panel</p>
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">
+                            <i class="fas fa-lightbulb"></i> Tip: Click "History" button (🕐) to see past executions
+                        </p>
+                    </div>
+                </div>
+                <div class="graph-minimap" id="graph-minimap">
+                    <svg width="140" height="90" id="minimap-svg">
+                        <rect width="140" height="90" fill="rgba(15,23,42,0.5)"/>
+                        <g id="minimap-content"></g>
+                        <rect id="minimap-viewport" stroke="#6366f1" stroke-width="2" fill="rgba(99,102,241,0.1)"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div id="steps-section" class="steps-section" style="display:none">
+                <div class="steps-header">
+                    <i class="fas fa-list-check"></i> 
+                    <span data-i18n="executionSteps">Execution Steps</span>
+                    <button class="btn btn-ghost" onclick="toggleAllSteps()" style="margin-left:auto;padding:4px 10px;font-size:12px">
+                        <i class="fas fa-expand-alt"></i> Expand All
+                    </button>
+                </div>
+                <div id="steps-list"></div>
+            </div>
+
+            <div id="error-panel" class="error-box" style="display:none">
+                <div class="error-title"><i class="fas fa-circle-exclamation"></i> <span id="error-step-name">Error</span></div>
+                <div id="error-content" class="error-content"></div>
+            </div>
+
+            <div id="yaml-panel" class="yaml-box" style="display:none">
+                <div class="yaml-title"><i class="fas fa-file-code"></i> <span data-i18n="yamlConfig">Configuration YAML</span></div>
+                <pre class="yaml-content" id="yaml-content"></pre>
+            </div>
+        </div>
+    </div>
+</div>

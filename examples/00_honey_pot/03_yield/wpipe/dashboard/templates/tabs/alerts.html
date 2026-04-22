@@ -1,0 +1,20 @@
+<!-- Alerts Tab -->
+<div id="tab-alerts" class="tab-content" style="display:none">
+    <div class="tab-description">
+        <i class="fas fa-info-circle"></i>
+        <strong>Alerts</strong> shows pipeline alerts (errors, warnings). Filter by severity (critical/warning) to focus on important issues.
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-bell"></i> <span data-i18n="pipelineAlerts">Pipeline Alerts</span></div>
+            <div class="filter-chips">
+                <span class="chip active" data-severity="" onclick="filterAlerts('')">All</span>
+                <span class="chip" data-severity="critical" onclick="filterAlerts('critical')">Critical</span>
+                <span class="chip" data-severity="warning" onclick="filterAlerts('warning')">Warning</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="alerts-list"></div>
+        </div>
+    </div>
+</div>
