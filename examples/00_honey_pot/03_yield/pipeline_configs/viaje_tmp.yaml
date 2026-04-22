@@ -1,0 +1,25 @@
+name: viaje_tmp
+registered_at: '2026-04-22T07:18:26.910166'
+step_count: 3
+steps:
+- func: <function start_capture at 0x7f01f6f32a20>
+  name: start_capture
+  type: task
+  version: v1.0
+- expression: process_complete == 0
+  iterations: null
+  steps:
+  - <__main__.Create_batch object at 0x7f01f70ed400>
+  - max_workers: 3
+    steps:
+    - <__main__.Simulated_inference object at 0x7f01f70ed550>
+    - <__main__.Simulated_inference object at 0x7f01f70474d0>
+    - <__main__.Simulated_inference object at 0x7f01f7047610>
+    type: parallel
+    use_processes: false
+  - <function draw_ia at 0x7f01f6f332e0>
+  type: for
+- func: <function save_images at 0x7f01f6f334c0>
+  name: save_images
+  type: task
+  version: v1.0
