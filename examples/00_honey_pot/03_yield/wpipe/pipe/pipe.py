@@ -649,11 +649,6 @@ class Pipeline(APIClient):
         """
         worker_id = self.worker_id
 
-        # if self.verbose:
-        #     print("\n", "\t", "*" * 50)
-        #     print("\n", f"\t [WORKER] {self.worker_id}")
-        #     print("\n\t", "*" * 50)
-
         self._api_process_update({"id": worker_id}, start=True)
 
         result = {}
@@ -661,10 +656,6 @@ class Pipeline(APIClient):
             result = self._pipeline_run(*args, **kwargs)
 
             self._api_process_update({"id": self.process_id, "details": ""})
-
-
-
-
         except TaskError as te:
             error = {
                 "message": str(te),
@@ -967,6 +958,16 @@ class Pipeline(APIClient):
         """Helper static method to run a step in parallel, avoiding pickling issues."""
         try:
             # Re-importar si es necesario en un proceso nuevo
+            result = pipeline_instance._execute_step(step_item, step_data, **pipe_kwargs)
+            return result
+        except Exception as e:
+            return {"error": f"Parallel execution error: {str(e)}"}
+
+    @staticmethod
+    def _run_parallel_step(pipeline_instance, step_item, step_data, pipe_kwargs):
+        """Helper static method to run a step in parallel, avoiding pickling issues."""
+        try:
+            # Re-importar si es necesario en un proceso nuevo
             return pipeline_instance._execute_step(step_item, step_data, **pipe_kwargs)
         except Exception as e:
             return {"error": f"Parallel execution error: {str(e)}"}
@@ -1055,9 +1056,7 @@ class Pipeline(APIClient):
                         }
 
                     # Usamos una lista para mantener el orden de las tareas lanzadas
-                    ordered_futures = [f for f in futures]
-
-                    for future in ordered_futures:
+                    for future in as_completed(futures):
                         try:
                             res = future.result()
                             if res and "error" in res:
@@ -1065,14 +1064,11 @@ class Pipeline(APIClient):
                             elif res:
                                 # EXTRAEMOS SOLO EL DELTA: Lo que este paso añadió o cambió
                                 delta = {k: v for k, v in res.items() if k not in initial_keys and k != "progress_rich"}
-                                # Si el paso no añadió nada nuevo pero devolvió algo, lo incluimos (fallback)
                                 if not delta and isinstance(res, dict):
-                                    # Solo añadimos claves que no sean las básicas de control si es posible
                                     delta = {k: v for k, v in res.items() if k != "progress_rich"}
-                                
                                 results.append(delta)
                         except Exception as e:
-                            errors.append(f"Execution error: {str(e)}")
+                            errors.append(f"Execution error ({futures[future]}): {str(e)}")
             except Exception as e:
                 data["error"] = f"Executor failure: {str(e)}"
                 # Completar tracking con error
@@ -1080,7 +1076,6 @@ class Pipeline(APIClient):
                 return data
 
             # Combinamos SOLO LOS DELTAS de todos los hilos/procesos
-            # Esto evita que 'batch' u otras claves compartidas se pisen con versiones viejas
             for delta in results:
                 if isinstance(delta, dict):
                     data.update(delta)
@@ -1127,8 +1122,6 @@ class Pipeline(APIClient):
             )
             data["progress_rich"] = data.get("progress_rich") or self.progress_rich
 
-            step_error = None
-            step_error_trace = None
             try:
                 # Pasar metadatos específicos del paso a _task_invoke
                 current_kwargs = kwargs.copy()
@@ -1145,8 +1138,8 @@ class Pipeline(APIClient):
                     )
 
                 data.update(result_data)
+                data.pop("error", None)
             except Exception as e:
-                # El error ya fue procesado por _task_invoke (incluyendo capturadores)
                 if self.verbose:
                     print(f"\n[ERROR] Step '{name}' failed: {str(e)}")
                 
@@ -1157,14 +1150,11 @@ class Pipeline(APIClient):
             finally:
                 alert_hooks = self._end_step_tracking(
                     tracked_step_id,
-                    data if not step_error else None,
-                    step_error,
-                    step_error_trace,
+                    data if "error" not in data else None,
+                    data.get("error"),
+                    None,
                 )
                 data = self._handle_alert_hooks(alert_hooks, data)
-
-            if self.verbose and not isinstance(item, (For, Condition)):
-                print()
 
         return data
 
@@ -1350,8 +1340,6 @@ class Pipeline(APIClient):
                     yield i, None
                 return
 
-            # Si verbose está activo, Rich puede causar parpadeos, pero si el usuario
-            # quiere ver el progreso, se lo permitimos.
             try:
                 from wpipe.pipe.pipe import ProgressManager
 
@@ -1388,8 +1376,6 @@ class Pipeline(APIClient):
                 data = self._execute_step(item, data, **step_kwargs)
 
                 # --- LIMPIEZA DE MEMORIA DE ERRORES ---
-                # Si el paso ha terminado sin la llave 'error', garantizamos que
-                # las variables de control de la pipeline reflejen éxito total.
                 if "error" not in data:
                     error_message = None
                     error_step = None

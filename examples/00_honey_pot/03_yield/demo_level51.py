@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from dto.car import Car
-from example import get_viaje_pipeline
+from demo_level50 import get_viaje_pipeline
 
 from wpipe import CheckpointManager
 
