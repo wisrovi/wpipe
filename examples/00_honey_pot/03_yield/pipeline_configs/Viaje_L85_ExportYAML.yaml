@@ -1,0 +1,8 @@
+name: Viaje_L85_ExportYAML
+registered_at: '2026-04-22T21:58:51.173842'
+step_count: 1
+steps:
+- func: <function iniciar at 0x7f09fbba9ee0>
+  name: iniciar
+  type: task
+  version: v1.0

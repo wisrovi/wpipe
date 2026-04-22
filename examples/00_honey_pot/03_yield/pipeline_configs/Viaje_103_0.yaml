@@ -1,0 +1,8 @@
+name: Viaje_103_0
+registered_at: '2026-04-22T22:02:23.742096'
+step_count: 1
+steps:
+- func: <function tarea at 0x7f8043e17ec0>
+  name: tarea
+  type: task
+  version: v1.0

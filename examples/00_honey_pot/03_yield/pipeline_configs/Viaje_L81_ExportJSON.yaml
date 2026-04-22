@@ -1,0 +1,12 @@
+name: Viaje_L81_ExportJSON
+registered_at: '2026-04-22T21:57:54.722632'
+step_count: 2
+steps:
+- func: <function iniciar at 0x7facf3907100>
+  name: iniciar
+  type: task
+  version: v1.0
+- func: <function finalizar at 0x7facf130af20>
+  name: finalizar
+  type: task
+  version: v1.0

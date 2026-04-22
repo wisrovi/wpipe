@@ -1,0 +1,12 @@
+name: Viaje_L104_Pipelines
+registered_at: '2026-04-22T22:02:36.747843'
+step_count: 2
+steps:
+- func: <function iniciar at 0x7fdc36157f60>
+  name: iniciar
+  type: task
+  version: v1.0
+- func: <function procesar at 0x7fdc33cff560>
+  name: procesar
+  type: task
+  version: v1.0

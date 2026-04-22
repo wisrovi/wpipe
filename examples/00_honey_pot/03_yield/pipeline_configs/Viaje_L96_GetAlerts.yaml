@@ -1,0 +1,8 @@
+name: Viaje_L96_GetAlerts
+registered_at: '2026-04-22T22:01:08.630513'
+step_count: 1
+steps:
+- func: <function tarea at 0x7f19f550fec0>
+  name: tarea
+  type: task
+  version: v1.0

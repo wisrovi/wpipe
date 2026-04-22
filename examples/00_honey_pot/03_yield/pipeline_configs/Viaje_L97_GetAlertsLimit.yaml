@@ -1,0 +1,8 @@
+name: Viaje_L97_GetAlertsLimit
+registered_at: '2026-04-22T22:01:23.986151'
+step_count: 1
+steps:
+- func: <function tarea at 0x7fec45e8fec0>
+  name: tarea
+  type: task
+  version: v1.0

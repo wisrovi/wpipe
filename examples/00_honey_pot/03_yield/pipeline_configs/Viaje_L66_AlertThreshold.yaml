@@ -1,0 +1,8 @@
+name: Viaje_L66_AlertThreshold
+registered_at: '2026-04-22T21:54:14.374134'
+step_count: 1
+steps:
+- func: <function proceso_lento at 0x7f4087baff60>
+  name: proceso_lento
+  type: task
+  version: v1.0

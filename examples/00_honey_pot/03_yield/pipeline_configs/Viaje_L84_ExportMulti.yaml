@@ -1,0 +1,12 @@
+name: Viaje_L84_ExportMulti
+registered_at: '2026-04-22T21:58:35.671507'
+step_count: 2
+steps:
+- func: <function iniciar at 0x7f0b77a01e40>
+  name: iniciar
+  type: task
+  version: v1.0
+- func: <function procesar at 0x7f0b7573f560>
+  name: procesar
+  type: task
+  version: v1.0

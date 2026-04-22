@@ -1,0 +1,16 @@
+name: Viaje_L70_SpecificAlert
+registered_at: '2026-04-22T21:55:51.581168'
+step_count: 3
+steps:
+- func: <function tarea_normal at 0x7f0f638d3ec0>
+  name: tarea_normal
+  type: task
+  version: v1.0
+- func: <function tarea_lenta at 0x7f0f616534c0>
+  name: tarea_lenta
+  type: task
+  version: v1.0
+- func: <function otra_normal at 0x7f0f61653920>
+  name: otra_normal
+  type: task
+  version: v1.0

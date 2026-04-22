@@ -1,17 +1,20 @@
-demos a hacer:
+demas completadas:
 
-- 40 al 50 todo lo de async
-- 56 al 60 eventos y como manejarlos
-- 61 al 65 Pipeline(retry, delay, on_execption)
-- 66 al 70 trakcer.alert_threshold, para pipeline o step lentos
-- 71 al 75 for usando iteracion (no por expresion)
-- 76 al 80 funciones lamda
-- 81 al 85 export en csv, json, etc
-- 86 al 90 with ResourceMonitor
-- 91 al 95 with TaskTimer
-- 96 al 100 get_fired_alerts
-- 101 al 105 tracker.analysis, get_top_slow_steps, get_trend_data, etc
-- 106 al 110 Wsqlite (de wpipe)
-- 111 al 115 Autoregister
-- 116 al 120 timeout decorador, sync y async, step_depends, ParallelExecutor
-- 120 al 130 apiClient a la api externa
+- 40 al 50 ✅  async (L41-L55 ya estaban en run_demos.sh)
+- 41 al 49 ✅  async nuevo (L41-L49)
+- 56 al 60 ✅  eventos (L56-L60)
+- 61 al 65 ✅  retry, delay, on_exception (L61-L65)
+- 66 al 70 ✅  alert_threshold (L66-L70)
+- 71 al 75 ✅  for iteracion (L71-L75)
+- 76 al 80 ✅  lambda (L76-L80)
+- 81 al 85 ✅  export csv, json, etc (L81-L85)
+- 86 al 90 ✅  ResourceMonitor (L86-L90)
+- 91 al 95 ✅  TaskTimer (L91-L95)
+- 96 al 100 ✅ get_fired_alerts (L96-L100)
+- 101 al 105 ✅ tracker.analysis (L101-L105)
+- 106 al 110 ✅ Wsqlite (L106-L110)
+- 111 al 115 ✅ Autoregister (L111-L115)
+- 116 al 120 ✅ timeout decorador, step_depends (L116-L120)
+- 121 al 130 ✅ apiClient (L121-L130)
+
+Total demos creadas: 90 niveles (41-130)
