@@ -1,8 +1,8 @@
-# 🚀 WPipe v1.6.19
+# 🚀 WPipe v2.1.0
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 
-WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar.
+WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye ahora un **Tour de Aprendizaje con 130 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
 
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)

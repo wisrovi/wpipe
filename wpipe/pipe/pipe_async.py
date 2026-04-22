@@ -75,7 +75,7 @@ class PipelineAsync(APIClient):
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
-        continue_on_error: bool = True,
+        continue_on_error: bool = False,
         show_progress: bool = True,
     ) -> None:
         """
@@ -151,6 +151,7 @@ class PipelineAsync(APIClient):
 
     def add_error_capture(self, steps: list):
         """Add error capture steps."""
+        self.continue_on_error = True
         self._error_capture_tasks.extend(steps)
 
     async def _evaluate_checkpoints(self, data: dict):

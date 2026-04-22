@@ -1,0 +1,22 @@
+name: viaje_tmp
+registered_at: '2026-04-23T00:47:49.633184'
+step_count: 2
+steps:
+- func: <function start_capture at 0x7f30501600e0>
+  name: start_capture
+  type: task
+  version: v1.0
+- expression: null
+  iterations: 150
+  steps:
+  - <__main__.Create_batch object at 0x7f300caf17f0>
+  - max_workers: 3
+    steps:
+    - <__main__.Simulated_yolo_inference object at 0x7f300caf1940>
+    - <__main__.Simulated_yolo_inference object at 0x7f300ca46fd0>
+    - <__main__.Simulated_yolo_inference object at 0x7f300ca47110>
+    type: parallel
+    use_processes: true
+  - <function draw_ia at 0x7f300cb1ec00>
+  - <function save_images at 0x7f300cb1ede0>
+  type: for

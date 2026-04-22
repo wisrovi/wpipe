@@ -7,6 +7,7 @@ This section contains comprehensive step-by-step tutorials for learning how to u
    :maxdepth: 2
    :numbered: 3
 
+   tutorials/tour/index
    tutorials/basic_pipeline
    tutorials/class_steps
    tutorials/api_integration
@@ -31,6 +32,9 @@ This tutorials section is organized in a progressive manner, where each tutorial
    * - Tutorial
      - Description
      - Difficulty
+   * - :doc:`tutorials/tour/index`
+     - **Tour de Aprendizaje (130+ Niveles)**: De básico a experto
+     - Beginner to Expert
    * - :doc:`tutorials/basic_pipeline`
      - Create your first pipeline and understand data flow
      - Beginner

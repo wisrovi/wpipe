@@ -5,6 +5,22 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-04-23
+
+### Added
+- **Tour de Aprendizaje (130 Niveles)**: Nuevo conjunto de 130 ejemplos guiados que cubren desde conceptos básicos hasta orquestación compleja, accesibles en la documentación y mediante `run_demos.sh`.
+- **Tutorial Guiado en Sphinx**: Documentación renovada con un modo tutorial "Paso a Paso" que integra los 130 ejemplos con código fuente y resultados de ejecución.
+- **Modernización de Sphinx**: Actualización total del motor de documentación con soporte para las últimas funcionalidades de la Fase 2 (Paralelismo, Composición, Decoradores).
+
+### Changed
+- **README e index.html**: Actualizados para reflejar el estado actual de la librería v2.1.0 LTS.
+- **run_demos.sh**: Optimizado para ejecutar y validar los 130 niveles del tour de aprendizaje.
+
+## [1.7.0] - 2026-04-22
+
+### Added
+- Mejoras generales de estabilidad y preparación para el lanzamiento mayor de la v2.1.0.
+
 ## [1.6.17] - 2026-04-21
 
 ### Fixed

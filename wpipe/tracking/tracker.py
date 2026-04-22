@@ -46,11 +46,36 @@ def _safe_json_dumps(data: Any) -> str:
 
 
 class Metric:
-    """Constants for alert metrics."""
+    """Constants for alert metrics and utility for recording numeric data."""
 
     PIPELINE_DURATION = "pipeline_duration_ms"
     STEP_DURATION = "step_duration_ms"
     ERROR_RATE = "error_rate"
+
+    # Reference to the active tracker for static recording
+    _active_tracker: Optional["PipelineTracker"] = None
+
+    @staticmethod
+    def record(name: str, value: float, unit: Optional[str] = None) -> None:
+        """
+        Record a numeric metric in the current pipeline execution.
+        
+        Args:
+            name: Name of the metric.
+            value: Numeric value.
+            unit: Optional unit of measurement (e.g., 'L/100km').
+        """
+        if Metric._active_tracker and Metric._active_tracker.pipeline_id:
+            Metric._active_tracker.add_event(
+                pipeline_id=Metric._active_tracker.pipeline_id,
+                event_type="metric",
+                event_name=name,
+                message=f"Metric '{name}' recorded: {value} {unit or ''}",
+                data={"value": value, "unit": unit}
+            )
+        else:
+            # Fallback for when no tracker is active
+            print(f"[METRIC] {name}: {value} {unit or ''}")
 
 
 class Severity:
@@ -112,6 +137,7 @@ class PipelineTracker:
     def __init__(self, db_path: str, config_dir: Optional[str] = None):
         self.db_path = db_path
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
+        self.pipeline_id: Optional[str] = None
 
         # Table instances with professional names
         self.db_pipelines = WSQLite(pipelines, db_path)
@@ -129,7 +155,7 @@ class PipelineTracker:
 
         self._alert_hooks = {}
 
-        # Specialized Managers
+        # specialized Managers
         self.alerts = AlertManager(
             self.db_alerts_config, self.db_alerts_fired, self._alert_hooks
         )
@@ -143,6 +169,9 @@ class PipelineTracker:
         self.analysis = AnalysisManager(
             self.db_pipelines, self.db_steps, self.db_step_history, self.db_alerts_fired
         )
+
+        # Set this tracker as the active one for Metric.record utility
+        Metric._active_tracker = self
 
     # ========================================
     # DELEGATED METHODS (Backward Compatibility)

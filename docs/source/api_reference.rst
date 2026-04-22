@@ -614,14 +614,14 @@ NestedPipelineStep
       result = pipeline.run({})
 
 StepRegistry
-^^^^^^^^^^^^
+------------
 
 .. py:class:: StepRegistry
 
    Central registry for decorated steps.
 
 AutoRegister
-^^^^^^^^^^^^
+------------
 
 .. py:class:: AutoRegister
 
@@ -686,7 +686,7 @@ ResourceMonitor
       Return dict with peak_ram_mb, avg_cpu_percent, etc.
 
 ResourceMonitorRegistry
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 
 .. py:class:: ResourceMonitorRegistry(db_path="resources.db")
 
@@ -751,14 +751,14 @@ Timeout Decorators
           return {"done": True}
 
 TimeoutError
-^^^^^^^^^^^^
+------------
 
 .. py:exception:: TimeoutError
 
    Raised when a task exceeds its timeout.
 
 TaskTimer
-^^^^^^^^^
+---------
 
 .. py:class:: TaskTimer(name)
 

@@ -36,7 +36,7 @@ Each step should do one thing well:
         ...
 
 1.2 Pure Functions
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 Step functions should be pure when possible:
 
@@ -439,10 +439,10 @@ Before deploying to production:
 - [ ] No secrets are logged or hardcoded
 
 11. Common Pitfalls
-------------------
+-------------------
 
 11.1 Mutable Default Arguments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 

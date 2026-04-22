@@ -279,7 +279,7 @@ Configure retries per-step:
         return decorator
 
 8. Complete Example
-------------------
+-------------------
 
 Here's a complete example with comprehensive retry logic:
 

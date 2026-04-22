@@ -23,10 +23,8 @@ from wpipe import (
     to_obj,
 )
 
-test_Wsqlite()
 
-
-SIZE_CAPTURE = 300
+SIZE_CAPTURE = 150
 
 
 def generator_capture():
@@ -57,6 +55,7 @@ class Create_batch:
 
     @to_obj
     def __call__(self, context: object):
+        print("Running Create_batch step...", flush=True)
         batch = []
         process_complete = False
 
@@ -111,9 +110,13 @@ CLASS_NAMES_C = [f"C_{i}" for i in range(30)]
 
 @step(name="simulated_inference", version="v1.0")
 class Simulated_yolo_inference:
+    _counter = 0
+
     def __init__(self, ref_class_names, sub_name):
         self.ref_class_names = ref_class_names
         self.sub_name = sub_name
+        self._instance_id = Simulated_yolo_inference._counter
+        Simulated_yolo_inference._counter += 1
 
     @to_obj
     def __call__(self, context: object):
@@ -162,6 +165,9 @@ def draw_ia(context: object):
     b_predictions = context.B_predictions
     c_predictions = context.C_predictions
 
+    print(f"[DEBUG draw_ia] batch_ids: {batch_ids}", flush=True)
+    print(f"[DEBUG draw_ia] batch has: {len(context.batch)} items", flush=True)
+
     new_batch_images = []
 
     for frame_id, frame, (A_id, A_predict), (B_id, B_predict), (C_id, C_predict) in zip(
@@ -203,8 +209,13 @@ def draw_ia(context: object):
 @step(name="save_images", version="v1.0")
 @to_obj
 def save_images(context: object):
+    import sys
+
+    print("save_images called!", flush=True)
     batch_ids = [id_ for id_, _ in context.batch]
     batch_images = [image for _, image in context.batch]
+
+    print(f"[save_images] Saving {len(batch_ids)} images", flush=True)
 
     path_to_save = "output/images"
     for frame_id, frame in zip(batch_ids, batch_images):
@@ -219,6 +230,7 @@ db_path = "output/wpipe_dashboard.db"
 pipe = Pipeline(
     pipeline_name="viaje_tmp",
     verbose=False,
+    show_progress=False,
     tracking_db=db_path,
 )
 pipe.add_error_capture([notificar_telegram_error])
@@ -230,10 +242,6 @@ pipe.set_steps(
             iterations=150,
             steps=[
                 Create_batch(2),
-                # option 1
-                # Simulated_yolo_inference(CLASS_NAMES_A, "A"),
-                # Simulated_yolo_inference(CLASS_NAMES_B, "B"),
-                # Simulated_yolo_inference(CLASS_NAMES_C, "C"),
                 # option 2
                 Parallel(
                     steps=[
@@ -242,6 +250,7 @@ pipe.set_steps(
                         Simulated_yolo_inference(CLASS_NAMES_C, "C"),
                     ],
                     max_workers=3,
+                    use_processes=True,
                 ),
                 draw_ia,
                 save_images,

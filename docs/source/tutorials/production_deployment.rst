@@ -205,7 +205,7 @@ Learn how to deploy wpipe pipelines to production environments.
 5. Test in staging before production
 
 10. Next Steps
--------------
+--------------
 
-- Review :doc:`architecture` for design details
-- Check :doc:`api_reference` for complete API
+- Review :doc:`../architecture` for design details
+- Check :doc:`../api_reference` for complete API

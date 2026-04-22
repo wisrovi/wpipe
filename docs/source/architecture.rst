@@ -4,12 +4,12 @@ Architecture
 This section describes the architecture of wpipe, designed for building sequential data processing pipelines with task orchestration, API integration, and execution tracking.
 
 1. System Overview
------------------
+------------------
 
 wpipe follows a layered architecture that separates concerns between pipeline orchestration, external communication, and data persistence.
 
 1.1 High-Level Components
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -57,7 +57,7 @@ wpipe follows a layered architecture that separates concerns between pipeline or
 - Rich console output
 
 2. Core Components
------------------
+------------------
 
 2.1 Pipeline
 ~~~~~~~~~~~~
@@ -96,7 +96,7 @@ The Pipeline class is the main entry point for creating and executing pipelines.
             ...
 
 2.2 Step Functions
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 Steps are the atomic units of work in a pipeline.
 
@@ -142,7 +142,7 @@ The APIClient handles communication with external APIs.
     }
 
 2.4 SQLite Integration
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Wsqlite provides persistent storage for pipeline execution.
 
@@ -158,7 +158,7 @@ Wsqlite provides persistent storage for pipeline execution.
         db.output = result
 
 3. Module Structure
-------------------
+-------------------
 
 ::
 
@@ -191,10 +191,10 @@ Wsqlite provides persistent storage for pipeline execution.
         └── codes.py          # Error codes
 
 4. Design Patterns
------------------
+------------------
 
 4.1 Pipeline Pattern
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 Each step receives accumulated results from previous steps:
 
@@ -218,7 +218,7 @@ Pipeline configuration uses a fluent interface:
     )
 
 4.3 Context Manager Pattern
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SQLite operations use context managers:
 
@@ -242,7 +242,7 @@ Different step types (functions, classes) are handled uniformly:
         return data
 
 5. Data Flow
------------
+------------
 
 5.1 Pipeline Execution Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -294,7 +294,7 @@ Errors are caught and wrapped in TaskError:
 --------------------
 
 6.1 Sequential Execution
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, pipeline steps execute sequentially:
 
@@ -306,7 +306,7 @@ By default, pipeline steps execute sequentially:
     Complete   Wait     Wait     Wait
 
 6.2 Retry Mechanism
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Failed steps can be automatically retried:
 
@@ -318,7 +318,7 @@ Failed steps can be automatically retried:
         ...
 
 7. Extension Points
-------------------
+-------------------
 
 7.1 Custom Step Decorators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -346,7 +346,7 @@ Extend the exception hierarchy:
         pass
 
 8. Configuration
----------------
+----------------
 
 8.1 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -372,7 +372,7 @@ Load configuration from YAML:
       token: ${API_TOKEN}
 
 9. Performance Considerations
------------------------------
+------------------------------
 
 9.1 Memory Management
 ~~~~~~~~~~~~~~~~~~~~
