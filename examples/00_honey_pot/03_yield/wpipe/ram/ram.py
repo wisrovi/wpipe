@@ -1,11 +1,37 @@
 """
-Memory limit utilities for controlling resource usage.
+Memory limit utilities and shared memory storage for the pipeline.
 """
 
 import platform
 import resource
 import sys
-from typing import Callable
+from typing import Any, Callable, Dict, Optional
+
+
+class SharedMemory:
+    """Simple key-value storage for sharing data across pipeline runs."""
+
+    def __init__(self):
+        self._data: Dict[str, Any] = {}
+
+    def set(self, key: str, value: Any) -> None:
+        """Store a value in shared memory."""
+        self._data[key] = value
+
+    def get(self, key: str, default: Any = None) -> Any:
+        """Retrieve a value from shared memory."""
+        return self._data.get(key, default)
+
+    def clear(self) -> None:
+        """Clear all data from shared memory."""
+        self._data.clear()
+
+    def __repr__(self):
+        return f"SharedMemory({self._data})"
+
+
+# Global instance for shared memory access
+memory_storage = SharedMemory()
 
 
 def memory_limit(percentage: float) -> None:
@@ -42,12 +68,12 @@ def get_memory() -> int:
     return free_memory
 
 
-def memory(percentage: float = 0.8) -> Callable:
+def memory_limit_decorator(percentage: float = 0.8) -> Callable:
     """
     Decorator to limit memory usage of a function.
 
     Example:
-        @memory(percentage=0.8)
+        @memory_limit_decorator(percentage=0.8)
         def main():
             print('My memory is limited to 80%.')
 
