@@ -24,31 +24,30 @@ test_Wsqlite()
 
 
 SIZE_CAPTURE = 300
+_capture_index = 0
 
 
 def generator_capture():
     image = cv2.imread("images.jpeg")
     for i in range(SIZE_CAPTURE):
         image_tmp = image.copy()
-
-        # write in image the number of "i"
         cv2.putText(
             image_tmp, str(i), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2
         )
-
         yield (i, image_tmp)
 
 
 @step(name="start_capture", version="v1.0")
 @to_obj
 def start_capture(context: object):
+    global _capture_index
+    _capture_index = 0
+    captures = list(generator_capture())
     return {
-        "capture": generator_capture(),
+        "captures": captures,
+        "capture_index": 0,
         "video_size": SIZE_CAPTURE,
-        "process_complete": int(False),
-        "A_predictions_all": [],
-        "B_predictions_all": [],
-        "C_predictions_all": [],
+        "process_complete": 0,
     }
 
 
@@ -59,22 +58,17 @@ class Create_batch:
 
     @to_obj
     def __call__(self, context: object):
+        global _capture_index
         batch = []
 
-        process_complete = False
-        i = -1
-
-        while len(batch) < self.size:
-            try:
-                i, image = next(context.capture)
-                batch.append((i, image))
-            except StopIteration:
+        for _ in range(self.size):
+            if _capture_index >= len(context.captures):
                 break
+            batch.append(context.captures[_capture_index])
+            _capture_index += 1
 
-        if i >= context.video_size - 1:
-            process_complete = True
-
-        return {"batch": batch, "process_complete": int(process_complete)}
+        context.process_complete = 1 if _capture_index >= len(context.captures) else 0
+        return {"batch": batch}
 
 
 @step(name="notificar_telegram_error", version="v1.0")
@@ -167,10 +161,6 @@ def draw_ia(context: object):
     b_predictions = context.B_predictions
     c_predictions = context.C_predictions
 
-    print(
-        f"DEBUG draw_ia: batch={len(batch_ids)}, A={len(a_predictions)}, B={len(b_predictions)}, C={len(c_predictions)}"
-    )
-
     a_preds_filtered = [(id_, p) for id_, p in a_predictions if id_ in batch_ids]
     b_preds_filtered = [(id_, p) for id_, p in b_predictions if id_ in batch_ids]
     c_preds_filtered = [(id_, p) for id_, p in c_predictions if id_ in batch_ids]
@@ -249,7 +239,7 @@ def save_images(context: object):
 db_path = "output/wpipe_dashboard.db"
 pipe = Pipeline(
     pipeline_name="viaje_tmp",
-    verbose=False,
+    verbose=True,
     tracking_db=db_path,
 )
 pipe.add_error_capture([notificar_telegram_error])
@@ -258,7 +248,7 @@ pipe.set_steps(
     [
         start_capture,
         For(
-            validation_expression="process_complete == 0",
+            iterations=150,
             steps=[
                 Create_batch(2),
                 Parallel(
@@ -268,7 +258,6 @@ pipe.set_steps(
                         Simulated_inference(CLASS_NAMES_C, "C"),
                     ],
                     max_workers=3,
-                    # use_processes=False  # Cambiado a False para evitar errores de pickling con objetos complejos
                 ),
                 draw_ia,
             ],
