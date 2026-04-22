@@ -3,9 +3,30 @@ YAML utilities for reading and writing configuration files.
 """
 
 from pathlib import Path
-from typing import Union
+from typing import Any, Union
 
 import yaml
+
+
+def clean_for_json(obj: Any) -> Any:
+    """
+    Recursively convert non-serializable objects to strings for JSON compatibility.
+    
+    Args:
+        obj: Object to clean.
+        
+    Returns:
+        Cleaned object (dict, list, or basic type).
+    """
+    if isinstance(obj, dict):
+        return {str(k): clean_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_for_json(item) for item in obj]
+    elif isinstance(obj, (str, int, float, bool, type(None))):
+        return obj
+    else:
+        # Fallback para objetos complejos como StepMetadata
+        return str(obj)
 
 
 def leer_yaml(archivo: Union[str, Path], verbose: bool = False) -> dict:

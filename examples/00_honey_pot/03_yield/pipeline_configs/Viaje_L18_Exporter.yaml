@@ -1,0 +1,8 @@
+name: Viaje_L18_Exporter
+registered_at: '2026-04-22T13:25:39.700398'
+step_count: 1
+steps:
+- func: <function circular_tramo_a at 0x7f93c6134400>
+  name: circular_tramo_a
+  type: task
+  version: v1.0

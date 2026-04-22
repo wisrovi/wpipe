@@ -24,6 +24,7 @@ from wpipe.api_client.api_client import APIClient
 from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import logger
 from wpipe.tracking import PipelineTracker
+from wpipe.util.utils import clean_for_json
 
 
 def get_system_metrics() -> dict:
@@ -320,7 +321,7 @@ class Pipeline(APIClient):
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
-        continue_on_error: bool = True,
+        continue_on_error: bool = False,
         show_progress: bool = True,
     ) -> None:
         """
@@ -387,6 +388,8 @@ class Pipeline(APIClient):
 
         if steps:
             self._post_run_tasks.extend(steps)
+        
+        return self
 
     def add_checkpoint(self, checkpoint_name: str, expression: str = "True", steps: Optional[list] = None):
         """
@@ -402,6 +405,7 @@ class Pipeline(APIClient):
             "steps": steps or [],
             "fired": False
         })
+        return self
 
     def _evaluate_checkpoints(self, data: dict):
         """Evaluate and fire checkpoints based on current data."""
@@ -443,7 +447,9 @@ class Pipeline(APIClient):
         
         The steps will receive (context_data, error_info).
         """
+        self.continue_on_error = True
         self._error_capture_tasks.extend(steps)
+        return self
 
     def _execute_error_capture(self, data: dict, error_info: dict):
         """Execute error capture steps safely."""
@@ -496,7 +502,7 @@ class Pipeline(APIClient):
                 relation_type=relation_type,
             )
 
-    def set_worker_id(self, worker_id: str) -> None:
+    def set_worker_id(self, worker_id: str):
         """
         Set the worker ID.
         """
@@ -510,6 +516,8 @@ class Pipeline(APIClient):
             self.worker_id = worker_id
         else:
             self.worker_id = None
+        
+        return self
 
     def worker_register(self, name: str, version: str) -> Optional[dict]:
         """
@@ -641,10 +649,10 @@ class Pipeline(APIClient):
         """
         worker_id = self.worker_id
 
-        if self.verbose:
-            print("\n", "\t", "*" * 50)
-            print("\n", f"\t [WORKER] {self.worker_id}")
-            print("\n\t", "*" * 50)
+        # if self.verbose:
+        #     print("\n", "\t", "*" * 50)
+        #     print("\n", f"\t [WORKER] {self.worker_id}")
+        #     print("\n\t", "*" * 50)
 
         self._api_process_update({"id": worker_id}, start=True)
 
@@ -653,6 +661,10 @@ class Pipeline(APIClient):
             result = self._pipeline_run(*args, **kwargs)
 
             self._api_process_update({"id": self.process_id, "details": ""})
+
+
+
+
         except TaskError as te:
             error = {
                 "message": str(te),
@@ -664,8 +676,11 @@ class Pipeline(APIClient):
                 "task_id": self.task_id,
             }
 
+            # Sanitize for JSON
+            safe_error = clean_for_json(error)
+
             self._api_process_update(
-                {"id": self.process_id, "details": json.dumps(error)}
+                {"id": self.process_id, "details": json.dumps(safe_error)}
             )
 
             if self.continue_on_error:
@@ -678,7 +693,7 @@ class Pipeline(APIClient):
 
         return result
 
-    def set_steps(self, steps: list) -> None:
+    def set_steps(self, steps: list):
         """
         Set the pipeline steps.
         """
@@ -728,6 +743,10 @@ class Pipeline(APIClient):
                         use_processes=item.use_processes,
                     )
                 )
+            elif isinstance(item, Pipeline):
+                name = item.pipeline_name or "SubPipeline"
+                version = "v1.0"
+                new_list.append((item, name, version, {}))
             elif callable(item):
                 name = getattr(item, "NAME", None) or getattr(
                     item, "__name__", "unknown"
@@ -751,6 +770,7 @@ class Pipeline(APIClient):
                 new_list.append(s)
 
         self.tasks_list = new_list
+        return self
 
     def add_state(
         self,
@@ -764,7 +784,7 @@ class Pipeline(APIClient):
         retry_delay=None,
         retry_on_exceptions=None,
         **kwargs,
-    ) -> None:
+    ):
         """
         Add a single step to the pipeline.
         """
@@ -792,6 +812,7 @@ class Pipeline(APIClient):
         new_step = (step_func, name, version, meta)
         current_steps.append(new_step)
         self.set_steps(current_steps)
+        return self
 
     @property
     def steps(self):
@@ -836,7 +857,7 @@ class Pipeline(APIClient):
 
     def _task_invoke(self, func: Callable, name: str, *args: Any, **kwargs: Any) -> Any:
         """
-        Invoke a task, optionally with retry logic.
+        Invoke a task, optionally with retry logic and timeout.
         """
         # Obtener metadatos específicos del paso si se pasaron desde _execute_step
         step_meta = kwargs.pop("__step_meta__", {})
@@ -844,10 +865,11 @@ class Pipeline(APIClient):
         # Obtener metadatos si existen en el objeto función (del decorador @step)
         decorator_meta = getattr(func, "_wpipe_metadata", None)
 
-        # Determinar configuraciones de reintento (Prioridad: Explícito > Decorador > Pipeline)
+        # Determinar configuraciones (Prioridad: Explícito > Decorador > Pipeline)
         max_retries = self.max_retries
         retry_delay = self.retry_delay
         retry_on_exceptions = self.retry_on_exceptions
+        timeout = None
 
         # 1. Aplicar desde decorador
         if decorator_meta:
@@ -857,6 +879,8 @@ class Pipeline(APIClient):
                 retry_delay = decorator_meta.retry_delay
             if getattr(decorator_meta, "retry_on_exceptions", None) is not None:
                 retry_on_exceptions = decorator_meta.retry_on_exceptions
+            if getattr(decorator_meta, "timeout", None) is not None:
+                timeout = decorator_meta.timeout
 
         # 2. Aplicar desde metadatos explícitos (add_state o similar) - Manda sobre el decorador
         if step_meta:
@@ -871,21 +895,33 @@ class Pipeline(APIClient):
                 retry_delay = _get_val(step_meta, "retry_delay")
             if _get_val(step_meta, "retry_on_exceptions") is not None:
                 retry_on_exceptions = _get_val(step_meta, "retry_on_exceptions")
+            if _get_val(step_meta, "timeout") is not None:
+                timeout = _get_val(step_meta, "timeout")
 
-        # 3. Limpiar argumentos internos de tracking para no pasarlos a la función del usuario
-        # que podría no aceptarlos (unexpected keyword argument)
+        # 3. Limpiar argumentos internos de tracking
         kwargs.pop("parent_step_id", None)
         kwargs.pop("parallel_group", None)
 
         last_exception = None
         for attempt in range(max_retries + 1):
             try:
-                if self.send_to_api:
-                    result = self._task_invoke_with_report(func, *args, **kwargs)
-                elif isinstance(func, Pipeline):
-                    result = func.run(*args, **kwargs)
+                def _run():
+                    if self.send_to_api:
+                        return self._task_invoke_with_report(func, *args, **kwargs)
+                    elif isinstance(func, Pipeline):
+                        return func.run(*args, **kwargs)
+                    else:
+                        return func(*args, **kwargs)
+
+                if timeout:
+                    with ThreadPoolExecutor(max_workers=1) as executor:
+                        future = executor.submit(_run)
+                        try:
+                            result = future.result(timeout=timeout)
+                        except TimeoutError:
+                            raise TimeoutError(f"Task '{name}' timed out after {timeout}s") from None
                 else:
-                    result = func(*args, **kwargs)
+                    result = _run()
 
                 # SI TIENE ÉXITO: Limpiamos cualquier rastro de error anterior en este paso
                 if args and isinstance(args[0], dict):
@@ -914,7 +950,6 @@ class Pipeline(APIClient):
                 }
 
                 # Ejecutar capturadores de error en CADA fallo
-                # Usamos el primer argumento de args como contexto (data)
                 context = args[0] if args and isinstance(args[0], dict) else {}
                 self._execute_error_capture(context, error_details)
 
@@ -1000,6 +1035,9 @@ class Pipeline(APIClient):
                 current_group = f"group_{tracked_parallel_id or 'none'}"
 
                 with ExecutorClass(max_workers=max_workers) as executor:
+                    # Capturamos las claves iniciales para poder extraer deltas después
+                    initial_keys = set(loop_data.keys())
+
                     if is_multiprocess:
                         # Para procesos usamos el método estático
                         futures = {
@@ -1007,7 +1045,7 @@ class Pipeline(APIClient):
                             for step in item.steps
                         }
                     else:
-                        # Para hilos, usamos una función local que captura self pero no requiere pickling
+                        # Para hilos, usamos una función local
                         def _thread_worker(s, d):
                             return self._execute_step(s, d, **{**kwargs, "parent_step_id": tracked_parallel_id, "parallel_group": current_group})
 
@@ -1016,13 +1054,23 @@ class Pipeline(APIClient):
                             for step in item.steps
                         }
 
-                    for future in as_completed(futures):
+                    # Usamos una lista para mantener el orden de las tareas lanzadas
+                    ordered_futures = [f for f in futures]
+
+                    for future in ordered_futures:
                         try:
                             res = future.result()
                             if res and "error" in res:
                                 errors.append(res["error"])
                             elif res:
-                                results.append(res)
+                                # EXTRAEMOS SOLO EL DELTA: Lo que este paso añadió o cambió
+                                delta = {k: v for k, v in res.items() if k not in initial_keys and k != "progress_rich"}
+                                # Si el paso no añadió nada nuevo pero devolvió algo, lo incluimos (fallback)
+                                if not delta and isinstance(res, dict):
+                                    # Solo añadimos claves que no sean las básicas de control si es posible
+                                    delta = {k: v for k, v in res.items() if k != "progress_rich"}
+                                
+                                results.append(delta)
                         except Exception as e:
                             errors.append(f"Execution error: {str(e)}")
             except Exception as e:
@@ -1031,10 +1079,11 @@ class Pipeline(APIClient):
                 self._end_step_tracking(tracked_parallel_id, None, data["error"])
                 return data
 
-            # Combinamos los resultados de todos los hilos/procesos
-            for res in results:
-                if isinstance(res, dict):
-                    data.update({k: v for k, v in res.items() if k != "progress_rich"})
+            # Combinamos SOLO LOS DELTAS de todos los hilos/procesos
+            # Esto evita que 'batch' u otras claves compartidas se pisen con versiones viejas
+            for delta in results:
+                if isinstance(delta, dict):
+                    data.update(delta)
 
             if errors:
                 data["error"] = " | ".join(errors)
@@ -1098,6 +1147,9 @@ class Pipeline(APIClient):
                 data.update(result_data)
             except Exception as e:
                 # El error ya fue procesado por _task_invoke (incluyendo capturadores)
+                if self.verbose:
+                    print(f"\n[ERROR] Step '{name}' failed: {str(e)}")
+                
                 if self.continue_on_error:
                     data["error"] = str(e)
                 else:

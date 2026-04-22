@@ -25,10 +25,51 @@ class TypeValidator:
     """Validate types at runtime."""
 
     @staticmethod
+    def format_pydantic_error(e) -> str:
+        """Format Pydantic ValidationError into a simple string."""
+        try:
+            errors = e.errors()
+            msg_parts = []
+            for err in errors:
+                loc = " -> ".join([str(x) for x in err.get("loc", [])])
+                msg = err.get("msg", "Unknown error")
+                err_type = err.get("type", "")
+                
+                if err_type == "missing":
+                    msg_parts.append(f"Ausencia de variable obligatoria: '{loc}'")
+                elif "type" in err_type:
+                    msg_parts.append(f"Tipo de dato incorrecto en '{loc}': {msg}")
+                else:
+                    msg_parts.append(f"Error en '{loc}': {msg}")
+            
+            return " | ".join(msg_parts)
+        except Exception:
+            return str(e)
+
+    @staticmethod
     def validate(value: Any, expected_type: Type[T]) -> T:
         """
         Validate value against expected type.
+        Supports standard types, TypedDict, and Pydantic models.
         """
+        from pydantic import BaseModel, ValidationError
+
+        # SOPORTE PARA PYDANTIC MODELS
+        if isinstance(expected_type, type) and issubclass(expected_type, BaseModel):
+            if isinstance(value, dict):
+                try:
+                    # Intentamos validar y devolver el modelo
+                    return expected_type.model_validate(value)
+                except ValidationError as e:
+                    simple_msg = TypeValidator.format_pydantic_error(e)
+                    raise TypeError(f"Validación Pydantic fallida: {simple_msg}") from e
+                except Exception as e:
+                    raise TypeError(f"Pydantic validation failed: {str(e)}") from e
+            elif isinstance(value, expected_type):
+                return value
+            else:
+                raise TypeError(f"Expected dict or {expected_type.__name__}, got {type(value).__name__}")
+
         origin = get_origin(expected_type)
         args = get_args(expected_type)
 

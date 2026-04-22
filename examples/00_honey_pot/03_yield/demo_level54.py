@@ -1,6 +1,9 @@
+import os
 import random
 import time
+
 import cv2
+from genericpath import exists
 
 from extras.wsqlite_test import test_Wsqlite
 from wpipe import (
@@ -24,7 +27,6 @@ test_Wsqlite()
 
 
 SIZE_CAPTURE = 300
-_capture_index = 0
 
 
 def generator_capture():
@@ -40,14 +42,11 @@ def generator_capture():
 @step(name="start_capture", version="v1.0")
 @to_obj
 def start_capture(context: object):
-    global _capture_index
-    _capture_index = 0
-    captures = list(generator_capture())
+    cap = generator_capture()
     return {
-        "captures": captures,
-        "capture_index": 0,
+        "cap": cap,
         "video_size": SIZE_CAPTURE,
-        "process_complete": 0,
+        "process_complete": int(False),
     }
 
 
@@ -58,17 +57,18 @@ class Create_batch:
 
     @to_obj
     def __call__(self, context: object):
-        global _capture_index
         batch = []
+        process_complete = False
 
         for _ in range(self.size):
-            if _capture_index >= len(context.captures):
-                break
-            batch.append(context.captures[_capture_index])
-            _capture_index += 1
+            frame_id, frame = next(context.cap)
 
-        context.process_complete = 1 if _capture_index >= len(context.captures) else 0
-        return {"batch": batch}
+            batch.append((frame_id, frame))
+
+            if frame_id >= context.video_size:
+                process_complete = True
+
+        return {"batch": batch, "process_complete": process_complete}
 
 
 @step(name="notificar_telegram_error", version="v1.0")
@@ -85,11 +85,6 @@ def notificar_telegram_error(context, error):
     print(f"🔢 LÍNEA: {error['line_number']}")
     print(f"⚠️ MENSAJE: {error['error_message']}")
     print("-" * 60)
-    # print("🔍 INFO DE LA BODEGA (CONTEXTO):")
-    # print(
-    #     f"   Modelo: {context.get('modelo')} | Gasolina: {context.get('nivel_gasolina')}"
-    # )
-    # print("-" * 60)
     # Aquí podrías usar requests.post para enviar el mensaje real
     return context
 
@@ -109,13 +104,13 @@ TEMPLATE = {
     "mask": random_mask(),
 }
 
-CLASS_NAMES_A = [f"class_A_{i}" for i in range(30)]
-CLASS_NAMES_B = [f"class_B_{i}" for i in range(30)]
-CLASS_NAMES_C = [f"class_C_{i}" for i in range(30)]
+CLASS_NAMES_A = [f"A_{i}" for i in range(30)]
+CLASS_NAMES_B = [f"B_{i}" for i in range(30)]
+CLASS_NAMES_C = [f"C_{i}" for i in range(30)]
 
 
 @step(name="simulated_inference", version="v1.0")
-class Simulated_inference:
+class Simulated_yolo_inference:
     def __init__(self, ref_class_names, sub_name):
         self.ref_class_names = ref_class_names
         self.sub_name = sub_name
@@ -130,7 +125,7 @@ class Simulated_inference:
 
         predictions = []
 
-        for batch_id, batch_image in zip(batch_ids, batch_images):
+        for frame_id, frame in zip(batch_ids, batch_images):
             # simulated wait of predictions
             time.sleep(0.001)
 
@@ -138,17 +133,23 @@ class Simulated_inference:
             there_predictions = True if random_value > SELECTION else False
 
             if not there_predictions:
-                predictions.append((batch_id, None))
+                predictions.append((frame_id, None))
                 continue
 
             template_tmp = TEMPLATE.copy()
             template_tmp["class_name"] = random.choice(self.ref_class_names)
-            template_tmp["confidence"] = random.random()
+            template_tmp["confidence"] = round(random.random(), 2)
             template_tmp["mask"] = random_mask()
 
-            predictions.append((batch_id, template_tmp))
+            predictions.append((frame_id, template_tmp))
 
         return {f"{self.sub_name}_predictions": predictions}
+
+
+def put_text(frame, text, y=80):
+    cv2.putText(frame, text, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+    return frame
 
 
 @step(name="draw_ia", version="v1.0")
@@ -161,65 +162,40 @@ def draw_ia(context: object):
     b_predictions = context.B_predictions
     c_predictions = context.C_predictions
 
-    a_preds_filtered = [(id_, p) for id_, p in a_predictions if id_ in batch_ids]
-    b_preds_filtered = [(id_, p) for id_, p in b_predictions if id_ in batch_ids]
-    c_preds_filtered = [(id_, p) for id_, p in c_predictions if id_ in batch_ids]
-
     new_batch_images = []
 
-    for batch_id, batch_image in zip(batch_ids, batch_images):
-        a_match = next(
-            ((id_, p) for id_, p in a_preds_filtered if id_ == batch_id),
-            (batch_id, None),
-        )
-        b_match = next(
-            ((id_, p) for id_, p in b_preds_filtered if id_ == batch_id),
-            (batch_id, None),
-        )
-        c_match = next(
-            ((id_, p) for id_, p in c_preds_filtered if id_ == batch_id),
-            (batch_id, None),
-        )
-
-        a_id, a_pred = a_match
-        b_id, b_pred = b_match
-        c_id, c_pred = c_match
-
-        if a_id != batch_id or b_id != batch_id or c_id != batch_id:
+    for frame_id, frame, (A_id, A_predict), (B_id, B_predict), (C_id, C_predict) in zip(
+        batch_ids, batch_images, a_predictions, b_predictions, c_predictions
+    ):
+        if frame_id != A_id != B_id != C_id:
             raise Exception("Error: desncronizacion")
 
-        if a_pred:
-            cv2.putText(
-                batch_image,
-                str(a_pred["class_name"]),
-                (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                2,
+        if A_predict is not None:
+            A_text = (
+                str(A_predict["class_name"]) + "-" + str(A_predict.get("confidence"))
             )
-        if b_pred:
-            cv2.putText(
-                batch_image,
-                str(b_pred["class_name"]),
-                (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                2,
-            )
-        if c_pred:
-            cv2.putText(
-                batch_image,
-                str(c_pred["class_name"]),
-                (10, 90),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                2,
-            )
+        else:
+            A_text = "-o-"
 
-        new_batch_images.append((batch_id, batch_image))
+        if B_predict is not None:
+            B_text = (
+                str(B_predict["class_name"]) + "-" + str(B_predict.get("confidence"))
+            )
+        else:
+            B_text = "-o-"
+
+        if C_predict is not None:
+            C_text = (
+                str(C_predict["class_name"]) + "-" + str(C_predict.get("confidence"))
+            )
+        else:
+            C_text = "-o-"
+
+        frame = put_text(frame, A_text, y=80)
+        frame = put_text(frame, B_text, y=120)
+        frame = put_text(frame, C_text, y=160)
+
+        new_batch_images.append((frame_id, frame))
 
     return {"batch": new_batch_images}
 
@@ -231,15 +207,18 @@ def save_images(context: object):
     batch_images = [image for _, image in context.batch]
 
     path_to_save = "output/images"
-    for batch_id, batch_image in zip(batch_ids, batch_images):
-        cv2.imwrite(f"{path_to_save}/{batch_id}.jpg", batch_image)
+    for frame_id, frame in zip(batch_ids, batch_images):
+        cv2.imwrite(f"{path_to_save}/{frame_id}.jpg", frame)
     return {"saved": True}
+
+
+os.makedirs("output/images", exist_ok=True)
 
 
 db_path = "output/wpipe_dashboard.db"
 pipe = Pipeline(
     pipeline_name="viaje_tmp",
-    verbose=True,
+    verbose=False,
     tracking_db=db_path,
 )
 pipe.add_error_capture([notificar_telegram_error])
@@ -251,18 +230,23 @@ pipe.set_steps(
             iterations=150,
             steps=[
                 Create_batch(2),
+                # option 1
+                # Simulated_yolo_inference(CLASS_NAMES_A, "A"),
+                # Simulated_yolo_inference(CLASS_NAMES_B, "B"),
+                # Simulated_yolo_inference(CLASS_NAMES_C, "C"),
+                # option 2
                 Parallel(
                     steps=[
-                        Simulated_inference(CLASS_NAMES_A, "A"),
-                        Simulated_inference(CLASS_NAMES_B, "B"),
-                        Simulated_inference(CLASS_NAMES_C, "C"),
+                        Simulated_yolo_inference(CLASS_NAMES_A, "A"),
+                        Simulated_yolo_inference(CLASS_NAMES_B, "B"),
+                        Simulated_yolo_inference(CLASS_NAMES_C, "C"),
                     ],
                     max_workers=3,
                 ),
                 draw_ia,
+                save_images,
             ],
         ),
-        save_images,
     ],
 )
 pipe.run({})
