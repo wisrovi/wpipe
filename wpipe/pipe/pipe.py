@@ -802,6 +802,18 @@ class Pipeline(APIClient):
         try:
             current_group = f"group_{tracked_id or 'none'}"
             clean_self = self
+            
+            # Check if data is picklable if using processes
+            if is_multiprocess:
+                import pickle
+                try:
+                    pickle.dumps(loop_data)
+                except (pickle.PicklingError, TypeError, AttributeError) as e:
+                    if self.verbose:
+                        print(f"[WARNING] Data not picklable: {e}. Falling back to THREADS.")
+                    is_multiprocess = False
+                    ExecutorClass = ThreadPoolExecutor
+
             if is_multiprocess:
                 import copy as cp  # pylint: disable=import-outside-toplevel
                 clean_self = cp.copy(self)
