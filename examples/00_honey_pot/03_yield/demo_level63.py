@@ -18,6 +18,7 @@ DIAGRAM:
 import random
 
 from wpipe import Pipeline, step
+from wpipe.exception.api_error import TaskError
 
 class NetworkError(Exception):
     pass
@@ -74,4 +75,10 @@ if __name__ == "__main__":
     )
     pipe.set_steps([validar_y_conectar, finish])
     print("\n>>> Probando retry filter por excepción...\n")
-    pipe.run({})
+    
+    try:
+        pipe.run({})
+    except TaskError as e:
+        print(e)
+    except Exception as e:
+        print(e)

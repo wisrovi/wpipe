@@ -6,13 +6,14 @@
 
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
             color: white;
             padding: 80px 40px;
             border-radius: 16px;
             text-align: center;
             margin-bottom: 50px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0, 242, 254, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -35,7 +36,7 @@
             position: relative;
         }
         .hero-section h1 .logo {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -67,8 +68,9 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #020617;
+            font-weight: 800;
         }
         .btn-secondary {
             background: rgba(255,255,255,0.1);
@@ -130,15 +132,17 @@
             margin: 40px 0;
         }
         .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             padding: 30px 20px;
             border-radius: 12px;
             text-align: center;
             color: white;
+            border: 1px solid rgba(0, 242, 254, 0.3);
         }
         .stat-box .value {
             font-size: 3em;
             font-weight: 800;
+            color: #00f2fe;
         }
         .stat-box .label {
             font-size: 0.95em;
