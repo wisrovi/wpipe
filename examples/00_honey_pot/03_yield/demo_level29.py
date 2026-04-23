@@ -1,32 +1,40 @@
 """
-DEMO LEVEL 29: Guardado de Seguridad (Smart Checkpoints)
---------------------------------------------------------
-Añade: Checkpoints que solo se disparan bajo condiciones críticas.
-Acumula: Persistencia (L14).
+DEMO LEVEL 29: Safety Save (Smart Checkpoints)
+----------------------------------------------
+Adds: Checkpoints that only fire under critical conditions.
+Accumulates: Persistence (L14).
 
-DIAGRAMA:
-(Viaje) -> [¿Gasolina < 15%?] -- SÍ --> (Guardar Punto de Rescate)
+DIAGRAM:
+(Trip) -> [Fuel < 15%?] -- YES --> (Save Rescue Point)
 """
 
 import os
+from typing import Any, Dict
 
 from wpipe import CheckpointManager, Pipeline, step
 
+@step(name="critical_consumption")
+def critical_consumption(data: Any) -> Dict[str, int]:
+    """Critical consumption detection step.
 
-@step(name="consumo_critico")
-def consumo_critico(data):
-    # Simulamos que la gasolina baja peligrosamente
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, int]: Fuel level.
+    """
+    # Simulate fuel dropping dangerously
     fuel_actual = 10
-    print(f"⛽ Alerta de Combustible: {fuel_actual}%")
-    return {"gasolina": fuel_actual}
-
+    print(f"⛽ Fuel Alert: {fuel_actual}%")
+    return {"fuel": fuel_actual}
 
 if __name__ == "__main__":
-    ck_mgr = CheckpointManager("output/coche_seguridad.db")
-    pipe = Pipeline(pipeline_name="Safety_First_L29", verbose=True)
+    os.makedirs("output", exist_ok=True)
+    ck_mgr = CheckpointManager("output/car_safety.db")
+    pipe = Pipeline(pipeline_name="safety_first_l29", verbose=True)
 
-    # NUEVO EN L29: El coche guarda partida automáticamente solo si el fuel es bajo
-    pipe.add_checkpoint(checkpoint_name="punto_de_rescate", expression="gasolina < 15")
+    # NEW IN L29: The car saves automatically only if fuel is low
+    pipe.add_checkpoint(checkpoint_name="rescue_point", expression="fuel < 15")
 
-    pipe.set_steps([consumo_critico])
-    pipe.run({"gasolina": 100}, checkpoint_mgr=ck_mgr, checkpoint_id="viaje_nocturno")
+    pipe.set_steps([critical_consumption])
+    pipe.run({"fuel": 100}, checkpoint_mgr=ck_mgr, checkpoint_id="night_trip")

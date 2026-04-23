@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 97: get_fired_alerts con Límite
 -----------------------------------------
-Añade: Limitar número de alerts devueltos.
-Continúa: L96.
+Adds: Limitar número de alerts devueltos.
+Continues: L96.
 
-DIAGRAMA:
+DIAGRAM:
 get_fired_alerts(limit=5)
 """
 
@@ -12,18 +12,28 @@ import time
 
 from wpipe import Pipeline, step, Metric, Severity
 
+@step(name="task")
+def task(data: dict) -> None:
 
-@step(name="tarea")
-def tarea(data):
+    """Task step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.02)
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Alerts con límite...")
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L97_GetAlertsLimit",
+        pipeline_name="viaje_l97_getalertslimit",
         verbose=True,
         tracking_db="output/alerts97.db",
     )
@@ -34,7 +44,7 @@ if __name__ == "__main__":
         severity=Severity.WARNING,
     )
 
-    pipe.set_steps([tarea])
+    pipe.set_steps([task])
     pipe.run({})
 
     alerts = pipe.tracker.get_fired_alerts(limit=5)

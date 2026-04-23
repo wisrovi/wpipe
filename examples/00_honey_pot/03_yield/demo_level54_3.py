@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import os
 import random
 import time
@@ -23,9 +24,7 @@ from wpipe import (
     to_obj,
 )
 
-
 SIZE_CAPTURE = 150
-
 
 def generator_capture():
     image = cv2.imread("images.jpeg")
@@ -36,7 +35,6 @@ def generator_capture():
         )
         yield (i, image_tmp)
 
-
 @step(name="start_capture", version="v1.0")
 @to_obj
 def start_capture(context: object):
@@ -46,7 +44,6 @@ def start_capture(context: object):
         "video_size": SIZE_CAPTURE,
         "process_complete": int(False),
     }
-
 
 @step(name="create_batch", version="v1.0")
 class Create_batch:
@@ -69,9 +66,20 @@ class Create_batch:
 
         return {"batch": batch, "process_complete": process_complete}
 
+@step(name="notify_telegram_error", version="v1.0")
+def notify_telegram_error(context: Any, error: Any) -> dict:
 
-@step(name="notificar_telegram_error", version="v1.0")
-def notificar_telegram_error(context, error):
+    """Notify telegram error step.
+
+    Args:
+
+        context: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("\n" + "!" * 60)
     print("🚨 ALERTA DE SISTEMA: ERROR DETECTADO")
     print("!" * 60)
@@ -82,13 +90,23 @@ def notificar_telegram_error(context, error):
     print("-" * 60)
     return context
 
+def random_mask() -> dict:
 
-def random_mask():
+    """Notify telegram error step.
+
+    Args:
+
+        context: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     return [
         (random.randint(0, 255), random.randint(0, 255))
         for _ in range(random.randint(30, 80))
     ]
-
 
 TEMPLATE = {
     "class": "0",
@@ -100,7 +118,6 @@ TEMPLATE = {
 CLASS_NAMES_A = [f"A_{i}" for i in range(30)]
 CLASS_NAMES_B = [f"B_{i}" for i in range(30)]
 CLASS_NAMES_C = [f"C_{i}" for i in range(30)]
-
 
 @step(name="simulated_inference", version="v1.0")
 class Simulated_yolo_inference:
@@ -140,12 +157,10 @@ class Simulated_yolo_inference:
 
         return {f"{self.sub_name}_predictions": predictions}
 
-
 def put_text(frame, text, y=80):
     cv2.putText(frame, text, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
     return frame
-
 
 @step(name="draw_ia", version="v1.0")
 @to_obj
@@ -197,7 +212,6 @@ def draw_ia(context: object):
 
     return {"batch": new_batch_images}
 
-
 @step(name="save_images", version="v1.0")
 @to_obj
 def save_images(context: object):
@@ -214,9 +228,7 @@ def save_images(context: object):
         cv2.imwrite(f"{path_to_save}/{frame_id}.jpg", frame)
     return {"saved": True}
 
-
 os.makedirs("output/images", exist_ok=True)
-
 
 db_path = "output/wpipe_dashboard.db"
 pipe = Pipeline(
@@ -225,7 +237,7 @@ pipe = Pipeline(
     show_progress=False,
     tracking_db=db_path,
 )
-pipe.add_error_capture([notificar_telegram_error])
+pipe.add_error_capture([notify_telegram_error])
 
 pipe.set_steps(
     [

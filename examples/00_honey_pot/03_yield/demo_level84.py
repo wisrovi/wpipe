@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 84: Export Multiple Formats
 ------------------------------------
-Añade: Exportar a múltiples formatos.
-Continúa: L83.
+Adds: Exportar a múltiples formatos.
+Continues: L83.
 
-DIAGRAMA:
+DIAGRAM:
 Pipeline --> JSON + CSV + STATS
 """
 
@@ -14,25 +14,46 @@ from pathlib import Path
 
 from wpipe import Pipeline, PipelineExporter, step
 
+@step(name="start")
+def start(data: dict) -> None:
 
-@step(name="iniciar")
-def iniciar(data):
+    """Start step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🔑 Motor iniciado")
     return {"motor": "on"}
 
+@step(name="process")
+def process(data: dict) -> None:
 
-@step(name="procesar")
-def procesar(data):
+    """Process step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("📊 Procesando...")
     return {"procesado": True}
-
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)
 
     db = "output/export_multi.db"
-    pipe = Pipeline(pipeline_name="Viaje_L84_ExportMulti", verbose=True, tracking_db=db)
-    pipe.set_steps([iniciar, procesar])
+    pipe = Pipeline(pipeline_name="viaje_l84_exportmulti", verbose=True, tracking_db=db)
+    pipe.set_steps([start, process])
     pipe.run({})
 
     print("\n📤 Exportando en múltiples formatos...")

@@ -1,39 +1,58 @@
 """
-DEMO LEVEL 13: CPU de Alto Rendimiento (Processes)
---------------------------------------------------
-Añade: Uso de núcleos reales para procesar mapas de profundidad pesados.
-Acumula: Visión 360° (L12).
+DEMO LEVEL 13: High-Performance CPU (Processes)
+-----------------------------------------------
+Adds: Use of real cores to process heavy depth maps.
+Accumulates: 360° Vision (L12).
 
-DIAGRAMA:
-[Proceso CPU 1] -> (Analizar Texturas Carretera)
-[Proceso CPU 2] -> (Reconocer Señales de Tráfico)
-[Proceso CPU 3] -> (Predecir Trayectorias Peatones)
+DIAGRAM:
+[CPU Process 1] -> (Analyze Road Textures)
+[CPU Process 2] -> (Recognize Traffic Signs)
+[CPU Process 3] -> (Predict Pedestrian Trajectories)
 """
 
 import os
 import time
+from typing import Any, Dict
 
 from wpipe import Parallel, Pipeline, step
 
+@step(name="deep_analysis")
+def deep_analysis(data: Any) -> Dict[str, str]:
+    """Deep analysis step simulating heavy AI processing.
 
-@step(name="analisis_profundo")
-def analisis_profundo(d):
-    # Simulamos carga de CPU real de un modelo de red neuronal
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, str]: Depth map status.
+    """
+    # Simulate real CPU load of a neural network model
     start = time.time()
     while time.time() - start < 0.2:
         pass
-    print(f"🧠 Engine IA (PID {os.getpid()}): Mapa de profundidad generado.")
-    return {"mapa": "completo"}
+    print(f"🧠 AI Engine (PID {os.getpid()}) -> None:
 
+    """Deep analysis step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        None: Result of the step.
+
+    """ Depth map generated.")
+    return {"map": "complete"}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L13_HeavyAI", verbose=True)
+    pipe = Pipeline(pipeline_name="trip_l13_heavyai", verbose=True)
     pipe.set_steps(
         [
             Parallel(
-                steps=[analisis_profundo] * 3,
+                steps=[deep_analysis] * 3,
                 max_workers=3,
-                use_processes=True,  # <--- Uso de potencia real del motor de IA
+                use_processes=True,  # <--- Use real AI engine power
             )
         ]
     )

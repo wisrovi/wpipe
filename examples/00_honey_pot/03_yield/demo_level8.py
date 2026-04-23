@@ -1,75 +1,110 @@
 """
-DEMO LEVEL 8: Ramificaciones (Condition)
-----------------------------------------
-Añade: Uso de Condition() para ejecutar ramas True/False.
-Acumula: Stream de cámara y procesamiento en bucle.
+DEMO LEVEL 8: Branching (Condition)
+-----------------------------------
+Adds: Use of Condition() to execute True/False branches.
 
-DIAGRAMA:
-(procesar_frame)
+DIAGRAM:
+(process_frame)
       |
       v
-Condition(¿Obstáculo detectado?)
-      |--- [True]  -> (frenar_emergencia)
-      |--- [False] -> (acelerar_suave)
+Condition(Obstacle detected?)
+      |--- [True]  -> (emergency_brake)
+      |--- [False] -> (gentle_accelerate)
 """
 
 import random
-
+from typing import Any, Dict, Generator, Tuple
 import numpy as np
-
 from wpipe import Condition, For, Pipeline, step, to_obj
 
 
-def simular_video():
+def simulate_video() -> Generator[Tuple[int, np.ndarray], None, None]:
+    """Simulate a video stream.
+
+    Yields:
+        Tuple[int, np.ndarray]: Frame ID and image.
+    """
     for i in range(10):
-        yield i, np.zeros((100, 100, 3))
+        yield i, np.zeros((100, 100, 3), dtype=np.uint8)
 
 
-@step(name="iniciar_camara")
-def iniciar_camara(data):
-    return {"stream": simular_video()}
+@step(name="start_camera")
+def start_camera(_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Start camera.
+
+    Args:
+        _data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Stream generator.
+    """
+    return {"stream": simulate_video()}
 
 
-@step(name="procesar_frame")
+@step(name="process_frame")
 @to_obj
-def procesar_frame(ctx):
+def process_frame(ctx: Any) -> Dict[str, Any]:
+    """Process a frame and detect hazards.
+
+    Args:
+        ctx (Any): The context object.
+
+    Returns:
+        Dict[str, Any]: Frame ID and obstacle status.
+    """
     try:
         frame_id, _ = next(ctx.stream)
-        peligro = random.random() < 0.3
-        print(f"🖼️ Frame {frame_id} | Peligro: {peligro}")
-        return {"current_frame": frame_id, "obstaculo": peligro}
+        danger = random.random() < 0.3
+        print(f"🖼️ Frame {frame_id} | Danger: {danger}")
+        return {"current_frame": frame_id, "obstacle": danger}
     except StopIteration:
-        return {"error": "Fin"}
+        return {"error": "End"}
 
 
-@step(name="frenar")
-def frenar(data):
-    print("🛑 ¡FRENO DE EMERGENCIA ACTIVADO!")
-    return {"accion": "Frenando"}
+@step(name="brake")
+def brake(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Apply emergency brakes.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Action performed.
+    """
+    print(f"🛑 EMERGENCY BRAKE ACTIVATED! Data: {data}")
+    return {"action": "Braking"}
 
 
-@step(name="acelerar")
-def acelerar(data):
-    print("🛣️ Carretera libre. Acelerando...")
-    return {"accion": "Acelerando"}
+@step(name="accelerate")
+def accelerate(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Accelerate smoothly.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Action performed.
+    """
+    print(f"🛣️ Clear road. Accelerating... Data: {data}")
+    return {"action": "Accelerating"}
 
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L8", verbose=True)
-    pipe.set_steps(
+    pipeline = Pipeline(pipeline_name="Trip_L8", verbose=True)
+    pipeline.set_steps(
         [
-            iniciar_camara,
+            start_camera,
             For(
                 iterations=5,
                 steps=[
-                    procesar_frame,
+                    process_frame,
                     Condition(
-                        expression="obstaculo == True",
-                        branch_true=[frenar],
-                        branch_false=[acelerar],
+                        expression="obstacle == True",
+                        branch_true=[brake],
+                        branch_false=[accelerate],
                     ),
                 ],
             ),
         ]
     )
-    pipe.run({})
+    pipeline.run({})

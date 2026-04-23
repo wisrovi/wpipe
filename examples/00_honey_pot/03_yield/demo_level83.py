@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 83: Export Statistics
 ---------------------------------
-Añade: Exportar estadísticas.
-Continúa: L82.
+Adds: Exportar estadísticas.
+Continues: L82.
 
-DIAGRAMA:
+DIAGRAM:
 Pipeline --> (export_statistics) --> stats.json
 """
 
@@ -14,26 +14,47 @@ from pathlib import Path
 
 from wpipe import Pipeline, PipelineExporter, step
 
+@step(name="start")
+def start(data: dict) -> None:
 
-@step(name="iniciar")
-def iniciar(data):
+    """Start step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     return {"motor": "on"}
 
+@step(name="process")
+def process(data: dict) -> None:
 
-@step(name="procesar")
-def procesar(data):
+    """Process step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     return {"procesado": True}
-
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L83_ExportStats",
+        pipeline_name="viaje_l83_exportstats",
         verbose=True,
         tracking_db="output/export_stats.db",
     )
-    pipe.set_steps([iniciar, procesar])
+    pipe.set_steps([start, process])
     pipe.run({})
 
     print("\n📊 Exportando estadísticas...")

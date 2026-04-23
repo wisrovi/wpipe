@@ -7,7 +7,7 @@ Transform decorators:
 """
 
 from .transform import auto_dict_input, dict_to_sns, object_to_dict, to_obj
-from .utils import escribir_yaml, leer_yaml
+from .utils import escribir_yaml, leer_yaml, read_yaml, write_yaml
 
 __all__ = [
     # Transform decorators
@@ -16,6 +16,8 @@ __all__ = [
     "dict_to_sns",
     "object_to_dict",
     # YAML utilities
+    "read_yaml",
+    "write_yaml",
     "leer_yaml",
     "escribir_yaml",
 ]

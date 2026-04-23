@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 93: TaskTimer Async
 --------------------------
-Añade: TaskTimer con PipelineAsync.
-Continúa: L92.
+Adds: TaskTimer con PipelineAsync.
+Continues: L92.
 
-DIAGRAMA:
+DIAGRAM:
 TaskTimer + PipelineAsync
 """
 
@@ -12,21 +12,18 @@ import asyncio
 
 from wpipe import PipelineAsync, TaskTimer
 
-
-async def tarea(data):
+async def task(data):
     print("⚡ Tarea async...")
     await asyncio.sleep(0.05)
     return {"ok": True}
 
-
 async def main():
     with TaskTimer("async93", timeout_seconds=1) as timer:
-        pipe = PipelineAsync(pipeline_name="Viaje_L93", verbose=True)
-        pipe.set_steps([tarea])
+        pipe = PipelineAsync(pipeline_name="viaje_l93", verbose=True)
+        pipe.set_steps([task])
         await pipe.run({})
 
     print(f"\n⏱️ Tiempo: {timer.elapsed_seconds:.3f}s")
-
 
 if __name__ == "__main__":
     print(">>> TaskTimer async...")

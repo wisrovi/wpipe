@@ -1,41 +1,59 @@
 """
-DEMO LEVEL 11: Fallo de Sensores (Error Capture)
-------------------------------------------------
-Añade: Gestión de errores cuando la cámara se ensucia o falla.
-Acumula: Parabrisas Inteligente (L10).
+DEMO LEVEL 11: Sensor Failure (Error Capture)
+---------------------------------------------
+Adds: Error handling when the camera gets dirty or fails.
+Accumulates: Smart Windshield (L10).
 
-DIAGRAMA:
-(Cámara) -- [¿Lente sucia?] -- ERROR! --> (Limpiaparabrisas Automático)
+DIAGRAM:
+(Camera) -- [Lens dirty?] -- ERROR! --> (Automatic Windshield Wipers)
       |
       v
-(Procesar Viaje)
+(Process Trip)
 """
 
 import random
+from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+def emergency_maintenance(context: Dict[str, Any], error: Dict[str, Any]) -> Dict[str, Any]:
+    """Emergency maintenance handler when a sensor fails.
 
-def mantenimiento_emergencia(context, error):
-    print(f"\n🔧 SISTEMA: Detectado error en '{error['step_name']}'.")
-    print(f"🧼 ACCIÓN: Activando autolimpieza de sensores...\n")
+    Args:
+        context: The current pipeline context.
+        error: Dictionary containing error details.
+
+    Returns:
+        Dict[str, Any]: The updated context.
+    """
+    print(f"\n🔧 SYSTEM: Error detected in '{error['step_name']}'.")
+    print("🧼 ACTION: Activating sensor self-cleaning...\n")
     return context
 
+@step(name="verify_lens")
+def verify_lens(data: Any) -> Dict[str, str]:
+    """Verifies if the sensor lens is clean.
 
-@step(name="verificar_lente")
-def verificar_lente(data):
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, str]: Vision status.
+
+    Raises:
+        RuntimeError: If visibility is obstructed.
+    """
     if random.random() < 0.3:
-        raise RuntimeError("Visibilidad obstruida (Lente sucia)")
-    print("👀 Sensores limpios. Visibilidad 100%.")
+        raise RuntimeError("Obstructed visibility (Dirty lens)")
+    print("👀 Sensors clean. Visibility 100%.")
     return {"vision": "Clear"}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L11_FaultTolerance", verbose=True)
+    pipe = Pipeline(pipeline_name="trip_l11_faulttolerance", verbose=True)
 
-    # El coche ahora sabe qué hacer si falla la visión
-    pipe.add_error_capture([mantenimiento_emergencia])
+    # The car now knows what to do if vision fails
+    pipe.add_error_capture([emergency_maintenance])
 
-    pipe.set_steps([verificar_lente])
-    print(">>> Iniciando trayecto con sensores de seguridad...")
+    pipe.set_steps([verify_lens])
+    print(">>> Starting trip with security sensors...")
     pipe.run({})

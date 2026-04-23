@@ -3,74 +3,75 @@ YAML utilities for reading and writing configuration files.
 """
 
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Union, Dict
 
 import yaml
 
 
 def clean_for_json(obj: Any) -> Any:
-    """
-    Recursively convert non-serializable objects to strings for JSON compatibility.
-    
+    """Recursively convert non-serializable objects to strings for JSON compatibility.
+
     Args:
         obj: Object to clean.
-        
+
     Returns:
         Cleaned object (dict, list, or basic type).
     """
     if isinstance(obj, dict):
         return {str(k): clean_for_json(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
+    if isinstance(obj, list):
         return [clean_for_json(item) for item in obj]
-    elif isinstance(obj, (str, int, float, bool, type(None))):
+    if isinstance(obj, (str, int, float, bool, type(None))):
         return obj
-    else:
-        # Fallback para objetos complejos como StepMetadata
-        return str(obj)
+    # Fallback for complex objects like StepMetadata
+    return str(obj)
 
 
-def leer_yaml(archivo: Union[str, Path], verbose: bool = False) -> dict:
-    """
-    Read a YAML file.
+def read_yaml(file_path: Union[str, Path], verbose: bool = False) -> Dict[str, Any]:
+    """Read a YAML file.
 
     Args:
-        archivo: Path to the YAML file.
+        file_path: Path to the YAML file.
         verbose: Enable verbose output.
 
     Returns:
         Dictionary with YAML contents, or empty dict on error.
     """
     try:
-        with open(archivo, encoding="utf-8") as file:
-            contenido = yaml.safe_load(file)
-            return contenido or {}
+        with open(file_path, encoding="utf-8") as file:
+            content = yaml.safe_load(file)
+            return content or {}
     except FileNotFoundError:
         if verbose:
-            print(f"El archivo {archivo} no se encontró.")
-    except yaml.YAMLError as e:
+            print(f"File {file_path} not found.")
+    except yaml.YAMLError as error:
         if verbose:
-            print(f"Error al leer el archivo YAML: {e}")
+            print(f"Error reading YAML file: {error}")
     return {}
 
 
-def escribir_yaml(
-    archivo: Union[str, Path],
-    datos: dict,
+def write_yaml(
+    file_path: Union[str, Path],
+    data: Dict[str, Any],
     verbose: bool = False,
 ) -> None:
-    """
-    Write data to a YAML file.
+    """Write data to a YAML file.
 
     Args:
-        archivo: Path to the output file.
-        datos: Dictionary to write.
+        file_path: Path to the output file.
+        data: Dictionary to write.
         verbose: Enable verbose output.
     """
     try:
-        with open(archivo, "w", encoding="utf-8") as file:
-            yaml.dump(datos, file, default_flow_style=False, allow_unicode=True)
+        with open(file_path, "w", encoding="utf-8") as file:
+            yaml.dump(data, file, default_flow_style=False, allow_unicode=True)
             if verbose:
-                print(f"Archivo YAML creado exitosamente en {archivo}")
-    except OSError as e:
+                print(f"YAML file successfully created at {file_path}")
+    except OSError as error:
         if verbose:
-            print(f"Error al escribir el archivo YAML: {e}")
+            print(f"Error writing YAML file: {error}")
+
+
+# Backward compatibility aliases
+leer_yaml = read_yaml
+escribir_yaml = write_yaml

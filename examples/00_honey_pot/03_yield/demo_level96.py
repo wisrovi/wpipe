@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 96: get_fired_alerts
 -----------------------------
-Añade: Obtener alerts disparados.
-Continúa: Alert threshold de L70.
+Adds: Obtener alerts disparados.
+Continues: Alert threshold de L70.
 
-DIAGRAMA:
+DIAGRAM:
 tracker.get_fired_alerts() --> lista de alerts
 """
 
@@ -12,18 +12,28 @@ import time
 
 from wpipe import Pipeline, step, Metric, Severity
 
+@step(name="task")
+def task(data: dict) -> None:
 
-@step(name="tarea")
-def tarea(data):
+    """Task step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.05)
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Obteniendo alerts disparados...")
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L96_GetAlerts",
+        pipeline_name="viaje_l96_getalerts",
         verbose=True,
         tracking_db="output/alerts96.db",
     )
@@ -34,7 +44,7 @@ if __name__ == "__main__":
         severity=Severity.CRITICAL,
     )
 
-    pipe.set_steps([tarea])
+    pipe.set_steps([task])
     pipe.run({})
 
     alerts = pipe.tracker.get_fired_alerts()

@@ -1,35 +1,46 @@
 """
-DEMO LEVEL 32: El Túnel de la Resiliencia (Retries)
----------------------------------------------------
-Añade: Reintentos con espera prolongada para fallos persistentes.
-Acumula: Reintentos (L22).
+DEMO LEVEL 32: The Resilience Tunnel (Retries)
+-----------------------------------------------
+Adds: Retries with prolonged wait for persistent failures.
+Accumulates: Retries (L22).
 
-DIAGRAMA:
-(conectar_gps) -- [Fallo 1] -> Espera 0.5s
-      |--- [Fallo 2] -> Espera 0.5s
-      |--- [Fallo 3] -> Espera 0.5s (Saliendo del túnel...)
-      |--- [¡ÉXITO!] -> Señal recuperada.
+DIAGRAM:
+(connect_gps) -- [Fail 1] -> Wait 0.5s
+      |--- [Fail 2] -> Wait 0.5s
+      |--- [Fail 3] -> Wait 0.5s (Leaving the tunnel...)
+      |--- [SUCCESS!] -> Signal recovered.
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step
 
-intento_local = 0
+# Global counter to simulate retry success after some attempts
+RETRY_ATTEMPT = 0
 
+@step(name="recover_gps", retry_count=3, retry_delay=0.5)
+def recover_gps(data: Any) -> Dict[str, bool]:
+    """Recover GPS signal step with retries.
 
-@step(name="recuperar_gps", retry_count=3, retry_delay=0.5)
-def recuperar_gps(data):
-    global intento_local
-    intento_local += 1
-    if intento_local < 3:
-        print(f"📡 Satélite: Intento {intento_local} fallido (Túnel)...")
-        raise ConnectionError("Sin visibilidad")
+    Args:
+        data: Input data for the step.
 
-    print("📡 Satélite: ¡Señal GPS fijada!")
+    Returns:
+        Dict[str, bool]: Signal lock status.
+
+    Raises:
+        ConnectionError: If signal is not locked.
+    """
+    global RETRY_ATTEMPT
+    RETRY_ATTEMPT += 1
+    if RETRY_ATTEMPT < 3:
+        print(f"📡 Satellite: Attempt {RETRY_ATTEMPT} failed (Tunnel)...")
+        raise ConnectionError("No visibility")
+
+    print("📡 Satellite: GPS signal fixed!")
     return {"locked": True}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="GPS_Tunnel_L32", verbose=True)
-    pipe.set_steps([recuperar_gps])
-    print(">>> Entrando en zona de baja cobertura (Túnel)...")
+    pipe = Pipeline(pipeline_name="gps_tunnel_l32", verbose=True)
+    pipe.set_steps([recover_gps])
+    print(">>> Entering low coverage zone (Tunnel)...")
     pipe.run({})

@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from pydantic import BaseModel, Field
 from wpipe import Pipeline, step, to_obj, Condition
 import random
@@ -24,7 +25,19 @@ class HardwareConnectionError(Exception):
     retry_delay=0.1,
     retry_on_exceptions=(HardwareConnectionError,) # <--- SOLO REINTENTA ESTA EXCEPCIÓN
 )
-def unstable_step(context):
+def unstable_step(context: Any) -> dict:
+
+    """Unstable step step.
+
+    Args:
+
+        context: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     val = random.random()
     if val < 0.7:
         print("  [!] Fallo de hardware... reintentando")
@@ -38,17 +51,37 @@ def unstable_step(context):
 
 # 3. PASOS PARA LA RAMIFICACIÓN
 @step(name="alert_high_temp")
-def alert_high_temp(context):
+def alert_high_temp(context: Any) -> None:
+    """Alert high temp step.
+
+    Args:
+        context: Input data for the step.
+
+    Returns:
+        dict: Result of the step.
+    """
     print("🚨 ALERTA: ¡Temperatura crítica detectada!")
     return {"alert_sent": True}
 
 @step(name="normal_operation")
-def normal_operation(context):
+def normal_operation(context: Any) -> None:
+
+    """Normal operation step.
+
+    Args:
+
+        context: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("✅ Operación normal: Clima controlado")
     return {"alert_sent": False}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Advanced_Features_Demo", verbose=True)
+    pipe = Pipeline(pipeline_name="advanced_features_demo", verbose=True)
     
     # Definición del flujo con Condition
     pipe.set_steps([
@@ -64,8 +97,8 @@ if __name__ == "__main__":
         )
     ])
     
-    print("\n>>> Iniciando demo de funcionalidades avanzadas...\n")
+    print("\n>>> Startsndo demo de funcionalidades avanzadas...\n")
     try:
         pipe.run({})
     except Exception as e:
-        print(f"\nFinalizado con error esperado: {e}")
+        print(f"\nFinishesdo con error esperado: {e}")

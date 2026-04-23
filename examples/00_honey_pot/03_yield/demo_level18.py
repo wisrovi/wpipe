@@ -1,39 +1,46 @@
 """
-DEMO LEVEL 18: El Libro de Ruta (Exportación)
----------------------------------------------
-Añade: PipelineExporter para guardar el historial en disco.
-Acumula: Tracking de datos (L14).
+DEMO LEVEL 18: The Route Book (Exporting)
+-----------------------------------------
+Adds: PipelineExporter to save history to disk.
+Accumulates: Data tracking (L14).
 
-DIAGRAMA:
-(Viaje Finalizado) -> [Base de Datos de Tracking]
+DIAGRAM:
+(Trip Finished) -> [Tracking Database]
       |
       v
-(PipelineExporter) -> [viaje_logs.csv]
+(PipelineExporter) -> [trip_logs.csv]
 """
 
 import os
+from typing import Any, Dict
 
 from wpipe import Pipeline, PipelineExporter, step
 
+@step(name="drive_section_a")
+def drive_section_a(data: Any) -> Dict[str, Any]:
+    """Driving section A step.
 
-@step(name="circular_tramo_a")
-def circular_tramo_a(d):
-    print("🚗 Circulando por Tramo A...")
-    return {"tramo": "A", "duracion": 15}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, Any]: Section details.
+    """
+    print("🚗 Driving through Section A...")
+    return {"section": "A", "duration": 15}
 
 if __name__ == "__main__":
-    db_path = "output/viaje_historial.db"
+    db_path = "output/trip_history.db"
     os.makedirs("output", exist_ok=True)
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L18_Exporter", tracking_db=db_path, verbose=True
+        pipeline_name="trip_l18_exporter", tracking_db=db_path, verbose=True
     )
-    pipe.set_steps([circular_tramo_a])
+    pipe.set_steps([drive_section_a])
     pipe.run({})
 
-    # NUEVO EN L18: Exportamos el viaje a un formato legible por humanos
-    print("\n>>> Generando reporte CSV para la compañía de seguros...")
+    # NEW IN L18: Exporting the trip to a human-readable format
+    print("\n>>> Generating CSV report for the insurance company...")
     exporter = PipelineExporter(db_path)
-    exporter.export_pipeline_logs("output/reporte_viaje.csv", format="csv")
-    print("✅ Reporte guardado en output/reporte_viaje.csv")
+    exporter.export_pipeline_logs("output/trip_report.csv", format="csv")
+    print("✅ Report saved in output/trip_report.csv")

@@ -1,35 +1,56 @@
 """
 DEMO LEVEL 104: Pipeline Analytics
 ------------------------------
-Añade: Análisis completo de pipelines.
-Continúa: L103.
+Adds: Análisis completo de pipelines.
+Continues: L103.
 
-DIAGRAMA:
+DIAGRAM:
 analysis.get_pipelines_analysis()
 """
 
 from wpipe import Pipeline, step
 
+@step(name="start")
+def start(data: dict) -> None:
 
-@step(name="iniciar")
-def iniciar(data):
+    """Start step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     return {"motor": "on"}
 
+@step(name="process")
+def process(data: dict) -> None:
 
-@step(name="procesar")
-def procesar(data):
+    """Process step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Análisis de pipelines...")
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L104_Pipelines",
+        pipeline_name="viaje_l104_pipelines",
         verbose=True,
         tracking_db="output/pipelines104.db",
     )
-    pipe.set_steps([iniciar, procesar])
+    pipe.set_steps([start, process])
     pipe.run({})
 
     analysis = pipe.tracker.analysis.get_pipelines_analysis()

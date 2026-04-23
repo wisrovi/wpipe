@@ -1,53 +1,64 @@
 """
-DEMO LEVEL 35: Radar de Objetos Múltiples (Complex Pydantic)
-------------------------------------------------------------
-Añade: Estructuras de IA anidadas y listas de objetos.
-Acumula: Visión ADAS (L10) y Pydantic (L16).
+DEMO LEVEL 35: Multi-Object Radar (Complex Pydantic)
+----------------------------------------------------
+Adds: Nested AI structures and lists of objects.
+Accumulates: ADAS Vision (L10) and Pydantic (L16).
 
-DIAGRAMA:
-(Radar_IA) -> { 'lista': [ {'tipo': 'Coche', 'id': 1}, ... ] }
+DIAGRAM:
+(Radar_AI) -> { 'list': [ {'type': 'Car', 'id': 1}, ... ] }
       |
       v
-(Procesar_Radar) -> Valida cada objeto de la lista individualmente.
+(Process_Radar) -> Validates each object in the list individually.
 """
 
-from typing import List
-
+from typing import Any, Dict, List
 from pydantic import BaseModel, Field
-
 from wpipe import Pipeline, step, to_obj
 
-
-class ObjetoDetectado(BaseModel):
-    tipo: str
-    confianza: float = Field(..., ge=0, le=1)
-
+class DetectedObject(BaseModel):
+    """Pydantic model for a single detected object."""
+    type: str
+    confidence: float = Field(..., ge=0, le=1)
 
 class RadarMap(BaseModel):
-    detecciones: List[ObjetoDetectado]
-
+    """Pydantic model for radar detection map."""
+    detections: List[DetectedObject]
 
 @step(name="radar_yolo_pro")
-def radar_yolo(d):
+def radar_yolo_pro(data: Any) -> Dict[str, List[Dict[str, Any]]]:
+    """Simulates high-end YOLO radar detections.
+
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, List[Dict[str, Any]]]: List of detected objects.
+    """
     return {
-        "detecciones": [
-            {"tipo": "Peatón", "confianza": 0.98},
-            {"tipo": "Bicicleta", "confianza": 0.85},
-            {"tipo": "Coche", "confianza": 0.92},
+        "detections": [
+            {"type": "Pedestrian", "confidence": 0.98},
+            {"type": "Bicycle", "confidence": 0.85},
+            {"type": "Car", "confidence": 0.92},
         ]
     }
 
-
-@step(name="analisis_entorno")
+@step(name="environment_analysis")
 @to_obj(RadarMap)
-def analisis_entorno(ctx: RadarMap):
-    print(f"👁️  Radar: Identificados {len(ctx.detecciones)} elementos en trayectoria.")
-    for obj in ctx.detecciones:
-        print(f"   - {obj.tipo} (Confianza: {obj.confianza*100:.0f}%)")
-    return {"via_libre": False}
+def environment_analysis(ctx: RadarMap) -> Dict[str, bool]:
+    """Analyzes the environment based on radar detections.
 
+    Args:
+        ctx: Validated radar map context.
+
+    Returns:
+        Dict[str, bool]: Path clear status.
+    """
+    print(f"👁️  Radar: Identified {len(ctx.detections)} elements in trajectory.")
+    for obj in ctx.detections:
+        print(f"   - {obj.type} (Confidence: {obj.confidence*100:.0f}%)")
+    return {"path_clear": False}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Advanced_Radar_L35", verbose=True)
-    pipe.set_steps([radar_yolo, analisis_entorno])
+    pipe = Pipeline(pipeline_name="advanced_radar_l35", verbose=True)
+    pipe.set_steps([radar_yolo_pro, environment_analysis])
     pipe.run({})

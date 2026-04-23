@@ -1,17 +1,17 @@
 """
 DEMO LEVEL 63: Retry Específico por Tipo de Excepción
 ------------------------------------------------------
-Añade: Filtrar qué excepciones se reintentan a nivel de Pipeline.
-Continúa: L62.
+Adds: Filtrar qué excepciones se reintentan a nivel de Pipeline.
+Continues: L62.
 
-DIAGRAMA:
+DIAGRAM:
 [Pipeline: retry_on_exceptions=(NetworkError, TimeoutError)]
       |
       v
 (paso_inestable)
       |
       +-- NetworkError --> [retry]
-      +-- ValueError --> [NO retry - falla]
+      +-- ValueError --> [NO retry - failure]
       +-- OK         --> [continuar]
 """
 
@@ -19,17 +19,26 @@ import random
 
 from wpipe import Pipeline, step
 
-
 class NetworkError(Exception):
     pass
-
 
 class ValidationError(Exception):
     pass
 
-
 @step(name="validar_y_conectar")
-def validar_y_conectar(data):
+def validar_y_conectar(data: dict) -> None:
+
+    """Validar y conectar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     val = random.random()
     if val < 0.3:
         raise NetworkError("Red no disponible")
@@ -38,21 +47,31 @@ def validar_y_conectar(data):
     print("✅ Conexión establecida")
     return {"connected": True}
 
+@step(name="finish")
+def finish(data: dict) -> None:
 
-@step(name="finalizar")
-def finalizar(data):
+    """Finish step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🏁 Proceso finalizado")
     return {"finalizado": True}
 
-
 if __name__ == "__main__":
     pipe = Pipeline(
-        pipeline_name="Viaje_L63_PipelineRetryExcept",
+        pipeline_name="viaje_l63_pipelineretryexcept",
         verbose=True,
         max_retries=3,
         retry_delay=0.1,
         retry_on_exceptions=(NetworkError,),
     )
-    pipe.set_steps([validar_y_conectar, finalizar])
+    pipe.set_steps([validar_y_conectar, finish])
     print("\n>>> Probando retry filter por excepción...\n")
     pipe.run({})

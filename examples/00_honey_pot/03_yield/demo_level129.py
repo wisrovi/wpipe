@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 129: API Error Handling
 ----------------------------------
-Añade: Manejo de errores de API.
-Continúa: L128.
+Adds: Manejo de errores de API.
+Continues: L128.
 
-DIAGRAMA:
+DIAGRAM:
 try/except en llamadas API
 """
 
 from wpipe.api_client import APIClient
-
 
 if __name__ == "__main__":
     print(">>> API error handling...")

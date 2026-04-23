@@ -1,48 +1,77 @@
 """
-DEMO LEVEL 5: Bodega Inicial Dinámica
--------------------------------------
-Añade: Inyección de datos al iniciar el pipeline (run).
-Acumula: Paso 1 al 4 (motor, frenos, validar, GPS).
+DEMO LEVEL 5: Dynamic Initial Warehouse
+---------------------------------------
+Adds: Data injection when starting the pipeline (run).
 
-DIAGRAMA:
-[Bodega con 'clima': 'Soleado'] <--- Inyectado en run()
+DIAGRAM:
+[Warehouse with 'weather': 'Sunny'] <--- Injected in run()
       |
       v
-(Pasos 1-4) --> [motor, frenos, destino, etc.]
+(Steps 1-4) --> [engine, gps, etc.]
       |
       v
-(ajustar_climatizador) -> ¡Usa el dato inyectado al inicio!
+(adjust_climate) -> Uses the data injected at the start!
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step, to_obj
 
 
-# Heredados simplificados:
-def encender_motor(data):
-    return {"motor": "ON"}
+def start_engine(_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Start the engine.
+
+    Args:
+        _data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Engine status.
+    """
+    return {"engine": "ON"}
 
 
-@step(name="configurar_gps")
-class ConfigurarGPS:
-    def __init__(self, d):
-        self.d = d
+@step(name="configure_gps")
+class ConfigureGPS:
+    """Class-based step for GPS configuration."""
 
-    def __call__(self, data):
-        return {"destino": self.d}
+    def __init__(self, destination: str):
+        """Initialize with destination.
+
+        Args:
+            destination (str): Destination name.
+        """
+        self.destination = destination
+
+    def __call__(self, _data: Dict[str, Any]) -> Dict[str, Any]:
+        """Return the destination.
+
+        Args:
+            _data (Dict[str, Any]): The current pipeline context data.
+
+        Returns:
+            Dict[str, Any]: Destination.
+        """
+        return {"destination": self.destination}
 
 
-# NUEVO EN L5: Uso de datos inyectados externamente
-@step(name="ajustar_clima")
+@step(name="adjust_climate")
 @to_obj
-def ajustar_clima(ctx):
-    # 'clima' vendrá del diccionario inicial del run()
-    print(f"🌡️ Clima exterior: {ctx.clima}. Ajustando aire...")
-    return {"clima_interior": 22}
+def adjust_climate(ctx: Any) -> Dict[str, Any]:
+    """Adjust the car climate based on external weather.
+
+    Args:
+        ctx (Any): The context object.
+
+    Returns:
+        Dict[str, Any]: Internal temperature setting.
+    """
+    # 'weather' comes from the initial dictionary in run()
+    print(f"🌡️ External weather: {ctx.weather}. Adjusting air...")
+    return {"internal_climate": 22}
 
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L5", verbose=True)
-    pipe.set_steps([encender_motor, ConfigurarGPS("Madrid"), ajustar_clima])
+    pipeline = Pipeline(pipeline_name="Trip_L5", verbose=True)
+    pipeline.set_steps([start_engine, ConfigureGPS("Madrid"), adjust_climate])
 
-    # PASAMOS DATOS INICIALES AQUÍ:
-    pipe.run({"clima": "Soleado"})
+    # PASS INITIAL DATA HERE:
+    pipeline.run({"weather": "Sunny"})

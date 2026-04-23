@@ -1,58 +1,95 @@
 """
-DEMO LEVEL 4: Configuración con Clases
---------------------------------------
-Añade: Uso de Clases como pasos con parámetros (__init__).
-Acumula: Paso 1 (encender_motor), Paso 2 (frenos), Paso 3 (validar).
+DEMO LEVEL 4: Configuration with Classes
+-----------------------------------------
+Adds: Use of Classes as steps with parameters (__init__).
 
-DIAGRAMA:
-[Bodega Inicial]
+DIAGRAM:
+[Initial Warehouse]
       |
       v
-(encender_motor) --> (revisar_frenos) --> (validar_estado)
+(start_engine) --> (check_brakes) --> (validate_status)
       |
       v
-(ConfigurarGPS @step) -> ¡Recibe el 'destino' como parámetro!
+(ConfigureGPS @step) -> Receives 'destination' as a parameter!
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step, to_obj
 
 
-# Heredados:
-def encender_motor(data):
-    return {"motor": "ON", "gasolina": 100}
+def start_engine(_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Start the car engine.
+
+    Args:
+        _data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Updated context with engine status and fuel.
+    """
+    return {"engine": "ON", "fuel": 100}
 
 
-@step(name="revisar_frenos")
-def revisar_frenos(data):
-    return {"frenos": "OK"}
+@step(name="check_brakes")
+def check_brakes(_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Verify the brakes.
+
+    Args:
+        _data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Updated context with brake status.
+    """
+    return {"brakes": "OK"}
 
 
-@step(name="validar_estado")
+@step(name="validate_status")
 @to_obj
-def validar_estado(ctx):
-    print(f"🚀 Coche listo. Gasolina: {ctx.gasolina}%")
-    return {"listo": True}
+def validate_status(ctx: Any) -> Dict[str, Any]:
+    """Validate the car status.
+
+    Args:
+        ctx (Any): The context object.
+
+    Returns:
+        Dict[str, Any]: Readiness status.
+    """
+    print(f"🚀 Car ready. Fuel: {ctx.fuel}%")
+    return {"ready": True}
 
 
-# NUEVO EN L4: Pasos con configuración inicial
-@step(name="configurar_gps")
-class ConfigurarGPS:
-    def __init__(self, destino):
-        self.destino = destino
+@step(name="configure_gps")
+class ConfigureGPS:
+    """Class-based step to configure the GPS with a destination."""
 
-    def __call__(self, data):
-        print(f"📍 GPS: Calculando ruta a {self.destino}...")
-        return {"destino": self.destino, "distancia": 450}
+    def __init__(self, destination: str):
+        """Initialize the GPS with a destination.
+
+        Args:
+            destination (str): The trip destination.
+        """
+        self.destination = destination
+
+    def __call__(self, _data: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate the route to the destination.
+
+        Args:
+            _data (Dict[str, Any]): The current pipeline context data.
+
+        Returns:
+            Dict[str, Any]: Destination and distance.
+        """
+        print(f"📍 GPS: Calculating route to {self.destination}...")
+        return {"destination": self.destination, "distance": 450}
 
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L4", verbose=True)
-    pipe.set_steps(
+    pipeline = Pipeline(pipeline_name="Trip_L4", verbose=True)
+    pipeline.set_steps(
         [
-            encender_motor,
-            revisar_frenos,
-            validar_estado,
-            ConfigurarGPS("Madrid"),  # <--- Pasamos el parámetro aquí
+            start_engine,
+            check_brakes,
+            validate_status,
+            ConfigureGPS("Madrid"),
         ]
     )
-    pipe.run({})
+    pipeline.run({})

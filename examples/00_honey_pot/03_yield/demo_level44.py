@@ -1,48 +1,68 @@
 """
 DEMO LEVEL 44: Async Parallel
---------------------------------------
-Añade: Pasos async en paralelo.
-Continúa: L43.
+-----------------------------
+Adds: Parallel async steps.
+Continues: L43.
 
-DIAGRAMA:
-Parallel(async pasos) {
-  |-- (async camara_frontal)
-  |-- (async camara_trasera)
+DIAGRAM:
+Parallel(async steps) {
+  |-- (async front_camera)
+  |-- (async rear_camera)
   |-- (async radar)
 }
 """
 
 import asyncio
-
+from typing import Any, Dict
 from wpipe import PipelineAsync, Parallel
 
+async def front_camera(data: Any) -> Dict[str, str]:
+    """Front camera activation step asynchronously.
 
-async def camara_frontal(data):
+    Args:
+        data: Input data.
+
+    Returns:
+        Dict[str, str]: Camera status.
+    """
     await asyncio.sleep(0.05)
-    print("📷 [ASYNC] Cámara frontal activada")
-    return {"frontal": "activa"}
+    print("📷 [ASYNC] Front camera activated")
+    return {"front": "active"}
 
+async def rear_camera(data: Any) -> Dict[str, str]:
+    """Rear camera activation step asynchronously.
 
-async def camara_trasera(data):
+    Args:
+        data: Input data.
+
+    Returns:
+        Dict[str, str]: Camera status.
+    """
     await asyncio.sleep(0.05)
-    print("📷 [ASYNC] Cámara trasera activada")
-    return {"trasera": "activa"}
+    print("📷 [ASYNC] Rear camera activated")
+    return {"rear": "active"}
 
+async def radar(data: Any) -> Dict[str, str]:
+    """Radar activation step asynchronously.
 
-async def radar(data):
+    Args:
+        data: Input data.
+
+    Returns:
+        Dict[str, str]: Radar status.
+    """
     await asyncio.sleep(0.05)
-    print("📡 [ASYNC] Radar activado")
-    return {"radar": "activo"}
+    print("📡 [ASYNC] Radar activated")
+    return {"radar": "active"}
 
-
-async def main():
-    pipe = PipelineAsync(pipeline_name="Viaje_L44_AsyncParallel", verbose=True)
+async def main() -> None:
+    """Main async entry point."""
+    pipe = PipelineAsync(pipeline_name="trip_l44_asyncparallel", verbose=True)
     pipe.set_steps(
-        [Parallel(steps=[camara_frontal, camara_trasera, radar], max_workers=3)]
+        [Parallel(steps=[front_camera, rear_camera, radar], max_workers=3)]
     )
-    print("\n>>> Probando async paralelo...\n")
+    print("\n>>> Testing async parallel...\n")
     await pipe.run({})
-
 
 if __name__ == "__main__":
     asyncio.run(main())

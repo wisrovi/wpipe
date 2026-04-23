@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 124: send_post
 -----------------------------
-Añade: Método POST.
-Continúa: L123.
+Adds: Método POST.
+Continues: L123.
 
-DIAGRAMA:
+DIAGRAM:
 client.send_post(endpoint, data)
 """
 
 from wpipe.api_client import APIClient
-
 
 if __name__ == "__main__":
     print(">>> send_post...")

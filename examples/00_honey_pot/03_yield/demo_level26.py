@@ -1,34 +1,41 @@
 """
-DEMO LEVEL 26: La Pantalla Central (Dashboard)
+DEMO LEVEL 26: The Central Screen (Dashboard)
 ---------------------------------------------
-Añade: Conexión con la base de datos de tracking para visualización.
-Acumula: Inferencia YOLO y Telemetría.
+Adds: Connection with the tracking database for visualization.
+Accumulates: YOLO Inference and Telemetry.
 
-DIAGRAMA:
-(Procesar Viaje) -> [Base de Datos SQLite]
+DIAGRAM:
+(Process Trip) -> [SQLite Database]
       |
-      +----------> [Dashboard Web] -> (Gráficos, Tiempos, Alertas)
+      +----------> [Web Dashboard] -> (Charts, Times, Alerts)
 """
 
 import os
+from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+@step(name="active_navigation")
+def active_navigation(data: Any) -> Dict[str, str]:
+    """Active navigation step.
 
-@step(name="navegacion_activa")
-def navegacion_activa(data):
-    print("🗺️  Navegación: Guiando al destino... (Datos grabándose para el Dashboard)")
-    return {"tramo": "Autopista A-6"}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, str]: Navigation details.
+    """
+    print("🗺️  Navigation: Guiding to destination... (Data being recorded for the Dashboard)")
+    return {"stretch": "Highway A-6"}
 
 if __name__ == "__main__":
-    db_path = "output/coche_dashboard.db"
+    db_path = "output/car_dashboard.db"
     os.makedirs("output", exist_ok=True)
 
-    # NUEVO EN L26: Al definir tracking_db, habilitamos la 'Caja Negra' del coche
-    pipe = Pipeline(pipeline_name="ADAS_System_L26", tracking_db=db_path, verbose=True)
+    # NEW IN L26: By defining tracking_db, we enable the car's 'Black Box'
+    pipe = Pipeline(pipeline_name="adas_system_l26", tracking_db=db_path, verbose=True)
 
-    pipe.set_steps([navegacion_activa])
+    pipe.set_steps([active_navigation])
 
-    print(f">>> CONSEJO: Abre una terminal y lanza 'wpipe dashboard {db_path}'")
+    print(f">>> TIP: Open a terminal and run 'wpipe dashboard {db_path}'")
     pipe.run({})

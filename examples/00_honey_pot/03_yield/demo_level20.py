@@ -1,45 +1,70 @@
 """
-DEMO LEVEL 20: Decisiones de Emergencia (Condition)
----------------------------------------------------
-Añade: Decisiones dinámicas basadas en la IA y la velocidad.
-Acumula: Inferencia (L10) y Telemetría (L16).
+DEMO LEVEL 20: Emergency Decisions (Condition)
+----------------------------------------------
+Adds: Dynamic decisions based on AI and speed.
+Accumulates: Inference (L10) and Telemetry (L16).
 
-DIAGRAMA:
-(Sistema_Vision) -> [Obstáculo detectado]
+DIAGRAM:
+(Vision_System) -> [Obstacle detected]
       |
       v
-Condition(¿Frenado de emergencia?)
-      |--- [SI] -> (Activar Frenos ABS)
-      |--- [NO] -> (Mantener Velocidad)
+Condition(Emergency braking?)
+      |--- [YES] -> (Activate ABS Brakes)
+      |--- [NO] -> (Maintain Speed)
 """
-from wpipe import Pipeline, step, Condition, to_obj
+from typing import Any, Dict
+from wpipe import Pipeline, step, Condition
 
-@step(name="ia_radar")
-def ia_radar(d):
-    # Simulamos detección de obstáculo a 5 metros
-    return {"distancia": 5, "obstaculo": True}
+@step(name="ai_radar")
+def ai_radar(data: Any) -> Dict[str, Any]:
+    """AI Radar detection step.
 
-@step(name="frenado_abs")
-def frenado_abs(d):
-    print("🚨 ABS: ¡Frenando bruscamente para evitar colisión!")
-    return {"frenando": True}
+    Args:
+        data: Input data for the step.
 
-@step(name="mantener_marcha")
-def mantener_marcha(d):
-    print("🛣️  Todo despejado. Manteniendo velocidad de crucero.")
-    return {"frenando": False}
+    Returns:
+        Dict[str, Any]: Distance and obstacle presence.
+    """
+    # Simulate obstacle detection at 5 meters
+    return {"distance": 5, "obstacle": True}
+
+@step(name="abs_braking")
+def abs_braking(data: Any) -> Dict[str, bool]:
+    """ABS braking step.
+
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, bool]: Braking status.
+    """
+    print("🚨 ABS: Braking sharply to avoid collision!")
+    return {"braking": True}
+
+@step(name="maintain_speed")
+def maintain_speed(data: Any) -> Dict[str, bool]:
+    """Maintain speed step.
+
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, bool]: Braking status.
+    """
+    print("🛣️  Everything clear. Maintaining cruise speed.")
+    return {"braking": False}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L20_EmergencyLogic", verbose=True)
-    
+    pipe = Pipeline(pipeline_name="trip_l20_emergencylogic", verbose=True)
+
     pipe.set_steps([
-        ia_radar,
-        # NUEVO EN L20: El coche decide qué rama ejecutar
+        ai_radar,
+        # NEW IN L20: The car decides which branch to execute
         Condition(
-            expression="obstaculo == True and distancia < 10",
-            branch_true=[frenado_abs],
-            branch_false=[mantener_marcha]
+            expression="obstacle == True and distance < 10",
+            branch_true=[abs_braking],
+            branch_false=[maintain_speed]
         )
     ])
-    
+
     pipe.run({})

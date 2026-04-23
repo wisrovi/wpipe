@@ -1,35 +1,42 @@
 """
-DEMO LEVEL 28: El Diario del Conductor (Events)
------------------------------------------------
-Añade: Marcadores manuales en la línea de tiempo.
-Acumula: Métricas y Tracking.
+DEMO LEVEL 28: The Driver's Diary (Events)
+------------------------------------------
+Adds: Manual markers on the timeline.
+Accumulates: Metrics and Tracking.
 
-DIAGRAMA:
-[Viaje] ---- [Evento: 'Radar Detectado'] ---- [Viaje] ---- [Evento: 'Pausa Café']
+DIAGRAM:
+[Trip] ---- [Event: 'Radar Detected'] ---- [Trip] ---- [Event: 'Coffee Break']
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step
 
+@step(name="cross_border")
+def cross_border(data: Any) -> Dict[str, str]:
+    """Cross border step.
 
-@step(name="cruzar_frontera")
-def cruzar_paso(data):
-    print("🌍 Cruzando frontera: Cambiando normativa de tráfico...")
-    return {"pais": "Portugal"}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, str]: Country status.
+    """
+    print("🌍 Crossing border: Changing traffic regulations...")
+    return {"country": "Portugal"}
 
 if __name__ == "__main__":
     pipe = Pipeline(
-        pipeline_name="Travel_Log_L28",
-        tracking_db="output/coche_eventos.db",
+        pipeline_name="travel_log_l28",
+        tracking_db="output/car_events.db",
         verbose=True,
     )
 
-    # NUEVO EN L28: Anotamos hitos que no cambian la bodega, pero quedan registrados
+    # NEW IN L28: Note milestones that don't change the context but are recorded
     pipe.add_event(
         event_type="annotation",
-        event_name="Inicio de Ruta",
-        message="Conductor: William R. | Clima: Despejado",
+        event_name="Route Start",
+        message="Driver: William R. | Weather: Clear",
     )
 
-    pipe.set_steps([cruzar_paso])
+    pipe.set_steps([cross_border])
     pipe.run({})

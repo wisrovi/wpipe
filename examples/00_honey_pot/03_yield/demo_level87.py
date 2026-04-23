@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 87: ResourceMonitor con Proceso Pesado
 ---------------------------------------------
-Añade: Monitoreo con proceso que consume recursos.
-Continúa: L86.
+Adds: Monitoreo con proceso que consume recursos.
+Continues: L86.
 
-DIAGRAMA:
+DIAGRAM:
 with ResourceMonitor() --> proceso pesado
 """
 
@@ -12,20 +12,30 @@ import time
 
 from wpipe import Pipeline, ResourceMonitor, step
 
-
 @step(name="proceso_pesado")
-def proceso_pesado(data):
+def proceso_pesado(data: dict) -> None:
+
+    """Proceso pesado step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🔄 Procesando...")
     time.sleep(0.2)
     print("✅ Completado")
     return {"ok": True}
 
-
 if __name__ == "__main__":
     print(">>> Proceso monitorizado...")
 
     with ResourceMonitor("Viaje_L87") as monitor:
-        pipe = Pipeline(pipeline_name="Viaje_L87_HeavyProcess", verbose=True)
+        pipe = Pipeline(pipeline_name="viaje_l87_heavyprocess", verbose=True)
         pipe.set_steps([proceso_pesado])
         pipe.run({})
 

@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 74: For con Condition
 ------------------------------------
-Añade: Condition dentro de For loop.
-Continúa: L73.
+Adds: Condition dentro de For loop.
+Continues: L73.
 
-DIAGRAMA:
+DIAGRAM:
 For() {
     Condition(obstaculo) {
         branch_true: freno
@@ -17,27 +17,59 @@ import random
 
 from wpipe import Pipeline, For, Condition, step
 
-
 @step(name="evaluar_situacion")
-def evaluar_situacion(data):
+def evaluar_situacion(data: dict) -> None:
+
+    """Evaluar situacion step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     obstaculo = random.random() < 0.3
     return {"obstaculo": obstaculo}
 
-
 @step(name="frenar")
-def frenar(data):
+def frenar(data: dict) -> None:
+
+    """Frenar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🛑 FRENANDO")
     return {"action": "brake"}
 
-
 @step(name="acelerar")
-def acelerar(data):
+def acelerar(data: dict) -> None:
+
+    """Acelerar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🚀 ACELERANDO")
     return {"action": "accelerate"}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L74_ForCondition", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l74_forcondition", verbose=True)
     pipe.set_steps(
         [
             For(

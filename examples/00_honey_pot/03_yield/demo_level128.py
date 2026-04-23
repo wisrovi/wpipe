@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 128: API con Headers
 ------------------------------
-Añade: Headers personalizados.
-Continúa: L127.
+Adds: Headers personalizados.
+Continues: L127.
 
-DIAGRAMA:
+DIAGRAM:
 client.headers = {"Authorization": "Bearer ..."}
 """
 
 from wpipe.api_client import APIClient
-
 
 if __name__ == "__main__":
     print(">>> API con headers...")

@@ -1,40 +1,54 @@
 """
-DEMO LEVEL 38: Gestión Híbrida de Recursos
+DEMO LEVEL 38: Hybrid Resource Management
 ------------------------------------------
-Añade: Combinación de hilos y procesos para máxima eficiencia.
-Acumula: Paralelismo Total (L25).
+Adds: Combination of threads and processes for maximum efficiency.
+Accumulates: Total Parallelism (L25).
 
-DIAGRAMA:
-[Hilos]   -> (Sensores de Aire, Temperatura, Humedad) -> Ligeros
-[Procesos] -> (IA de Reconocimiento de Objetos 4K)    -> Pesados
+DIAGRAM:
+[Threads]   -> (Air Sensors, Temperature, Humidity) -> Light
+[Processes] -> (4K Object Recognition AI)          -> Heavy
 """
 
-from wpipe import Pipeline, step, Parallel
 import time
+from typing import Any, Dict
+from wpipe import Pipeline, step, Parallel
 
+@step(name="heavy_ai_4k")
+def heavy_ai_4k(data: Any) -> Dict[str, str]:
+    """Heavy 4K video analysis step using multiprocess power.
 
-@step(name="ia_pesada_4k")
-def ia_pesada(d):
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, str]: Video analysis status.
+    """
     time.sleep(0.3)
-    return {"video_analizado": "OK"}
+    return {"video_analyzed": "OK"}
 
+@step(name="light_air_sensor")
+def light_air_sensor(data: Any) -> Dict[str, str]:
+    """Light air quality sensor step using threads.
 
-@step(name="sensor_ligero_aire")
-def sensor_ligero(d):
-    return {"calidad_aire": "Excelente"}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, str]: Air quality status.
+    """
+    return {"air_quality": "Excellent"}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Hybrid_Power_L38", verbose=True)
+    pipe = Pipeline(pipeline_name="hybrid_power_l38", verbose=True)
 
     pipe.set_steps(
         [
-            # 1. Usamos procesos para la carga pesada de vídeo
-            Parallel(steps=[ia_pesada] * 2, use_processes=True, max_workers=2),
-            # 2. Usamos hilos para sensores que no consumen apenas CPU
-            Parallel(steps=[sensor_ligero] * 4, use_processes=False, max_workers=4),
+            # 1. Use processes for heavy video load
+            Parallel(steps=[heavy_ai_4k] * 2, use_processes=True, max_workers=2),
+            # 2. Use threads for sensors that consume minimal CPU
+            Parallel(steps=[light_air_sensor] * 4, use_processes=False, max_workers=4),
         ]
     )
 
-    print(">>> Optimizando hardware: El coche usa hilos y procesos según la tarea.")
+    print(">>> Optimizing hardware: The car uses threads and processes according to the task.")
     pipe.run({})

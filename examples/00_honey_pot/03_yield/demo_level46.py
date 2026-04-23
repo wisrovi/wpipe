@@ -1,57 +1,77 @@
 """
-DEMO LEVEL 46: Async con Condition
---------------------------------------
-Añade: Condition en pipeline async.
-Continúa: L45.
+DEMO LEVEL 46: Async with Condition
+-----------------------------------
+Adds: Condition in async pipeline.
+Continues: L45.
 
-DIAGRAMA:
-(async evaluar_situacion)
+DIAGRAM:
+(async evaluate_situation)
       |
-      +-- (obstaculo == True) -> [FRENO]
-      +-- (obstaculo == False) -> [ACELERAR]
+      +-- (obstacle == True) -> [BRAKE]
+      +-- (obstacle == False) -> [ACCELERATE]
 """
 
 import asyncio
 import random
-
+from typing import Any, Dict
 from wpipe import PipelineAsync, Condition
 
+async def evaluate_situation(data: Any) -> Dict[str, bool]:
+    """Evaluate situation step asynchronously.
 
-async def evaluar_situacion(data):
+    Args:
+        data: Input data.
+
+    Returns:
+        Dict[str, bool]: Obstacle presence.
+    """
     await asyncio.sleep(0.05)
-    obstaculo = random.random() < 0.3
-    print(f"🚗 [ASYNC] Evaluación: obstáculo={obstaculo}")
-    return {"obstaculo": obstaculo}
+    obstacle = random.random() < 0.3
+    print(f"🚗 [ASYNC] Evaluation: obstacle={obstacle}")
+    return {"obstacle": obstacle}
 
+async def brake(data: Any) -> Dict[str, str]:
+    """Brake step asynchronously.
 
-async def frenar(data):
-    print("🛑 [ASYNC] Frenando de emergencia")
+    Args:
+        data: Input data.
+
+    Returns:
+        Dict[str, str]: Action performed.
+    """
+    print("🛑 [ASYNC] Emergency braking")
     return {"action": "brake"}
 
+async def accelerate(data: Any) -> Dict[str, str]:
+    """Accelerate step asynchronously.
 
-async def acelerar(data):
-    print("🚀 [ASYNC] Acelerando")
+    Args:
+        data: Input data.
+
+    Returns:
+        Dict[str, str]: Action performed.
+    """
+    print("🚀 [ASYNC] Accelerating")
     return {"action": "accelerate"}
 
-
-async def main():
-    pipe = PipelineAsync(pipeline_name="Viaje_L46_AsyncCondition", verbose=True)
+async def main() -> None:
+    """Main async entry point."""
+    pipe = PipelineAsync(pipeline_name="trip_l46_asynccondition", verbose=True)
     pipe.set_steps(
         [
-            evaluar_situacion,
+            evaluate_situation,
             Condition(
-                expression="obstaculo == True",
-                branch_true=[frenar],
-                branch_false=[acelerar],
+                expression="obstacle == True",
+                branch_true=[brake],
+                branch_false=[accelerate],
             ),
         ]
     )
-    print("\n>>> Probando async con condiciones...\n")
+    print("\n>>> Testing async with conditions...\n")
     try:
         await pipe.run({})
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     asyncio.run(main())

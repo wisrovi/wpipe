@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 75: For con Parallel
 -----------------------------------
-Añade: Parallel dentro de For loop.
-Continúa: L74.
+Adds: Parallel dentro de For loop.
+Continues: L74.
 
-DIAGRAMA:
+DIAGRAM:
 For() {
     Parallel(sensores) {
         camara, radar, lidar
@@ -14,30 +14,73 @@ For() {
 
 from wpipe import Pipeline, For, Parallel, step
 
-
 @step(name="leer_camara")
-def leer_camara(data):
+def leer_camara(data: dict) -> None:
+
+    """Leer camara step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("  📷 Cámara")
 
-
 @step(name="leer_radar")
-def leer_radar(data):
+def leer_radar(data: dict) -> None:
+
+    """Leer radar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("  📡 Radar")
 
-
 @step(name="leer_lidar")
-def leer_lidar(data):
+def leer_lidar(data: dict) -> None:
+
+    """Leer lidar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("  🔴 LiDAR")
 
+@step(name="process")
+def process(data: dict) -> None:
 
-@step(name="procesar")
-def procesar(data):
+    """Process step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🧠 Fusionando datos...")
     return {"fusion": "completa"}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L75_ForParallel", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l75_forparallel", verbose=True)
     pipe.set_steps(
         [
             For(
@@ -46,7 +89,7 @@ if __name__ == "__main__":
                     Parallel(
                         steps=[leer_camara, leer_radar, leer_lidar], max_workers=3
                     ),
-                    procesar,
+                    process,
                 ],
             )
         ]

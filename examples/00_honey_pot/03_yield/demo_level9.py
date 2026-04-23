@@ -1,75 +1,110 @@
 """
-DEMO LEVEL 9: Inferencia YOLO (Simulada)
+DEMO LEVEL 9: YOLO Inference (Simulated)
 ----------------------------------------
-Añade: Generación de predicciones complejas (diccionarios).
-Acumula: Stream, bucle y condiciones.
+Adds: Generation of complex predictions (dictionaries).
 
-DIAGRAMA:
-(procesar_frame)
+DIAGRAM:
+(process_frame)
       |
       v
-(yolo_inference) -> Genera {'prediccion': {'class': 'Coche', ...}}
+(yolo_inference) -> Generates {'prediction': {'class': 'Car', ...}}
       |
       v
-(Condition) -> Reacciona a la predicción
+(Condition) -> Reacts to the prediction
 """
 
 import random
-
+from typing import Any, Dict, Generator, Tuple
 import numpy as np
-
 from wpipe import Condition, For, Pipeline, step, to_obj
 
 
-def simular_video():
+def simulate_video() -> Generator[Tuple[int, np.ndarray], None, None]:
+    """Simulate video stream.
+
+    Yields:
+        Tuple[int, np.ndarray]: Frame ID and image.
+    """
     for i in range(10):
-        yield i, np.zeros((100, 100, 3))
+        yield i, np.zeros((100, 100, 3), dtype=np.uint8)
 
 
-@step(name="iniciar_camara")
-def iniciar_camara(data):
-    return {"stream": simular_video()}
+@step(name="start_camera")
+def start_camera(_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Start camera.
+
+    Args:
+        _data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Stream.
+    """
+    return {"stream": simulate_video()}
 
 
-@step(name="procesar_frame")
-def procesar_frame(data):
+@step(name="process_frame")
+def process_frame(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Process frame from stream.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Frame ID.
+    """
     frame_id, _ = next(data["stream"])
     return {"frame_id": frame_id}
 
 
 @step(name="yolo_inference")
 @to_obj
-def yolo_inference(ctx):
-    hay_algo = random.random() < 0.5
-    if hay_algo:
-        pred = {"class": "Peatón", "conf": 0.95}
-        print(f"🔍 YOLO: Detectado {pred['class']} ({pred['conf']})")
-        return {"detectado": True, "info_ia": pred}
-    return {"detectado": False, "info_ia": None}
+def yolo_inference(_ctx: Any) -> Dict[str, Any]:
+    """Simulate YOLO AI inference.
+
+    Args:
+        _ctx (Any): The context object.
+
+    Returns:
+        Dict[str, Any]: Detection status and AI info.
+    """
+    something_detected = random.random() < 0.5
+    if something_detected:
+        pred = {"class": "Pedestrian", "conf": 0.95}
+        print(f"🔍 YOLO: Detected {pred['class']} ({pred['conf']})")
+        return {"detected": True, "ai_info": pred}
+    return {"detected": False, "ai_info": None}
 
 
-@step(name="alerta_seguridad")
-def alerta_seguridad(data):
-    obj = data["info_ia"]["class"]
-    print(f"⚠️ ALERTA: {obj} en la trayectoria!")
+@step(name="security_alert")
+def security_alert(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Issue a security alert.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Empty dict.
+    """
+    obj = data["ai_info"]["class"]
+    print(f"⚠️ ALERT: {obj} in the path!")
     return {}
 
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L9", verbose=True)
-    pipe.set_steps(
+    pipeline = Pipeline(pipeline_name="Trip_L9", verbose=True)
+    pipeline.set_steps(
         [
-            iniciar_camara,
+            start_camera,
             For(
                 iterations=5,
                 steps=[
-                    procesar_frame,
+                    process_frame,
                     yolo_inference,
                     Condition(
-                        expression="detectado == True", branch_true=[alerta_seguridad]
+                        expression="detected == True", branch_true=[security_alert]
                     ),
                 ],
             ),
         ]
     )
-    pipe.run({})
+    pipeline.run({})

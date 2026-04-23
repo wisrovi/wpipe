@@ -1,36 +1,57 @@
 """
 DEMO LEVEL 73: For Anidado
 -------------------------------------
-Añade: For loops anidados.
-Continúa: L72.
+Adds: For loops anidados.
+Continues: L72.
 
-DIAGRAMA:
+DIAGRAM:
 For(iterations=2) {
     For(iterations=2) {
-        procesar()
+        process()
     }
 }
 """
 
 from wpipe import Pipeline, For, step
 
-
 @step(name="procesar_tramo")
-def procesar_tramo(data):
+def procesar_tramo(data: dict) -> None:
+
+    """Procesar tramo step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     outer = data.get("_loop_iteration", 0)
     print(f"🛣️ Tramo: {outer}")
-    return {"tramo": outer}
-
+    return {"stretch": outer}
 
 @step(name="procesar_segmento")
-def procesar_segmento(data):
+def procesar_segmento(data: dict) -> None:
+
+    """Procesar segmento step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     inner = data.get("_loop_iteration", 0)
     print(f"  📍 Segmento: {inner}")
     return {"segmento": inner}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L73_NestedFor", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l73_nestedfor", verbose=True)
     pipe.set_steps(
         [
             For(

@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 69: Alerts con Condición
 -----------------------------------
-Añade: Alerts evaluados con expresiones.
-Continúa: L68.
+Adds: Alerts evaluados con expresiones.
+Continues: L68.
 
-DIAGRAMA:
+DIAGRAM:
 (Alert: metric < valor)
 """
 
@@ -12,24 +12,45 @@ import time
 
 from wpipe import Pipeline, step, Metric, Severity
 
-
 @step(name="tarea_rapida")
-def tarea_rapida(data):
+def tarea_rapida(data: dict) -> None:
+
+    """Tarea rapida step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.02)
     print("⚡ Tarea rápida")
     return {"tiempo": 20}
 
-
 @step(name="tarea_normal")
-def tarea_normal(data):
+def tarea_normal(data: dict) -> None:
+
+    """Tarea normal step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.05)
     print("📊 Tarea normal")
     return {"tiempo": 50}
 
-
 if __name__ == "__main__":
     pipe = Pipeline(
-        pipeline_name="Viaje_L69_ConditionalAlert",
+        pipeline_name="viaje_l69_conditionalalert",
         verbose=True,
         tracking_db="output/cond_alert.db",
     )

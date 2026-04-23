@@ -1,40 +1,47 @@
 """
-DEMO LEVEL 30: Ruta desde el Satélite (External YAML)
------------------------------------------------------
-Añade: Carga de la configuración del viaje desde un archivo YAML.
-Acumula: Modularización (L19).
+DEMO LEVEL 30: Satellite Route (External YAML)
+-----------------------------------------------
+Adds: Loading trip configuration from a YAML file.
+Accumulates: Modularization (L19).
 
-DIAGRAMA:
-[satelite.yaml] -> (leer_yaml) -> [Configuración] -> Pipeline.run()
+DIAGRAM:
+[satellite.yaml] -> (read_yaml) -> [Configuration] -> Pipeline.run()
 """
 
 import os
+from typing import Any, Dict
 
 from wpipe import Pipeline, step
 from wpipe.util import escribir_yaml, leer_yaml
 
+@step(name="show_destination")
+def show_destination(data: Dict[str, Any]) -> Dict[str, str]:
+    """Show destination step based on external configuration.
 
-@step(name="mostrar_destino")
-def mostrar_destino(data):
-    config = data.get("config_externa", {})
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, str]: Estimated arrival.
+    """
+    config = data.get("external_config", {})
     print(
-        f"📡 Satélite: Recibida ruta a {config.get('destino')} via {config.get('ruta')}"
+        f"📡 Satellite: Received route to {config.get('destination')} via {config.get('route')}"
     )
-    return {"llegada_estimada": "14:00"}
-
+    return {"estimated_arrival": "14:00"}
 
 if __name__ == "__main__":
-    # Creamos un archivo de configuración simulando la app del móvil
+    # We create a configuration file simulating the mobile app
     os.makedirs("pipeline_configs", exist_ok=True)
-    mock_config = {"destino": "Lisboa", "ruta": "Peaje", "paradas": 2}
-    config_path = "pipeline_configs/satelite.yaml"
+    mock_config = {"destination": "Lisbon", "route": "Toll", "stops": 2}
+    config_path = "pipeline_configs/satellite.yaml"
     escribir_yaml(config_path, mock_config)
 
-    # NUEVO EN L30: Cargamos los datos antes de arrancar
-    datos_satelite = leer_yaml(config_path)
+    # NEW IN L30: We load data before starting
+    satellite_data = leer_yaml(config_path)
 
-    pipe = Pipeline(pipeline_name="Connected_Car_L30", verbose=True)
-    pipe.set_steps([mostrar_destino])
+    pipe = Pipeline(pipeline_name="connected_car_l30", verbose=True)
+    pipe.set_steps([show_destination])
 
-    print(">>> Sincronizando con el móvil...")
-    pipe.run({"config_externa": datos_satelite})
+    print(">>> Synchronizing with mobile...")
+    pipe.run({"external_config": satellite_data})

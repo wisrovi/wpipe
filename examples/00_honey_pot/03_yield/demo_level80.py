@@ -1,20 +1,18 @@
 """
 DEMO LEVEL 80: Lambda Complejo
 -------------------------------
-Añade: Lambda con lógica completa.
-Continúa: L79.
+Adds: Lambda con lógica completa.
+Continues: L79.
 
-DIAGRAMA:
+DIAGRAM:
 (lambda d: if x > 0 else y)
 """
 
 from wpipe import Pipeline
 
-
 def verificar_sistema(data):
     print("🔍 Verificando sistema...")
     return {"fuel": 50, "temp": 90, "ok": True}
-
 
 def evaluar_estado(data):
     fuel = data.get("fuel", 0)
@@ -28,9 +26,8 @@ def evaluar_estado(data):
         print("✅ Sistema OK")
     return {"estado": "ok"}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L80_LambdaComplex", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l80_lambdacomplex", verbose=True)
     pipe.set_steps(
         [
             verificar_sistema,

@@ -1,48 +1,69 @@
 """
-DEMO LEVEL 3: Bodega como Objeto (@to_obj)
-------------------------------------------
-Añade: Uso de @to_obj para acceder a la bodega con '.' (Puntos).
-Acumula: Paso 1 (encender_motor), Paso 2 (revisar_frenos).
+DEMO LEVEL 3: Warehouse as Object (@to_obj)
+-------------------------------------------
+Adds: Use of @to_obj to access the warehouse using dot notation ('.').
 
-DIAGRAMA:
-[Bodega Inicial]
+DIAGRAM:
+[Initial Warehouse]
       |
       v
-(encender_motor) ----> [motor: 'ON', gasolina: 100]
+(start_engine) ----> [engine: 'ON', fuel: 100]
       |
       v
-(revisar_frenos @step) -> [frenos: 'OK']
+(check_brakes @step) -> [brakes: 'OK']
       |
       v
-(validar_estado @to_obj) -> ¡Accede a ctx.motor y ctx.frenos!
+(validate_status @to_obj) -> Accesses ctx.engine and ctx.brakes!
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step, to_obj
 
 
-# Heredados:
-def encender_motor(data):
-    print("🔑 Motor encendido.")
-    return {"motor": "ON", "gasolina": 100}
+def start_engine(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Start the car engine.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Updated context with engine status and fuel.
+    """
+    print(f"🔑 Engine started. Input data: {data}")
+    return {"engine": "ON", "fuel": 100}
 
 
-@step(name="revisar_frenos")
-def revisar_frenos(data):
-    print("👟 Frenos verificados.")
-    return {"frenos": "OK"}
+@step(name="check_brakes")
+def check_brakes(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Verify the brakes.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Updated context with brake status.
+    """
+    print(f"👟 Brakes verified. Input data: {data}")
+    return {"brakes": "OK"}
 
 
-# NUEVO EN L3: Acceso a datos más limpio
-@step(name="validar_estado")
-@to_obj  # <--- Permite usar ctx.nombre_campo
-def validar_estado(ctx):
-    # Accedemos de forma elegante a datos de pasos anteriores
-    if ctx.motor == "ON" and ctx.frenos == "OK":
-        print(f"✅ Bodega verificada. Gasolina: {ctx.gasolina}%")
-    return {"todo_listo": True}
+@step(name="validate_status")
+@to_obj
+def validate_status(ctx: Any) -> Dict[str, Any]:
+    """Cleanly access previous data using dot notation.
+
+    Args:
+        ctx (Any): The context object allowing dot notation access.
+
+    Returns:
+        Dict[str, Any]: Confirmation that everything is ready.
+    """
+    if ctx.engine == "ON" and ctx.brakes == "OK":
+        print(f"✅ Warehouse verified. Fuel: {ctx.fuel}%")
+    return {"everything_ready": True}
 
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L3", verbose=True)
-    pipe.set_steps([encender_motor, revisar_frenos, validar_estado])
-    pipe.run({})
+    pipeline = Pipeline(pipeline_name="Trip_L3", verbose=True)
+    pipeline.set_steps([start_engine, check_brakes, validate_status])
+    pipeline.run({})

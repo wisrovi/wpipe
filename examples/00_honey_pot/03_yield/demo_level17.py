@@ -1,40 +1,47 @@
 """
-DEMO LEVEL 17: Monitor del Motor de IA (Recursos)
--------------------------------------------------
-Añade: collect_system_metrics=True para vigilar la carga del coche.
-Acumula: Inferencia pesada (L13).
+DEMO LEVEL 17: AI Engine Monitor (Resources)
+--------------------------------------------
+Adds: collect_system_metrics=True to watch car load.
+Accumulates: Heavy inference (L13).
 
-DIAGRAMA:
-[Inicio Monitor] ------------------+
-      |                            | (Vigila CPU/RAM en segundo plano)
+DIAGRAM:
+[Start Monitor] ------------------+
+      |                            | (Watches CPU/RAM in background)
       v                            |
-(Procesar Redes Neuronales) <------+
+(Process Neural Networks) <--------+
       |
       v
-[Log de Recursos] -> Reporta picos de consumo del sistema ADAS.
+[Resource Log] -> Reports consumption peaks of the ADAS system.
 """
 
 import time
+from typing import Any, Dict
 
 from wpipe import Parallel, Pipeline, step
 
+@step(name="ai_vision_360")
+def ai_vision_360(data: Any) -> Dict[str, str]:
+    """AI Vision 360 processing step.
 
-@step(name="ia_vision_360")
-def ia_vision_360(data):
-    print("🧠 Procesando visión artificial 360°...")
-    time.sleep(0.5)  # Simula procesamiento intensivo
-    return {"detecciones": "OK"}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, str]: Detection status.
+    """
+    print("🧠 Processing 360° artificial vision...")
+    time.sleep(0.5)  # Simulate intensive processing
+    return {"detections": "OK"}
 
 if __name__ == "__main__":
-    # Activamos la monitorización de recursos del sistema
+    # We activate system resource monitoring
     pipe = Pipeline(
-        pipeline_name="Viaje_L17_Performance",
+        pipeline_name="trip_l17_performance",
         verbose=True,
-        collect_system_metrics=True,  # <--- NUEVO: Monitoriza el hardware
+        collect_system_metrics=True,  # <--- NEW: Monitor hardware
     )
 
-    pipe.set_steps([Parallel(steps=[ia_vision_360] * 4, max_workers=4)])
+    pipe.set_steps([Parallel(steps=[ai_vision_360] * 4, max_workers=4)])
 
-    print(">>> Iniciando viaje. Observa los logs de métricas al finalizar...")
+    print(">>> Starting trip. Observe the metrics logs when finished...")
     pipe.run({})

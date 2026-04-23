@@ -206,12 +206,27 @@ class ParallelExecutor:
         step: StepDependency,
         context: Dict[str, Any],
     ) -> Dict[str, Any]:
-        """Execute a single step."""
+        """
+        Execute a single step.
+
+        Args:
+            step: The step dependency object to execute.
+            context: The current pipeline context.
+
+        Returns:
+            The result context from the step.
+
+        Raises:
+            Exception: Re-raises any exception caught during step execution.
+        """
         try:
             result = step.func(context)
             return result or {}
-        except Exception as e:
+        except (ValueError, TypeError, RuntimeError, AttributeError) as e:
             print(f"Error in step {step.name}: {e}")
+            raise
+        except Exception as e:
+            print(f"Unexpected error in step {step.name}: {e}")
             raise
 
     def _execute_step_safe(
@@ -237,9 +252,17 @@ class ContextMerger:
 
     @staticmethod
     def merge(results: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
-        """Merge multiple result contexts."""
+        """
+        Merge multiple result contexts.
+
+        Args:
+            results: Dictionary mapping step names to their result contexts.
+
+        Returns:
+            A single dictionary containing all merged results.
+        """
         merged = {}
-        for name, ctx in results.items():
+        for ctx in results.values():
             if ctx:
                 merged.update(ctx)
         return merged

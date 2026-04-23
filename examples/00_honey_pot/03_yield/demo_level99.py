@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 99: Múltiples Alerts
 -------------------------------
-Añade: Obtener múltiples alerts.
-Continúa: L98.
+Adds: Obtener múltiples alerts.
+Continues: L98.
 
-DIAGRAMA:
+DIAGRAM:
 múltiples threshold --> múltiples alerts
 """
 
@@ -12,24 +12,45 @@ import time
 
 from wpipe import Pipeline, step, Metric, Severity
 
-
 @step(name="tarea1")
-def tarea1(data):
+def tarea1(data: dict) -> None:
+
+    """Tarea1 step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.02)
     return {"ok": True}
 
-
 @step(name="tarea2")
-def tarea2(data):
+def tarea2(data: dict) -> None:
+
+    """Tarea2 step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.1)
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Múltiples alerts...")
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L99_MultiAlerts",
+        pipeline_name="viaje_l99_multialerts",
         verbose=True,
         tracking_db="output/alerts99.db",
     )

@@ -1,27 +1,37 @@
 """
 DEMO LEVEL 109: Wsqlite Pipeline Integration
 -------------------------------------
-Añade: Wsqlite con tracking de Pipeline.
-Continúa: L108.
+Adds: Wsqlite con tracking de Pipeline.
+Continues: L108.
 
-DIAGRAMA:
+DIAGRAM:
 Pipeline(tracking_db) + Wsqlite
 """
 
 from wpipe import Pipeline, step
 from wpipe.sqlite import Wsqlite
 
-
 @step(name="proceso")
-def proceso(data):
-    return {"ok": True}
+def proceso(data: dict) -> None:
 
+    """Proceso step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
+    return {"ok": True}
 
 if __name__ == "__main__":
     print(">>> Wsqlite + Pipeline integration...")
 
     db = "output/pipe109.db"
-    pipe = Pipeline(pipeline_name="Viaje_L109", verbose=True, tracking_db=db)
+    pipe = Pipeline(pipeline_name="viaje_l109", verbose=True, tracking_db=db)
     pipe.set_steps([proceso])
     pipe.run({})
 

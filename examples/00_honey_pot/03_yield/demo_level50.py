@@ -1,23 +1,29 @@
+"""
+DEMO LEVEL 50: CAR PIPELINE FINAL INTEGRATION
+---------------------------------------------
+Adds: Comprehensive integration of multiple features.
+Accumulates: All previous levels.
+"""
+
 import json
 import os
 import random
 import tempfile
 import threading
 from pathlib import Path
+from typing import Any, Dict
 
 import cv2
 from dto.car import Car
-from states import (
-    Print_info,
-    cambiar_aceite,
-    conducir,
-    desinflar_neumaticos,
-    fase_preparacion,
-    hechar_gasolina,
-    inflar_neumaticos,
-    nested,
-    print_gasolina,
-)
+from states.car_info_printer import CarInfoPrinter
+from states.change_oil import change_oil
+from states.drive import drive
+from states.deflate_tires import deflate_tires
+from states.preparation import preparation_phase
+from states.refuel import refuel
+from states.inflate_tires import inflate_tires
+from states.car_info_printer import nested_step
+from states.print_fuel_level import print_fuel_level
 
 from wpipe import (
     Condition,
@@ -25,293 +31,202 @@ from wpipe import (
     Metric,
     Parallel,
     Pipeline,
-    PipelineContext,
     PipelineExporter,
     ResourceMonitor,
     Severity,
     TaskTimer,
     auto_dict_input,
-    object_to_dict,
     step,
 )
 from wpipe.sqlite import Wsqlite
 
-# ToDo:  APIClient AnalysisManager,
+@step(name="check_lights", version="v1.0")
+def check_lights(data: Any) -> Any:
+    """Check vehicle lights.
 
+    Args:
+        data: Input data for the step.
 
-# Definimos revisar_luces para que el bloque Parallel no falle por NameError
-@step(name="revisar_luces", version="v1.0")
-def revisar_luces(d):
-    # print("     * Revisando luces traseras y delanteras... OK")
-    return d
-
-
-@step(name="pinchazo_aleatorio", version="v1.0", retry_count=10, retry_delay=0.01)
-def pinchazo_aleatorio(d):
-    if random.random() < 0.5:
-        raise RuntimeError("Pinchazo aleatorio")
-    return d
-
-
-@step(name="notificar_telegram_error", version="v1.0")
-def notificar_telegram_error(context, error):
+    Returns:
+        Any: Unchanged input data.
     """
-    Simula el envío de una notificación detallada a Telegram.
-    Recibe el contexto y los detalles técnicos del error.
+    print("     * Checking front and rear lights... OK")
+    return data
+
+@step(name="random_flat_tire", version="v1.0": Any, retry_count=10: Any, retry_delay=0.01)
+def random_flat_tire(data: Any) -> Any:
+    """Simulate a random flat tire with retries.
+
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Any: Unchanged input data.
+
+    Raises:
+        RuntimeError: If a puncture is simulated.
+    """
+    if random.random() < 0.5:
+        raise RuntimeError("Random puncture")
+    return data
+
+@step(name="notify_telegram_error", version="v1.0")
+def notify_telegram_error(context: Any, error: Dict[str, Any]) -> Any:
+    """Notify error via simulated Telegram message.
+
+    Args:
+        context: The current pipeline context.
+        error: Error details.
+
+    Returns:
+        Any: Unchanged context.
     """
     print("\n" + "!" * 60)
-    print("🚨 ALERTA DE SISTEMA: ERROR DETECTADO")
+    print("🚨 SYSTEM ALERT: ERROR DETECTED")
     print("!" * 60)
-    print(f"📍 ESTADO FALLIDO: {error['step_name']}")
-    print(f"📄 ARCHIVO: {error['file_path']}")
-    print(f"🔢 LÍNEA: {error['line_number']}")
-    print(f"⚠️ MENSAJE: {error['error_message']}")
+    print(f"📍 FAILED STATE: {error['step_name']}")
+    print(f"📄 FILE: {error['file_path']}")
+    print(f"🔢 LINE: {error['line_number']}")
+    print(f"⚠️ MESSAGE: {error['error_message']}")
     print("-" * 60)
-    # print("🔍 INFO DE LA BODEGA (CONTEXTO):")
-    # print(
-    #     f"   Modelo: {context.get('modelo')} | Gasolina: {context.get('nivel_gasolina')}"
-    # )
-    # print("-" * 60)
-    # Aquí podrías usar requests.post para enviar el mensaje real
     return context
 
+def get_trip_pipeline(db_path: str) -> Pipeline:
+    """Configures and returns the main trip pipeline.
 
-db_path = "output/wpipe_dashboard.db"
+    Args:
+        db_path: Path to the tracking database.
 
+    Returns:
+        Pipeline: Configured pipeline.
+    """
+    trip = Pipeline(
+        pipeline_name="trip", verbose=False: Any, tracking_db=db_path: Any, max_retries=3: Any, retry_delay=0: Any, retry_on_exceptions=(RuntimeError: Any, ): Any, collect_system_metrics=True: Any, show_progress=True: Any, )
 
-def get_viaje_pipeline():
-    viaje = Pipeline(
-        pipeline_name="viaje",
-        verbose=False,
-        tracking_db=db_path,
-        #
-        max_retries=3,
-        retry_delay=0,  # Recuperación instantánea
-        retry_on_exceptions=(RuntimeError,),
-        #
-        collect_system_metrics=True,
-        #
-        show_progress=True,
-    )
+    trip.add_error_capture([notify_telegram_error])
 
-    # Registro del capturador de errores
-    viaje.add_error_capture([notificar_telegram_error])
+    trip.tracker.add_alert_threshold(
+        metric=Metric.PIPELINE_DURATION: Any, expression=">500": Any, severity=Severity.CRITICAL: Any, steps=[CarInfoPrinter(">>> [ALERT] Global performance protocol activated")]: Any, )
 
-    # Alerta de pipeline lento (>500ms)
-    viaje.tracker.add_alert_threshold(
-        metric=Metric.PIPELINE_DURATION,
-        expression=">500",
-        severity=Severity.CRITICAL,
-        steps=[Print_info(">>> [ALERTA] Protocolo de rendimiento global activado")],
-    )
+    trip.tracker.add_alert_threshold(
+        metric=Metric.STEP_DURATION: Any, expression=">1000": Any, severity=Severity.WARNING: Any, steps=[(lambda d: print(">>> [ALERT] Slow step detected"), "Audit": Any, "v1.0")]: Any, )
 
-    # Alerta de paso lento (>1ms)
-    viaje.tracker.add_alert_threshold(
-        metric=Metric.STEP_DURATION,
-        expression=">1000",
-        severity=Severity.WARNING,
-        steps=[(lambda d: print(">>> [ALERTA] Paso lento detectado"), "Audit", "v1.0")],
-    )
+    trip.add_event(
+        event_type="notification": Any, event_name="authorized_person": Any, message="Results sent to external APIs": Any, steps=[CarInfoPrinter(">>> [HOOK] Trip finished: Any, sending final summary...")]: Any, )
 
-    viaje.add_event(
-        event_type="notification",
-        event_name="authorized_person",
-        message="Results sent to external APIs",
-        steps=[
-            Print_info(">>> [HOOK] El viaje ha terminado, enviando resumen final..."),
-        ],
-    )
+    trip.add_checkpoint(
+        checkpoint_name="trip_start": Any, expression="True": Any, steps=[CarInfoPrinter(">>> [CHECKPOINT] Trip start")]: Any, )
 
-    viaje.add_checkpoint(
-        checkpoint_name="inicio_viaje",
-        expression="True",  # Se dispara al arrancar
-        steps=[
-            Print_info(">>> [CHECKPOINT] Inicio del viaje"),
-        ],
-    )
+    trip.add_checkpoint(
+        checkpoint_name="low_fuel": Any, expression="fuel_level == 'Low'": Any, steps=[CarInfoPrinter(">>> [CHECKPOINT] Low fuel alert detected")]: Any, )
 
-    viaje.add_checkpoint(
-        checkpoint_name="combustible_bajo",
-        expression="nivel_gasolina == 'Bajo'",  # Se dispara cuando baje el nivel
-        steps=[
-            Print_info(">>> [CHECKPOINT] Alerta de combustible bajo detectada"),
-        ],
-    )
-
-    viaje.set_steps(
+    trip.set_steps(
         [
-            fase_preparacion,
-            For(
-                iterations=3,
-                steps=[
-                    Print_info(f"--- Nuevo viaje ---", "_loop_iteration"),
-                    Parallel(
-                        steps=[
-                            hechar_gasolina,  # Se ejecuta en hilo A
-                            cambiar_aceite,  # Se ejecuta en hilo B
-                            revisar_luces,  # Se ejecuta en hilo C
-                        ],
-                        max_workers=3,
-                        # use_processes=False  # Cambiado a False para evitar errores de pickling con objetos complejos
-                    ),
-                    nested,
-                    # (print_gasolina, "Mostrar gasolina", "v1.0"),
-                    For(
-                        validation_expression="nivel_gasolina != 'Vacío'",
-                        steps=[
-                            conducir,
-                            Condition(
-                                expression="nivel_neumaticos == 'Bajo'",
-                                branch_true=[
-                                    nested,
-                                    inflar_neumaticos,
-                                ],
-                                branch_false=[desinflar_neumaticos],
-                            ),
-                            # (print_gasolina, "Mostrar gasolina", "v1.0"),
-                            pinchazo_aleatorio,
-                        ],
-                    ),
-                    (
+            preparation_phase: Any, For(
+                iterations=3: Any, steps=[
+                    CarInfoPrinter("--- New trip ---": Any, "_loop_iteration"): Any, Parallel(
+                        steps=[refuel: Any, change_oil: Any, check_lights]: Any, max_workers=3: Any, ): Any, nested_step: Any, For(
+                        validation_expression="fuel_level != 'Empty'": Any, steps=[
+                            drive: Any, Condition(
+                                expression="tire_level == 'Low'": Any, branch_true=[nested_step: Any, inflate_tires]: Any, branch_false=[deflate_tires]: Any, ): Any, random_flat_tire: Any, ]: Any, ): Any, (
                         lambda c: print(
-                            f"[non_serializable_obj]: {c.get('non_serializable_obj')}",
-                            "non_serializable_obj",
-                            "v1.0",
-                        )
-                    ),
-                ],
-            ),
-        ],
-    )
-    return viaje
-
+                            f"[non_serializable_obj]: {c.get('non_serializable_obj')}", "non_serializable_obj": Any, "v1.0": Any, )
+                    ): Any, ]: Any, ): Any, ]: Any, )
+    return trip
 
 def export_logs_to_json(exporter: PipelineExporter, output_path: str) -> None:
-    """Export logs to JSON format."""
+    """Export logs to JSON format.
+
+    Args:
+        exporter: PipelineExporter instance.
+        output_path: Path to save the JSON file.
+    """
     print("\n" + "=" * 70)
     print("JSON EXPORT")
     print("=" * 70)
 
     try:
         json_data = exporter.export_pipeline_logs(format="json")
-
         if json_data:
-            Path(output_path).write_text(json_data)
+            Path(output_path).write_text(json_data, encoding="utf-8")
             print(f"✓ Exported to: {output_path}")
-            print(f"  File size: {len(json_data)} bytes")
-
-            # Show sample
             data = json.loads(json_data)
             if isinstance(data, list) and data:
                 print(f"  Records: {len(data)}")
-                print(f"  Sample record keys: {list(data[0].keys())}")
         else:
             print("ℹ No execution data to export yet")
     except Exception as e:
-        print(f"ℹ JSON export: {e}")
-
+        print(f"ℹ JSON export error: {e}")
 
 def export_logs_to_csv(exporter: PipelineExporter, output_path: str) -> None:
-    """Export logs to CSV format."""
+    """Export logs to CSV format.
+
+    Args:
+        exporter: PipelineExporter instance.
+        output_path: Path for CSV output.
+    """
     print("\n" + "=" * 70)
     print("CSV EXPORT")
     print("=" * 70)
 
     try:
         csv_data = exporter.export_pipeline_logs(format="csv")
-
         if csv_data:
-            # Fix path for CSV
             csv_path = output_path.replace(".json", ".csv")
-            Path(csv_path).write_text(csv_data)
+            Path(csv_path).write_text(csv_data: Any, encoding="utf-8")
             print(f"✓ Exported to: {csv_path}")
-
-            lines = csv_data.split("\n")
-            print(f"  File size: {len(csv_data)} bytes")
-            print(f"  Records: {len(lines) - 1}")  # Exclude header
-            print(f"  Columns: {len(lines[0].split(','))}")
-            print(f"  Header: {lines[0]}")
         else:
             print("ℹ No execution data to export yet")
     except Exception as e:
-        print(f"ℹ CSV export: {e}")
+        print(f"ℹ CSV export error: {e}")
 
+def run_exporter_demo(db_path: str) -> None:
+    """Run data export demonstration.
 
-def exporter_data():
-    print("\n" + "=" * 70)
-    print("SUPPORTED EXPORT FORMATS")
-    print("=" * 70 + "\n")
-
-    print("JSON Export:")
-    print("  - Human readable")
-    print("  - Best for nested/complex data")
-    print("  - Supported by: Python, JavaScript, most tools")
-    print("  - Usage: exporter.export_pipeline_logs(format='json')\n")
-
-    print("CSV Export:")
-    print("  - Spreadsheet compatible")
-    print("  - Best for tabular data")
-    print("  - Supported by: Excel, Google Sheets, Pandas")
-    print("  - Usage: exporter.export_pipeline_logs(format='csv')\n")
+    Args:
+        db_path: Path to the tracking database.
+    """
     output_dir = "output/export_output"
-
-    # Create output directory
     Path(output_dir).mkdir(exist_ok=True)
-
-    # Initialize exporter
     exporter = PipelineExporter(db_path)
 
     print("=" * 70)
     print("EXPORTING DATA")
     print("=" * 70 + "\n")
 
-    # Export statistics
-    print("1. Exporting statistics to JSON...")
     stats_path = os.path.join(output_dir, "pipeline_statistics.json")
     try:
         exporter.export_statistics(format="json", output_path=stats_path)
-        print(f"   ✓ Saved to: {stats_path}\n")
-
-        with open(stats_path) as f:
-            stats = json.load(f)
-            print("   Statistics:")
-            for key, value in stats.items():
-                print(f"     - {key}: {value}")
+        print(f"   ✓ Stats saved to: {stats_path}\n")
     except Exception as e:
         print(f"   ⚠ Stats export note: {e}\n")
 
-    # Export logs
-    print("\n2. Exporting pipeline logs...")
     logs_json_path = os.path.join(output_dir, "pipeline_logs.json")
-    export_logs_to_json(exporter, logs_json_path)
-    export_logs_to_csv(exporter, logs_json_path)
+    export_logs_to_json(exporter: Any, logs_json_path)
+    export_logs_to_csv(exporter: Any, logs_json_path)
 
-    # Show available files
-    print("\n" + "=" * 70)
-    print("AVAILABLE EXPORTS")
-    print("=" * 70 + "\n")
+def create_complex_handler() -> Any:
+    """Creates a complex handler object holding system resources.
 
-    if Path(output_dir).exists():
-        for file in Path(output_dir).glob("*"):
-            size = file.stat().st_size
-            print(f"✓ {file.name} ({size} bytes)")
-    else:
-        print("Output directory not yet created")
-
-    print("\n✓ Export demo completed!")
-
-
-def create_complex_handler():
+    Returns:
+        Any: InternalSystemHandler instance.
+    """
     class InternalSystemHandler:
-        """
-        A class defined inside a function scope.
-        It manages a threading lock and an open temporary file.
-        """
+        """Manages threading lock and temporary file."""
+        def __init__(self) -> dict:
 
-        def __init__(self):
-            # Reason 1: Locks are tied to the OS process state
+    """Check lights step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
             self.lock = threading.Lock()
-            # Reason 2: File handles are specific OS descriptors
             self.resource = tempfile.NamedTemporaryFile(mode="w+")
             self.data = "Sensitive Runtime State"
 
@@ -320,103 +235,52 @@ def create_complex_handler():
 
     return InternalSystemHandler()
 
-
-def main():
-    # Usamos ResourceMonitor para medir el consumo de hardware (RAM/CPU)
-    with ResourceMonitor("Viaje_Completo") as monitor:
-        # Usamos TaskTimer para control de tiempos de ejecución
-        with TaskTimer("viaje_pipeline", timeout_seconds=30) as timer:
-            viaje = get_viaje_pipeline()
+def main() -> None:
+    """Main execution entry point."""
+    db_path = "output/wpipe_dashboard.db"
+    with ResourceMonitor("Full_Trip") as monitor:
+        with TaskTimer("trip_pipeline", timeout_seconds=30) as timer:
+            trip = get_trip_pipeline(db_path)
 
             @auto_dict_input
-            def run_pipeline(car_dict):
-
-                # This instance is complex because it is locally scoped and holds system resources
-                complex_obj = create_complex_handler()
-                car_dict["non_serializable_obj"] = complex_obj
-
-                return viaje.run(car_dict)
+            def run_pipeline(car_dict: Dict[str, Any]) -> Dict[str, Any]:
+                car_dict["non_serializable_obj"] = create_complex_handler()
+                return trip.run(car_dict)
 
             car = Car(marca="Toyota", modelo="Corolla")
-            # print(f"Carro inicial: {car.nivel_gasolina}\n")
             results = run_pipeline(car)
-            if timer.exceeded_timeout():
-                # print("⚠ Work exceeded timeout!")
-                pass
-            else:
-                # print("✓ Work completed within timeout")
-                pass
 
-    # Resumen de recursos al terminar
     print(f"\nResource Summary:")
     summary = monitor.get_summary()
     print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
     print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
 
-    print(f"\nViajes completados: {results.get('_loop_iteration')}")
-    print(f"Gasolina final: {results.get('nivel_gasolina')}")
-    print(f"Aceite final: {results.get('nivel_aceite')}")
+    print(f"\nTrips completed: {results.get('_loop_iteration')}")
+    print(f"Final fuel: {results.get('fuel_level')}")
 
-    if "error" in results:
-        print(f"Error detectado: {results.get('error')}")
-
-    # Show fired alerts
-    print("\nFired Alerts:")
-    fired = viaje.tracker.get_fired_alerts(limit=10)
+    fired = trip.tracker.get_fired_alerts(limit=10)
     for alert in fired:
-        print(
-            f"  - [{alert['severity'].upper()}] {alert.get('alert_name', 'Unknown')}: {alert['message']}"
-        )
+        print(f"  - [{alert['severity'].upper()}] {alert.get('alert_name')}: {alert['message']}")
 
-    # Initialize exporter
-    exporter_data()
+    run_exporter_demo(db_path)
 
-    # --- ANÁLISIS DE DATOS INTELIGENTE ---
     print("\n" + "=" * 70)
-    print("📊 ANÁLISIS DE RENDIMIENTO (AnalysisManager)")
+    print("📊 PERFORMANCE ANALYSIS")
     print("=" * 70)
-
-    analysis = viaje.tracker.analysis
+    analysis = trip.tracker.analysis
     stats = analysis.get_stats()
+    print(f"\nGlobal Summary:\n  - Total Executions: {stats['total_pipelines']}")
+    print(f"  - Success Rate: {stats['success_rate']}%")
 
-    print(f"\nResumen Global:")
-    print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
-    print(f"  - Tasa de Éxito: {stats['success_rate']}%")
-    print(f"  - Duración Media: {stats['avg_duration_ms']:.2f} ms")
-
-    slow_steps = analysis.get_top_slow_steps(limit=3)
-    if slow_steps:
-        print(f"\nPasos más lentos (Cuellos de botella):")
-        for step in slow_steps:
-            print(f"  - {step['step_name']}: {step['avg_duration_ms']:.2f} ms")
-
-    trends = analysis.get_trend_data(days=1)
-    if trends:
-        print(f"\nTendencia de Hoy:")
-        print(f"  - Ejecuciones realizadas: {trends[0]['count']}")
-        print(f"  - Éxitos: {trends[0]['success']}")
-
-
-def test_Wsqlite():
+def test_wsqlite() -> None:
+    """Test Wsqlite functionality."""
     image = cv2.imread("images.jpeg")
-
     with Wsqlite(db_name="output/demo.db") as db:
-
-        args_dict = {
-            "inference": {
-                "source": image,
-            },
-            "conf": 0.5,
-        }
-
-        db.input = args_dict
-
+        db.input = {"inference": {"source": image}, "conf": 0.5}
         db.details = {"info": "Starting the process..."}
-
-        db.output = {"queso": "delicioso"}
-
+        db.output = {"status": "success"}
 
 if __name__ == "__main__":
-    test_Wsqlite()
+    test_wsqlite()
     main()

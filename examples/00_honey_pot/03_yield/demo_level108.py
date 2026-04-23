@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 108: Wsqlite Múltiples Datos
 -----------------------------------
-Añade: Guardar múltiples datos.
-Continúa: L107.
+Adds: Guardar múltiples datos.
+Continues: L107.
 
-DIAGRAMA:
+DIAGRAM:
 Wsqlite con varios registros
 """
 
 from wpipe.sqlite import Wsqlite
-
 
 if __name__ == "__main__":
     print(">>> Múltiples datos...")
@@ -18,6 +17,6 @@ if __name__ == "__main__":
         with Wsqlite(db_name="output/multi108.db") as db:
             db.input = {"id": i, "valor": i * 10}
             db.output = {"resultado": i}
-            print(f"  ✅ registro {i}")
+            print(f"  ✅ record {i}")
 
     print("✅ Completado!")

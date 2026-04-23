@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 120: ParallelExecutor
 ---------------------------------
-Añade: Ejecución paralela explícita.
-Continúa: L119.
+Adds: Ejecución paralela explícita.
+Continues: L119.
 
-DIAGRAMA:
+DIAGRAM:
 ParallelExecutor con steps
 """
 
@@ -12,18 +12,15 @@ from time import sleep
 
 from wpipe.parallel import ParallelExecutor
 
-
 def tarea_a(data):
     sleep(0.05)
     print("📗 Tarea A")
     return {"a": True}
 
-
 def tarea_b(data):
     sleep(0.05)
     print("📘 Tarea B")
     return {"b": True}
-
 
 if __name__ == "__main__":
     print(">>> ParallelExecutor...")

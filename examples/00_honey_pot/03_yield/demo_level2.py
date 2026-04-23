@@ -1,36 +1,51 @@
 """
-DEMO LEVEL 2: Metadatos (@step)
--------------------------------
-Añade: Uso de @step para dar nombre, versión y trazabilidad a los pasos.
-Acumula: Paso 1 (encender_motor).
+DEMO LEVEL 2: Metadata (@step)
+------------------------------
+This level introduces the use of @step to provide a name, version,
+and traceability to the pipeline steps.
 
-DIAGRAMA:
-[Bodega Vacía]
+DIAGRAM:
+[Empty Warehouse]
       |
       v
-(encender_motor) ----> [motor: 'ON']
+(start_engine) ----> [engine: 'ON']
       |
       v
-(revisar_frenos @step) -> [motor: 'ON', frenos: 'OK']
+(check_brakes @step) -> [engine: 'ON', brakes: 'OK']
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step
 
 
-# Paso heredado del Nivel 1
-def encender_motor(data):
-    print("🔑 Girando llave: Motor encendido.")
-    return {"motor": "ON", "gasolina": 100}
+def start_engine(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Start the car engine and initialize fuel levels.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Updated context with engine status and fuel.
+    """
+    print(f"🔑 Turning key: Engine started. Input data: {data}")
+    return {"engine": "ON", "fuel": 100}
 
 
-# NUEVO EN L2: @step para mejorar la organización
-@step(name="revisar_frenos", version="v1.0")
-def revisar_frenos(data):
-    print("👟 Probando pedales: Frenos verificados.")
-    return {"frenos": "OK"}
+@step(name="check_brakes", version="v1.0")
+def check_brakes(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Verify the state of the brake system.
+
+    Args:
+        data (Dict[str, Any]): The current pipeline context data.
+
+    Returns:
+        Dict[str, Any]: Updated context with brake status.
+    """
+    print(f"👟 Testing pedals: Brakes verified. Input data: {data}")
+    return {"brakes": "OK"}
 
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L2", verbose=True)
-    pipe.set_steps([encender_motor, revisar_frenos])
-    pipe.run({})
+    pipeline = Pipeline(pipeline_name="Trip_L2", verbose=True)
+    pipeline.set_steps([start_engine, check_brakes])
+    pipeline.run({})

@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 127: Múltiples APIs
 ------------------------------
-Añade: Conectar a múltiples APIs.
-Continúa: L126.
+Adds: Conectar a múltiples APIs.
+Continues: L126.
 
-DIAGRAMA:
+DIAGRAM:
 APIClient + API1 + API2
 """
 
 from wpipe.api_client import APIClient
-
 
 if __name__ == "__main__":
     print(">>> Múltiples APIs...")

@@ -1,33 +1,50 @@
 """
 DEMO LEVEL 114: AutoRegister con Dependencias
 -----------------------------------------
-Añade: AutoRegister con pasos que dependen de otros.
-Continúa: L113.
+Adds: AutoRegister con pasos que dependen de otros.
+Continues: L113.
 
-DIAGRAMA:
+DIAGRAM:
 @step(depends_on=["step1"])
 """
 
 from wpipe import Pipeline, step, AutoRegister
 
+@step(name="start", tags=["inic"])
+def start(data: dict) -> None:
+    """Start step.
 
-@step(name="iniciar", tags=["inic"])
-def iniciar(data):
-    print("🔑 Paso 1: Iniciar")
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        dict: Result of the step.
+    """
+    print("🔑 Paso 1: Startsr")
     return {"iniciado": True}
 
+@step(name="validar", depends_on=["start"], tags=["proc"])
+def validar(data: dict) -> None:
 
-@step(name="validar", depends_on=["iniciar"], tags=["proc"])
-def validar(data):
-    print("✅ Paso 2: Validar (depende de iniciar)")
+    """Validar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
+    print("✅ Paso 2: Validar (depende de start)")
     return {"validado": True}
-
 
 if __name__ == "__main__":
     print(">>> AutoRegister con dependencias...")
 
-    pipe = Pipeline(pipeline_name="Viaje_L114", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l114", verbose=True)
     AutoRegister.register_all(pipe)
 
-    pipe.set_steps([iniciar, validar])
+    pipe.set_steps([start, validar])
     pipe.run({})

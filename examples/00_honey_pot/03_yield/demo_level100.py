@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 100: Alerts Historial
 --------------------------------
-Añade: Ver historial completo de alerts.
-Continúa: L99.
+Adds: View history completo de alerts.
+Continues: L99.
 
-DIAGRAMA:
+DIAGRAM:
 get_fired_alerts() en pipeline diferente
 """
 
@@ -12,18 +12,28 @@ import time
 
 from wpipe import Pipeline, step, Metric, Severity
 
+@step(name="task")
+def task(data: dict) -> None:
 
-@step(name="tarea")
-def tarea(data):
+    """Task step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.02)
     return {"ok": True}
 
-
 if __name__ == "__main__":
-    print(">>> Historial de alerts...")
+    print(">>> Alerts history...")
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L100_History",
+        pipeline_name="viaje_l100_history",
         verbose=True,
         tracking_db="output/alerts100.db",
     )
@@ -34,17 +44,17 @@ if __name__ == "__main__":
         severity=Severity.WARNING,
     )
 
-    pipe.set_steps([tarea])
+    pipe.set_steps([task])
     pipe.run({})
 
-    print(">>> Corriendo segundo pipeline...")
+    print(">>> Running second pipeline...")
     pipe2 = Pipeline(
-        pipeline_name="Viaje_L100b",
+        pipeline_name="viaje_l100b",
         verbose=False,
         tracking_db="output/alerts100.db",
     )
-    pipe2.set_steps([tarea])
+    pipe2.set_steps([task])
     pipe2.run({})
 
     alerts = pipe.tracker.get_fired_alerts()
-    print(f"\n🚨 Total en historial: {len(alerts)}")
+    print(f"\n🚨 Total in history: {len(alerts)}")

@@ -1,3 +1,11 @@
+"""
+Car DTO module for the yield example.
+Provides multiple ways to define a Car object (Pydantic, Dataclass, Traditional).
+"""
+
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Union
+
 try:
     from pydantic import BaseModel  # pip install pydantic
 
@@ -5,115 +13,137 @@ try:
 except ImportError:
 
     class BaseModel:
-        def model_dump(self):
+        """Fallback for Pydantic BaseModel."""
+
+        def model_dump(self) -> Dict[str, Any]:
+            """Dump model to dict."""
             return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
 
     HAS_PYDANTIC = False
 
-from dataclasses import asdict, dataclass, is_dataclass
+
+class Levels:
+    """Standard levels for car fluids and tires."""
+
+    EMPTY = "Empty"
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
 
 
-class Niveles:
-    vacio = "Vacío"
-    bajo = "Bajo"
-    medio = "Medio"
-    alto = "Alto"
-
-
-# case 1: Usando Pydantic
+# case 1: Using Pydantic
 class Extras(BaseModel):
-    aire_acondicionado: bool = True
+    """Car extras using Pydantic."""
+
+    air_conditioning: bool = True
     radio: bool = True
     gps: bool = True
-    asientos_calefaccionados: bool = False
-    techo_solar: bool = False
+    heated_seats: bool = False
+    sunroof: bool = False
 
 
 class Car(BaseModel):
-    marca: str
-    modelo: str
-    ano: int = 2020
-    color: str = "Rojo"
-    nivel_gasolina: str = Niveles.medio
-    nivel_aceite: str = Niveles.medio
-    nivel_neumaticos: str = Niveles.medio
+    """Car DTO using Pydantic."""
+
+    make: str
+    model: str
+    year: int = 2020
+    color: str = "Red"
+    fuel_level: str = Levels.MEDIUM
+    oil_level: str = Levels.MEDIUM
+    tire_level: str = Levels.MEDIUM
     extras: Extras = Extras()
 
 
-# case 2: Usando dataclass
+# case 2: Using dataclass
 @dataclass
 class Extras2:
-    aire_acondicionado: bool = True
+    """Car extras using dataclass."""
+
+    air_conditioning: bool = True
     radio: bool = True
     gps: bool = True
-    asientos_calefaccionados: bool = False
-    techo_solar: bool = False
+    heated_seats: bool = False
+    sunroof: bool = False
 
 
 @dataclass
 class Car2:
-    marca: str
-    modelo: str
-    ano: int = 2020
-    color: str = "Rojo"
-    nivel_gasolina: str = Niveles.medio
-    nivel_aceite: str = Niveles.medio
-    nivel_neumaticos: str = Niveles.medio
-    extras: Extras2 = None
+    """Car DTO using dataclass."""
+
+    make: str
+    model: str
+    year: int = 2020
+    color: str = "Red"
+    fuel_level: str = Levels.MEDIUM
+    oil_level: str = Levels.MEDIUM
+    tire_level: str = Levels.MEDIUM
+    extras: Optional[Extras2] = None
 
     def __post_init__(self):
+        """Initialize extras if not provided."""
         if self.extras is None:
             self.extras = Extras2()
 
 
-# case 3: Usando clase tradicional
+# case 3: Using traditional class
 class Extras3:
+    """Car extras using traditional class."""
+
     def __init__(self):
-        self.aire_acondicionado: bool = True
+        """Initialize traditional extras."""
+        self.air_conditioning: bool = True
         self.radio: bool = True
         self.gps: bool = True
-        self.asientos_calefaccionados: bool = False
-        self.techo_solar: bool = False
+        self.heated_seats: bool = False
+        self.sunroof: bool = False
 
 
 class Car3:
+    """Car DTO using traditional class."""
+
     def __init__(
         self,
-        marca: str,
-        modelo: str,
-        ano: int = 2020,
-        color: str = "Rojo",
-        nivel_gasolina: str = Niveles.medio,
-        nivel_aceite: str = Niveles.medio,
-        nivel_neumaticos: str = Niveles.medio,
-        extras: Extras3 = None,
+        make: str,
+        model: str,
+        year: int = 2020,
+        color: str = "Red",
+        fuel_level: str = Levels.MEDIUM,
+        oil_level: str = Levels.MEDIUM,
+        tire_level: str = Levels.MEDIUM,
+        extras: Optional[Extras3] = None,
     ):
-        self.marca = marca
-        self.modelo = modelo
-        self.ano = ano
+        """Initialize traditional car."""
+        self.make = make
+        self.model = model
+        self.year = year
         self.color = color
-        self.nivel_gasolina = nivel_gasolina
-        self.nivel_aceite = nivel_aceite
-        self.nivel_neumaticos = nivel_neumaticos
+        self.fuel_level = fuel_level
+        self.oil_level = oil_level
+        self.tire_level = tire_level
         self.extras = extras if extras is not None else Extras3()
 
 
-# case 4: Usando dict tradicional
-def tradicional_to_dict():
+def traditional_to_dict() -> Dict[str, Any]:
+    """Create a car representation using a traditional dictionary.
+
+    Returns:
+        Dict[str, Any]: Dictionary representation of a car.
+    """
     return {
-        "marca": "Toyota",
-        "modelo": "Corolla",
-        "ano": 2021,
-        "color": "Azul",
-        "nivel_gasolina": Niveles.medio,
-        "nivel_aceite": Niveles.medio,
-        "nivel_neumaticos": Niveles.medio,
+        "make": "Toyota",
+        "model": "Corolla",
+        "year": 2021,
+        "color": "Blue",
+        "fuel_level": Levels.MEDIUM,
+        "oil_level": Levels.MEDIUM,
+        "tire_level": Levels.MEDIUM,
         "extras": {
-            "aire_acondicionado": True,
+            "air_conditioning": True,
             "radio": True,
             "gps": True,
-            "asientos_calefaccionados": False,
-            "techo_solar": False,
+            "heated_seats": False,
+            "sunroof": False,
         },
     }
 
@@ -121,24 +151,24 @@ def tradicional_to_dict():
 if __name__ == "__main__":
     from utils.dict2obj import to_dict
 
-    car = Car(marca="Toyota", modelo="Corolla")
-    car2 = Car2(marca="Toyota", modelo="Corolla")
-    car3 = Car3(marca="Toyota", modelo="Corolla")
-    car4 = tradicional_to_dict()
+    car_pydantic = Car(make="Toyota", model="Corolla")
+    car_dataclass = Car2(make="Toyota", model="Corolla")
+    car_traditional = Car3(make="Toyota", model="Corolla")
+    car_dict = traditional_to_dict()
 
-    cars = [car, car2, car3, car4]
+    cars_to_process: List[Union[Car, Car2, Car3, Dict[str, Any]]] = [
+        car_pydantic,
+        car_dataclass,
+        car_traditional,
+        car_dict,
+    ]
 
-    for i, c in enumerate(cars, 1):
-        # print(f"\n--- Procesando Carro {i} ---")
-
-        # Fallback para objetos genéricos que tengan __dict__
+    for i, car_obj in enumerate(cars_to_process, 1):
         try:
-            car_dict = to_dict(c)
-        except TypeError:
+            processed_dict = to_dict(car_obj)
+        except TypeError as exc:
             raise ValueError(
-                f"El objeto de tipo {type(c).__name__} no es compatible para conversión a dict"
-            )
+                f"Object type {type(car_obj).__name__} is not compatible for dict conversion"
+            ) from exc
 
-        # print(f"Tipo original: {type(c).__name__}")
-        print(f"Resultado: {car_dict}")
-        # print(f"Tipo resultado: {type(car_dict).__name__}")
+        print(f"Result {i}: {processed_dict}")

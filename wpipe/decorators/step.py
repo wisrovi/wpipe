@@ -6,7 +6,10 @@ Provides @wpipe.step() decorator for inline step definitions.
 
 from dataclasses import dataclass, field
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Tuple
+
+if TYPE_CHECKING:
+    from wpipe.pipeline import Pipeline
 
 # Global registry for decorated steps
 _STEP_REGISTRY: Dict[str, "DecoratedStep"] = {}
@@ -14,7 +17,21 @@ _STEP_REGISTRY: Dict[str, "DecoratedStep"] = {}
 
 @dataclass
 class StepMetadata:
-    """Metadata for a decorated step."""
+    """Metadata for a decorated step.
+
+    Attributes:
+        name: The name of the step.
+        func: The function to execute.
+        version: The version of the step.
+        timeout: Execution timeout in seconds.
+        depends_on: List of step names this step depends on.
+        retry_count: Number of retries on failure.
+        retry_delay: Delay between retries in seconds.
+        retry_on_exceptions: Tuple of exceptions that trigger a retry.
+        parallel: Whether the step can run in parallel.
+        description: Description of the step's purpose.
+        tags: List of tags for categorization.
+    """
 
     name: str
     func: Callable
@@ -23,15 +40,23 @@ class StepMetadata:
     depends_on: List[str] = field(default_factory=list)
     retry_count: Optional[int] = None
     retry_delay: Optional[float] = None
-    retry_on_exceptions: Optional[tuple] = None
+    retry_on_exceptions: Optional[Tuple[type, ...]] = None
     parallel: bool = False
     description: str = ""
     tags: List[str] = field(default_factory=list)
 
 
 class DecoratedStep:
-    """Represents a decorated step."""
+    """Represents a decorated step.
 
+    Attributes:
+        metadata: The metadata associated with the step.
+        parallel: Whether the step can run in parallel.
+        name: The name of the step (compatibility attribute).
+        version: The version of the step (compatibility attribute).
+    """
+
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         func: Callable,
@@ -41,12 +66,26 @@ class DecoratedStep:
         depends_on: Optional[List[str]] = None,
         retry_count: Optional[int] = None,
         retry_delay: Optional[float] = None,
-        retry_on_exceptions: Optional[tuple] = None,
+        retry_on_exceptions: Optional[Tuple[type, ...]] = None,
         parallel: bool = False,
         description: str = "",
         tags: Optional[List[str]] = None,
     ):
-        """Initialize decorated step."""
+        """Initialize decorated step.
+
+        Args:
+            func: Function to be wrapped as a step.
+            name: Step name (defaults to function name).
+            version: Step version.
+            timeout: Execution timeout.
+            depends_on: Dependencies list.
+            retry_count: Max retry attempts.
+            retry_delay: Seconds between retries.
+            retry_on_exceptions: Exceptions to catch for retrying.
+            parallel: Parallel execution flag.
+            description: Step description.
+            tags: Category tags.
+        """
         self.metadata = StepMetadata(
             name=name or func.__name__,
             func=func,
@@ -60,27 +99,51 @@ class DecoratedStep:
             tags=tags or [],
         )
         self.parallel = parallel
-        self.NAME = self.metadata.name
-        self.VERSION = self.metadata.version
+        # Compatibility with @state attributes
+        self.NAME = self.metadata.name  # pylint: disable=invalid-name
+        self.VERSION = self.metadata.version  # pylint: disable=invalid-name
 
     def __call__(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute decorated step."""
+        """Execute decorated step.
+
+        Args:
+            context: The pipeline context.
+
+        Returns:
+            The modified context.
+        """
         return self.metadata.func(context)
 
     def get_name(self) -> str:
-        """Get step name."""
+        """Get step name.
+
+        Returns:
+            The step name.
+        """
         return self.metadata.name
 
     def get_dependencies(self) -> List[str]:
-        """Get step dependencies."""
+        """Get step dependencies.
+
+        Returns:
+            List of dependency names.
+        """
         return self.metadata.depends_on
 
     def get_timeout(self) -> Optional[float]:
-        """Get step timeout."""
+        """Get step timeout.
+
+        Returns:
+            The timeout in seconds or None.
+        """
         return self.metadata.timeout
 
     def get_metadata(self) -> StepMetadata:
-        """Get all metadata."""
+        """Get all metadata.
+
+        Returns:
+            The StepMetadata object.
+        """
         return self.metadata
 
 
@@ -91,32 +154,31 @@ def step(
     depends_on: Optional[List[str]] = None,
     retry_count: Optional[int] = None,
     retry_delay: Optional[float] = None,
-    retry_on_exceptions: Optional[tuple] = None,
+    retry_on_exceptions: Optional[Tuple[type, ...]] = None,
     parallel: bool = False,
     description: str = "",
     tags: Optional[List[str]] = None,
-):
-    """
-    Decorator to mark a function as a pipeline step.
+) -> Callable:
+    """Decorator to mark a function as a pipeline step.
 
     Args:
-        name: Step name (defaults to function name)
-        version: Step version (defaults to "v1.0")
-        timeout: Timeout in seconds
-        depends_on: List of step names this depends on
-        retry_count: Number of retries on failure
-        retry_delay: Delay between retries
-        retry_on_exceptions: Exceptions to retry on
-        parallel: Whether this step can run in parallel
-        description: Step description
-        tags: List of tags for step
+        name: Step name (defaults to function name).
+        version: Step version (defaults to "v1.0").
+        timeout: Timeout in seconds.
+        depends_on: List of step names this depends on.
+        retry_count: Number of retries on failure.
+        retry_delay: Delay between retries.
+        retry_on_exceptions: Exceptions to retry on.
+        parallel: Whether this step can run in parallel.
+        description: Step description.
+        tags: List of tags for step.
 
     Returns:
-        Decorated function
+        Decorated function.
 
     Example:
         @wpipe.step(timeout=30, depends_on=["fetch_data"])
-        def process_data(context):
+        def process_data(context: Dict[str, Any]) -> Dict[str, Any]:
             return {"result": "..."}
     """
 
@@ -143,15 +205,15 @@ def step(
 
         # Preserve original function but add metadata
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             return func(*args, **kwargs)
 
-        wrapper._wpipe_step = decorated
-        wrapper._wpipe_metadata = decorated.get_metadata()
+        wrapper._wpipe_step = decorated  # pylint: disable=protected-access
+        wrapper._wpipe_metadata = decorated.get_metadata()  # pylint: disable=protected-access
 
         # Mirror attributes for @state compatibility
-        wrapper.NAME = decorated.NAME
-        wrapper.VERSION = decorated.VERSION
+        wrapper.NAME = decorated.NAME  # pylint: disable=invalid-name
+        wrapper.VERSION = decorated.VERSION  # pylint: disable=invalid-name
 
         return wrapper
 
@@ -159,29 +221,36 @@ def step(
 
 
 class StepRegistry:
-    """Registry for managing decorated steps."""
+    """Registry for managing decorated steps.
 
-    def __init__(self):
+    Attributes:
+        steps: Dictionary mapping step names to DecoratedStep objects.
+    """
+
+    def __init__(self) -> None:
         """Initialize registry."""
         self.steps: Dict[str, DecoratedStep] = {}
 
     def register(self, decorated_step: DecoratedStep) -> None:
-        """Register a decorated step."""
+        """Register a decorated step.
+
+        Args:
+            decorated_step: The step to register.
+        """
         self.steps[decorated_step.get_name()] = decorated_step
 
     def register_func(
         self,
         func: Callable,
         name: Optional[str] = None,
-        **metadata,
+        **metadata: Any,
     ) -> None:
-        """
-        Register a function as a step.
+        """Register a function as a step.
 
         Args:
-            func: Function to register
-            name: Step name
-            **metadata: Additional metadata
+            func: Function to register.
+            name: Step name.
+            **metadata: Additional metadata.
         """
         decorated = DecoratedStep(
             func=func,
@@ -191,32 +260,51 @@ class StepRegistry:
         self.register(decorated)
 
     def get(self, name: str) -> Optional[DecoratedStep]:
-        """Get step by name."""
+        """Get step by name.
+
+        Args:
+            name: The name of the step.
+
+        Returns:
+            The DecoratedStep object or None if not found.
+        """
         return self.steps.get(name)
 
     def get_all(self) -> Dict[str, DecoratedStep]:
-        """Get all registered steps."""
+        """Get all registered steps.
+
+        Returns:
+            A copy of the steps dictionary.
+        """
         return self.steps.copy()
 
     def clear(self) -> None:
         """Clear all registered steps."""
         self.steps.clear()
 
-    def get_global_registry() -> Dict[str, DecoratedStep]:
-        """Get global step registry."""
+    @staticmethod
+    def get_global_registry() -> Dict[str, "DecoratedStep"]:
+        """Get global step registry.
+
+        Returns:
+            A copy of the global step registry.
+        """
         return _STEP_REGISTRY.copy()
 
-    @staticmethod
-    def from_global() -> "StepRegistry":
-        """Create registry from global registry."""
-        registry = StepRegistry()
+    @classmethod
+    def from_global(cls) -> "StepRegistry":
+        """Create registry from global registry.
+
+        Returns:
+            A StepRegistry instance populated with global steps.
+        """
+        registry = cls()
         registry.steps = _STEP_REGISTRY.copy()
         return registry
 
 
 class AutoRegister:
-    """
-    Utility to auto-register decorated steps into a pipeline.
+    """Utility to auto-register decorated steps into a pipeline.
 
     Example:
         @wpipe.step(timeout=30)
@@ -235,12 +323,11 @@ class AutoRegister:
     def register_all(
         pipeline: "Pipeline", registry: Optional[StepRegistry] = None
     ) -> None:
-        """
-        Auto-register all decorated steps to pipeline.
+        """Auto-register all decorated steps to pipeline.
 
         Args:
-            pipeline: Target pipeline
-            registry: Optional custom registry (uses global by default)
+            pipeline: Target pipeline.
+            registry: Optional custom registry (uses global by default).
         """
         if registry is None:
             steps = _STEP_REGISTRY
@@ -262,13 +349,12 @@ class AutoRegister:
         tag: str,
         registry: Optional[StepRegistry] = None,
     ) -> None:
-        """
-        Register steps with specific tag.
+        """Register steps with specific tag.
 
         Args:
-            pipeline: Target pipeline
-            tag: Tag to filter by
-            registry: Optional custom registry
+            pipeline: Target pipeline.
+            tag: Tag to filter by.
+            registry: Optional custom registry.
         """
         if registry is None:
             steps = _STEP_REGISTRY
@@ -287,7 +373,11 @@ class AutoRegister:
 
 
 def get_step_registry() -> StepRegistry:
-    """Get the global step registry."""
+    """Get the global step registry.
+
+    Returns:
+        The StepRegistry from the global scope.
+    """
     return StepRegistry.from_global()
 
 

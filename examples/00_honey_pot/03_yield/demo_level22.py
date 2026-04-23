@@ -1,36 +1,46 @@
 """
-DEMO LEVEL 22: Recuperación de Señal (Retries)
-----------------------------------------------
-Añade: retry_count y retry_delay para fallos intermitentes.
-Acumula: Telemetría (L16).
+DEMO LEVEL 22: Signal Recovery (Retries)
+----------------------------------------
+Adds: retry_count and retry_delay for intermittent failures.
+Accumulates: Telemetry (L16).
 
-DIAGRAMA:
-(conectar_gps) -- [Fallo] -> Espera 0.5s -> Reintento 1
-      |--- [Fallo] -> Espera 0.5s -> Reintento 2
-      |--- [¡Conectado!] -> Continúa ruta.
+DIAGRAM:
+(connect_gps) -- [Fail] -> Wait 0.5s -> Retry 1
+      |--- [Fail] -> Wait 0.5s -> Retry 2
+      |--- [Connected!] -> Continue route.
 """
 
 import random
+from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+# NEW IN L22: Retries up to 10 times before giving up
+@step(name="connect_gps", retry_count=10, retry_delay=0.5)
+def connect_gps(data: Any) -> Dict[str, float]:
+    """Connect to GPS step with retries.
 
-# NUEVO EN L22: Reintenta hasta 5 veces antes de rendirse
-@step(name="conectar_gps", retry_count=10, retry_delay=0.5)
-def conectar_gps(data):
-    if random.random() < 0.8:  # Simulamos mala cobertura bajo un puente
-        print("🛰️ GPS: Buscando señal de satélite...")
-        raise ConnectionError("Señal débil")
+    Args:
+        data: Input data for the step.
 
-    print("🛰️ GPS: ¡Posición fijada con éxito!")
+    Returns:
+        Dict[str, float]: GPS coordinates.
+
+    Raises:
+        ConnectionError: If signal is weak.
+    """
+    if random.random() < 0.8:  # Simulate poor coverage under a bridge
+        print("🛰️ GPS: Searching for satellite signal...")
+        raise ConnectionError("Weak signal")
+
+    print("🛰️ GPS: Position fixed successfully!")
     return {"lat": 40.41, "lon": -3.70}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L22_GPS_Recovery", verbose=True)
-    pipe.set_steps([conectar_gps])
+    pipe = Pipeline(pipeline_name="trip_l22_gps_recovery", verbose=True)
+    pipe.set_steps([connect_gps])
 
     print(
-        ">>> Iniciando navegación: El sistema se recuperará solo de las pérdidas de señal."
+        ">>> Starting navigation: The system will recover on its own from signal losses."
     )
     pipe.run({})

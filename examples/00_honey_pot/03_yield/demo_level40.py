@@ -1,17 +1,18 @@
 """
-DEMO LEVEL 40: THE GRAND FINALE (Autonomía Total)
---------------------------------------------------
-Resumen: Integración de las 40 funcionalidades en un viaje real.
-Acumula: ABSOLUTAMENTE TODO.
+DEMO LEVEL 40: THE GRAND FINALE (Total Autonomy)
+------------------------------------------------
+Summary: Integration of the 40 functionalities in a real trip.
+Accumulates: ABSOLUTELY EVERYTHING.
 
-DIAGRAMA FINAL:
-[Arrancar] -> (Cargar YAML) -> (Checkpoints) -> For(Ruta) {
-   Parallel(IA Multiproceso) -> Condition(Obstáculo) -> Pydantic(Validar) -> Metric(Fuel)
-} -> [Destino] -> (Hooks de Apagado) -> (Exportar CSV)
+FINAL DIAGRAM:
+[Start] -> (Load YAML) -> (Checkpoints) -> For(Route) {
+   Parallel(Multiprocess AI) -> Condition(Obstacle) -> Pydantic(Validate) -> Metric(Fuel)
+} -> [Destination] -> (Shutdown Hooks) -> (Export CSV)
 """
 
 import os
 import random
+from typing import Any, Dict
 
 from pydantic import BaseModel, Field
 
@@ -27,89 +28,109 @@ from wpipe import (
     to_obj,
 )
 
-
-# 1. Definición de Datos Seguros
+# 1. Secure Data Definition
 class CarStatus(BaseModel):
-    gasolina: float = Field(..., ge=0, le=100)
-    velocidad: float = Field(..., ge=0, le=200)
+    """Pydantic model for vehicle status validation."""
+    fuel: float = Field(..., ge=0, le=100)
+    speed: float = Field(..., ge=0, le=200)
 
+# 2. Vision Intelligence
+@step(name="ai_vision_360")
+def ai_vision_360(data: Any) -> Dict[str, Any]:
+    """AI Vision 360 processing step.
 
-# 2. Inteligencia de Visión
-@step(name="ia_vision_360")
-def vision(d):
-    peligro = random.random() < 0.2
-    return {"obstaculo": peligro, "distancia": random.randint(2, 50)}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, Any]: Detection status and distance.
+    """
+    danger = random.random() < 0.2
+    return {"obstacle": danger, "distance": random.randint(2, 50)}
 
-# 3. Respuesta Automática
-@step(name="frenado_emergencia")
-def frenado(d):
-    print("🚨 ADAS: ¡FRENADO DE EMERGENCIA ACTIVADO!")
-    return {"frenando": True}
+# 3. Automatic Response
+@step(name="emergency_braking")
+def emergency_braking(data: Any) -> Dict[str, bool]:
+    """Emergency braking step.
 
+    Args:
+        data: Input data for the step.
 
-# Validación y Métricas
+    Returns:
+        Dict[str, bool]: Braking status.
+    """
+    print("🚨 ADAS: EMERGENCY BRAKING ACTIVATED!")
+    return {"braking": True}
+
+# Validation and Metrics
 @to_obj(CarStatus)
-def telemetria(ctx):
-    Metric.record("trip_speed", ctx.velocidad, "km/h")
+def validate_telemetry(ctx: CarStatus) -> Dict[str, bool]:
+    """Validates telemetry and records speed metric.
+
+    Args:
+        ctx: Validated CarStatus context.
+
+    Returns:
+        Dict[str, bool]: Validation status.
+    """
+    Metric.record("trip_speed", ctx.speed, "km/h")
     return {"v_ok": True}
 
-
 if __name__ == "__main__":
-    # Preparación de infraestructura
+    # Infrastructure preparation
     os.makedirs("output", exist_ok=True)
-    db_tracking = "output/gran_viaje_2026.db"
-    ck_mgr = CheckpointManager("output/puntos_control_viaje.db")
+    TRACKING_DB = "output/grand_trip_2026.db"
+    CK_MGR = CheckpointManager("output/trip_control_points.db")
 
-    # EL SUPER PIPELINE: Configurado con todo el arsenal
-    viaje = Pipeline(
-        pipeline_name="VIAJE_AUTONOMO_TOTAL",
-        tracking_db=db_tracking,
+    # THE SUPER PIPELINE: Configured with the full arsenal
+    trip = Pipeline(
+        pipeline_name="total_autonomous_trip",
+        tracking_db=TRACKING_DB,
         collect_system_metrics=True,
         continue_on_error=True,
         verbose=True,
     )
 
-    # Definición del flujo Maestro
-    viaje.set_steps(
+    # Master flow definition
+    trip.set_steps(
         [
-            # Inicio y Preparación
-            (lambda d: {"gasolina": 100, "velocidad": 120}, "arranque_inicial", "v1.0"),
-            # Bucle de Conducción Principal
+            # Start and Preparation
+            (lambda d: {"fuel": 100, "speed": 120}, "initial_start", "v1.0"),
+            # Main Driving Loop
             For(
                 iterations=3,
                 steps=[
-                    # Mirar en paralelo usando varios núcleos (Multiproceso)
-                    Parallel(steps=[vision] * 3, use_processes=True, max_workers=3),
-                    # Decisión lógica
-                    Condition(expression="obstaculo == True", branch_true=[frenado]),
-                    telemetria,
+                    # Look in parallel using multiple cores (Multiprocess)
+                    Parallel(steps=[ai_vision_360] * 3, use_processes=True, max_workers=3),
+                    # Logical decision
+                    Condition(expression="obstacle == True", branch_true=[emergency_braking]),
+                    validate_telemetry,
                 ],
             ),
             (
-                lambda d: print("🏁 DESTINO ALCANZADO: El coche ha llegado solo."),
-                "fin",
-                "v1",
+                lambda d: print("🏁 DESTINATION REACHED: The car has arrived on its own."),
+                "finish",
+                "v1.0",
             ),
         ]
     )
 
-    # Registro de Eventos y Hooks
-    viaje.add_event(
-        event_type="log", event_name="Salida", message="Iniciando ruta Madrid-Valencia"
+    # Event and Hook Registration
+    trip.add_event(
+        event_type="log", event_name="Departure", message="Starting Madrid-Valencia route"
     )
-    viaje.add_event(
+    trip.add_event(
         event_type="hook",
-        event_name="Protocolo Final",
-        steps=[(lambda d: print("🔌 Sistemas desconectados."), "shutdown", "v1")],
+        event_name="Final Protocol",
+        steps=[(lambda d: print("🔌 Systems disconnected."), "shutdown", "v1.0")],
     )
 
-    # EJECUCIÓN MAESTRA
-    print("\n🚀 INICIANDO EL GRAN VIAJE (Integración de 40 niveles)...\n")
-    viaje.run({}, checkpoint_mgr=ck_mgr, checkpoint_id="viaje_final_autonomo")
+    # MASTER EXECUTION
+    print("\n🚀 STARTING THE GRAND TRIP (Integration of 40 levels)...\n")
+    trip.run({}, checkpoint_mgr=CK_MGR, checkpoint_id="final_autonomous_trip")
 
-    # Exportación del informe final para el propietario
-    PipelineExporter(db_tracking).export_pipeline_logs(
-        "output/informe_propietario.csv", format="csv"
+    # Exporting the final report for the owner
+    PipelineExporter(TRACKING_DB).export_pipeline_logs(
+        "output/owner_report.csv", format="csv"
     )
-    print("\n✅ TOUR DE APRENDIZAJE COMPLETADO. 40 NIVELES DE DOMINIO DE WPIPE.")
+    print("\n✅ LEARNING TOUR COMPLETED. 40 LEVELS OF WPIPE MASTERY.")

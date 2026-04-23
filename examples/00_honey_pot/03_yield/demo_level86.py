@@ -1,30 +1,40 @@
 """
 DEMO LEVEL 86: ResourceMonitor
 -------------------------------
-Añade: Monitoreo de recursos del sistema.
-Continúa: Export de L85.
+Adds: Monitoreo de recursos del sistema.
+Continues: Export de L85.
 
-DIAGRAMA:
-with ResourceMonitor("nombre") --> medir RAM/CPU
+DIAGRAM:
+with ResourceMonitor("nombre") --> measure RAM/CPU
 """
 
 import time
 
 from wpipe import Pipeline, ResourceMonitor, step
 
-
 @step(name="proceso")
-def proceso(data):
+def proceso(data: dict) -> None:
+
+    """Proceso step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.05)
     print("⚡ Proceso completado")
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Monitor de recursos...")
 
     with ResourceMonitor("Viaje_L86") as monitor:
-        pipe = Pipeline(pipeline_name="Viaje_L86_Resource", verbose=True)
+        pipe = Pipeline(pipeline_name="viaje_l86_resource", verbose=True)
         pipe.set_steps([proceso])
         pipe.run({})
 

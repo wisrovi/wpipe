@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 62: on_exception Callback
 -------------------------------------
-Añade: Callback ejecutado cuando ocurre una excepción.
-Continúa: Retry de L61.
+Adds: Callback ejecutado cuando ocurre una excepción.
+Continues: Retry de L61.
 
-DIAGRAMA:
+DIAGRAM:
 [Pipeline: add_error_capture(handler)]
       |
       v
@@ -15,24 +15,45 @@ import random
 
 from wpipe import Pipeline, step
 
-
 @step(name="operacion_peligrosa")
-def operacion_peligrosa(data):
+def operacion_peligrosa(data: dict) -> None:
+
+    """Operacion peligrosa step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     if random.random() < 0.4:
         raise RuntimeError("Operación falló")
     print("✅ Operación completada")
     return {"status": "ok"}
 
+def manejador_errores(context, error: dict) -> dict:
 
-def manejador_errores(context, error):
+    """Operacion peligrosa step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print(f"🔴 [CALLBACK] Error capturado: {error['error_message']}")
     print("📧 Enviando notificación...")
     return {"notificado": True}
 
-
 if __name__ == "__main__":
     pipe = Pipeline(
-        pipeline_name="Viaje_L62_OnException",
+        pipeline_name="viaje_l62_onexception",
         verbose=True,
         max_retries=2,
     )

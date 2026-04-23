@@ -1,44 +1,58 @@
 """
-DEMO LEVEL 23: Compartimentación (Data Filtering)
---------------------------------------------------
-Añade: Paso de sub-bodegas para proteger datos sensibles.
-Acumula: Modularización (L19).
+DEMO LEVEL 23: Compartmentalization (Data Filtering)
+----------------------------------------------------
+Adds: Passing sub-contexts to protect sensitive data.
+Accumulates: Modularization (L19).
 
-DIAGRAMA:
-[Bodega Global: motor_id, posicion, imagen, velocidad]
+DIAGRAM:
+[Global Context: engine_id, position, image, speed]
       |
       v
-(IA_Publicidad) <- ¡Solo recibe 'posicion'! (Privacidad)
+(Ads_AI) <- Only receives 'position'! (Privacy)
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, step
 
+@step(name="full_telemetry")
+def full_telemetry(data: Any) -> Dict[str, Any]:
+    """Full telemetry gathering step.
 
-@step(name="telemetria_completa")
-def telemetria_completa(d):
-    return {"id_motor": "X-100", "posicion": "Gran Via", "velocidad": 50}
+    Args:
+        data: Input data.
 
+    Returns:
+        Dict[str, Any]: Engine ID, position, and speed.
+    """
+    return {"engine_id": "X-100", "position": "Gran Via", "speed": 50}
 
-# NUEVO EN L23: Un paso que solo ve lo que le filtramos
-@step(name="sugerir_restaurantes")
-def sugerir_restaurantes(data):
-    # Verificamos que no podamos ver el 'id_motor'
-    id_visible = "id_motor" in data
+# NEW IN L23: A step that only sees what we filter for it
+@step(name="suggest_restaurants")
+def suggest_restaurants(data: Dict[str, Any]) -> Dict[str, str]:
+    """Restaurant suggestion step based on filtered position.
+
+    Args:
+        data: Filtered input data.
+
+    Returns:
+        Dict[str, str]: Suggestion details.
+    """
+    # Verify we cannot see 'engine_id'
+    id_visible = "engine_id" in data
     print(
-        f"📍 Sugerencia en {data.get('posicion')}: ¿Ves el ID del motor? {id_visible}"
+        f"📍 Suggestion in {data.get('position')}: Engine ID visible? {id_visible}"
     )
-    return {"sugerencia": "VIPS a 200m"}
-
+    return {"suggestion": "VIPS 200m away"}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L23_Privacy", verbose=True)
+    pipe = Pipeline(pipeline_name="trip_l23_privacy", verbose=True)
 
     pipe.set_steps(
         [
-            telemetria_completa,
-            # Filtramos la bodega usando una función lambda intermedia
-            (lambda d: {"posicion": d["posicion"]}, "FiltroPrivacidad", "v1"),
-            sugerir_restaurantes,
+            full_telemetry,
+            # Filter the context using an intermediate lambda
+            (lambda d: {"position": d["position"]}, "PrivacyFilter", "v1.0"),
+            suggest_restaurants,
         ]
     )
 

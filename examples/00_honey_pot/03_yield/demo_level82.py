@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 82: Export a CSV
 -------------------------------
-Añade: Exportar resultados a CSV.
-Continúa: L81.
+Adds: Exportar resultados a CSV.
+Continues: L81.
 
-DIAGRAMA:
+DIAGRAM:
 Pipeline --> (export) --> resultado.csv
 """
 
@@ -14,27 +14,36 @@ from pathlib import Path
 
 from wpipe import Pipeline, PipelineExporter, step
 
-
-def iniciar(data):
+def start(data):
     print("🔑 Motor iniciado")
     return {"motor": "on"}
 
+@step(name="finish")
+def finish(data: dict) -> None:
 
-@step(name="finalizar")
-def finalizar(data):
+    """Finish step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("🏁 Viaje completado")
     return {"destino": "llegado"}
-
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L82_ExportCSV",
+        pipeline_name="viaje_l82_exportcsv",
         verbose=True,
         tracking_db="output/export_csv.db",
     )
-    pipe.set_steps([iniciar, finalizar])
+    pipe.set_steps([start, finish])
     pipe.run({})
 
     print("\n📤 Exportando a CSV...")

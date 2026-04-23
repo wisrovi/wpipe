@@ -1,33 +1,54 @@
 """
 DEMO LEVEL 111: AutoRegister
 ------------------------------
-Añade: Registro automático de steps.
-Continúa: Wsqlite de L110.
+Adds: Registro automático de steps.
+Continues: Wsqlite de L110.
 
-DIAGRAMA:
+DIAGRAM:
 @step + AutoRegister.register_all()
 """
 
 from wpipe import Pipeline, step, AutoRegister
 
+@step(name="start", tags=["inic"])
+def start(data: dict) -> None:
 
-@step(name="iniciar", tags=["inic"])
-def iniciar(data):
-    print("🔑 Iniciando...")
+    """Start step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
+    print("🔑 Startsndo...")
     return {"estado": "iniciado"}
 
+@step(name="process", tags=["proc"])
+def process(data: dict) -> None:
 
-@step(name="procesar", tags=["proc"])
-def procesar(data):
+    """Process step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("⚡ Procesando...")
     return {"procesado": True}
-
 
 if __name__ == "__main__":
     print(">>> AutoRegister...")
 
-    pipe = Pipeline(pipeline_name="Viaje_L111", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l111", verbose=True)
     AutoRegister.register_all(pipe)
 
-    pipe.set_steps([iniciar, procesar])
+    pipe.set_steps([start, process])
     pipe.run({})

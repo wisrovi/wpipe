@@ -7,8 +7,8 @@ from demo_level50 import get_viaje_pipeline
 from wpipe import CheckpointManager
 
 # 1. Configuración de fiabilidad
-viaje = get_viaje_pipeline()
-viaje.verbose = True
+trip = get_viaje_pipeline()
+trip.verbose = True
 chk = CheckpointManager("checkpoints.db")
 
 # ID estable para la demostración
@@ -23,20 +23,20 @@ car = Car(marca="Toyota", modelo="Corolla").__dict__
 
 try:
     if not chk.can_resume(ID_VIAJE):
-        print("⊘ No se encontró punto de control previo. Iniciando viaje desde el garaje...")
+        print("⊘ No se encontró punto de control previo. Startsndo trip desde el garaje...")
         print("\n[!] PASO 1: Ejecución inicial con caída simulada.")
         print("-" * 60)
         
-        # Inyectamos una excepción que ocurrirá DESPUÉS del primer paso exitoso (fase_preparacion)
+        # Inyectamos una excepción que ocurrirá DESPUÉS del primer paso exitoso (preparation_phase)
         # pero antes de completar el bucle de viajes.
         # Para esta demo, simplemente lanzamos el error manualmente tras una ejecución parcial.
         
         # Ejecutamos la pipeline con el gestor de checkpoints activo
-        viaje.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
+        trip.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
         
         # Si por algún motivo termina sin errores, forzamos la caída para la demo
         if not os.path.exists("checkpoints.db"):
-             print("ℹ Nota: No se generaron checkpoints. Asegúrate de que el viaje sea lo suficientemente largo.")
+             print("ℹ Nota: No se generaron checkpoints. Asegúrate de que el trip sea lo suficientemente largo.")
         
         raise RuntimeError("🔌 FALLO ELÉCTRICO CRÍTICO: El sistema se ha apagado inesperadamente.")
     
@@ -49,11 +49,11 @@ try:
         print(f"  🕒 Fecha del guardado: {last['created_at']}")
         print(f"  📦 Datos recuperados: {len(last['data'])} llaves en bodega")
         
-        print("\n>>> PASO 2: Reanudando viaje automáticamente desde el punto exacto...")
+        print("\n>>> PASO 2: Reanudando trip automáticamente desde el punto exacto...")
         print("-" * 60)
         
         # Al pasar el mismo ID_VIAJE y el gestor, la pipeline saltará los pasos ya hechos
-        res = viaje.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
+        res = trip.run(car, checkpoint_mgr=chk, checkpoint_id=ID_VIAJE)
         
         print("\n" + "✓" * 60)
         print("🏁 ¡VIAJE COMPLETADO CON ÉXITO TRAS LA REANUDACIÓN!")
@@ -69,4 +69,4 @@ except Exception as e:
     print(f"✘ SISTEMA CAÍDO: {e}")
     print("!" * 60)
     print("\n>>> INSTRUCCIONES: Ejecuta este script una vez más para ver cómo WPipe")
-    print(">>> reanuda el viaje saltándose la fase de preparación.")
+    print(">>> reanuda el trip saltándose la fase de preparación.")

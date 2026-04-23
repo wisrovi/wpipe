@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 123: send_get
 ----------------------
-Añade: Método GET.
-Continúa: L122.
+Adds: Método GET.
+Continues: L122.
 
-DIAGRAMA:
+DIAGRAM:
 client.send_get(endpoint)
 """
 
 from wpipe.api_client import APIClient
-
 
 if __name__ == "__main__":
     print(">>> send_get...")

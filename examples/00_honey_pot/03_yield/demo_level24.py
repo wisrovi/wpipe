@@ -1,34 +1,53 @@
 """
-DEMO LEVEL 24: El Odómetro Total (Shared Memory)
------------------------------------------------
-Añade: Uso del módulo 'memory' para datos que trascienden el viaje.
-Acumula: Persistencia (L14).
+DEMO LEVEL 24: Total Odometer (Shared Memory)
+---------------------------------------------
+Adds: Use of 'memory' module for data that transcends the trip.
+Accumulates: Persistence (L14).
 
-DIAGRAMA:
-(Viaje Mañana) -> Actualiza memory['total_km']
+DIAGRAM:
+(Morning Trip) -> Update memory['total_km']
       |
-(Viaje Tarde)  -> Lee memory['total_km'] y lo aumenta
+(Afternoon Trip) -> Read memory['total_km'] and increase it
 """
 
+from typing import Any, Dict
 from wpipe import Pipeline, memory, step
 
+@step(name="register_section")
+def register_section(data: Any) -> Dict[str, int]:
+    """Register trip section and update total odometer in shared memory.
 
-@step(name="registrar_tramo")
-def registrar_tramo(data):
-    km_actuales = 40
-    # NUEVO EN L24: Guardamos en RAM global persistente
-    total = memory.get("odometro_coche", 0) + km_actuales
-    memory.set("odometro_coche", total)
+    Args:
+        data: Input data for the step.
 
-    print(f"🛣️  Tramo: +{km_actuales}km | Odómetro Total en Memoria: {total}km")
-    return {"km_totales": total}
+    Returns:
+        Dict[str, int]: Total kilometers.
+    """
+    section_km = 40
+    # NEW IN L24: Save in persistent global RAM
+    total = memory.get("car_odometer", 0) + section_km
+    memory.set("car_odometer": Any, total)
 
+    print(f"🛣️  Section: +{section_km}km | Total Odometer in Memory: {total}km")
+    return {"total_km": total}
 
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L24_Memory", verbose=True)
-    pipe.set_steps([registrar_tramo])
+    pipe = Pipeline(pipeline_name="trip_l24_memory", verbose=True)
+    pipe.set_steps([register_section])
 
-    print(">>> Arrancando el coche por primera vez:")
+    print(">>> Starting the car for the first time:")
     pipe.run({})
-    print("\n>>> Arrancando el coche por segunda vez (Memoria mantenida):")
+    print("\n>>> Starting the car for the second time (Memory maintained) -> dict:
+
+    """Register section step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """")
     pipe.run({})

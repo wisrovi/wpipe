@@ -8,15 +8,20 @@ and for creating structured state classes from functions.
 from dataclasses import asdict, is_dataclass
 from functools import wraps
 from types import SimpleNamespace
-from typing import Any, Callable, Set
-import sys
+from typing import Any, Callable, Set, Optional
 
 from pydantic import BaseModel
 
 
-def dict_to_sns(data: Any, _seen: Set[int] = None) -> Any:
-    """
-    Recursively convert a dictionary to SimpleNamespace.
+def dict_to_sns(data: Any, _seen: Optional[Set[int]] = None) -> Any:
+    """Recursively convert a dictionary to SimpleNamespace.
+
+    Args:
+        data: Data to convert.
+        _seen: Set of seen object IDs to prevent infinite recursion.
+
+    Returns:
+        Converted object.
     """
     # Initialize seen set for cycle detection
     if _seen is None:
@@ -31,7 +36,7 @@ def dict_to_sns(data: Any, _seen: Set[int] = None) -> Any:
     try:
         if isinstance(data, dict):
             return SimpleNamespace(**{k: dict_to_sns(v, _seen) for k, v in data.items()})
-        elif isinstance(data, list):
+        if isinstance(data, list):
             return [dict_to_sns(i, _seen) for i in data]
         return data
     finally:
@@ -39,9 +44,15 @@ def dict_to_sns(data: Any, _seen: Set[int] = None) -> Any:
         _seen.discard(data_id)
 
 
-def object_to_dict(obj: Any, _seen: Set[int] = None) -> Any:
-    """
-    Recursively convert any object (Pydantic, Dataclass, etc.) to dict.
+def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
+    """Recursively convert any object (Pydantic, Dataclass, etc.) to dict.
+
+    Args:
+        obj: Object to convert.
+        _seen: Set of seen object IDs to prevent infinite recursion.
+
+    Returns:
+        Converted dictionary or original object if not convertible.
     """
     # Initialize seen set for cycle detection
     if _seen is None:
@@ -86,16 +97,23 @@ def object_to_dict(obj: Any, _seen: Set[int] = None) -> Any:
 
 
 def to_obj(arg: Any = None) -> Callable:
+    """Decorator that converts dict arguments to SimpleNamespace objects.
+
+    Supports @to_obj and @to_obj(PipelineContextClass).
+
+    Args:
+        arg: Optional schema or function to decorate.
+
+    Returns:
+        Decorated function or decorator factory.
     """
-    Decorator that converts dict arguments to SimpleNamespace objects.
-    Supports @to_obj and @to_obj(PipelineContextClass)
-    """
+    # pylint: disable=import-outside-toplevel
     from wpipe.type_hinting.validators import TypeValidator
 
     def actual_decorator(func: Callable, schema: Any = None) -> Callable:
         @wraps(func)
-        def wrapper(*args, **kwargs):
-            # Identificamos el diccionario de datos (bodega)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            # Identify the data dictionary (store)
             data_arg = None
             data_idx = -1
 
@@ -105,46 +123,51 @@ def to_obj(arg: Any = None) -> Callable:
                     data_idx = i
                     break
 
-            # 1. Validación de esquema
+            # 1. Schema validation
             if schema and data_arg is not None:
                 TypeValidator.validate(data_arg, schema)
 
-            # 2. Conversión a objeto
+            # 2. Convert to object
             new_args = list(args)
             if data_idx != -1:
                 new_args[data_idx] = dict_to_sns(data_arg)
 
-            # 3. Ejecución
+            # 3. Execution
             result = func(*new_args, **kwargs)
 
-            # 4. Aseguramos que el retorno sea un dict no-nulo para WPipe
+            # 4. Ensure return is a non-null dict for WPipe
             if result is None:
                 return data_arg if data_arg is not None else {}
 
             res_dict = object_to_dict(result)
 
-            # Si el resultado es vacío pero la bodega no, devolvemos la bodega
+            # If result is empty but store is not, return the store
             if not res_dict and data_arg is not None:
                 return data_arg
 
             return res_dict if res_dict is not None else {}
         return wrapper
 
-    # Si se usó como @to_obj (sin paréntesis)
-    # Detectamos si 'arg' es una función normal y no una clase de contexto
+    # If used as @to_obj (without parentheses)
+    # Detect if 'arg' is a normal function and not a context class
     if callable(arg) and not isinstance(arg, type):
         return actual_decorator(arg)
 
-    # Si se usó como @to_obj(Schema)
-    def factory(f: Callable) -> Callable:
-        return actual_decorator(f, schema=arg)
+    # If used as @to_obj(Schema)
+    def factory(func: Callable) -> Callable:
+        return actual_decorator(func, schema=arg)
 
     return factory
 
 
 def auto_dict_input(func: Callable) -> Callable:
-    """
-    Decorator that converts any object arguments to dicts.
+    """Decorator that converts any object arguments to dicts.
+
+    Args:
+        func: Function to decorate.
+
+    Returns:
+        Decorated function.
     """
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:

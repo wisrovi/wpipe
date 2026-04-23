@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 102: get_top_slow_steps
 ---------------------------------
-Añade: Obtener pasos más lentos.
-Continúa: L101.
+Adds: Obtener pasos más lentos.
+Continues: L101.
 
-DIAGRAMA:
+DIAGRAM:
 analysis.get_top_slow_steps(limit=3)
 """
 
@@ -12,22 +12,55 @@ import time
 
 from wpipe import Pipeline, step
 
-
 @step(name="rapido")
-def rapido(data):
-    return {"ok": True}
+def rapido(data: dict) -> None:
 
+    """Rapido step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
+    return {"ok": True}
 
 @step(name="lento")
-def lento(data):
+def lento(data: dict) -> None:
+
+    """Lento step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.05)
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Pasos más lentos...")
 
-    for i in range(3):
+    for i in range(3) -> dict:
+
+    """Rapido step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
         pipe = Pipeline(
             pipeline_name=f"Viaje_L102_{i}",
             verbose=False,

@@ -1,15 +1,14 @@
 """
 DEMO LEVEL 121: APIClient Básico
 -------------------------------
-Añade: Cliente para APIs externas.
-Continúa: ParallelExecutor de L120.
+Adds: Cliente para APIs externas.
+Continues: ParallelExecutor de L120.
 
-DIAGRAMA:
+DIAGRAM:
 APIClient.get(url)
 """
 
 from wpipe.api_client import APIClient
-
 
 if __name__ == "__main__":
     print(">>> APIClient básico...")

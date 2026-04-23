@@ -76,5 +76,5 @@ if __name__ == "__main__":
         )
     ])
     
-    print("Iniciando Pipeline con Multiprocesamiento (CPU Intensive)...")
+    print("Startsndo Pipeline con Multiprocesamiento (CPU Intensive)...")
     pipe.run({})

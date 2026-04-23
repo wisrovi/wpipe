@@ -1,10 +1,10 @@
 """
 DEMO LEVEL 98: Filtrar Alerts por Severidad
 -----------------------------------------
-Añade: Filtrar alerts por severity.
-Continúa: L97.
+Adds: Filtrar alerts por severity.
+Continues: L97.
 
-DIAGRAMA:
+DIAGRAM:
 get_fired_alerts(severity=CRITICAL)
 """
 
@@ -12,18 +12,28 @@ import time
 
 from wpipe import Pipeline, step, Metric, Severity
 
+@step(name="task")
+def task(data: dict) -> None:
 
-@step(name="tarea")
-def tarea(data):
+    """Task step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     time.sleep(0.02)
     return {"ok": True}
-
 
 if __name__ == "__main__":
     print(">>> Filtrar alerts por severity...")
 
     pipe = Pipeline(
-        pipeline_name="Viaje_L98_AlertsSeverity",
+        pipeline_name="viaje_l98_alertsseverity",
         verbose=True,
         tracking_db="output/alerts98.db",
     )
@@ -34,7 +44,7 @@ if __name__ == "__main__":
         severity=Severity.CRITICAL,
     )
 
-    pipe.set_steps([tarea])
+    pipe.set_steps([task])
     pipe.run({})
 
     alerts = pipe.tracker.get_fired_alerts()

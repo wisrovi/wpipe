@@ -1,44 +1,58 @@
 """
-DEMO LEVEL 14: Parada en Área de Servicio (Checkpoints)
--------------------------------------------------------
-Añade: Guardado del estado del viaje en una parada.
-Acumula: Toda la telemetría del viaje.
+DEMO LEVEL 14: Service Area Stop (Checkpoints)
+----------------------------------------------
+Adds: Saving trip status at a stop.
+Accumulates: All trip telemetry.
 
-DIAGRAMA:
-(Tramo 1: Ciudad) -> (Llegada Área Servicio)
+DIAGRAM:
+(Section 1: City) -> (Arrival Service Area)
       |
       v
-[CHECKPOINT: 'descanso_1'] --> (Guarda Gasolina, Km, Destino en DB)
+[CHECKPOINT: 'break_1'] --> (Saves Gasoline, Km, Destination in DB)
       |
       v
-(Tramo 2: Autopista)
+(Section 2: Highway)
 """
 
 import os
+from typing import Any, Dict
 
 from wpipe import CheckpointManager, Pipeline, step
 
+@step(name="drive_to_service_area")
+def drive_to_service_area(data: Any) -> Dict[str, int]:
+    """Drive to service area step.
 
-@step(name="conducir_hasta_area")
-def conducir_hasta_area(d):
-    print("🛣️  Conduciendo 100km hasta el área de servicio...")
-    return {"km": 100, "gasolina": 70}
+    Args:
+        data: Input data for the step.
 
+    Returns:
+        Dict[str, int]: Kilometers and gasoline level.
+    """
+    print("🛣️  Driving 100km to the service area...")
+    return {"km": 100, "gasoline": 70}
 
-@step(name="descanso")
-def descanso(d):
-    print("☕ Tomando un café. El coche guarda el progreso automáticamente.")
-    return {"descansado": True}
+@step(name="service_break")
+def service_break(data: Any) -> Dict[str, bool]:
+    """Service break step.
 
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, bool]: Resting status.
+    """
+    print("☕ Taking a coffee. The car saves progress automatically.")
+    return {"rested": True}
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)
-    ck_mgr = CheckpointManager("output/viaje_progreso.db")
+    ck_mgr = CheckpointManager("output/trip_progress.db")
 
-    pipe = Pipeline(pipeline_name="Viaje_L14_Checkpoints", verbose=True)
-    pipe.set_steps([conducir_hasta_area, descanso])
+    pipe = Pipeline(pipeline_name="trip_l14_checkpoints", verbose=True)
+    pipe.set_steps([drive_to_service_area, service_break])
 
-    # El sistema registra el hito 'parada_1'
+    # The system registers the milestone 'stop_1'
     pipe.run(
-        {"viaje_id": "vacaciones_2026"}, checkpoint_mgr=ck_mgr, checkpoint_id="viaje_1"
+        {"trip_id": "vacation_2026"}, checkpoint_mgr=ck_mgr, checkpoint_id="trip_1"
     )

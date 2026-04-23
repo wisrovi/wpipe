@@ -4,17 +4,15 @@ import json
 import asyncio
 from pathlib import Path
 from dto.car import Car
-from states import (
-    Print_info,
-    cambiar_aceite,
-    conducir,
-    desinflar_neumaticos,
-    fase_preparacion,
-    hechar_gasolina,
-    inflar_neumaticos,
-    print_gasolina,
-    nested
-)
+from states.car_info_printer import CarInfoPrinter
+from states.change_oil import change_oil
+from states.drive import drive
+from states.deflate_tires import deflate_tires
+from states.preparation import preparation_phase
+from states.refuel import refuel
+from states.inflate_tires import inflate_tires
+from states.print_fuel_level import print_fuel_level
+from states.car_info_printer import nested_step
 
 from wpipe import (
     Condition, 
@@ -40,21 +38,21 @@ class ViajeContext(PipelineContext):
     nivel_aceite: str
     nivel_neumaticos: str
 
-# Definimos revisar_luces para que el bloque Parallel no falle por NameError
-@step(name="revisar_luces", version="v1.0")
-async def revisar_luces(d): 
-    print("     * [ASYNC] Revisando luces traseras y delanteras... OK")
+# Definimos check_lights para que el bloque Parallel no falle por NameError
+@step(name="check_lights", version="v1.0")
+async def check_lights(d): 
+    print("     * [ASYNC] Revisando lights traseras y delanteras... OK")
     await asyncio.sleep(0.01) # Simulación de trabajo I/O
     return d
 
-@step(name="pinchazo_aleatorio", version="v1.0", retry_count=10, retry_delay=0)
-async def pinchazo_aleatorio(d):
+@step(name="random_flat_tire", version="v1.0", retry_count=10, retry_delay=0)
+async def random_flat_tire(d):
     if random.random() < 0.5:
         raise RuntimeError("Pinchazo aleatorio")
     return d
 
-@step(name="notificar_telegram_error", version="v1.0")
-async def notificar_telegram_error(context, error):
+@step(name="notify_telegram_error", version="v1.0")
+async def notify_telegram_error(context, error):
     print("\n" + "!" * 60)
     print("🚨 [ASYNC] ALERTA DE SISTEMA: ERROR DETECTADO")
     print("!" * 60)
@@ -66,7 +64,7 @@ async def notificar_telegram_error(context, error):
 db_path = "wpipe_dashboard_async.db"
 
 async def get_viaje_pipeline_async():
-    viaje = PipelineAsync(
+    trip = PipelineAsync(
         pipeline_name="viaje_async",
         verbose=True,
         tracking_db=db_path,
@@ -78,82 +76,82 @@ async def get_viaje_pipeline_async():
     )
 
     # Registro del capturador de errores
-    viaje.add_error_capture([notificar_telegram_error])
+    trip.add_error_capture([notify_telegram_error])
 
     # Alerta de pipeline lento (>500ms)
-    viaje.tracker.add_alert_threshold(
+    trip.tracker.add_alert_threshold(
         metric=Metric.PIPELINE_DURATION,
         expression=">500",
         severity=Severity.CRITICAL,
-        steps=[Print_info(">>> [ALERTA] Protocolo de rendimiento global activado")],
+        steps=[CarInfoPrinter(">>> [ALERTA] Protocolo de rendimiento global activado")],
     )
 
-    viaje.add_event(
+    trip.add_event(
         event_type="notification",
         event_name="authorized_person",
         message="Results sent to external APIs",
         steps=[
-            Print_info(">>> [HOOK] El viaje ha terminado, enviando resumen final..."),
+            CarInfoPrinter(">>> [HOOK] El trip ha terminado, enviando resumen final..."),
         ],
     )
 
-    viaje.add_checkpoint(
-        checkpoint_name="inicio_viaje",
+    trip.add_checkpoint(
+        checkpoint_name="trip_start",
         expression="True",
         steps=[
-            Print_info(">>> [CHECKPOINT] Inicio del viaje"),
+            CarInfoPrinter(">>> [CHECKPOINT] Inicio del trip"),
         ],
     )
 
-    viaje.set_steps(
+    trip.set_steps(
         [
-            fase_preparacion,
+            preparation_phase,
             For(
                 iterations=3,
                 steps=[
-                    Print_info(f"--- Nuevo viaje asíncrono ---", "_loop_iteration"),
+                    CarInfoPrinter(f"--- Nuevo trip asíncrono ---", "_loop_iteration"),
                     Parallel(
                         steps=[
-                            hechar_gasolina,
-                            cambiar_aceite,
-                            revisar_luces
+                            refuel,
+                            change_oil,
+                            check_lights
                         ],
                         max_workers=3
                     ),
-                    Print_info("Resumen post-paralelo"),
-                    (print_gasolina, "Mostrar gasolina", "v1.0"),
+                    CarInfoPrinter("Resumen post-paralelo"),
+                    (print_fuel_level, "Mostrar fuel", "v1.0"),
                     For(
                         validation_expression="nivel_gasolina != 'Vacío'",
                         steps=[
-                            conducir,
+                            drive,
                             Condition(
                                 expression="nivel_neumaticos == 'Bajo'",
                                 branch_true=[
-                                    nested,
-                                    inflar_neumaticos,
+                                    nested_step,
+                                    inflate_tires,
                                 ],
-                                branch_false=[desinflar_neumaticos],
+                                branch_false=[deflate_tires],
                             ),
-                            (print_gasolina, "Mostrar gasolina", "v1.0"),
-                            pinchazo_aleatorio,
+                            (print_fuel_level, "Mostrar fuel", "v1.0"),
+                            random_flat_tire,
                         ],
                     ),
                 ],
             ),
         ],
     )
-    return viaje
+    return trip
 
 async def main():
-    # Usamos ResourceMonitor para medir el consumo de hardware (RAM/CPU)
+    # Usamos ResourceMonitor para measure el consumption de hardware (RAM/CPU)
     with ResourceMonitor("Viaje_Completo_Async") as monitor:
         # Usamos TaskTimer para control de tiempos de ejecución
         with TaskTimer("viaje_pipeline_async", timeout_seconds=30) as timer:
-            viaje = await get_viaje_pipeline_async()
+            trip = await get_viaje_pipeline_async()
 
             @auto_dict_input
             async def run_pipeline(car_dict):
-                return await viaje.run(car_dict)
+                return await trip.run(car_dict)
 
             car = Car(marca="Toyota", modelo="Corolla")
             print(f"Carro inicial: {car.nivel_gasolina}\n")
@@ -169,7 +167,7 @@ async def main():
     print(f"\nViajes completados: {results.get('_loop_iteration')}")
     
     # --- ANÁLISIS DE DATOS ---
-    analysis = viaje.tracker.analysis
+    analysis = trip.tracker.analysis
     stats = analysis.get_stats()
     print("\n" + "=" * 70)
     print("📊 ANÁLISIS DE RENDIMIENTO ASÍNCRONO")

@@ -1,41 +1,56 @@
 """
-DEMO LEVEL 21: Timeouts (Seguridad de Respuesta)
------------------------------------------------
-Añade: Parámetro timeout para evitar bloqueos del sistema.
-Acumula: Inferencia (L10) y Captura de Errores (L11).
+DEMO LEVEL 21: Timeouts (Response Safety)
+-----------------------------------------
+Adds: Timeout parameter to prevent system lockups.
+Accumulates: Inference (L10) and Error Capture (L11).
 
-DIAGRAMA:
-(radar_proximidad) -- [¿Tarda más de 0.2s?] -- ¡ABORTAR!
+DIAGRAM:
+(proximity_radar) -- [Takes more than 0.2s?] -- ABORT!
       |
       v
-(alarma_seguridad) -> [Error: Timeout]
+(safety_alarm) -> [Error: Timeout]
 """
 
 import time
+from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+# NEW IN L21: Strict time limit for the sensor
+@step(name="proximity_radar", timeout=0.2)
+def proximity_radar(data: Any) -> Dict[str, bool]:
+    """Proximity radar scanning step with timeout.
 
-# NUEVO EN L21: Límite de tiempo estricto para el sensor
-@step(name="radar_proximidad", timeout=0.2)
-def radar_proximidad(data):
-    print("📡 Radar: Escaneando entorno...")
-    # Simulamos que el hardware del radar se queda 'colgado'
+    Args:
+        data: Input data for the step.
+
+    Returns:
+        Dict[str, bool]: Obstacle detection status.
+    """
+    print("📡 Radar: Scanning environment...")
+    # Simulate radar hardware hanging
     time.sleep(1.0)
-    return {"obstaculo": False}
+    return {"obstacle": False}
 
+def emergency_report(context: Dict[str, Any], error: Dict[str, Any]) -> Dict[str, Any]:
+    """Emergency report handler for sensor timeouts.
 
-def reporte_emergencia(context, error):
-    print(f"\n🚨 ALERTA CRÍTICA: El sensor '{error['step_name']}' no responde.")
-    print("🛑 ACCIÓN: Cambiando a modo de conducción manual.\n")
+    Args:
+        context: Current pipeline context.
+        error: Error details.
+
+    Returns:
+        Dict[str, Any]: Updated context.
+    """
+    print(f"\n🚨 CRITICAL ALERT: The sensor '{error['step_name']}' is not responding.")
+    print("🛑 ACTION: Switching to manual driving mode.\n")
     return context
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L21_Timeout", verbose=True)
-    pipe.add_error_capture([reporte_emergencia])
+    pipe = Pipeline(pipeline_name="trip_l21_timeout", verbose=True)
+    pipe.add_error_capture([emergency_report])
 
-    pipe.set_steps([radar_proximidad])
+    pipe.set_steps([proximity_radar])
 
-    print(">>> Test de seguridad: Comprobando que el radar no bloquee el sistema...")
+    print(">>> Safety test: Checking that the radar doesn't block the system...")
     pipe.run({})

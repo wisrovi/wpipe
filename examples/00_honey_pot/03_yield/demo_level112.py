@@ -1,33 +1,54 @@
 """
 DEMO LEVEL 112: AutoRegister por Tag
 ---------------------------------
-Añade: Registro filtrado por tags.
-Continúa: L111.
+Adds: Registro filtrado por tags.
+Continues: L111.
 
-DIAGRAMA:
+DIAGRAM:
 register_by_tag(pipeline, "inic")
 """
 
 from wpipe import Pipeline, step, AutoRegister
 
+@step(name="start", tags=["inic"])
+def start(data: dict) -> None:
 
-@step(name="iniciar", tags=["inic"])
-def iniciar(data):
-    print("🔑 Iniciando...")
+    """Start step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
+    print("🔑 Startsndo...")
     return {"estado": "iniciado"}
 
-
 @step(name="verificar", tags=["inic"])
-def verificar(data):
+def verificar(data: dict) -> None:
+
+    """Verificar step.
+
+    Args:
+
+        data: Input data for the step.
+
+    Returns:
+
+        dict: Result of the step.
+
+    """
     print("✅ Verificando...")
     return {"verificado": True}
-
 
 if __name__ == "__main__":
     print(">>> Registro por tag...")
 
-    pipe = Pipeline(pipeline_name="Viaje_L112", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l112", verbose=True)
     AutoRegister.register_by_tag(pipe, "inic")
 
-    pipe.set_steps([iniciar, verificar])
+    pipe.set_steps([start, verificar])
     pipe.run({})

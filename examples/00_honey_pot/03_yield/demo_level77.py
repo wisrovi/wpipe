@@ -1,28 +1,26 @@
 """
 DEMO LEVEL 77: Lambda con Retorno
 -------------------------------
-Añade: Lambda que retorna datos.
-Continúa: L76.
+Adds: Lambda que retorna datos.
+Continues: L76.
 
-DIAGRAMA:
+DIAGRAM:
 (lambda d: {"key": value})
 """
 
 from wpipe import Pipeline
 
-
-def procesar(data):
-    print(f"📊 Velocidad: {data.get('velocidad')} km/h")
+def process(data):
+    print(f"📊 Velocidad: {data.get('speed')} km/h")
     return {"procesado": True}
 
-
 if __name__ == "__main__":
-    pipe = Pipeline(pipeline_name="Viaje_L77_LambdaReturn", verbose=True)
+    pipe = Pipeline(pipeline_name="viaje_l77_lambdareturn", verbose=True)
     pipe.set_steps(
         [
-            (lambda d: {"velocidad": 120}, "set_speed", "v1.0"),
+            (lambda d: {"speed": 120}, "set_speed", "v1.0"),
             (lambda d: {"temperatura": 25}, "set_temp", "v1.0"),
-            procesar,
+            process,
         ]
     )
     print("\n>>> Lambda con retorno de datos...\n")
