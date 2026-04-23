@@ -698,15 +698,23 @@ class Pipeline(APIClient):
                 raise
             except Exception as e:  # pylint: disable=broad-exception-caught
                 last_exception = e
-                tb = traceback.extract_tb(e.__traceback__)
-                last_trace = tb[-1] if tb else None
+                tb_list = traceback.extract_tb(e.__traceback__)
+                
+                # Find the most relevant frame (user code instead of library code)
+                # We look for the last frame that doesn't contain 'site-packages' or 'wpipe'
+                relevant_frame = tb_list[-1]
+                for frame in reversed(tb_list):
+                    if "site-packages" not in frame.filename and "wpipe/pipe" not in frame.filename:
+                        relevant_frame = frame
+                        break
+                
                 error_details = {
                     "step_name": name,
                     "error_message": str(e),
                     "error_traceback": traceback.format_exc(),
-                    "file_path": last_trace.filename if last_trace else "unknown",
-                    "line_number": last_trace.lineno if last_trace else 0,
-                    "method": last_trace.name if last_trace else "unknown",
+                    "file_path": relevant_frame.filename,
+                    "line_number": relevant_frame.lineno,
+                    "method": relevant_frame.name,
                     "timestamp": datetime.now().isoformat(),
                     "attempt": attempt + 1,
                 }
@@ -860,7 +868,12 @@ class Pipeline(APIClient):
                     step_id = item[3]
         elif callable(item):
             func = item
-            name = getattr(item, "NAME", getattr(item, "__name__", "task"))
+            # Look for step name in priorities: NAME attribute > __name__ > class name
+            name = getattr(item, "NAME", getattr(item, "__name__", item.__class__.__name__))
+            if name == "task" or name == "function":
+                # Fallback to a more descriptive name if possible
+                name = item.__class__.__name__
+            
             version = getattr(item, "VERSION", "v1.0")
             step_meta = getattr(item, "_wpipe_metadata", {})
 
