@@ -20,7 +20,7 @@ async def main():
     print(">>> Wsqlite + async...")
 
     db = "output/async110.db"
-    pipe = PipelineAsync(pipeline_name="viaje_l110", verbose=True, tracking_db=db)
+    pipe = PipelineAsync(pipeline_name="viaje_l110", verbose=True, tracking_db=db, show_progress=True)
     pipe.set_steps([proceso])
     await pipe.run({})
 
