@@ -109,6 +109,7 @@ class PipelineAsync(APIClient):
         self._collect_system_metrics: bool = collect_system_metrics
         self.continue_on_error: bool = continue_on_error
         self.show_progress: bool = show_progress
+        self.tracking_db: Optional[str] = tracking_db
 
         # Initialize tracking if database path provided
         self.tracker: Optional[PipelineTracker] = None
@@ -576,7 +577,18 @@ class PipelineAsync(APIClient):
         Returns:
             Dict[str, Any]: The final pipeline data dictionary.
         """
-        return await self._pipeline_run(*args, **kwargs)
+        result = await self._pipeline_run(*args, **kwargs)
+        
+        # Release database locks after execution
+        if self.tracking_db:
+            try:
+                from wpipe import _db_connections, _db_lock
+                with _db_lock:
+                    if self.tracking_db in _db_connections:
+                        _db_connections[self.tracking_db].commit()
+            except Exception:
+                pass
+        return result
 
     def set_steps(self, steps: List[Any]) -> None:
         """
