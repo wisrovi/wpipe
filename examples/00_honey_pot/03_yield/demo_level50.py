@@ -91,6 +91,8 @@ def notify_telegram_error(context, error: Dict[str, Any]) -> Any:
     print(f"📄 FILE: {error['file_path']}")
     print(f"🔢 LINE: {error['line_number']}")
     print(f"⚠️ MESSAGE: {error['error_message']}")
+    print(f"🔄 ATTEMPT: {error.get('attempt', 1)}")
+    print(f"🕒 TIMESTAMP: {error.get('timestamp')}")
     print("-" * 60)
     return context
 
