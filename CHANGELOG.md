@@ -5,6 +5,13 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.5] - 2026-04-23
+
+### Fixed
+- **Compatibilidad Async**: Corregido el acceso al atributo `tracking_db` en `PipelineAsync`, permitiendo el commit final y liberando bloqueos de base de datos en flujos asíncronos.
+- **Robustez Visual**: Asegurado que `LiveError` se maneje correctamente incluso si la carga de la librería Rich es perezosa o parcial.
+- **Integridad de Datos**: Refinado el proceso de commit final para garantizar que todos los logs se persistan antes de liberar el handle de SQLite.
+
 ## [2.1.4] - 2026-04-23
 
 ### Fixed
