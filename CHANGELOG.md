@@ -5,6 +5,18 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2026-04-23
+
+### Fixed
+- **Contención de SQLite**: Solucionado el error `database is locked` mediante la implementación de un commit único al finalizar el pipeline y gestión robusta de conexiones compartidas.
+- **Colisión de Argumentos**: Corregido el fallo `multiple values for argument parent_step_id` que ocurría en ejecuciones paralelas anidadas dentro de bucles.
+- **Barra de Progreso**: Corregido el `NameError: LiveError` en entornos donde Rich no está disponible o se carga de forma perezosa.
+
+### Changed
+- **Rendimiento de Carga**: Implementación de **Lazy Loading** en `wpipe/__init__.py` y decoradores, reduciendo el tiempo de importación inicial drásticamente.
+- **Optimización de Ejecución**: Reducción del tiempo de ejecución del pipeline de ~300ms a < 15ms mediante el uso de `PRAGMA synchronous=OFF` y transacciones optimizadas en SQLite.
+- **Arquitectura**: Los componentes pesados de UI (Rich, Tqdm) y Métricas (Psutil) ahora se cargan bajo demanda, evitando penalizaciones de tiempo si no se utilizan.
+
 ## [2.1.1] - 2026-04-23
 
 ### Changed
