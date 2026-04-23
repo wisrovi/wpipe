@@ -14,10 +14,6 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_compl
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from rich.errors import LiveError
-from rich.progress import Progress
-from tqdm import tqdm
-
 from wpipe.api_client.api_client import APIClient
 from wpipe.exception import ApiError, Codes, ProcessError, TaskError
 from wpipe.exception.api_error import logger
@@ -56,7 +52,7 @@ class Pipeline(APIClient):
     SHOW_API_ERRORS = False
 
     task_name: str = "Processing pipeline tasks"
-    progress_rich: Optional[Progress] = None
+    progress_rich: Optional["Progress"] = None
 
     max_retries: int = 0
     retry_delay: float = 1.0
@@ -64,7 +60,18 @@ class Pipeline(APIClient):
     show_progress: bool = True
 
     # Tracking
-    tracker: Optional[PipelineTracker] = None
+    _tracker: Optional[Any] = None
+    
+    @property
+    def tracker(self) -> Any:
+        if self._tracker is None and getattr(self, "tracking_db", None):
+            from wpipe.tracking import PipelineTracker
+            self._tracker = PipelineTracker(self.tracking_db)
+        return self._tracker
+        
+    @tracker.setter
+    def tracker(self, value: Any) -> None:
+        self._tracker = value
     pipeline_name: str = "Pipeline"
     pipeline_id: Optional[str] = None
     _step_order: int = 0
@@ -130,6 +137,7 @@ class Pipeline(APIClient):
         self._collect_system_metrics = collect_system_metrics
         self.continue_on_error = continue_on_error
         self.show_progress = show_progress
+        self.tracking_db = tracking_db
 
         # Internal queues for events and post-run tasks
         self._pending_events: List[Dict[str, Any]] = []
@@ -725,7 +733,8 @@ class Pipeline(APIClient):
 
     def _execute_step(self, item: Any, data: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Execute a single step."""
-        # pylint: disable=too-many-branches,too-many-statements
+        # Clean kwargs to prevent collision with named arguments
+        kwargs = {k: v for k, v in kwargs.items() if k not in ("parent_step_id", "parallel_group")}
         parent_step_id = kwargs.get("parent_step_id")
         parallel_group = kwargs.get("parallel_group")
 
@@ -741,9 +750,10 @@ class Pipeline(APIClient):
             iteration = 0
             while item.should_continue(loop_data, iteration):
                 loop_data["_loop_iteration"] = iteration
-                for step in item.steps:
-                    loop_data = self._execute_step(step, loop_data, **kwargs)
+                for step_in_loop in item.steps:
+                    loop_data = self._execute_step(step_in_loop, loop_data, **kwargs)
                     if "error" in loop_data:
+                        print(f"  [ERROR] Loop broken at iteration {iteration} due to: {loop_data['error']}")
                         break
                 if "error" in loop_data:
                     break
@@ -800,9 +810,12 @@ class Pipeline(APIClient):
                         })
                     else:
                         def _thread_worker(s, d):
-                            return self._execute_step(s, d, **{
-                                **kwargs, "parent_step_id": tracked_id, "parallel_group": current_group,
-                            })
+                            # Ensure we don't pass duplicate arguments to _execute_step
+                            worker_kwargs = {k: v for k, v in kwargs.items() if k not in ("parent_step_id", "parallel_group")}
+                            return self._execute_step(s, d, 
+                                                   parent_step_id=tracked_id, 
+                                                   parallel_group=current_group, 
+                                                   **worker_kwargs)
                         fut = executor.submit(_thread_worker, step, loop_data.copy())
                     futures[fut] = step
 
@@ -1027,6 +1040,12 @@ class Pipeline(APIClient):
                 - The total number of steps.
         """
         def progress_bar_gen(size: int):
+            from tqdm import tqdm
+            try:
+                from rich.errors import LiveError
+            except ImportError:
+                class LiveError(Exception): pass
+
             if not self.show_progress:
                 for i in range(size):
                     yield i, None
@@ -1213,4 +1232,15 @@ class Pipeline(APIClient):
         """Execute the pipeline."""
         if "error" in (args[0] if args else {}):
             raise TaskError(f"[{self.task_name}] Initial data contains error", Codes.TASK_FAILED)
-        return self._pipeline_run_with_report(*args, **kwargs)
+        result = self._pipeline_run_with_report(*args, **kwargs)
+        
+        # Release database locks after execution
+        if self.tracking_db:
+            try:
+                from wpipe import _db_connections, _db_lock
+                with _db_lock:
+                    if self.tracking_db in _db_connections:
+                        _db_connections[self.tracking_db].commit()
+            except Exception:
+                pass
+        return result
