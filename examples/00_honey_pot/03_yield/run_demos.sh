@@ -29,6 +29,7 @@ for demo in $demos; do
     else
         echo "----------------------------------------------------"
         echo -e "\033[0;31m❌ Error en $demo. Deteniendo el tour.\033[0m"
+        sleep 60
         exit 1
     fi
 
