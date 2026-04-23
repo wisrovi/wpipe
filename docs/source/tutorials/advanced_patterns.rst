@@ -1,7 +1,7 @@
 Advanced Patterns Tutorial
 ============================
 
-Learn advanced patterns for complex pipeline scenarios using WPipe v1.6.0 features.
+Learn advanced patterns for complex pipeline scenarios using WPipe v2.1.0 features.
 
 .. contents::
    :local:
@@ -92,7 +92,7 @@ The error handler receives a dictionary with:
 4. High-Performance Monitoring
 ------------------------------
 
-WPipe v1.6.0 features a non-blocking ``ResourceMonitor`` using WAL mode for SQLite.
+WPipe v2.1.0 features a non-blocking ``ResourceMonitor`` using WAL mode for SQLite.
 
 .. code-block:: python
 

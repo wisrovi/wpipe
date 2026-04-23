@@ -112,7 +112,7 @@ Verify wpipe is installed correctly:
     import wpipe
     # Basic core validation
     from wpipe import Pipeline, Parallel
-    print("WPipe Engine v1.6.0 Ready")
+    print("WPipe Engine v2.1.0 Ready")
 
 4.2 Check Available Classes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -195,7 +195,6 @@ wpipe |version| Documentation
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
    :caption: 📚 Documentation
 
    getting_started

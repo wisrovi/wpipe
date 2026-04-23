@@ -5,7 +5,6 @@ This section contains comprehensive step-by-step tutorials for learning how to u
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 3
 
    tutorials/tour/index
    tutorials/basic_pipeline
