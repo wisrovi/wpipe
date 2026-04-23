@@ -62,4 +62,7 @@ if __name__ == "__main__":
     )
     pipe.set_steps([conectar_api, procesar_respuesta])
     print("\n>>> Probando retry a nivel de Pipeline...\n")
-    pipe.run({})
+    try:
+        pipe.run({})
+    except Exception as e:
+        print(e)
