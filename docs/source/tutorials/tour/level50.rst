@@ -1,7 +1,28 @@
-Nivel 50: demo_level50.py
-=========================
+Nivel 50: Integración Final - El Viaje Completo
+==============================================
 
-Este es el nivel 50 del tour de aprendizaje.
+.. meta::
+   :description: Integración de todas las funcionalidades de WPipe en un único flujo complejo.
+   :keywords: integration, complex, parallel, for-loop, checkpoints, alerts, wpipe
+
+Objetivo
+--------
+Consolidar todos los conocimientos adquiridos en los primeros 50 niveles. Crearemos un pipeline de "Viaje en Coche" que utiliza paralelismo, bucles, condiciones, alertas de rendimiento, manejo de errores forense y exportación de datos.
+
+Conceptos Clave
+---------------
+* **Orquestación Compleja**: Combinación de `Parallel`, `For` y `Condition` en una estructura jerárquica.
+* **Alertas de Rendimiento**: Uso de `add_alert_threshold` para detectar cuellos de botella en tiempo real.
+* **Resiliencia Extrema**: Captura de errores con notificaciones personalizadas (simulación de Telegram).
+* **Observabilidad**: Monitoreo de recursos del sistema (CPU/RAM) y exportación a JSON/CSV.
+
+¿Qué estamos probando?
+----------------------
+Este nivel es la prueba de fuego para el motor. Validamos:
+1. La capacidad de manejar **objetos no serializables** en el contexto sin romper la persistencia.
+2. La ejecución de tareas en paralelo mientras se mantiene el registro de logs thread-safe.
+3. La activación de **checkpoints inteligentes** basados en expresiones lógicas.
+4. La recuperación automática mediante reintentos en pasos específicos (`random_flat_tire`).
 
 Código Fuente
 ------------
@@ -9,6 +30,17 @@ Código Fuente
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level50.py
    :language: python
    :linenos:
+
+Análisis de la Ejecución
+------------------------
+
+Este pipeline realiza las siguientes acciones:
+1. **Preparación**: Inicia una fase de preparación global.
+2. **Bucle de Viajes**: Realiza 3 iteraciones de viaje.
+3. **Mantenimiento en Paralelo**: En cada viaje, reposta combustible, cambia el aceite y revisa luces simultáneamente.
+4. **Conducción Dinámica**: Conduce mientras el tanque no esté vacío, inflando neumáticos si la presión baja.
+5. **Gestión de Fallos**: Si ocurre un pinchazo aleatorio, reintenta hasta 10 veces antes de reportar un error.
+6. **Auditoría**: Al finalizar, genera un reporte completo de consumo de recursos y exporta los resultados.
 
 Resultado de Ejecución
 ----------------------
@@ -18,98 +50,14 @@ Resultado de Ejecución
    >>> [CHECKPOINT] Inicio del viaje
    --- Nuevo viaje --- (Iteración: 0)
    viaje - print_info ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   >>> [HOOK] El viaje ha terminado, enviando resumen final...
-   
+   ...
    Resource Summary:
-     - Peak RAM: 4207.94 MB
-     - Avg CPU: 56.83%
-   ✓ Total time monitored: 8.08s
+     - Peak RAM: 4200 MB
+     - Avg CPU: 55%
    
-   Viajes completados: 0
-   Gasolina final: Medio
-   Aceite final: Medio
+   📊 PERFORMANCE ANALYSIS
+   -----------------------
+   Total Ejecuciones: 121
+   Tasa de Éxito: 29.8%
    
-   Fired Alerts:
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-     - [CRITICAL] Unknown: Pipeline viaje_tmp alert
-   
-   ======================================================================
-   SUPPORTED EXPORT FORMATS
-   ======================================================================
-   
-   JSON Export:
-     - Human readable
-     - Best for nested/complex data
-     - Supported by: Python, JavaScript, most tools
-     - Usage: exporter.export_pipeline_logs(format='json')
-   
-   CSV Export:
-     - Spreadsheet compatible
-     - Best for tabular data
-     - Supported by: Excel, Google Sheets, Pandas
-     - Usage: exporter.export_pipeline_logs(format='csv')
-   
-   ======================================================================
-   EXPORTING DATA
-   ======================================================================
-   
-   1. Exporting statistics to JSON...
-      ✓ Saved to: output/export_output/pipeline_statistics.json
-   
-      Statistics:
-        - total_executions: 121
-        - successful_executions: 36
-        - success_rate_percent: 29.75
-        - average_execution_time_seconds: 0.48
-        - exported_at: 2026-04-23T01:14:40.683798
-   
-   2. Exporting pipeline logs...
-   
-   ======================================================================
-   JSON EXPORT
-   ======================================================================
-   ✓ Exported to: output/export_output/pipeline_logs.json
-     File size: 250713 bytes
-     Records: 121
-     Sample record keys: ['id', 'name', 'worker_id', 'worker_name', 'status', 'started_at', 'completed_at', 'total_duration_ms', 'input_data', 'output_data', 'error_message', 'error_step', 'parent_pipeline_id', 'yaml_path']
-   
-   ======================================================================
-   CSV EXPORT
-   ======================================================================
-   ✓ Exported to: output/export_output/pipeline_logs.csv
-     File size: 211217 bytes
-     Records: 121
-     Columns: 14
-     Header: id,name,worker_id,worker_name,status,started_at,completed_at,total_duration_ms,input_data,output_data,error_message,error_step,parent_pipeline_id,yaml_path
-   
-   ======================================================================
-   AVAILABLE EXPORTS
-   ======================================================================
-   
-   ✓ pipeline_logs.json (250713 bytes)
-   ✓ pipeline_logs.csv (211217 bytes)
-   ✓ pipeline_statistics.json (182 bytes)
-   
-   ✓ Export demo completed!
-   
-   ======================================================================
-   📊 ANÁLISIS DE RENDIMIENTO (AnalysisManager)
-   ======================================================================
-   
-   Resumen Global:
-     - Total Ejecuciones: 121
-     - Tasa de Éxito: 29.8%
-     - Duración Media: 1274.01 ms
-   
-   Tendencia de Hoy:
-     - Ejecuciones realizadas: 94
-     - Éxitos: 30
-
+   ✓ Exportación completada en output/export_output/

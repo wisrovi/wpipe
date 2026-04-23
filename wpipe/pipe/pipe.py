@@ -224,8 +224,7 @@ class Pipeline(APIClient):
                 try:
                     if eval(cp["expression"], safe_globals, data):  # pylint: disable=eval-used
                         if self.verbose:
-                            print(f"
-[CHECKPOINT REACHED] {cp['name']}")
+                            print(f"\n[CHECKPOINT REACHED] {cp['name']}")
 
                         # Register event with simple retry for SQLite stability
                         max_db_tries = 3
@@ -272,8 +271,7 @@ class Pipeline(APIClient):
             return data
 
         if self.verbose:
-            print(f"
-[ERROR CAPTURE] Processing error in state '{error_info['step_name']}'...")
+            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info['step_name']}'...")
 
         for task in self._error_capture_tasks:
             try:
@@ -304,8 +302,7 @@ class Pipeline(APIClient):
             return data
 
         if self.verbose:
-            print("
-[HOOKS] Executing post-run tasks...")
+            print("\n[HOOKS] Executing post-run tasks...")
 
         for task in self._post_run_tasks:
             try:
@@ -660,10 +657,10 @@ class Pipeline(APIClient):
             timeout = getattr(decorator_meta, "timeout", None)
 
         if step_meta:
-            max_retries = step_meta.get("retry_count", max_retries) or max_retries
-            retry_delay = step_meta.get("retry_delay", retry_delay) or retry_delay
-            retry_on_exceptions = step_meta.get("retry_on_exceptions", retry_on_exceptions) or retry_on_exceptions
-            timeout = step_meta.get("timeout", timeout)
+            max_retries = getattr(step_meta, "retry_count", None) or max_retries
+            retry_delay = getattr(step_meta, "retry_delay", None) or retry_delay
+            retry_on_exceptions = getattr(step_meta, "retry_on_exceptions", None) or retry_on_exceptions
+            timeout = getattr(step_meta, "timeout", timeout)
 
         kwargs.pop("parent_step_id", None)
         kwargs.pop("parallel_group", None)
@@ -734,8 +731,7 @@ class Pipeline(APIClient):
 
         if isinstance(item, Condition):
             if self.verbose:
-                print(f"
-[CONDITION] Evaluating: {item.expression}")
+                print(f"[CONDITION] Evaluating: {item.expression}")
             data, _ = self._run_branch([item], data, **kwargs)
             return data
 
@@ -783,8 +779,7 @@ class Pipeline(APIClient):
 
         if self.verbose:
             mode = "PROCESSES" if is_multiprocess else "THREADS"
-            print(f"
-[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})")
+            print(f"[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})")
 
         try:
             current_group = f"group_{tracked_id or 'none'}"
@@ -946,8 +941,7 @@ class Pipeline(APIClient):
         if not hooks:
             return data
         if self.verbose:
-            print(f"
-[ALERTS] Firing {len(hooks)} alert hooks...")
+            print(f"[ALERTS] Firing {len(hooks)} alert hooks...")
         for hook in hooks:
             try:
                 data = self._execute_step(hook, data)
@@ -992,14 +986,13 @@ class Pipeline(APIClient):
             data.update(last["data"] or {})
             start_at_step = last["step_order"] + 1
             if self.verbose:
-                print(f"
-[CHECKPOINT] Resuming '{checkpoint_id}' from step {start_at_step}")
+                print(f"[CHECKPOINT] Resuming '{checkpoint_id}' from step {start_at_step}")
 
         metrics_collector: Optional[SystemMetricsCollector] = None
         if self.tracker:
             reg = self.tracker.register_pipeline(
                 name=self.pipeline_name,
-                steps=self.tasks_list,
+                pipeline_steps=self.tasks_list,
                 input_data=data,
                 worker_id=self.worker_id,
                 worker_name=self.worker_name,
@@ -1008,8 +1001,7 @@ class Pipeline(APIClient):
             self.pipeline_id = reg["pipeline_id"]
             self._step_order = start_at_step
             if self.verbose:
-                print(f"
-[PIPELINE STATUS] Registered: {self.pipeline_id}")
+                print(f"[PIPELINE STATUS] Registered: {self.pipeline_id}")
             for event in self._pending_events:
                 self.tracker.add_event(pipeline_id=self.pipeline_id, **event)
             self._pending_events = []
@@ -1165,7 +1157,8 @@ class Pipeline(APIClient):
 
         # Initialize context (data, tracker, metrics, start_at_step)
         initial_data = args[0].copy() if args else {}
-        checkpoint_mgr, checkpoint_id = kwargs.get("checkpoint_mgr"), kwargs.get("checkpoint_id")
+        checkpoint_mgr = kwargs.pop("checkpoint_mgr", None)
+        checkpoint_id = kwargs.pop("checkpoint_id", None)
         # Assign checkpoint_mgr and checkpoint_id to self for _finalize_pipeline_execution
         self.checkpoint_mgr = checkpoint_mgr
         self.checkpoint_id = checkpoint_id
@@ -1212,11 +1205,9 @@ class Pipeline(APIClient):
                 self._handle_alert_hooks(hooks, data)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 if self.verbose:
-                    print(f"
-[WARNING] Tracker completion failed: {e}")
+                    print(f"[WARNING] Tracker completion failed: {e}")
             if self.verbose:
-                print(f"
-[PIPELINE STATUS] {self.pipeline_id}: {'ERROR' if error_msg else 'COMPLETED'}")
+                print(f"[PIPELINE STATUS] {self.pipeline_id}: {'ERROR' if error_msg else 'COMPLETED'}")
 
     def run(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         """Execute the pipeline."""

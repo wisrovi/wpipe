@@ -185,7 +185,7 @@
 .. image:: https://img.shields.io/badge/tests-625%20passing-10b981
    :alt: Tests
 
-.. image:: https://img.shields.io/badge/LTS-2.1.0-green
+.. image:: https://img.shields.io/badge/LTS-2.1.1-green
    :alt: LTS
 
 wpipe |version| Documentation
@@ -295,7 +295,7 @@ Your First Pipeline
         </div>
         <div class="stat-box">
             <div class="value">LTS</div>
-            <div class="label">2.1.0</div>
+            <div class="label">2.1.1</div>
         </div>
     </div>
 
@@ -306,7 +306,7 @@ Your First Pipeline
 **Author**: William Steve Rodriguez Villamizar
 
 - GitHub: https://github.com/wisrovi
-- LinkedIn: https://linkedin.com/in/wisrovi-rodriguez
+- LinkedIn: https://es.linkedin.com/in/wisrovi-rodriguez
 
 If you find wpipe useful, please ⭐ star the repository on GitHub!
 

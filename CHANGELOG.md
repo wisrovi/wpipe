@@ -5,6 +5,13 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-04-23
+
+### Changed
+- **Branding & Identity**: Updated contact email to `wisrovi.rodriguez@gmail.com` and LinkedIn profile to `https://es.linkedin.com/in/wisrovi-rodriguez`.
+- **Documentation**: Refreshed `index.html` with a modern, enterprise-grade design and updated all version references to v2.1.1 LTS across the project.
+- **Consistency**: Synchronized versioning in `pyproject.toml`, `setup.py`, and Sphinx configuration.
+
 ## [2.1.0] - 2026-04-23
 
 ### Added

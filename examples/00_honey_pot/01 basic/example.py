@@ -3,9 +3,15 @@ import os
 import random
 import tempfile
 import threading
+from datetime import datetime
 from pathlib import Path
 
 import cv2
+
+start_time = datetime.now().isoformat()
+print("before the wpipe load:", start_time)
+
+
 from dto.car import Car
 from states import (
     Print_info,
@@ -154,7 +160,6 @@ def get_viaje_pipeline():
                         max_workers=3,
                         # use_processes=False  # Cambiado a False para evitar errores de pickling con objetos complejos
                     ),
-                    nested,
                     # (print_gasolina, "Mostrar gasolina", "v1.0"),
                     For(
                         validation_expression="nivel_gasolina != 'Vacío'",
@@ -322,6 +327,9 @@ def create_complex_handler():
 
 
 def main():
+    start_time = datetime.now().isoformat()
+    print("after the wpipe load:", start_time)
+
     # Usamos ResourceMonitor para medir el consumo de hardware (RAM/CPU)
     with ResourceMonitor("Viaje_Completo") as monitor:
         # Usamos TaskTimer para control de tiempos de ejecución
@@ -353,6 +361,14 @@ def main():
     print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
     print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
+
+    stop_time = datetime.now().isoformat()
+    print("when the wpipe end pipeline execution:", stop_time)
+
+    elapsed_time = datetime.now() - datetime.fromisoformat(start_time)
+    print(f"Elapsed time: {elapsed_time}")
+
+    exit()
 
     print(f"\nViajes completados: {results.get('_loop_iteration')}")
     print(f"Gasolina final: {results.get('nivel_gasolina')}")

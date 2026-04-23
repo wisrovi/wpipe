@@ -527,7 +527,7 @@ class PipelineAsync(APIClient):
             start_at_step = last["step_order"] + 1
 
         if self.tracker:
-            reg = self.tracker.register_pipeline(name=self.pipeline_name, steps=self.tasks_list, input_data=data)
+            reg = self.tracker.register_pipeline(name=self.pipeline_name, pipeline_steps=self.tasks_list, input_data=data)
             self.pipeline_id = reg["pipeline_id"]
             for event in self._pending_events:
                 self.tracker.add_event(pipeline_id=self.pipeline_id, **event)

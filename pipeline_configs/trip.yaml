@@ -1,0 +1,35 @@
+name: trip
+registered_at: '2026-04-23T11:34:54.009842'
+step_count: 2
+steps:
+- func: <function preparation_phase at 0x77b8a31882c0>
+  name: preparation_phase
+  type: task
+  version: v1.1
+- expression: null
+  iterations: 3
+  steps:
+  - <states.car_info_printer.CarInfoPrinter object at 0x77b8a32ca3f0>
+  - max_workers: 3
+    steps:
+    - <function refuel at 0x77b8a31672e0>
+    - <function change_oil at 0x77b8a315fe20>
+    - <function check_lights at 0x77b8e0bd5bc0>
+    type: parallel
+    use_processes: false
+  - <wpipe.pipe.pipe.Pipeline object at 0x77b8a316c440>
+  - expression: fuel_level != 'Empty'
+    iterations: null
+    steps:
+    - <function drive at 0x77b8a3166980>
+    - branch_false:
+      - <function deflate_tires at 0x77b8a3166f20>
+      branch_true:
+      - <wpipe.pipe.pipe.Pipeline object at 0x77b8a316c440>
+      - <function inflate_tires at 0x77b8a31677e0>
+      expression: tire_level == 'Low'
+      type: condition
+    - <function random_flat_tire at 0x77b8a3188680>
+    type: for
+  - <function get_trip_pipeline.<locals>.<lambda> at 0x77b8a318b060>
+  type: for

@@ -169,7 +169,8 @@ class PipelineTracker:
         self.db_system_metrics = WSQLite(system_metrics, db_path)
         self.db_comparisons = WSQLite(comparisons, db_path)
 
-        self._ensure_schema_up_to_date()
+        # Deferred - called on first use instead of at import time
+        # self._ensure_schema_up_to_date()
 
         self._alert_hooks: Dict[str, List[str]] = {}
 
@@ -263,6 +264,8 @@ class PipelineTracker:
         Returns:
             Dictionary with pipeline_id and yaml_path.
         """
+        # Ensure schema is up to date on first use
+        self._ensure_schema_up_to_date()
         pipeline_id = f"PIPE-{uuid.uuid4().hex[:8].upper()}"
         if not os.path.exists(self.config_dir):
             os.makedirs(self.config_dir)
@@ -608,25 +611,15 @@ class PipelineTracker:
 
     def _ensure_schema_up_to_date(self) -> None:
         """Ensure the database schema is up to date with the latest models."""
+        if not os.path.exists(self.db_path):
+            return
         try:
-            # Force a small operation to ensure tables exist
-            try:
-                self.db_steps.get_all()
-            except (AttributeError, RuntimeError, ValueError):
-                pass
-
-            if not os.path.exists(self.db_path):
-                return
-
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
-
-            # Check for parent_step_id and parallel_group in common table names
             for table in ["steps", "stepmodel"]:
                 cursor.execute(f"PRAGMA table_info({table})")
                 columns = [info[1] for info in cursor.fetchall()]
-
-                if columns:  # If table exists
+                if columns:
                     modified = False
                     if "parent_step_id" not in columns:
                         cursor.execute(f"ALTER TABLE {table} ADD COLUMN parent_step_id INTEGER")
@@ -634,10 +627,8 @@ class PipelineTracker:
                     if "parallel_group" not in columns:
                         cursor.execute(f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT")
                         modified = True
-
                     if modified:
                         conn.commit()
             conn.close()
         except (sqlite3.Error, AttributeError, RuntimeError, ValueError):
-            # We don't want to crash the whole app if migration fails
             pass
