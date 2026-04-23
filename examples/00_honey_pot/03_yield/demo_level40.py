@@ -131,6 +131,6 @@ if __name__ == "__main__":
 
     # Exporting the final report for the owner
     PipelineExporter(TRACKING_DB).export_pipeline_logs(
-        "output/owner_report.csv", format="csv"
+        "output/owner_report.csv", export_format="csv"
     )
     print("\n✅ LEARNING TOUR COMPLETED. 40 LEVELS OF WPIPE MASTERY.")

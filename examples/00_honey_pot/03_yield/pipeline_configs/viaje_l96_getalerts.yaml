@@ -1,0 +1,8 @@
+name: viaje_l96_getalerts
+registered_at: '2026-04-23T11:41:04.987887'
+step_count: 1
+steps:
+- func: <function task at 0x79f385438400>
+  name: task
+  type: task
+  version: v1.0

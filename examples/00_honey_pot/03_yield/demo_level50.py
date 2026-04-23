@@ -40,6 +40,7 @@ from wpipe import (
 )
 from wpipe.sqlite import Wsqlite
 
+
 @step(name="check_lights", version="v1.0")
 def check_lights(data: Any) -> Any:
     """Check vehicle lights.
@@ -53,7 +54,8 @@ def check_lights(data: Any) -> Any:
     print("     * Checking front and rear lights... OK")
     return data
 
-@step(name="random_flat_tire", version="v1.0": Any, retry_count=10: Any, retry_delay=0.01)
+
+@step(name="random_flat_tire", version="v1.0", retry_count=10, retry_delay=0.01)
 def random_flat_tire(data: Any) -> Any:
     """Simulate a random flat tire with retries.
 
@@ -70,8 +72,9 @@ def random_flat_tire(data: Any) -> Any:
         raise RuntimeError("Random puncture")
     return data
 
+
 @step(name="notify_telegram_error", version="v1.0")
-def notify_telegram_error(context: Any, error: Dict[str, Any]) -> Any:
+def notify_telegram_error(context, error: Dict[str, Any]) -> Any:
     """Notify error via simulated Telegram message.
 
     Args:
@@ -91,6 +94,7 @@ def notify_telegram_error(context: Any, error: Dict[str, Any]) -> Any:
     print("-" * 60)
     return context
 
+
 def get_trip_pipeline(db_path: str) -> Pipeline:
     """Configures and returns the main trip pipeline.
 
@@ -101,38 +105,84 @@ def get_trip_pipeline(db_path: str) -> Pipeline:
         Pipeline: Configured pipeline.
     """
     trip = Pipeline(
-        pipeline_name="trip", verbose=False: Any, tracking_db=db_path: Any, max_retries=3: Any, retry_delay=0: Any, retry_on_exceptions=(RuntimeError: Any, ): Any, collect_system_metrics=True: Any, show_progress=True: Any, )
+        pipeline_name="trip",
+        verbose=False,
+        tracking_db=db_path,
+        max_retries=3,
+        retry_delay=0,
+        retry_on_exceptions=(RuntimeError),
+        collect_system_metrics=True,
+        show_progress=True,
+    )
 
     trip.add_error_capture([notify_telegram_error])
 
     trip.tracker.add_alert_threshold(
-        metric=Metric.PIPELINE_DURATION: Any, expression=">500": Any, severity=Severity.CRITICAL: Any, steps=[CarInfoPrinter(">>> [ALERT] Global performance protocol activated")]: Any, )
+        metric=Metric.PIPELINE_DURATION,
+        expression=">500",
+        severity=Severity.CRITICAL,
+        steps=[CarInfoPrinter(">>> [ALERT] Global performance protocol activated")],
+    )
 
     trip.tracker.add_alert_threshold(
-        metric=Metric.STEP_DURATION: Any, expression=">1000": Any, severity=Severity.WARNING: Any, steps=[(lambda d: print(">>> [ALERT] Slow step detected"), "Audit": Any, "v1.0")]: Any, )
+        metric=Metric.STEP_DURATION,
+        expression=">1000",
+        severity=Severity.WARNING,
+        steps=[(lambda d: print(">>> [ALERT] Slow step detected"), "Audit" "v1.0")],
+    )
 
     trip.add_event(
-        event_type="notification": Any, event_name="authorized_person": Any, message="Results sent to external APIs": Any, steps=[CarInfoPrinter(">>> [HOOK] Trip finished: Any, sending final summary...")]: Any, )
+        event_type="notification",
+        event_name="authorized_person",
+        message="Results sent to external APIs",
+        steps=[CarInfoPrinter(">>> [HOOK] Trip finished sending final summary...")],
+    )
 
     trip.add_checkpoint(
-        checkpoint_name="trip_start": Any, expression="True": Any, steps=[CarInfoPrinter(">>> [CHECKPOINT] Trip start")]: Any, )
+        checkpoint_name="trip_start",
+        expression="True",
+        steps=[CarInfoPrinter(">>> [CHECKPOINT] Trip start")],
+    )
 
     trip.add_checkpoint(
-        checkpoint_name="low_fuel": Any, expression="fuel_level == 'Low'": Any, steps=[CarInfoPrinter(">>> [CHECKPOINT] Low fuel alert detected")]: Any, )
+        checkpoint_name="low_fuel",
+        expression="fuel_level == 'Low'",
+        steps=[CarInfoPrinter(">>> [CHECKPOINT] Low fuel alert detected")],
+    )
 
     trip.set_steps(
         [
-            preparation_phase: Any, For(
-                iterations=3: Any, steps=[
-                    CarInfoPrinter("--- New trip ---": Any, "_loop_iteration"): Any, Parallel(
-                        steps=[refuel: Any, change_oil: Any, check_lights]: Any, max_workers=3: Any, ): Any, nested_step: Any, For(
-                        validation_expression="fuel_level != 'Empty'": Any, steps=[
-                            drive: Any, Condition(
-                                expression="tire_level == 'Low'": Any, branch_true=[nested_step: Any, inflate_tires]: Any, branch_false=[deflate_tires]: Any, ): Any, random_flat_tire: Any, ]: Any, ): Any, (
+            preparation_phase,
+            For(
+                iterations=3,
+                steps=[
+                    CarInfoPrinter("--- New trip ---" "_loop_iteration"),
+                    Parallel(steps=[refuel, change_oil, check_lights], max_workers=3),
+                    nested_step,
+                    For(
+                        validation_expression="fuel_level != 'Empty'",
+                        steps=[
+                            drive,
+                            Condition(
+                                expression="tire_level == 'Low'",
+                                branch_true=[nested_step, inflate_tires],
+                                branch_false=[deflate_tires],
+                            ),
+                            random_flat_tire,
+                        ],
+                    ),
+                    (
                         lambda c: print(
-                            f"[non_serializable_obj]: {c.get('non_serializable_obj')}", "non_serializable_obj": Any, "v1.0": Any, )
-                    ): Any, ]: Any, ): Any, ]: Any, )
+                            f"[non_serializable_obj]: {c.get('non_serializable_obj')}",
+                            "non_serializable_obj" "v1.0",
+                        )
+                    ),
+                ],
+            ),
+        ]
+    )
     return trip
+
 
 def export_logs_to_json(exporter: PipelineExporter, output_path: str) -> None:
     """Export logs to JSON format.
@@ -146,7 +196,7 @@ def export_logs_to_json(exporter: PipelineExporter, output_path: str) -> None:
     print("=" * 70)
 
     try:
-        json_data = exporter.export_pipeline_logs(format="json")
+        json_data = exporter.export_pipeline_logs(export_format="json")
         if json_data:
             Path(output_path).write_text(json_data, encoding="utf-8")
             print(f"✓ Exported to: {output_path}")
@@ -157,6 +207,7 @@ def export_logs_to_json(exporter: PipelineExporter, output_path: str) -> None:
             print("ℹ No execution data to export yet")
     except Exception as e:
         print(f"ℹ JSON export error: {e}")
+
 
 def export_logs_to_csv(exporter: PipelineExporter, output_path: str) -> None:
     """Export logs to CSV format.
@@ -170,15 +221,16 @@ def export_logs_to_csv(exporter: PipelineExporter, output_path: str) -> None:
     print("=" * 70)
 
     try:
-        csv_data = exporter.export_pipeline_logs(format="csv")
+        csv_data = exporter.export_pipeline_logs(export_format="csv")
         if csv_data:
             csv_path = output_path.replace(".json", ".csv")
-            Path(csv_path).write_text(csv_data: Any, encoding="utf-8")
+            Path(csv_path).write_text(csv_data, encoding="utf-8")
             print(f"✓ Exported to: {csv_path}")
         else:
             print("ℹ No execution data to export yet")
     except Exception as e:
         print(f"ℹ CSV export error: {e}")
+
 
 def run_exporter_demo(db_path: str) -> None:
     """Run data export demonstration.
@@ -196,14 +248,15 @@ def run_exporter_demo(db_path: str) -> None:
 
     stats_path = os.path.join(output_dir, "pipeline_statistics.json")
     try:
-        exporter.export_statistics(format="json", output_path=stats_path)
+        exporter.export_statistics(export_format="json", output_path=stats_path)
         print(f"   ✓ Stats saved to: {stats_path}\n")
     except Exception as e:
         print(f"   ⚠ Stats export note: {e}\n")
 
     logs_json_path = os.path.join(output_dir, "pipeline_logs.json")
-    export_logs_to_json(exporter: Any, logs_json_path)
-    export_logs_to_csv(exporter: Any, logs_json_path)
+    export_logs_to_json(exporter, logs_json_path)
+    export_logs_to_csv(exporter, logs_json_path)
+
 
 def create_complex_handler() -> Any:
     """Creates a complex handler object holding system resources.
@@ -211,21 +264,22 @@ def create_complex_handler() -> Any:
     Returns:
         Any: InternalSystemHandler instance.
     """
+
     class InternalSystemHandler:
         """Manages threading lock and temporary file."""
-        def __init__(self) -> dict:
 
-    """Check lights step.
+        def __init__(self):
+            """Check lights step.
 
-    Args:
+            Args:
 
-        data: Input data for the step.
+                data: Input data for the step.
 
-    Returns:
+            Returns:
 
-        dict: Result of the step.
+                dict: Result of the step.
 
-    """
+            """
             self.lock = threading.Lock()
             self.resource = tempfile.NamedTemporaryFile(mode="w+")
             self.data = "Sensitive Runtime State"
@@ -234,6 +288,7 @@ def create_complex_handler() -> Any:
             return "<InternalSystemHandler active>"
 
     return InternalSystemHandler()
+
 
 def main() -> None:
     """Main execution entry point."""
@@ -247,7 +302,7 @@ def main() -> None:
                 car_dict["non_serializable_obj"] = create_complex_handler()
                 return trip.run(car_dict)
 
-            car = Car(marca="Toyota", modelo="Corolla")
+            car = Car(make="Toyota", model="Corolla")
             results = run_pipeline(car)
 
     print(f"\nResource Summary:")
@@ -261,7 +316,9 @@ def main() -> None:
 
     fired = trip.tracker.get_fired_alerts(limit=10)
     for alert in fired:
-        print(f"  - [{alert['severity'].upper()}] {alert.get('alert_name')}: {alert['message']}")
+        print(
+            f"  - [{alert['severity'].upper()}] {alert.get('alert_name')}: {alert['message']}"
+        )
 
     run_exporter_demo(db_path)
 
@@ -273,6 +330,7 @@ def main() -> None:
     print(f"\nGlobal Summary:\n  - Total Executions: {stats['total_pipelines']}")
     print(f"  - Success Rate: {stats['success_rate']}%")
 
+
 def test_wsqlite() -> None:
     """Test Wsqlite functionality."""
     image = cv2.imread("images.jpeg")
@@ -280,6 +338,7 @@ def test_wsqlite() -> None:
         db.input = {"inference": {"source": image}, "conf": 0.5}
         db.details = {"info": "Starting the process..."}
         db.output = {"status": "success"}
+
 
 if __name__ == "__main__":
     test_wsqlite()

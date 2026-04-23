@@ -12,9 +12,9 @@ import time
 
 from wpipe import Pipeline, ResourceMonitor, step
 
+
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -29,23 +29,12 @@ def task(data: dict) -> None:
     time.sleep(0.02)
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Múltiples ejecuciones...")
 
     with ResourceMonitor("Viaje_L88") as monitor:
-        for i in range(3) -> dict:
-
-    """Task step.
-
-    Args:
-
-        data: Input data for the step.
-
-    Returns:
-
-        dict: Result of the step.
-
-    """
+        for i in range(3):
             pipe = Pipeline(pipeline_name=f"Viaje_L88_{i}", verbose=False)
             pipe.set_steps([task])
             pipe.run({})

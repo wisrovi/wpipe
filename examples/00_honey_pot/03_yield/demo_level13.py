@@ -27,22 +27,7 @@ def deep_analysis(data: Any) -> Dict[str, str]:
         Dict[str, str]: Depth map status.
     """
     # Simulate real CPU load of a neural network model
-    start = time.time()
-    while time.time() - start < 0.2:
-        pass
-    print(f"🧠 AI Engine (PID {os.getpid()}) -> None:
-
-    """Deep analysis step.
-
-    Args:
-
-        data: Input data for the step.
-
-    Returns:
-
-        None: Result of the step.
-
-    """ Depth map generated.")
+    time.sleep(0.2)
     return {"map": "complete"}
 
 if __name__ == "__main__":

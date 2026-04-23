@@ -1,0 +1,8 @@
+name: adas_system_l26
+registered_at: '2026-04-23T10:21:17.984063'
+step_count: 1
+steps:
+- func: <function active_navigation at 0x73662603cb80>
+  name: active_navigation
+  type: task
+  version: v1.0

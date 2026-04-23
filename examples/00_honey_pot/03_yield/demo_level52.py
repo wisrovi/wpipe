@@ -153,8 +153,8 @@ async def main():
             async def run_pipeline(car_dict):
                 return await trip.run(car_dict)
 
-            car = Car(marca="Toyota", modelo="Corolla")
-            print(f"Carro inicial: {car.nivel_gasolina}\n")
+            car = Car(make="Toyota", model="Corolla")
+            print(f"Carro inicial: {car.fuel_level}\n")
             results = await run_pipeline(car)
 
     # Resumen de recursos al terminar

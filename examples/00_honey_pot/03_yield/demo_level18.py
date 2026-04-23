@@ -42,5 +42,5 @@ if __name__ == "__main__":
     # NEW IN L18: Exporting the trip to a human-readable format
     print("\n>>> Generating CSV report for the insurance company...")
     exporter = PipelineExporter(db_path)
-    exporter.export_pipeline_logs("output/trip_report.csv", format="csv")
+    exporter.export_pipeline_logs("output/trip_report.csv", export_format="csv")
     print("✅ Report saved in output/trip_report.csv")

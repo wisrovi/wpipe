@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     print("\n📤 Exportando a CSV...")
     exporter = PipelineExporter("output/export_csv.db")
-    csv_data = exporter.export_pipeline_logs(format="csv")
+    csv_data = exporter.export_pipeline_logs(export_format="csv")
 
     if csv_data:
         Path("output/viaje82.csv").write_text(csv_data)

@@ -1,0 +1,8 @@
+name: travel_log_l28
+registered_at: '2026-04-23T10:21:18.980420'
+step_count: 1
+steps:
+- func: <function cross_border at 0x790482638c20>
+  name: cross_border
+  type: task
+  version: v1.0

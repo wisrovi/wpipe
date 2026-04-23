@@ -55,4 +55,8 @@ if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l59_retrydelay", verbose=True)
     pipe.set_steps([conectar_servidor, descargar_datos])
     print("\n>>> Probando retry con delay...\n")
-    pipe.run({})
+    
+    try:
+        pipe.run({})
+    except ConnectionError as e:
+        print(e)

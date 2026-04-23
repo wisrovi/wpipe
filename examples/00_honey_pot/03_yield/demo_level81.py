@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     print("\n📤 Exportando a JSON...")
     exporter = PipelineExporter("output/export_test.db")
-    json_data = exporter.export_pipeline_logs(format="json")
+    json_data = exporter.export_pipeline_logs(export_format="json")
 
     if json_data:
         Path("output/viaje81.json").write_text(json_data)

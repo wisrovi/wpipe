@@ -2,12 +2,15 @@ import os
 from datetime import datetime
 
 from dto.car import Car
-from demo_level50 import get_viaje_pipeline
+from demo_level50 import get_trip_pipeline
 
 from wpipe import CheckpointManager
 
 # 1. Configuración de fiabilidad
-trip = get_viaje_pipeline()
+db_path = "output/wpipe_dashboard.db"
+
+trip = get_trip_pipeline(db_path)
+
 trip.verbose = True
 chk = CheckpointManager("checkpoints.db")
 
@@ -19,7 +22,7 @@ print(f"🚀 PIPELINE RESUMIBLE: {ID_VIAJE}")
 print("="*60 + "\n")
 
 # 2. Datos iniciales
-car = Car(marca="Toyota", modelo="Corolla").__dict__
+car = Car(make="Toyota", model="Corolla").__dict__
 
 try:
     if not chk.can_resume(ID_VIAJE):

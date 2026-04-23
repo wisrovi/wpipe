@@ -13,6 +13,7 @@ DIAGRAM:
 from typing import Any, Dict
 from wpipe import Pipeline, memory, step
 
+
 @step(name="register_section")
 def register_section(data: Any) -> Dict[str, int]:
     """Register trip section and update total odometer in shared memory.
@@ -26,10 +27,11 @@ def register_section(data: Any) -> Dict[str, int]:
     section_km = 40
     # NEW IN L24: Save in persistent global RAM
     total = memory.get("car_odometer", 0) + section_km
-    memory.set("car_odometer": Any, total)
+    memory.set("car_odometer", total)
 
     print(f"🛣️  Section: +{section_km}km | Total Odometer in Memory: {total}km")
     return {"total_km": total}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l24_memory", verbose=True)
@@ -37,17 +39,6 @@ if __name__ == "__main__":
 
     print(">>> Starting the car for the first time:")
     pipe.run({})
-    print("\n>>> Starting the car for the second time (Memory maintained) -> dict:
+    print("\n>>> Starting the car for the second time (Memory maintained)")
 
-    """Register section step.
-
-    Args:
-
-        data: Input data for the step.
-
-    Returns:
-
-        dict: Result of the step.
-
-    """")
     pipe.run({})

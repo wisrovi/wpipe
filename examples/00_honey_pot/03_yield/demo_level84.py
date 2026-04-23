@@ -59,17 +59,17 @@ if __name__ == "__main__":
     print("\n📤 Exportando en múltiples formatos...")
     exporter = PipelineExporter(db)
 
-    json_data = exporter.export_pipeline_logs(format="json")
+    json_data = exporter.export_pipeline_logs(export_format="json")
     if json_data:
         Path("output/viaje84.json").write_text(json_data)
         print("✅ JSON exportado")
 
-    csv_data = exporter.export_pipeline_logs(format="csv")
+    csv_data = exporter.export_pipeline_logs(export_format="csv")
     if csv_data:
         Path("output/viaje84.csv").write_text(csv_data)
         print("✅ CSV exportado")
 
-    stats = exporter.export_statistics(format="json")
+    stats = exporter.export_statistics(export_format="json")
     if stats:
         Path("output/viaje84_stats.json").write_text(stats)
         print("✅ Statistics exportado")

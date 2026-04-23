@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     print("\n📊 Exportando estadísticas...")
     exporter = PipelineExporter("output/export_stats.db")
-    stats = exporter.export_statistics(format="json")
+    stats = exporter.export_statistics(export_format="json")
 
     if stats:
         Path("output/viaje83_stats.json").write_text(stats)

@@ -48,19 +48,7 @@ def lento(data: dict) -> None:
 if __name__ == "__main__":
     print(">>> Pasos más lentos...")
 
-    for i in range(3) -> dict:
-
-    """Rapido step.
-
-    Args:
-
-        data: Input data for the step.
-
-    Returns:
-
-        dict: Result of the step.
-
-    """
+    for i in range(3):
         pipe = Pipeline(
             pipeline_name=f"Viaje_L102_{i}",
             verbose=False,

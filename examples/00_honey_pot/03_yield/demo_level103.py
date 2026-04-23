@@ -12,9 +12,9 @@ import time
 
 from wpipe import Pipeline, step
 
+
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -28,22 +28,11 @@ def task(data: dict) -> None:
     """
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Tendencia de datos...")
 
-    for i in range(2) -> dict:
-
-    """Task step.
-
-    Args:
-
-        data: Input data for the step.
-
-    Returns:
-
-        dict: Result of the step.
-
-    """
+    for i in range(2):
         pipe = Pipeline(
             pipeline_name=f"Viaje_103_{i}",
             verbose=False,
