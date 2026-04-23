@@ -5,6 +5,12 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.3] - 2026-04-23
+
+### Fixed
+- **Precisión de Traceback**: El reporte de errores ahora identifica correctamente el frame del código del usuario, ignorando frames de librerías externas (como numpy) para facilitar la depuración.
+- **Nombres de Pasos**: Se ha mejorado la identificación del nombre del paso fallido, evitando el nombre genérico "task" y priorizando metadatos del decorador.
+
 ## [2.1.2] - 2026-04-23
 
 ### Fixed
