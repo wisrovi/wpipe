@@ -15,8 +15,9 @@ from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+
 # NEW IN L22: Retries up to 10 times before giving up
-@step(name="connect_gps", retry_count=10, retry_delay=0.5)
+@step(name="connect_gps", retry_count=2, retry_delay=0.5)
 def connect_gps(data: Any) -> Dict[str, float]:
     """Connect to GPS step with retries.
 
@@ -36,6 +37,7 @@ def connect_gps(data: Any) -> Dict[str, float]:
     print("🛰️ GPS: Position fixed successfully!")
     return {"lat": 40.41, "lon": -3.70}
 
+
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l22_gps_recovery", verbose=True)
     pipe.set_steps([connect_gps])
@@ -43,4 +45,9 @@ if __name__ == "__main__":
     print(
         ">>> Starting navigation: The system will recover on its own from signal losses."
     )
-    pipe.run({})
+    try:
+        pipe.run({})
+    except ConnectionError as e:
+        print("ConnectionError", e)
+    except Exception as e:
+        print("Exception", e)
