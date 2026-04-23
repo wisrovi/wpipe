@@ -32,7 +32,7 @@ def test_dashboard_api(client):
     assert res_alerts.status_code == 200
 
 def test_resource_monitor():
-    monitor = ResourceMonitor()
+    monitor = ResourceMonitor(task_name="test_task")
 
     
     # Test single reading

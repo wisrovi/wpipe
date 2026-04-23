@@ -1,403 +1,127 @@
-Architecture
-============
+System Architecture: The WPipe Engine
+========================================
 
-This section describes the architecture of wpipe, designed for building sequential data processing pipelines with task orchestration, API integration, and execution tracking.
+.. meta::
+   :description: Architectural deep dive into wpipe v2.1.1-LTS. Learn about the Warehouse model, WSQLite persistence, and parallel execution.
+   :keywords: architecture, design, internal, data flow, persistence, parallel
 
-1. System Overview
------------------
+This document details the internal design and engineering philosophy behind **wpipe v2.1.1-LTS**. Our goal is to provide a zero-boilerplate orchestration engine that remains robust under industrial loads.
 
-wpipe follows a layered architecture that separates concerns between pipeline orchestration, external communication, and data persistence.
+.. raw:: html
 
-1.1 High-Level Components
-~~~~~~~~~~~~~~~~~~~~~~~~
+    <div style="background: rgba(0, 242, 254, 0.05); padding: 30px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2); margin-bottom: 40px;">
+        <h3 style="color: #00f2fe; margin-top: 0;">Philosophy: "Code is the Config"</h3>
+        <p style="color: #94a3b8; margin-bottom: 0;">
+            Unlike XML or YAML-heavy orchestrators, WPipe treats your Python code as the source of truth. 
+            We provide a thin but powerful layer of resiliency and observability over pure logic.
+        </p>
+    </div>
 
-::
+1. The "Warehouse" Model
+-----------------------
 
-    +------------------+     +------------------+     +------------------+
-    |                  |     |                  |     |                  |
-    |  Pipeline Layer  |<--->|   API Layer      |<--->|  External API    |
-    |                  |     |                  |     |                  |
-    +------------------+     +------------------+     +------------------+
-            |                        |
-            |                        v
-            v                +------------------+
-    +------------------+     |                  |
-    |                  |     |   SQLite Layer   |
-    |  Progress Layer  |     |                  |
-    |                  |     +------------------+
-    +------------------+
+The core mental model of WPipe is the **Warehouse**. 
 
-1.2 Component Responsibilities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*   **Accumulation**: Instead of steps passing specific arguments to each other, every step updates a global "Warehouse" dictionary.
+*   **Context Awareness**: Every task has visibility into all previous results, allowing for complex decision-making without complex parameter passing.
+*   **Atomic Updates**: WPipe ensures that context updates are merged safely, even in high-concurrency scenarios.
 
-**Pipeline Layer**
+.. image:: https://raw.githubusercontent.com/wisrovi/wpipe/main/images.jpeg
+   :width: 600
+   :align: center
+   :alt: WPipe Architecture Diagram
 
-- Orchestrates step execution in sequence
-- Manages data flow between steps
-- Handles error propagation
-- Supports nested pipelines
+2. Core Internal Layers
+-----------------------
 
-**API Layer**
+WPipe is structured into four specialized layers:
 
-- Worker registration with external services
-- Health check monitoring
-- Task status reporting
-- Process tracking
+.. grid:: 1 1 2 2
+    :gutter: 3
 
-**SQLite Layer**
+    .. grid-item-card:: 🧠 Orchestration Layer
+        :padding: 2
 
-- Persistent storage of execution results
-- Input/output tracking
-- Execution metadata storage
+        The `Pipeline` and `PipelineAsync` engines. They manage the DAG execution, handle step registration, and coordinate the flow between components.
 
-**Progress Layer**
+    .. grid-item-card:: 💾 Persistence Layer (WSQLite)
+        :padding: 2
 
-- Visual progress tracking in terminal
-- Step status indicators
-- Rich console output
+        A unified abstraction over SQLite that forces **WAL (Write-Ahead Logging)** mode. This ensures that tracking logs and metrics never block your primary data tasks.
 
-2. Core Components
------------------
+    .. grid-item-card:: 📊 Observability Layer
+        :padding: 2
 
-2.1 Pipeline
-~~~~~~~~~~~~
+        Includes the `ResourceMonitor` (CPU/RAM tracking) and the `PipelineTracker`. It captures performance data and forensic error details.
 
-The Pipeline class is the main entry point for creating and executing pipelines.
+    .. grid-item-card:: 🌐 Integration Layer
+        :padding: 2
 
-::
+        The `APIClient` and `Dashboard`. It allows pipelines to communicate with central command centers and provides real-time visual feedback.
 
-    Pipeline
-    ├── Steps (functions or classes)
-    ├── API Client (optional)
-    ├── Progress Manager
-    ├── Logger
-    └── Configuration
+3. Persistence Strategy: WSQLite
+-------------------------------
 
-**Key Responsibilities:**
+One of the most critical components of v2.1.1-LTS is the **WSQLite unification**. 
 
-- Initialize and configure pipeline
-- Register steps with metadata
-- Execute steps in sequence
-- Manage data flow between steps
-- Handle errors and retries
-- Report progress
+*   **Zero Raw SQL**: All internal tracking (logs, steps, metrics) is handled through Pydantic-mapped models.
+*   **Thread Safety**: Connection pooling and locking mechanisms are built-in to prevent `Database is locked` errors during parallel execution.
+*   **WAL Mode**: Mandatory Write-Ahead Logging allows simultaneous reads (Dashboard) and writes (Pipeline) with zero latency.
 
-**Class Definition:**
+4. Resiliency & Reliability
+---------------------------
 
-.. code-block:: python
+WPipe is "Resilient by Design". This is achieved through two main features:
 
-    class Pipeline:
-        def __init__(
-            self,
-            verbose: bool = False,
-            api_config: Optional[dict] = None,
-            log_level: str = "INFO"
-        ):
-            ...
+4.1 Smart Checkpointing
+~~~~~~~~~~~~~~~~~~~~~~~
+Checkpoints are not just periodic saves. They are **logic-gated milestones**. You can define a checkpoint that only triggers if a specific data validation passes, ensuring you never save a "corrupt" state.
 
-2.2 Step Functions
-~~~~~~~~~~~~~~~~~
+4.2 Forensic Error Capture
+~~~~~~~~~~~~~~~~~~~~~~~~~
+When a step fails, the `LogGestor` captures:
+*   The exact state of the Warehouse.
+*   The file path and line number of the exception.
+*   The system metrics (RAM/CPU) at the moment of failure.
 
-Steps are the atomic units of work in a pipeline.
-
-**Function Signature:**
-
-.. code-block:: python
-
-    def step_function(data: dict) -> dict:
-        # Process data
-        return {"key": value}
-
-**Class Steps:**
-
-.. code-block:: python
-
-    class MyStep:
-        def __init__(self, param):
-            self.param = param
-
-        def __call__(self, data: dict) -> dict:
-            return {"result": data["value"] * self.param}
-
-2.3 API Client
-~~~~~~~~~~~~~~
-
-The APIClient handles communication with external APIs.
-
-**Responsibilities:**
-
-- Register workers with the API
-- Perform health checks
-- Report task status
-- Track process execution
-
-**Configuration:**
-
-.. code-block:: python
-
-    api_config = {
-        "base_url": "https://api.example.com",
-        "token": "your-auth-token",
-        "timeout": 30
-    }
-
-2.4 SQLite Integration
-~~~~~~~~~~~~~~~~~~~~~
-
-Wsqlite provides persistent storage for pipeline execution.
-
-**Usage Pattern:**
-
-.. code-block:: python
-
-    from wpipe.sqlite import Wsqlite
-
-    with Wsqlite(db_name="results.db") as db:
-        db.input = {"key": "value"}
-        result = pipeline.run({"key": "value"})
-        db.output = result
-
-3. Module Structure
-------------------
-
-::
-
-    wpipe/
-    ├── __init__.py           # Package initialization
-    ├── pipe/                 # Pipeline implementation
-    │   ├── __init__.py
-    │   ├── pipe.py          # Main Pipeline class
-    │   ├── progress.py       # Progress tracking
-    │   └── step.py          # Step utilities
-    ├── api_client/          # API communication
-    │   ├── __init__.py
-    │   ├── client.py        # APIClient class
-    │   └── endpoints.py     # API endpoints
-    ├── sqlite/              # Database operations
-    │   ├── __init__.py
-    │   └── sqlite.py        # Wsqlite class
-    ├── log/                 # Logging utilities
-    │   ├── __init__.py
-    │   └── logger.py        # Logger setup
-    ├── ram/                 # Memory utilities
-    │   ├── __init__.py
-    │   └── ram.py           # RAM operations
-    ├── util/                # YAML utilities
-    │   ├── __init__.py
-    │   └── yaml_util.py     # YAML loading
-    └── exception/           # Custom exceptions
-        ├── __init__.py
-        ├── exception.py     # Exception classes
-        └── codes.py          # Error codes
-
-4. Design Patterns
------------------
-
-4.1 Pipeline Pattern
-~~~~~~~~~~~~~~~~~~~
-
-Each step receives accumulated results from previous steps:
-
-::
-
-    Input -> Step1 -> {data + result1} -> Step2 -> {data + result1 + result2} -> Output
-
-4.2 Builder Pattern
-~~~~~~~~~~~~~~~~~~~
-
-Pipeline configuration uses a fluent interface:
-
-.. code-block:: python
-
-    pipeline = (
-        Pipeline()
-        .set_verbose(True)
-        .set_api_config(api_config)
-        .set_steps([...])
-        .run(data)
-    )
-
-4.3 Context Manager Pattern
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-SQLite operations use context managers:
-
-.. code-block:: python
-
-    with Wsqlite(db_name="results.db") as db:
-        db.input = data
-        result = pipeline.run(data)
-        db.output = result
-
-4.4 Strategy Pattern
-~~~~~~~~~~~~~~~~~~~~
-
-Different step types (functions, classes) are handled uniformly:
-
-.. code-block:: python
-
-    def execute_step(step, data):
-        if callable(step):
-            return step(data)
-        return data
-
-5. Data Flow
------------
-
-5.1 Pipeline Execution Flow
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-    +-------------------------------------------------------------+
-    |  Pipeline.run(initial_data)                                 |
-    +-------------------------------------------------------------+
-                              |
-                              v
-    +-------------------------------------------------------------+
-    |  For each step in pipeline:                                  |
-    |    1. Call step(data)                                       |
-    |    2. Merge result into data                                |
-    |    3. Update progress                                       |
-    |    4. Check for errors                                      |
-    +-------------------------------------------------------------+
-                              |
-                              v
-    +-------------------------------------------------------------+
-    |  Return accumulated data                                    |
-    +-------------------------------------------------------------+
-
-5.2 Data Accumulation
-~~~~~~~~~~~~~~~~~~~~~
-
-Each step receives all previous results:
-
-.. code-block:: python
-
-    # Step 1: returns {"step1_result": 10}
-    # Step 2: receives {"step1_result": 10}, returns {"step2_result": 20}
-    # Step 3: receives {"step1_result": 10, "step2_result": 20}
-
-5.3 Error Propagation
-~~~~~~~~~~~~~~~~~~~~~
-
-Errors are caught and wrapped in TaskError:
-
-.. code-block:: python
-
-    try:
-        result = pipeline.run(data)
-    except TaskError as e:
-        print(f"Pipeline failed at step {e.step_name}: {e.original_error}")
-
-6. Concurrency Model
+5. Concurrency Model
 --------------------
 
-6.1 Sequential Execution
-~~~~~~~~~~~~~~~~~~~~~~~
+WPipe provides a dual-executor model to bypass the limitations of Python:
 
-By default, pipeline steps execute sequentially:
+.. list-table::
+   :widths: 20 40 40
+   :header-rows: 1
 
-::
+   * - Executor
+     - Backend
+     - Best for
+   * - **IO-Bound**
+     - `ThreadPoolExecutor`
+     - API calls, DB queries, Web scraping.
+   * - **CPU-Bound**
+     - `ProcessPoolExecutor`
+     - Image processing, AI inference, Heavy math.
+   * - **Async**
+     - `asyncio` loop
+     - High-concurrency network tasks.
 
-    Step 1 -> Step 2 -> Step 3 -> Step 4
-       │         │         │         │
-       v         v         v         v
-    Complete   Wait     Wait     Wait
+6. Module Hierarchy
+-------------------
 
-6.2 Retry Mechanism
-~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
 
-Failed steps can be automatically retried:
+    wpipe/
+    ├── pipe/               # Core Engine (Sync/Async/DAG)
+    ├── parallel/           # Concurrency Executors
+    ├── sqlite/             # WSQLite Unification
+    ├── tracking/           # Metrics & Alerts
+    ├── resource_monitor/   # CPU/RAM Probing
+    ├── checkpoint/         # Resiliency Logic
+    └── dashboard/          # Visual Intelligence
 
-.. code-block:: python
+Next Steps
+----------
 
-    @retry(max_attempts=3, delay=1.0, backoff=2.0)
-    def unreliable_step(data):
-        # May fail occasionally
-        ...
-
-7. Extension Points
-------------------
-
-7.1 Custom Step Decorators
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create custom step decorators:
-
-.. code-block:: python
-
-    def validate_output(func):
-        def wrapper(data):
-            result = func(data)
-            if not validate(result):
-                raise ValueError("Invalid output")
-            return result
-        return wrapper
-
-7.2 Custom Exceptions
-~~~~~~~~~~~~~~~~~~~~~
-
-Extend the exception hierarchy:
-
-.. code-block:: python
-
-    class PipelineWarning(UserWarning):
-        pass
-
-8. Configuration
----------------
-
-8.1 Environment Variables
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- ``WPIPE_LOG_LEVEL``: Set logging level
-- ``WPIPE_DB_PATH``: Default SQLite database path
-- ``WPIPE_API_TIMEOUT``: Default API timeout
-
-8.2 YAML Configuration
-~~~~~~~~~~~~~~~~~~~~~~
-
-Load configuration from YAML:
-
-.. code-block:: yaml
-
-    # config.yaml
-    pipeline:
-      verbose: true
-      log_level: DEBUG
-
-    api:
-      base_url: https://api.example.com
-      token: ${API_TOKEN}
-
-9. Performance Considerations
------------------------------
-
-9.1 Memory Management
-~~~~~~~~~~~~~~~~~~~~
-
-- Data accumulates between steps
-- Use ``ram`` module to monitor memory
-- Clear intermediate results when not needed
-
-9.2 Large Data Sets
-~~~~~~~~~~~~~~~~
-
-For large data processing:
-
-.. code-block:: python
-
-    # Process in chunks
-    def chunk_processor(data):
-        for chunk in chunked(data, size=1000):
-            yield process_chunk(chunk)
-
-9.3 Timeout Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Set timeouts to prevent hanging:
-
-.. code-block:: python
-
-    pipeline = Pipeline(timeout=300)  # 5 minute timeout
+*   See :doc:`best_practices` to implement this architecture correctly.
+*   Explore :doc:`api_reference` for the technical specifications of each module.

@@ -1,8 +1,8 @@
-# 🚀 WPipe v1.6.15
+# 🚀 WPipe v2.1.1
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 
-WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar.
+WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye ahora un **Tour de Aprendizaje con 130 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
 
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
@@ -421,12 +421,59 @@ exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 
 | Aspecto | Detalle |
 |--------|---------|
-| **LTS** | WPipe v1.6+ cuenta con soporte a largo plazo |
+| **LTS** | WPipe v2.1+ cuenta con soporte a largo plazo |
 | **Test Coverage** | 95%+ pruebas en entornos síncronos y asíncronos |
 | **Arquitectura** | Unificación bajo `wsqlite`, sin SQL crudo en el núcleo |
 | **Python** | Compatible con Python 3.9+ |
 
 ---
+
+## DASHBOARD
+
+### Tutorial
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/ebc5159c-a159-430b-9722-a4b57f4a3742" />
+
+### Principal menus
+
+#### Timeline:
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/a21f43fc-4c91-4d3e-a34c-99bf8b9b28d6" />
+
+#### Analitics:
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/69624571-6872-492e-b56a-e32f41a9abd4" />
+
+#### Alerts:
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/451f5ece-bc0c-4f31-b2da-f61c9a35d2bb" />
+
+#### Events:
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/6390d842-493a-45cd-9cbb-3636b234e28e" />
+
+#### states:
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/f70cc3d6-7eb5-4288-9aa6-f7a70455872a" />
+
+#### Pipelines:
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/91debeec-9add-4bc8-acb0-b70bb4c6cbc9" />
+
+### Graph pipeline
+
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/90795e53-948b-44dd-89f5-5b1e346e7241" />
+
+## states data transaction
+
+<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/71786eb7-f0ff-4262-b0f1-bfc1da4dc236" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 📄 Licencia
 

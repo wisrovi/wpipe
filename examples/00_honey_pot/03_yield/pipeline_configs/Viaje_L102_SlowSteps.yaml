@@ -1,0 +1,12 @@
+name: Viaje_L102_SlowSteps
+registered_at: '2026-04-22T22:02:03.975805'
+step_count: 2
+steps:
+- func: <function rapido at 0x7fbdd88d3ec0>
+  name: rapido
+  type: task
+  version: v1.0
+- func: <function lento at 0x7fbdd664f4c0>
+  name: lento
+  type: task
+  version: v1.0

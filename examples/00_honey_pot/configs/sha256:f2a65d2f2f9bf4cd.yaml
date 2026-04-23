@@ -1,0 +1,24 @@
+metadata: {}
+nested_pipelines: []
+pipeline:
+  code_hash: sha256:f2a65d2f2f9bf4cd
+  created_at: '2026-03-30T17:50:13.665942'
+  id: PIPE-888A7426
+  name: honey_pot_inference
+  version: 1.0.0
+steps:
+- code_hash: null
+  name: states.yaml_read
+  pipeline_id: null
+  type: state
+  version: 1.0.1
+- code_hash: null
+  name: states.image_inference
+  pipeline_id: null
+  type: state
+  version: 1.2.1
+- code_hash: null
+  name: choice_random_result
+  pipeline_id: null
+  type: state
+  version: v1.0

@@ -1,0 +1,8 @@
+name: Viaje_L100_History
+registered_at: '2026-04-22T22:01:47.123211'
+step_count: 1
+steps:
+- func: <function tarea at 0x7f250e3fbec0>
+  name: tarea
+  type: task
+  version: v1.0

@@ -4,8 +4,9 @@ Pipeline composition for nested pipelines.
 Allows using a Pipeline as a step within another Pipeline.
 """
 
+import time
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 
 @dataclass
@@ -20,7 +21,7 @@ class PipelineAsStep:
     name: str
     pipeline: "Pipeline"
     timeout: Optional[float] = None
-    depends_on: Optional[list] = None
+    depends_on: Optional[List[str]] = None
 
     def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -38,12 +39,22 @@ class PipelineAsStep:
         # Return only new/modified keys
         return {k: v for k, v in result.items() if k not in context}
 
-    def get_dependencies(self) -> list:
-        """Get step dependencies."""
+    def get_dependencies(self) -> List[str]:
+        """
+        Get step dependencies.
+
+        Returns:
+            List of step names this step depends on.
+        """
         return self.depends_on or []
 
     def get_timeout(self) -> Optional[float]:
-        """Get step timeout."""
+        """
+        Get step timeout.
+
+        Returns:
+            Timeout in seconds or None.
+        """
         return self.timeout
 
 
@@ -89,7 +100,7 @@ class CompositionHelper:
         return merged
 
     @staticmethod
-    def extract_context_subset(context: Dict[str, Any], keys: list) -> Dict[str, Any]:
+    def extract_context_subset(context: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
         """
         Extract subset of context for child pipeline.
 
@@ -146,8 +157,8 @@ class NestedPipelineStep:
         self,
         name: str,
         pipeline: "Pipeline",
-        context_filter: Optional[Callable] = None,
-        result_filter: Optional[Callable] = None,
+        context_filter: Optional[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
+        result_filter: Optional[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
         timeout: Optional[float] = None,
     ):
         """
@@ -168,9 +179,15 @@ class NestedPipelineStep:
         self.execution_time = 0.0
 
     def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute nested pipeline with filtering."""
-        import time
+        """
+        Execute nested pipeline with filtering.
 
+        Args:
+            context: Parent pipeline context.
+
+        Returns:
+            Dictionary with the results of the execution.
+        """
         # Filter context if needed
         child_context = context
         if self.context_filter:
@@ -188,5 +205,10 @@ class NestedPipelineStep:
         return result
 
     def get_execution_time(self) -> float:
-        """Get last execution time."""
+        """
+        Get last execution time.
+
+        Returns:
+            Execution time in seconds.
+        """
         return self.execution_time

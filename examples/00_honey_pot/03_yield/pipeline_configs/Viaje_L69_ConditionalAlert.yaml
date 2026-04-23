@@ -1,0 +1,12 @@
+name: Viaje_L69_ConditionalAlert
+registered_at: '2026-04-22T21:55:24.554505'
+step_count: 2
+steps:
+- func: <function tarea_rapida at 0x7f79b3313ec0>
+  name: tarea_rapida
+  type: task
+  version: v1.0
+- func: <function tarea_normal at 0x7f79b10af4c0>
+  name: tarea_normal
+  type: task
+  version: v1.0

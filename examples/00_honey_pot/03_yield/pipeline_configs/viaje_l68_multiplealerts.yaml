@@ -1,0 +1,12 @@
+name: viaje_l68_multiplealerts
+registered_at: '2026-04-23T11:40:54.196174'
+step_count: 2
+steps:
+- func: <function validar_datos at 0x712b60c144a0>
+  name: validar_datos
+  type: task
+  version: v1.0
+- func: <function process at 0x712b5eb23560>
+  name: process
+  type: task
+  version: v1.0

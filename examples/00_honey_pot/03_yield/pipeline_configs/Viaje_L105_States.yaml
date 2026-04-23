@@ -1,0 +1,12 @@
+name: Viaje_L105_States
+registered_at: '2026-04-22T22:02:45.190017'
+step_count: 2
+steps:
+- func: <function iniciar at 0x7fa70da93f60>
+  name: iniciar
+  type: task
+  version: v1.0
+- func: <function verificar at 0x7fa70b80b560>
+  name: verificar
+  type: task
+  version: v1.0

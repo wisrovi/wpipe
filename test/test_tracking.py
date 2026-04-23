@@ -103,7 +103,7 @@ def test_tracker_analysis_and_queries(tracker):
     
     pipe_ana = tracker.get_pipelines_analysis()
     
-    executions = tracker.get_pipeline_executions(limit=10)
+    executions = tracker.get_pipeline_executions(name="AnalysisPipe", limit=10)
 
 def test_tracker_graph_and_metrics(tracker):
     reg = tracker.register_pipeline("GraphPipe", [])

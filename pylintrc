@@ -1,0 +1,55 @@
+[MASTER]
+jobs=4
+persistent=yes
+suggest-args=yes
+
+[MESSAGES CONTROL]
+disable=
+    C0111,  # Missing docstring
+    C0114,  # Missing module docstring
+    C0115,  # Missing function docstring
+    C0301,  # Line too long
+    C0303,  # Trailing whitespace
+    C0413,  # Wrong import position
+    C0414,  # Consider using from-import
+    R0801,  # Similar lines
+    R0903,  # Too many public methods
+    R0904,  # Too many direct base classes
+    W0212,  # Protected access (needed for monkeypatching)
+    W0236,  # Invalid overridden method
+    W0622,  # Redefining built-in
+    W0707,  # Raise missing from
+    W1514,  # Using open without specifying encoding
+    R1705,  # Unnecessary elif after return
+    E0211,  # Method has no argument (static method)
+    R0917,  # Too many positional arguments (decorator)
+
+[FORMAT]
+max-line-length=120
+indent-string='    '
+indent-after-paren=4
+
+[DESIGN]
+max-args=10
+max-attributes=12
+max-branches=20
+max-locals=25
+max-parents=5
+max-public-methods=25
+max-returns=8
+max-statements=80
+min-public-methods=1
+
+[BASIC]
+good-names=i,j,k,x,y,z,df,ex,_,db,id,ok,to
+
+[TYPECHECK]
+ignore-mixin-members=yes
+generated-members=
+
+[IMPORTS]
+known-standard-library=threading,sqlite3,logging
+known-third-party=loguru,pydantic,pydantic_settings,fastapi
+
+[EXCEPTIONS]
+overgeneral-exceptions=builtins.Exception

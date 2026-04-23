@@ -126,10 +126,10 @@ Before committing, run all quality checks:
     ruff check wpipe/ && mypy wpipe/ && pytest
 
 3. Testing Guidelines
---------------------
+----------------------
 
 3.1 Write Tests
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 All new features should include tests:
 
@@ -177,7 +177,7 @@ Follow the naming convention:
 ----------------
 
 4.1 Update Documentation
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 If your changes affect the API or user experience, update the documentation:
 
@@ -204,7 +204,7 @@ If your changes affect the API or user experience, update the documentation:
     open build/html/index.html
 
 4.3 Documentation Style
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 - Use RST format for ``.rst`` files
 - Follow existing section numbering
@@ -231,7 +231,7 @@ Write clear, concise commit messages:
     git commit -m "Changes"  # Not informative
 
 5.2 Commit Message Format
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Follow this format:
 
@@ -266,7 +266,7 @@ Follow this format:
 -----------------------
 
 6.1 Create Pull Request
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 When your changes are ready, create a pull request:
 
@@ -282,7 +282,7 @@ When your changes are ready, create a pull request:
 5. Fill in the PR template
 
 6.2 Pull Request Template
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: markdown
 
@@ -317,7 +317,7 @@ When your changes are ready, create a pull request:
 -------------------
 
 7.1 Bug Reports
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 Report bugs using GitHub Issues with this template:
 
@@ -343,7 +343,7 @@ Report bugs using GitHub Issues with this template:
     - wpipe version: [e.g., 1.0.0]
 
 7.2 Feature Requests
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 For new features, open a GitHub Discussion or Issue:
 
@@ -373,7 +373,7 @@ Please be respectful and constructive in all interactions:
 - Show empathy towards other community members
 
 9. Questions?
--------------
+--------------
 
 If you have questions, feel free to:
 

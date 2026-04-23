@@ -1,0 +1,8 @@
+name: viaje_l109
+registered_at: '2026-04-23T11:41:10.184617'
+step_count: 1
+steps:
+- func: <function proceso at 0x7f6be1168400>
+  name: proceso
+  type: task
+  version: v1.0

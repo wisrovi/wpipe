@@ -4,10 +4,12 @@ wpipe Pipeline Tracker - Professional Execution Tracking System using WSQLite.
 
 import json
 import os
+import sqlite3
 import uuid
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
+import yaml
 from wsqlite import WSQLite
 
 from wpipe.sqlite.tables_dto.tracker_models import (
@@ -22,6 +24,7 @@ from wpipe.sqlite.tables_dto.tracker_models import (
     StepModel,
     SystemMetricsModel,
 )
+from wpipe.util.transform import object_to_dict
 
 from .alerts import AlertManager
 from .analysis import AnalysisManager
@@ -29,28 +32,58 @@ from .queries import QueryManager
 
 
 def _safe_json_dumps(data: Any) -> str:
-    """Safe JSON dump that handles non-serializable objects and circular references."""
-    from wpipe.util.transform import object_to_dict
-    
+    """
+    Safe JSON dump that handles non-serializable objects and circular references.
+
+    Args:
+        data: The data to serialize.
+
+    Returns:
+        A JSON string representation of the data.
+    """
     try:
-        # Primero convertimos todo a una estructura de dicts/lists limpia
-        # object_to_dict ya maneja referencias circulares y tipos complejos
+        # First convert everything to a clean dict/list structure
         clean_data = object_to_dict(data)
         return json.dumps(clean_data)
     except (TypeError, OverflowError, ValueError):
         try:
-            # Si falla (por ejemplo, por tipos exóticos no cubiertos), intentamos stringify individual
+            # Fallback for exotic types not covered
             return json.dumps(str(data))
-        except Exception:
+        except (TypeError, ValueError, OverflowError):
             return '"<Unserializable Data>"'
 
 
 class Metric:
-    """Constants for alert metrics."""
+    """Constants for alert metrics and utility for recording numeric data."""
 
     PIPELINE_DURATION = "pipeline_duration_ms"
     STEP_DURATION = "step_duration_ms"
     ERROR_RATE = "error_rate"
+
+    # Reference to the active tracker for static recording
+    _active_tracker: Optional["PipelineTracker"] = None
+
+    @staticmethod
+    def record(name: str, value: float, unit: Optional[str] = None) -> None:
+        """
+        Record a numeric metric in the current pipeline execution.
+
+        Args:
+            name: Name of the metric.
+            value: Numeric value.
+            unit: Optional unit of measurement (e.g., 'L/100km').
+        """
+        if Metric._active_tracker and Metric._active_tracker.pipeline_id:
+            Metric._active_tracker.add_event(
+                pipeline_id=Metric._active_tracker.pipeline_id,
+                event_type="metric",
+                event_name=name,
+                message=f"Metric '{name}' recorded: {value} {unit or ''}",
+                data={"value": value, "unit": unit}
+            )
+        else:
+            # Fallback for when no tracker is active
+            print(f"[METRIC] {name}: {value} {unit or ''}")
 
 
 class Severity:
@@ -62,44 +95,46 @@ class Severity:
 
 
 # --- PROFESSIONAL TABLE NAMING FOR LTS ---
+# pylint: disable=invalid-name
 class pipelines(PipelineModel):
-    pass
+    """Pipeline table model."""
 
 
 class steps(StepModel):
-    pass
+    """Steps table model."""
 
 
 class step_history(StepHistoryModel):
-    pass
+    """Step history table model."""
 
 
 class performance_stats(PerformanceStatsModel):
-    pass
+    """Performance stats table model."""
 
 
 class alerts_config(AlertConfigModel):
-    pass
+    """Alerts configuration table model."""
 
 
 class alerts_fired(AlertFiredModel):
-    pass
+    """Alerts fired table model."""
 
 
 class events(EventModel):
-    pass
+    """Events table model."""
 
 
 class pipeline_relations(PipelineRelationModel):
-    pass
+    """Pipeline relations table model."""
 
 
 class system_metrics(SystemMetricsModel):
-    pass
+    """System metrics table model."""
 
 
 class comparisons(ComparisonModel):
-    pass
+    """Comparisons table model."""
+# pylint: enable=invalid-name
 
 
 class PipelineTracker:
@@ -109,9 +144,18 @@ class PipelineTracker:
     Orchestrates registration, step tracking, alerts, and dashboard queries.
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, db_path: str, config_dir: Optional[str] = None):
+        """
+        Initialize the PipelineTracker.
+
+        Args:
+            db_path: Path to the SQLite database.
+            config_dir: Directory to store pipeline configurations.
+        """
         self.db_path = db_path
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
+        self.pipeline_id: Optional[str] = None
 
         # Table instances with professional names
         self.db_pipelines = WSQLite(pipelines, db_path)
@@ -125,11 +169,12 @@ class PipelineTracker:
         self.db_system_metrics = WSQLite(system_metrics, db_path)
         self.db_comparisons = WSQLite(comparisons, db_path)
 
-        self._ensure_schema_up_to_date()
+        # Deferred - called on first use instead of at import time
+        # self._ensure_schema_up_to_date()
 
-        self._alert_hooks = {}
+        self._alert_hooks: Dict[str, List[str]] = {}
 
-        # Specialized Managers
+        # specialized Managers
         self.alerts = AlertManager(
             self.db_alerts_config, self.db_alerts_fired, self._alert_hooks
         )
@@ -144,62 +189,89 @@ class PipelineTracker:
             self.db_pipelines, self.db_steps, self.db_step_history, self.db_alerts_fired
         )
 
+        # Set this tracker as the active one for Metric.record utility
+        Metric._active_tracker = self
+
     # ========================================
     # DELEGATED METHODS (Backward Compatibility)
     # ========================================
 
-    def add_alert_threshold(self, *args, **kwargs):
+    def add_alert_threshold(self, *args, **kwargs) -> int:
+        """Delegate to alerts manager."""
         return self.alerts.add_alert_threshold(*args, **kwargs)
 
-    def get_pipelines(self, *args, **kwargs):
+    def get_pipelines(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to queries manager."""
         return self.queries.get_pipelines(*args, **kwargs)
 
-    def get_pipeline(self, *args, **kwargs):
+    def get_pipeline(self, *args, **kwargs) -> Optional[Dict[str, Any]]:
+        """Delegate to queries manager."""
         return self.queries.get_pipeline(*args, **kwargs)
 
-    def get_stats(self, *args, **kwargs):
+    def get_stats(self, *args, **kwargs) -> Dict[str, Any]:
+        """Delegate to analysis manager."""
         return self.analysis.get_stats(*args, **kwargs)
 
-    def get_trend_data(self, *args, **kwargs):
+    def get_trend_data(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to analysis manager."""
         return self.analysis.get_trend_data(*args, **kwargs)
 
-    def get_top_slow_steps(self, *args, **kwargs):
+    def get_top_slow_steps(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to analysis manager."""
         return self.analysis.get_top_slow_steps(*args, **kwargs)
 
-    def get_events(self, *args, **kwargs):
+    def get_events(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to queries manager."""
         return self.queries.get_events(*args, **kwargs)
 
-    def get_fired_alerts(self, *args, **kwargs):
+    def get_fired_alerts(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to queries manager."""
         return self.queries.get_fired_alerts(*args, **kwargs)
 
-    def get_alert_thresholds(self, *args, **kwargs):
+    def get_alert_thresholds(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to queries manager."""
         return self.queries.get_alert_thresholds(*args, **kwargs)
 
-    def get_states_analysis(self, *args, **kwargs):
+    def get_states_analysis(self, *args, **kwargs) -> Dict[str, Any]:
+        """Delegate to analysis manager."""
         return self.analysis.get_states_analysis(*args, **kwargs)
 
-    def get_pipelines_analysis(self, *args, **kwargs):
+    def get_pipelines_analysis(self, *args, **kwargs) -> Dict[str, Any]:
+        """Delegate to analysis manager."""
         return self.analysis.get_pipelines_analysis(*args, **kwargs)
 
-    def get_table_data(self, *args, **kwargs):
+    def get_table_data(self, *args, **kwargs) -> Dict[str, Any]:
+        """Delegate to analysis manager."""
         return self.analysis.get_table_data(*args, **kwargs)
 
-    def get_pipeline_executions(self, *args, **kwargs):
+    def get_pipeline_executions(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        """Delegate to queries manager."""
         return self.queries.get_pipeline_executions(*args, **kwargs)
 
     # ========================================
     # CORE TRACKING LOGIC
     # ========================================
 
-    def register_pipeline(self, name: str, steps: list, **kwargs) -> dict:
+    def register_pipeline(self, name: str, pipeline_steps: List[Any], **kwargs) -> Dict[str, Any]:
+        """
+        Register a pipeline and its steps.
+
+        Args:
+            name: Pipeline name.
+            pipeline_steps: List of pipeline steps.
+            **kwargs: Additional metadata (worker_id, worker_name, input_data, parent_pipeline_id).
+
+        Returns:
+            Dictionary with pipeline_id and yaml_path.
+        """
+        # Ensure schema is up to date on first use
+        self._ensure_schema_up_to_date()
         pipeline_id = f"PIPE-{uuid.uuid4().hex[:8].upper()}"
         if not os.path.exists(self.config_dir):
             os.makedirs(self.config_dir)
         safe_name = os.path.basename(os.path.normpath(name))
         yaml_path = os.path.join(self.config_dir, f"{safe_name}.yaml")
         if not os.path.exists(yaml_path):
-            import yaml
-
             def _serialize_step(s):
                 if hasattr(s, "to_dict"):
                     return s.to_dict()
@@ -215,10 +287,10 @@ class PipelineTracker:
             config = {
                 "name": name,
                 "registered_at": datetime.now().isoformat(),
-                "step_count": len(steps),
-                "steps": [_serialize_step(s) for s in steps],
+                "step_count": len(pipeline_steps),
+                "steps": [_serialize_step(s) for s in pipeline_steps],
             }
-            with open(yaml_path, "w") as f:
+            with open(yaml_path, "w", encoding="utf-8") as f:
                 yaml.dump(config, f)
 
         model = PipelineModel(
@@ -236,20 +308,32 @@ class PipelineTracker:
         )
         self.db_pipelines.insert(model)
         if kwargs.get("parent_pipeline_id"):
-            self.link_pipelines(kwargs.get("parent_pipeline_id"), pipeline_id)
+            self.link_pipelines(str(kwargs.get("parent_pipeline_id")), pipeline_id)
         return {"pipeline_id": pipeline_id, "yaml_path": yaml_path}
 
     def complete_pipeline(
         self,
         pipeline_id: str,
-        output_data: Optional[dict] = None,
+        output_data: Optional[Dict[str, Any]] = None,
         error_message: Optional[str] = None,
         error_step: Optional[str] = None,
-    ) -> list:
-        pipelines = self.db_pipelines.get_by_field(id=pipeline_id)
-        if not pipelines:
+    ) -> List[str]:
+        """
+        Mark a pipeline as completed or failed.
+
+        Args:
+            pipeline_id: Unique pipeline identifier.
+            output_data: Optional execution results.
+            error_message: Optional error message if failed.
+            error_step: Optional step name where failure occurred.
+
+        Returns:
+            List of fired alert hooks.
+        """
+        pipeline_records = self.db_pipelines.get_by_field(id=pipeline_id)
+        if not pipeline_records:
             return []
-        model = pipelines[0]
+        model = pipeline_records[0]
         started = datetime.fromisoformat(model.started_at)
         duration_ms = (datetime.now() - started).total_seconds() * 1000
         model.status = "error" if error_message else "completed"
@@ -266,6 +350,18 @@ class PipelineTracker:
     def start_step(
         self, pipeline_id: str, step_order: int, step_name: str, **kwargs
     ) -> int:
+        """
+        Mark a step as started.
+
+        Args:
+            pipeline_id: Unique pipeline identifier.
+            step_order: Execution order.
+            step_name: Name of the step.
+            **kwargs: Additional metadata (step_version, step_type, parent_step_id, parallel_group, input_data).
+
+        Returns:
+            The ID of the inserted step record.
+        """
         model = StepModel(
             pipeline_id=pipeline_id,
             step_order=step_order,
@@ -274,6 +370,7 @@ class PipelineTracker:
             step_type=kwargs.get("step_type", "task"),
             parent_step_id=kwargs.get("parent_step_id"),
             parallel_group=kwargs.get("parallel_group"),
+            status="running",
             input_data=(
                 _safe_json_dumps(kwargs.get("input_data"))
                 if kwargs.get("input_data")
@@ -285,15 +382,28 @@ class PipelineTracker:
     def complete_step(
         self,
         step_id: int,
-        output_data: Optional[dict] = None,
+        output_data: Optional[Dict[str, Any]] = None,
         error_message: Optional[str] = None,
         error_traceback: Optional[str] = None,
         pipeline_id: Optional[str] = None,
-    ) -> list:
-        steps = self.db_steps.get_by_field(id=step_id)
-        if not steps:
+    ) -> List[str]:
+        """
+        Mark a step as completed or failed.
+
+        Args:
+            step_id: Unique step identifier.
+            output_data: Optional step results.
+            error_message: Optional error message.
+            error_traceback: Optional error traceback.
+            pipeline_id: Optional pipeline ID.
+
+        Returns:
+            List of fired alert hooks.
+        """
+        step_records = self.db_steps.get_by_field(id=step_id)
+        if not step_records:
             return []
-        model = steps[0]
+        model = step_records[0]
         started = datetime.fromisoformat(model.started_at)
         duration_ms = (datetime.now() - started).total_seconds() * 1000
         model.status = "error" if error_message else "completed"
@@ -317,7 +427,15 @@ class PipelineTracker:
 
     def link_pipelines(
         self, parent_id: str, child_id: str, relation_type: str = "triggered"
-    ):
+    ) -> None:
+        """
+        Link two pipelines with a relationship.
+
+        Args:
+            parent_id: Parent pipeline ID.
+            child_id: Child pipeline ID.
+            relation_type: Type of relationship.
+        """
         model = PipelineRelationModel(
             parent_pipeline_id=parent_id,
             child_pipeline_id=child_id,
@@ -325,7 +443,16 @@ class PipelineTracker:
         )
         self.db_pipeline_relations.insert(model)
 
-    def add_event(self, pipeline_id: str, event_type: str, event_name: str, **kwargs):
+    def add_event(self, pipeline_id: str, event_type: str, event_name: str, **kwargs) -> None:
+        """
+        Record an event.
+
+        Args:
+            pipeline_id: Unique pipeline identifier.
+            event_type: Type of event.
+            event_name: Name of the event.
+            **kwargs: Additional metadata (step_id, message, data, tags).
+        """
         model = EventModel(
             pipeline_id=pipeline_id,
             step_id=kwargs.get("step_id"),
@@ -337,7 +464,14 @@ class PipelineTracker:
         )
         self.db_events.insert(model)
 
-    def record_system_metrics(self, pipeline_id: str, metrics: dict):
+    def record_system_metrics(self, pipeline_id: str, metrics: Dict[str, Any]) -> None:
+        """
+        Record system metrics.
+
+        Args:
+            pipeline_id: Unique pipeline identifier.
+            metrics: Dictionary of system metrics.
+        """
         model = SystemMetricsModel(
             pipeline_id=pipeline_id,
             cpu_percent=metrics.get("cpu_percent"),
@@ -349,14 +483,31 @@ class PipelineTracker:
         )
         self.db_system_metrics.insert(model)
 
-    def acknowledge_alert(self, alert_id: int):
-        alerts = self.db_alerts_fired.get_by_field(id=alert_id)
-        if alerts:
-            self.db_alerts_fired.update(alert_id, alerts[0])
+    def acknowledge_alert(self, alert_id: int) -> Dict[str, str]:
+        """
+        Acknowledge a fired alert.
+
+        Args:
+            alert_id: Unique alert identifier.
+
+        Returns:
+            Status dictionary.
+        """
+        alert_records = self.db_alerts_fired.get_by_field(id=alert_id)
+        if alert_records:
+            self.db_alerts_fired.update(alert_id, alert_records[0])
         return {"status": "success"}
 
-    def get_pipeline_graph(self, pipeline_id: str) -> dict:
-        """Get pipeline data formatted for graph visualization with full metadata."""
+    def get_pipeline_graph(self, pipeline_id: str) -> Dict[str, Any]:
+        """
+        Get pipeline data formatted for graph visualization with full metadata.
+
+        Args:
+            pipeline_id: Unique pipeline identifier.
+
+        Returns:
+            Dictionary with nodes and edges for visualization.
+        """
         pipeline = self.get_pipeline(pipeline_id)
         if not pipeline:
             return {"nodes": [], "edges": []}
@@ -366,12 +517,13 @@ class PipelineTracker:
         steps_list = pipeline.get("steps", [])
 
         for i, step in enumerate(steps_list):
-            # Parseamos datos de entrada/salida para extraer info de bifurcación
             output_data = step.get("output_data") or {}
-            input_data = step.get("input_data") or {}
 
+            step_id = step.get("id")
+            if not step_id or step_id == "None" or step_id == "":
+                step_id = step.get("step_order")
             node = {
-                "id": f"step_{step['id']}",
+                "id": f"step_{step_id}",
                 "name": step["step_name"],
                 "type": step["step_type"],
                 "status": step["status"],
@@ -396,20 +548,18 @@ class PipelineTracker:
             }
             nodes.append(node)
 
-            # --- Lógica de conexión de bordes ---
+            # --- Edge connection logic ---
             parent_id = step.get("parent_step_id")
+            step_order = step.get("step_order")
 
             if parent_id:
-                # Conexión desde el bloque padre al sub-paso
                 edges.append({
-                    "from": f"step_{parent_id}",
-                    "to": f"step_{step['id']}",
+                    "from": f"step_{parent_id}" if parent_id else f"step_{step_order}",
+                    "to": f"step_{step_id}",
                     "label": "parallel",
                     "style": "dashed" if step["status"] == "skipped" else "solid"
                 })
             elif i > 0:
-                # Conexión secuencial normal, buscando el último paso real que NO tenga un padre
-                # (para no conectar un paso secuencial con un sub-paso de un paralelo)
                 j = i - 1
                 found_prev = None
                 while j >= 0:
@@ -420,13 +570,21 @@ class PipelineTracker:
                     j -= 1
 
                 if found_prev:
+                    prev_id = found_prev.get("id") or found_prev.get("step_order")
+                    prev_order = found_prev.get("step_order")
                     is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
                     edges.append({
-                        "from": f"step_{found_prev['id']}",
-                        "to": f"step_{step['id']}",
-                        "label": "next" if found_prev["step_type"] != "condition" else ("taken" if not is_skipped else "skipped"),
+                        "from": f"step_{prev_id}" if prev_id else f"step_{prev_order}",
+                        "to": f"step_{step_id}",
+                        "label": (
+                            "next" if found_prev["step_type"] != "condition"
+                            else ("taken" if not is_skipped else "skipped")
+                        ),
                         "style": "solid" if not is_skipped else "dashed",
-                        "color": "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped) else None
+                        "color": (
+                            "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped)
+                            else None
+                        )
                     })
 
         return {
@@ -438,40 +596,30 @@ class PipelineTracker:
             "edges": edges,
         }
 
-    def delete_pipeline(self, pipeline_id: str):
+    def delete_pipeline(self, pipeline_id: str) -> None:
+        """
+        Delete all data related to a pipeline.
+
+        Args:
+            pipeline_id: Unique pipeline identifier.
+        """
         self.db_pipelines.delete(pipeline_id)
         for s in self.db_steps.get_by_field(pipeline_id=pipeline_id):
             self.db_steps.delete(s.id)
         for e in self.db_events.get_by_field(pipeline_id=pipeline_id):
             self.db_events.delete(e.id)
 
-    def _ensure_schema_up_to_date(self):
+    def _ensure_schema_up_to_date(self) -> None:
         """Ensure the database schema is up to date with the latest models."""
+        if not os.path.exists(self.db_path):
+            return
         try:
-            import os
-            import sqlite3
-
-            # Si el archivo no existe, WSQLite lo creará en la primera operación,
-            # pero necesitamos asegurarnos de que las columnas de paralelismo estén ahí
-            # si WSQLite crea una tabla basada en un modelo antiguo o simplificado.
-            # Forzamos una pequeña operación para asegurar que las tablas existan
-            try:
-                self.db_steps.get_all()
-            except Exception:
-                pass
-
-            if not os.path.exists(self.db_path):
-                return
-
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
-
-            # Check for parent_step_id and parallel_group in common table names
             for table in ["steps", "stepmodel"]:
                 cursor.execute(f"PRAGMA table_info({table})")
                 columns = [info[1] for info in cursor.fetchall()]
-
-                if columns: # If table exists
+                if columns:
                     modified = False
                     if "parent_step_id" not in columns:
                         cursor.execute(f"ALTER TABLE {table} ADD COLUMN parent_step_id INTEGER")
@@ -479,10 +627,8 @@ class PipelineTracker:
                     if "parallel_group" not in columns:
                         cursor.execute(f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT")
                         modified = True
-
                     if modified:
                         conn.commit()
             conn.close()
-        except Exception:
-            # We don't want to crash the whole app if migration fails
+        except (sqlite3.Error, AttributeError, RuntimeError, ValueError):
             pass

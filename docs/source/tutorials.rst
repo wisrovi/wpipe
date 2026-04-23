@@ -1,12 +1,27 @@
-Tutorials
-=========
+WPipe Academy: Master Your Pipelines
+====================================
 
-This section contains comprehensive step-by-step tutorials for learning how to use wpipe, from basic concepts to advanced patterns.
+.. meta::
+   :description: Complete learning path for wpipe, from basic concepts to advanced enterprise patterns.
+   :keywords: tutorials, learning, academy, pipeline, wpipe, automation
+
+Welcome to the **WPipe Academy**. This section is your definitive guide to becoming a master of industrial-grade pipeline orchestration. Whether you are building simple ETL scripts or complex, distributed microservices, these tutorials will guide you through every feature of |wpipe|.
+
+.. raw:: html
+
+    <div class="hero-section" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px; border-radius: 16px; margin-bottom: 40px; border-left: 8px solid #00f2fe;">
+        <h2 style="color: #00f2fe; margin-top: 0;">🚀 The Learning Path</h2>
+        <p style="color: #94a3b8; font-size: 1.1em;">
+            Our curriculum is designed to take you from a curious beginner to a senior pipeline architect. 
+            Follow the 130-level tour for a deep dive, or jump into specific tutorials to solve your immediate problems.
+        </p>
+    </div>
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 3
+   :hidden:
 
+   tutorials/tour/index
    tutorials/basic_pipeline
    tutorials/class_steps
    tutorials/api_integration
@@ -19,181 +34,109 @@ This section contains comprehensive step-by-step tutorials for learning how to u
    tutorials/advanced_patterns
    tutorials/production_deployment
 
-1. Tutorial Overview
---------------------
+The Learning Tour
+-----------------
 
-This tutorials section is organized in a progressive manner, where each tutorial builds upon the concepts learned in previous tutorials.
+.. raw:: html
+
+    <div class="feature-grid">
+        <div class="feature-card" style="grid-column: span 2; background: rgba(0, 242, 254, 0.05); border: 2px solid rgba(0, 242, 254, 0.3);">
+            <h3><span>🏆</span> The 130-Level Tour de Aprendizaje</h3>
+            <p>A massive, step-by-step journey through every single capability of the engine. Each level introduces one new concept, building upon the last.</p>
+            <p><strong>Status:</strong> Available (Levels 1-130)</p>
+            <a href="tutorials/tour/index.html" class="btn-primary" style="display: inline-block; margin-top: 15px; text-decoration: none;">Start The Tour →</a>
+        </div>
+    </div>
+
+Core Curriculum
+---------------
+
+.. raw:: html
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3><span>🌱</span> 1. Basic Foundations</h3>
+            <p>Learn the core mental model of wpipe: Pipelines, Steps, and Context. Ideal for your first 30 minutes.</p>
+            <ul>
+                <li><a href="tutorials/basic_pipeline.html">Basic Pipeline</a></li>
+                <li><a href="tutorials/class_steps.html">Class-based Steps</a></li>
+                <li><a href="tutorials/yaml_config.html">YAML Configuration</a></li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3><span>🛡️</span> 2. Resiliency & Reliability</h3>
+            <p>Master the features that keep your pipelines running when things go wrong in production.</p>
+            <ul>
+                <li><a href="tutorials/error_handling.html">Error Handling</a></li>
+                <li><a href="tutorials/retry_logic.html">Retry Strategies</a></li>
+                <li><a href="tutorials/sqlite_integration.html">SQLite Persistence</a></li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3><span>🧩</span> 3. Advanced Orchestration</h3>
+            <p>Combine pipelines, use logic, and scale with parallelism for complex enterprise workflows.</p>
+            <ul>
+                <li><a href="tutorials/nested_pipelines.html">Nested Pipelines</a></li>
+                <li><a href="tutorials/conditions.html">Conditional Logic</a></li>
+                <li><a href="tutorials/advanced_patterns.html">Advanced Patterns</a></li>
+            </ul>
+        </div>
+        <div class="feature-card">
+            <h3><span>🌐</span> 4. Integration & Operations</h3>
+            <p>Connect your pipelines to the world and monitor them like a pro.</p>
+            <ul>
+                <li><a href="tutorials/api_integration.html">API & Dashboard</a></li>
+                <li><a href="tutorials/production_deployment.html">Production Ready</a></li>
+            </ul>
+        </div>
+    </div>
+
+Recommended Learning Plan
+-------------------------
+
+We've structured this academy to fit into your busy schedule.
 
 .. list-table::
    :header-rows: 1
    :widths: 20 60 20
 
-   * - Tutorial
-     - Description
-     - Difficulty
-   * - :doc:`tutorials/basic_pipeline`
-     - Create your first pipeline and understand data flow
-     - Beginner
-   * - :doc:`tutorials/class_steps`
-     - Use classes with __call__ as pipeline steps
-     - Beginner
-   * - :doc:`tutorials/api_integration`
-     - Integrate with external APIs for tracking
-     - Intermediate
-   * - :doc:`tutorials/error_handling`
-     - Handle errors gracefully with custom exceptions
-     - Intermediate
-   * - :doc:`tutorials/retry_logic`
-     - Implement automatic retries for failed steps
-     - Intermediate
-   * - :doc:`tutorials/nested_pipelines`
-     - Compose complex workflows from smaller pipelines
-     - Advanced
-   * - :doc:`tutorials/sqlite_integration`
-     - Persist pipeline execution results to database
-     - Intermediate
-   * - :doc:`tutorials/yaml_config`
-     - Load pipeline configuration from YAML files
-     - Beginner
-   * - :doc:`tutorials/conditions`
-     - Execute conditional branches based on data
-     - Intermediate
-   * - :doc:`tutorials/advanced_patterns`
-     - Advanced patterns like parallel execution, callbacks
-     - Advanced
-   * - :doc:`tutorials/production_deployment`
-     - Deploy pipelines to production environments
-     - Advanced
+   * - Phase
+     - Focus
+     - Estimated Time
+   * - **Phase 1**
+     - :doc:`tutorials/basic_pipeline`, :doc:`tutorials/class_steps`, :doc:`tutorials/yaml_config`
+     - 2 hours
+   * - **Phase 2**
+     - :doc:`tutorials/error_handling`, :doc:`tutorials/sqlite_integration`, :doc:`tutorials/api_integration`
+     - 4 hours
+   * - **Phase 3**
+     - :doc:`tutorials/retry_logic`, :doc:`tutorials/conditions`, :doc:`tutorials/nested_pipelines`
+     - 4 hours
+   * - **Phase 4**
+     - :doc:`tutorials/advanced_patterns`, :doc:`tutorials/production_deployment`
+     - 3 hours
 
-2. Prerequisites
-----------------
-
-Before starting these tutorials, ensure you have:
-
-2.1 Python Environment
-~~~~~~~~~~~~~~~~~~~~~~~
-
-- Python 3.9 or higher installed
-- Virtual environment set up (recommended)
-
-.. code-block:: bash
-
-    python --version  # Should show Python 3.9+
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-2.2 Install wpipe
-~~~~~~~~~~~~~~~~~
-
-.. code-block:: bash
-
-    pip install wpipe
-
-Or install with development dependencies:
-
-.. code-block:: bash
-
-    pip install -e ".[dev]"
-
-3. Learning Path
-----------------
-
-We recommend following this learning path:
-
-3.1 Week 1: Fundamentals
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-- Day 1-2: :doc:`tutorials/basic_pipeline`
-- Day 3-4: :doc:`tutorials/class_steps`
-- Day 5-7: :doc:`tutorials/yaml_config`
-
-3.2 Week 2: Integration
-~~~~~~~~~~~~~~~~~~~~~~~
-
-- Day 8-10: :doc:`tutorials/api_integration`
-- Day 11-12: :doc:`tutorials/sqlite_integration`
-- Day 13-14: :doc:`tutorials/error_handling`
-
-3.3 Week 3: Advanced
-~~~~~~~~~~~~~~~~~~~~
-
-- Day 15-17: :doc:`tutorials/retry_logic`
-- Day 18-20: :doc:`tutorials/conditions`
-- Day 21: :doc:`tutorials/advanced_patterns`
-
-3.4 Week 4: Production
-~~~~~~~~~~~~~~~~~~~~~~
-
-- Day 22-28: :doc:`tutorials/production_deployment`
-
-4. Quick Reference
-------------------
-
-4.1 Common Patterns
-~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    # Basic Pipeline
-    from wpipe import Pipeline
-    
-    pipeline = Pipeline(verbose=True)
-    pipeline.set_steps([
-        (step1, "Step 1", "v1.0"),
-        (step2, "Step 2", "v1.0"),
-    ])
-    result = pipeline.run(input_data)
-
-.. code-block:: python
-
-    # Conditional Pipeline
-    from wpipe import Pipeline, Condition
-    
-    pipeline = Pipeline()
-    pipeline.set_steps([
-        (fetch_data, "Fetch", "v1.0"),
-        Condition(
-            expression="status == 'success'",
-            branch_true=[(process_success, "Success", "v1.0")],
-            branch_false=[(handle_error, "Error", "v1.0")],
-        ),
-    ])
-
-.. code-block:: python
-
-    # With SQLite
-    from wpipe import Pipeline
-    from wpipe.sqlite import Wsqlite
-    
-    with Wsqlite(db_name="results.db") as db:
-        db.input = input_data
-        result = pipeline.run(input_data)
-        db.output = result
-
-5. Troubleshooting
------------------
+Troubleshooting During Tutorials
+--------------------------------
 
 If you encounter issues during the tutorials:
 
-5.1 Common Issues
-~~~~~~~~~~~~~~~~~
+.. raw:: html
 
-- **ImportError**: Ensure wpipe is installed correctly
-- **TypeError in step**: Verify your step functions return dictionaries
-- **API connection errors**: Check your API configuration
+    <div style="background: rgba(245, 158, 11, 0.1); border-left: 5px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0;"><strong>Common Pitfalls:</strong></p>
+        <ul style="margin: 10px 0 0 0;">
+            <li><strong>Step Output:</strong> Ensure every step returns a dictionary. Returning <code>None</code> or a non-dict will break the chain.</li>
+            <li><strong>Context Keys:</strong> Be careful with key naming to avoid overwriting data from previous steps unless intentional.</li>
+            <li><strong>Async Mismatch:</strong> Don't mix <code>Pipeline</code> with async steps, use <code>PipelineAsync</code> instead.</li>
+        </ul>
+    </div>
 
-5.2 Getting Help
-~~~~~~~~~~~~~~~~
-
-- Check :doc:`user_guide/troubleshooting`
-- Review :doc:`faq`
-- Open an issue on GitHub
-
-6. Next Steps
--------------
+Next Steps
+----------
 
 After completing these tutorials:
 
-- Explore the :doc:`user_guide/index` for in-depth topics
-- Check the :doc:`api_reference` for complete API documentation
-- Review :doc:`architecture` to understand the design
+- Explore the :doc:`user_guide/index` for in-depth technical deep dives.
+- Check the :doc:`api_reference` for the complete specification.
+- Review :doc:`best_practices` to write idiomatic and clean code.

@@ -1,0 +1,8 @@
+name: Viaje_L98_AlertsSeverity
+registered_at: '2026-04-22T22:01:31.718713'
+step_count: 1
+steps:
+- func: <function tarea at 0x7f76f2ff7ec0>
+  name: tarea
+  type: task
+  version: v1.0

@@ -1,0 +1,12 @@
+name: viaje_l82_exportcsv
+registered_at: '2026-04-23T11:41:00.150246'
+step_count: 2
+steps:
+- func: <function start at 0x7d9d21c231a0>
+  name: start
+  type: task
+  version: v1.0
+- func: <function finish at 0x7d9d1f842d40>
+  name: finish
+  type: task
+  version: v1.0

@@ -1,4 +1,4 @@
-from wpipe import to_obj,Pipeline
+from wpipe import to_obj, Pipeline
 from wpipe.decorators import step, AutoRegister, get_step_registry
 
 
@@ -38,14 +38,13 @@ class Print_info_2:
         return {}
 
 
-
-
 registry = get_step_registry()
 
 nested = Pipeline(
-        pipeline_name="viaje",
-        verbose=False,
-        tracking_db="wpipe_dashboard.db")
+    pipeline_name="viaje_tmp",
+    verbose=False,
+    tracking_db="output/wpipe_dashboard.db",
+    show_progress=False,
+)
 
 AutoRegister.register_all(nested, registry)
-

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "PIPE-02AC8538",
+    "name": "viaje",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-23T00:48:58.945270",
+    "completed_at": "2026-04-23T00:48:58.950615",
+    "total_duration_ms": 5.324,
+    "input_data": "\"{'marca': 'Toyota', 'modelo': 'Corolla', 'ano': 2020, 'color': 'Rojo', 'nivel_gasolina': 'Medio', 'nivel_aceite': 'Medio', 'nivel_neumaticos': 'Medio', 'extras': {'aire_acondicionado': True, 'radio': True, 'gps': True, 'asientos_calefaccionados': False, 'techo_solar': False}, 'non_serializable_obj': <InternalSystemHandler active>, '_pipeline_start_time': '2026-04-23T00:48:58.945136'}\"",
+    "output_data": "{\"pipeline_start_time\": \"2026-04-23T00:48:58.945136\", \"pipeline_end_time\": \"2026-04-23T00:48:58.950445\", \"pipeline_elapsed_time_ms\": 5.316000000000001}",
+    "error_message": "Execution error: cannot access free variable 'copy' where it is not associated with a value in enclosing scope | Execution error: cannot access free variable 'copy' where it is not associated with a value in enclosing scope | Execution error: cannot access free variable 'copy' where it is not associated with a value in enclosing scope",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f1e2c360190>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje.yaml"
+  },
+  {
+    "id": "PIPE-9E62DD00",
+    "name": "viaje_tmp",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-23T00:47:55.581996",
+    "completed_at": "2026-04-23T00:47:55.601536",
+    "total_duration_ms": 19.506,
+    "input_data": "{\"_pipeline_start_time\": \"2026-04-23T00:47:55.581810\"}",
+    "output_data": "{\"pipeline_start_time\": \"2026-04-23T00:47:55.581810\", \"pipeline_end_time\": \"2026-04-23T00:47:55.601310\", \"pipeline_elapsed_time_ms\": 19.509999999999998}",
+    "error_message": "Execution error: Can't pickle <function start_capture at 0x7fd66d3118a0>: it's not the same object as __main__.start_capture | Execution error: Can't pickle <function start_capture at 0x7fd66d3118a0>: it's not the same object as __main__.start_capture | Execution error: Can't pickle <function start_capture at 0x7fd66d3118a0>: it's not the same object as __main__.start_capture",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7fd62d64f250>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje_tmp.yaml"
+  },
+  {
+    "id": "PIPE-2DAE51A0",
+    "name": "viaje_tmp",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "error",
+    "started_at": "2026-04-23T00:47:49.634410",
+    "completed_at": "2026-04-23T00:47:49.637778",
+    "total_duration_ms": 3.349,
+    "input_data": "{\"_pipeline_start_time\": \"2026-04-23T00:47:49.633123\"}",
+    "output_data": "{\"pipeline_start_time\": \"2026-04-23T00:47:49.633123\", \"pipeline_end_time\": \"2026-04-23T00:47:49.637639\", \"pipeline_elapsed_time_ms\": 4.523}",
+    "error_message": "[Error Code: 502] 'NoneType' object has no attribute 'copy'",
+    "error_step": "<wpipe.pipe.pipe.For object at 0x7f300ca47250>",
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/wisrovi/Documentos/w_libraries/wpipe/wpipe/pipeline_configs/viaje_tmp.yaml"
+  }
+]

@@ -1,0 +1,12 @@
+name: viaje_l67_stepalert
+registered_at: '2026-04-23T11:40:53.668973'
+step_count: 2
+steps:
+- func: <function paso_rapido at 0x719975568360>
+  name: paso_rapido
+  type: task
+  version: v1.0
+- func: <function paso_lento at 0x7199734b3420>
+  name: ' paso_lento'
+  type: task
+  version: v1.0

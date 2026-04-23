@@ -47,7 +47,7 @@ This example demonstrates all the core concepts you'll need to build production 
 --------------------
 
 2.1 Prerequisites
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Before starting, ensure you have:
 
@@ -760,7 +760,7 @@ Configure automatic retries:
 - Forget to return dictionaries from steps
 
 11. Exercises
--------------
+--------------
 
 Practice what you've learned:
 
@@ -802,6 +802,6 @@ Now that you understand basic pipelines:
 - Continue to :doc:`class_steps` - Learn to use classes as steps
 - Explore :doc:`api_integration` - Add API tracking
 - Learn :doc:`error_handling` - Handle errors gracefully
-- Check :doc:`best_practices` - More best practices
+- Check :doc:`../best_practices` - More best practices
 
-The :doc:`tutorials` section contains many more detailed tutorials covering advanced topics.
+The :doc:`../tutorials` section contains many more detailed tutorials covering advanced topics.

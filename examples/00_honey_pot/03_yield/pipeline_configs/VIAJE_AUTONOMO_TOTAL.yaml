@@ -1,0 +1,29 @@
+name: VIAJE_AUTONOMO_TOTAL
+registered_at: '2026-04-22T16:53:08.855422'
+step_count: 3
+steps:
+- func: <function <lambda> at 0x708b8e727600>
+  name: arranque_inicial
+  type: task
+  version: v1.0
+- expression: null
+  iterations: 3
+  steps:
+  - max_workers: 3
+    steps:
+    - <function vision at 0x708b8e7262a0>
+    - <function vision at 0x708b8e7262a0>
+    - <function vision at 0x708b8e7262a0>
+    type: parallel
+    use_processes: true
+  - branch_false: []
+    branch_true:
+    - <function frenado at 0x708b8e726c00>
+    expression: obstaculo == True
+    type: condition
+  - <function telemetria at 0x708b8e7271a0>
+  type: for
+- func: <function <lambda> at 0x708b8e727060>
+  name: fin
+  type: task
+  version: v1

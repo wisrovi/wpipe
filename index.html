@@ -1,322 +1,723 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WPipe v1.6.15 | El Motor de Orquestación Ultra-Rápido para Python</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>wpipe v2.1.1-LTS | Enterprise-Grade Python Pipeline Library</title>
+    
+    <!-- SEO & Meta Tags -->
+    <meta name="description" content="wpipe v2.1.1-LTS: The most resilient, parallel, and scalable Python library for mission-critical data pipelines. Featuring 130 levels of learning tour and 90% test coverage.">
+    <meta name="keywords" content="python, pipeline, LTS, enterprise, data processing, ETL, workflow, orchestration, parallel execution, wisrovi">
+    <meta name="author" content="William Steve Rodriguez Villamizar (wisrovi)">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="wpipe - The Engine of Modern Data Workflows">
+    <meta property="og:description" content="Orchestrate complex Python tasks with native parallelism, extreme resiliency, and zero boilerplate.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/wisrovi/wpipe">
+    <meta property="og:image" content="https://raw.githubusercontent.com/wisrovi/wpipe/main/images.jpeg">
+    <meta property="og:site_name" content="wpipe">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@wisrovi">
+    <meta name="twitter:title" content="wpipe v2.1.1-LTS | Enterprise Python Pipelines">
+    
+    <!-- Favicon (Procedural SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%2300f2fe'/><stop offset='100%25' style='stop-color:%234facfe'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><path d='M30 50 L45 65 L70 35' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
+            /* Colors - Ultra Modern Cyber Palette */
             --primary: #00f2fe;
+            --primary-glow: rgba(0, 242, 254, 0.4);
             --secondary: #4facfe;
-            --dark: #0f172a;
-            --light: #f8fafc;
+            --secondary-glow: rgba(79, 172, 254, 0.4);
             --accent: #f59e0b;
             --success: #10b981;
+            --danger: #ef4444;
+            --bg-deep: #020617;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --bg-card-hover: rgba(30, 41, 59, 0.8);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(0, 242, 254, 0.3);
+            
+            /* Gradients */
+            --gradient-linear: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --gradient-mesh: radial-gradient(at 0% 0%, hsla(180, 100%, 50%, 0.15) 0, transparent 50%), 
+                             radial-gradient(at 100% 100%, hsla(210, 100%, 50%, 0.15) 0, transparent 50%);
+            --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+            
+            /* Shadows */
+            --shadow-neo: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+            --shadow-glow: 0 0 30px var(--primary-glow);
+            
+            /* Config */
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --container-max: 1200px;
         }
 
+        /* Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
             line-height: 1.6;
-            color: var(--light);
-            background-color: var(--dark);
-            margin: 0;
-            padding: 0;
             overflow-x: hidden;
+            background-image: var(--gradient-mesh);
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        /* Layout */
+        .container { max-width: var(--container-max); margin: 0 auto; padding: 0 2rem; }
+        section { padding: 100px 0; position: relative; }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+        .gradient-text {
+            background: var(--gradient-linear);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* Hero Section */
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 0;
+            transition: var(--transition);
+            border-bottom: 1px solid transparent;
+        }
+        nav.scrolled {
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 1rem 0;
+            border-color: var(--border);
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+        .logo i {
+            background: var(--gradient-linear);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .nav-links a:hover { color: var(--primary); }
+        .btn-nav {
+            background: var(--gradient-linear);
+            color: var(--bg-deep) !important;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Hero */
         .hero {
             height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             text-align: center;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
         }
-
-        .hero::before {
-            content: "";
+        .hero-bg-fx {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 242, 254, 0.05) 0%, transparent 70%);
+            z-index: -1;
         }
-
-        .hero h1 {
-            font-size: 5rem;
-            margin: 0;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: -2px;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            color: #94a3b8;
-            max-width: 700px;
-            margin: 1.5rem 0 2.5rem;
-        }
-
-        .version-badge {
-            background: rgba(79, 172, 254, 0.1);
-            border: 1px solid var(--secondary);
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--border-highlight);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
             color: var(--primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 99px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 0.85rem;
             margin-bottom: 2rem;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: fadeInUp 0.8s ease;
         }
-
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease 0.1s both;
+        }
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-dim);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 1.2s ease 0.2s both;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            animation: fadeInUp 1.4s ease 0.3s both;
+        }
         .btn {
-            padding: 1rem 2.5rem;
-            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.2rem 2.5rem;
+            border-radius: 12px;
             font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition);
             font-size: 1.1rem;
+            cursor: pointer;
         }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--secondary), var(--primary));
-            color: var(--dark);
-            box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
+        .btn-main {
+            background: var(--gradient-linear);
+            color: var(--bg-deep);
+            box-shadow: var(--shadow-glow);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 0 40px var(--primary-glow); }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
         }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--primary); transform: translateY(-3px); }
 
-        /* Stats Section */
+        /* Stats Bar */
         .stats-bar {
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(10px);
-            padding: 2rem 0;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 3rem 0;
         }
-
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
             text-align: center;
         }
-
-        .stat-item h2 { font-size: 2.5rem; margin: 0; color: var(--primary); }
-        .stat-item p { margin: 0.5rem 0 0; color: #64748b; font-weight: 600; }
-
-        /* Features Section */
-        .features { padding: 8rem 0; }
-        .section-title { text-align: center; margin-bottom: 5rem; }
-        .section-title h2 { font-size: 3rem; margin: 0; }
-        .section-title p { color: #94a3b8; font-size: 1.2rem; margin-top: 1rem; }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
+        .stat-item h3 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            font-weight: 800;
+        }
+        .stat-item p {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
         }
 
+        /* Features */
+        .section-header { text-align: center; margin-bottom: 5rem; }
+        .section-header h2 { font-size: 3.5rem; margin-bottom: 1.5rem; }
+        .section-header p { color: var(--text-dim); font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
         .feature-card {
-            background: #1e293b;
-            padding: 3rem 2rem;
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.3s;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 24px;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
-
         .feature-card::before {
-            content: "";
+            content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            opacity: 0;
-            transition: 0.3s;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--gradient-surface);
+            pointer-events: none;
         }
-
         .feature-card:hover {
             transform: translateY(-10px);
-            background: #232f45;
-            border-color: rgba(79, 172, 254, 0.3);
+            border-color: var(--border-highlight);
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow-neo);
         }
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(0, 242, 254, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .feature-card p { color: var(--text-dim); margin-bottom: 1.5rem; }
 
-        .feature-card:hover::before { opacity: 1; }
-
-        .feature-card i {
-            font-size: 2.5rem;
+        /* Code Section */
+        .code-showcase {
+            background: #010409;
+            border-radius: 32px;
+            border: 1px solid var(--border);
+            padding: 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .code-content h2 { margin-bottom: 2rem; }
+        .code-content p { color: var(--text-dim); margin-bottom: 2rem; font-size: 1.1rem; }
+        .code-window {
+            background: #0d1117;
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+            box-shadow: var(--shadow-neo);
+            border: 1px solid #30363d;
+            position: relative;
+        }
+        .code-header {
+            display: flex;
+            gap: 8px;
             margin-bottom: 1.5rem;
-            background: linear-gradient(to bottom right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
 
-        .feature-card h3 { font-size: 1.5rem; margin: 0 0 1rem; }
-        .feature-card p { color: #94a3b8; margin: 0; }
-
-        /* Code Comparison */
-        .comparison { padding: 8rem 0; background: #0a0f1d; }
-        .code-block {
-            background: #011627;
+        /* The Tour Section */
+        .tour-section { background: rgba(0, 242, 254, 0.02); }
+        .tour-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .tour-card {
+            background: var(--bg-card);
             padding: 2rem;
-            border-radius: 1rem;
-            font-family: 'Fira Code', monospace;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        /* CTA */
-        .cta {
-            padding: 10rem 0;
+            border-radius: 20px;
+            border: 1px solid var(--border);
             text-align: center;
-            background: linear-gradient(to bottom, var(--dark), #1e293b);
+        }
+        .tour-lvl {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            background: var(--primary);
+            color: var(--bg-deep);
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
         }
 
-        .cta h2 { font-size: 4rem; margin-bottom: 2rem; }
+        /* Wisrovi Ecosystem */
+        .ecosystem {
+            text-align: center;
+            background: linear-gradient(180deg, transparent, rgba(79, 172, 254, 0.05));
+        }
+        .eco-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 4rem;
+            border-radius: 40px;
+            border: 2px solid var(--border-highlight);
+            box-shadow: var(--shadow-glow);
+        }
+        .eco-card img { width: 120px; border-radius: 30px; margin-bottom: 2rem; }
+        .eco-card h3 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .eco-card p { font-size: 1.2rem; color: var(--text-dim); margin-bottom: 2.5rem; }
 
+        /* Footer */
         footer {
-            padding: 4rem 0;
-            text-align: center;
-            color: #475569;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+        .footer-brand p { color: var(--text-dim); margin: 1.5rem 0; max-width: 300px; }
+        .footer-links h4 { margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 0.75rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; transition: var(--transition); }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .social-links { display: flex; gap: 1.5rem; }
+        .social-links a { font-size: 1.5rem; color: var(--text-muted); transition: var(--transition); }
+        .social-links a:hover { color: var(--primary); transform: scale(1.2); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 3rem; }
-            .feature-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        /* Responsive */
+        @media (max-width: 968px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .code-showcase { grid-template-columns: 1fr; padding: 2rem; }
+            .hero h1 { font-size: 3.5rem; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-project-diagram"></i> wpipe
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#tour">The Tour</a>
+                <a href="#ecosystem">Ecosystem</a>
+                <a href="https://wpipe.readthedocs.io/" target="_blank">Docs</a>
+                <a href="https://github.com/wisrovi/wpipe" class="btn-nav">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
     <section class="hero">
-        <div class="version-badge">WPipe v1.6.15 LTS</div>
-        <h1>Domina el Caos.</h1>
-        <p>WPipe es la librería de orquestación para Python que combina paralelismo nativo, resiliencia extrema y observabilidad forense en un solo paquete ultra-ligero.</p>
-        <div style="margin-top: 2rem;">
-            <a href="https://github.com/wisrovi/wpipe" class="btn btn-primary"><i class="fab fa-github"></i> Ver en GitHub</a>
-            <a href="docs/build/html/index.html" class="btn" style="color: white; margin-left: 1rem;">Documentación <i class="fas fa-arrow-right"></i></a>
+        <div class="hero-bg-fx"></div>
+        <div class="container">
+            <div class="hero-badge">
+                <i class="fas fa-shield-alt"></i> v2.1.1-LTS — Enterprise Reliability
+            </div>
+            <h1>The engine for <br><span class="gradient-text">Mission-Critical</span> Pipelines</h1>
+            <p>
+                wpipe is a powerhouse for Python orchestration. 
+                Built for resilience, extreme performance with Parallel Execution, 
+                and featuring a massive 130-level learning tour.
+            </p>
+            <div class="hero-btns">
+                <a href="https://github.com/wisrovi/wpipe" class="btn btn-main">
+                    Get Started <i class="fas fa-chevron-right"></i>
+                </a>
+                <a href="#tour" class="btn btn-outline">
+                    Explore The Tour
+                </a>
+            </div>
         </div>
     </section>
 
+    <!-- Stats Section -->
     <div class="stats-bar">
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <h2>&lt; 1ms</h2>
-                    <p>LATENCIA CORE</p>
+                    <h3>130</h3>
+                    <p>Learning Levels</p>
                 </div>
                 <div class="stat-item">
-                    <h2>100%</h2>
-                    <p>ASÍNCRONO</p>
+                    <h3>&lt; 1ms</h3>
+                    <p>Core Latency</p>
                 </div>
                 <div class="stat-item">
-                    <h2>625+</h2>
-                    <p>TESTS PASSING</p>
+                    <h3>90%+</h3>
+                    <p>Test Coverage</p>
                 </div>
                 <div class="stat-item">
-                    <h2>∞</h2>
-                    <p>ESCALABILIDAD</p>
+                    <h3>LTS</h3>
+                    <p>Enterprise Support</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="features">
+    <!-- Features Section -->
+    <section id="features">
         <div class="container">
-            <div class="section-title">
-                <h2>¿Por qué ingenieros de élite eligen WPipe?</h2>
-                <p>No es solo un orquestador, es el sistema nervioso de tus aplicaciones distribuidas.</p>
+            <div class="section-header">
+                <span class="gradient-text" style="font-weight: 800; text-transform: uppercase;">Core Capabilities</span>
+                <h2>Performance Meets <span class="gradient-text">Resiliency</span></h2>
+                <p>Designed to handle complex workflows without the overhead of massive frameworks.</p>
             </div>
-            <div class="feature-grid">
+
+            <div class="features-grid">
                 <div class="feature-card">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Modo Relámpago</h3>
-                    <p>Arquitectura optimizada con WSQLite y modo WAL. Diseñado para ráfagas de alta frecuencia sin bloqueos.</p>
+                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Parallel Execution</h3>
+                    <p>Native support for ThreadPool (I/O) and ProcessPool (CPU) executors. Scale your pipelines horizontally in seconds.</p>
+                    <div class="tour-lvl">v2.1.1 Feature</div>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Resiliencia Forense</h3>
-                    <p>Checkpoints inteligentes. Si el sistema cae, WPipe sabe exactamente dónde reanudar sin perder un milisegundo.</p>
+                    <div class="feature-icon"><i class="fas fa-history"></i></div>
+                    <h3>Smart Checkpointing</h3>
+                    <p>Never start from zero again. wpipe remembers exactly where it failed and resumes with full context awareness.</p>
+                    <div class="tour-lvl">Resiliency Pro</div>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-project-diagram"></i>
-                    <h3>Paralelismo Puro</h3>
-                    <p>Bypass del GIL de forma transparente. Ejecuta hilos o procesos distribuidos con una sola línea de código.</p>
+                    <div class="feature-icon"><i class="fas fa-database"></i></div>
+                    <h3>SQLite WAL Mode</h3>
+                    <p>Blazing fast execution tracking using SQLite Write-Ahead Logging. Zero-lock, multi-threaded persistence.</p>
+                    <div class="tour-lvl">High Perf</div>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-eye"></i>
-                    <h3>Observabilidad Total</h3>
-                    <p>Dashboard en tiempo real. Localización exacta de errores (archivo/línea) y métricas de hardware por paso.</p>
+                    <div class="feature-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3>Conditional Logic</h3>
+                    <p>Complex decision trees with simple expressions. Build dynamic workflows that adapt to your data in real-time.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-code-branch"></i>
-                    <h3>Paridad Sync/Async</h3>
-                    <p>Escribe una vez, ejecuta como quieras. Soporte nativo para Corrutinas y ejecución bloqueante tradicional.</p>
+                    <div class="feature-icon"><i class="fas fa-recycle"></i></div>
+                    <h3>Advanced Retries</h3>
+                    <p>Configurable backoff strategies, exception filtering, and retry limits. Built for the unstable nature of APIs.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-file-contract"></i>
-                    <h3>Contratos de Datos</h3>
-                    <p>Validación estricta de esquemas Pydantic integrada. Errores detectados antes de que ocurran.</p>
+                    <div class="feature-icon"><i class="fas fa-cubes"></i></div>
+                    <h3>Full Composition</h3>
+                    <p>Nest pipelines within pipelines. Reuse logic, encapsulate complexity, and build massive systems modularly.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="comparison">
+    <!-- Code Showcase -->
+    <section>
         <div class="container">
-            <div class="section-title">
-                <h2>Simplicidad que Escala</h2>
-                <p>De un script local a una arquitectura de microservicios en segundos.</p>
-            </div>
-            <div class="code-block">
-<pre><span style="color: #ff7b72;">from</span> <span style="color: #d2a8ff;">wpipe</span> <span style="color: #ff7b72;">import</span> Pipeline, step, Parallel
-
-<span style="color: #d2a8ff;">@step</span>(name=<span style="color: #a5d6ff;">"Analizar"</span>, retry_count=<span style="color: #79c0ff;">3</span>)
-<span style="color: #ff7b72;">def</span> <span style="color: #d2a8ff;">analizar_datos</span>(data):
-    <span style="color: #ff7b72;">return</span> {<span style="color: #a5d6ff;">"status"</span>: <span style="color: #a5d6ff;">"procesado"</span>}
-
-<span style="color: #8b949e;"># Orquestación de grado industrial en 3 líneas</span>
-pipeline = Pipeline(verbose=<span style="color: #79c0ff;">True</span>)
-pipeline.set_steps([
-    Parallel([step_a, step_b, step_c]), <span style="color: #8b949e;"># ¡Paralelismo real!</span>
-    analizar_datos
-])
-pipeline.run({<span style="color: #a5d6ff;">"input"</span>: <span style="color: #79c0ff;">100</span>})</pre>
+            <div class="code-showcase">
+                <div class="code-content">
+                    <span class="gradient-text" style="font-weight: 800; text-transform: uppercase;">Simplicity First</span>
+                    <h2>Zero Boilerplate, <br><span class="gradient-text">Pure Python</span></h2>
+                    <p>Define your steps, set your data flow, and let wpipe handle the orchestration, logging, and error recovery.</p>
+                    <ul style="list-style: none; color: var(--text-dim);">
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle style='color: var(--primary); margin-right: 10px;'"></i> Automatic context passing between steps</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle style='color: var(--primary); margin-right: 10px;'"></i> Native async support for high-concurrency</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle style='color: var(--primary); margin-right: 10px;'"></i> Built-in resource monitoring</li>
+                    </ul>
+                </div>
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                    <span style="color: #ff7b72;">from</span> wpipe <span style="color: #ff7b72;">import</span> Pipeline<br><br>
+                    <span style="color: #8b949e;"># Simple, modular steps</span><br>
+                    <span style="color: #ff7b72;">def</span> <span style="color: #d2a8ff;">fetch</span>(data): <span style="color: #ff7b72;">return</span> {<span style="color: #a5d6ff;">"raw"</span>: <span style="color: #a5d6ff;">"data"</span>}<br>
+                    <span style="color: #ff7b72;">def</span> <span style="color: #d2a8ff;">process</span>(data): <span style="color: #ff7b72;">return</span> {<span style="color: #a5d6ff;">"ok"</span>: <span style="color: #79c0ff;">True</span>}<br><br>
+                    <span style="color: #8b949e;"># Orchestrate in seconds</span><br>
+                    pipe = Pipeline(verbose=<span style="color: #79c0ff;">True</span>)<br>
+                    pipe.set_steps([<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;(fetch, <span style="color: #a5d6ff;">"FetchData"</span>, <span style="color: #a5d6ff;">"v1.0"</span>),<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;(process, <span style="color: #a5d6ff;">"Transformer"</span>, <span style="color: #a5d6ff;">"v1.0"</span>)<br>
+                    ])<br><br>
+                    result = pipe.run({})
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="cta">
+    <!-- The Tour Section -->
+    <section id="tour" class="tour-section">
         <div class="container">
-            <h2>¿Listo para acelerar?</h2>
-            <p style="font-size: 1.5rem; color: #94a3b8; margin-bottom: 3rem;">Únete a la nueva generación de orquestación en Python.</p>
-            <code>pip install wpipe</code>
-            <div style="margin-top: 3rem;">
-                <a href="https://github.com/wisrovi/wpipe" class="btn btn-primary">Empieza Gratis Ahora</a>
+            <div class="section-header">
+                <span class="gradient-text" style="font-weight: 800; text-transform: uppercase;">Learning Path</span>
+                <h2>130 Levels of <span class="gradient-text">Mastery</span></h2>
+                <p>From basic "Hello World" to complex parallel enterprise architectures.</p>
+            </div>
+            <div class="tour-grid">
+                <div class="tour-card">
+                    <div class="tour-lvl">LVL 1 - 20</div>
+                    <h3>Foundations</h3>
+                    <p>Mastering the Pipeline object, simple tasks, and data flow basics.</p>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-lvl">LVL 21 - 50</div>
+                    <h3>Control Flow</h3>
+                    <p>Conditions, For-loops, and complex logical branches within pipelines.</p>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-lvl">LVL 51 - 80</div>
+                    <h3>Resiliency</h3>
+                    <p>Retry strategies, Checkpointing, and Error Recovery in production.</p>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-lvl">LVL 81 - 110</div>
+                    <h3>Performance</h3>
+                    <p>Parallel executors, Async processing, and WAL SQLite optimizations.</p>
+                </div>
+                <div class="tour-card" style="grid-column: span 2;">
+                    <div class="tour-lvl">LVL 111 - 130</div>
+                    <h3>Enterprise Architectures</h3>
+                    <p>Microservices, API Integration, Resource Monitoring, and Full Pipeline Composition.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 4rem;">
+                <a href="https://github.com/wisrovi/wpipe/tree/main/examples" class="btn btn-outline">Explore Examples Folder</a>
             </div>
         </div>
     </section>
 
+    <!-- Wisrovi Ecosystem -->
+    <section id="ecosystem" class="ecosystem">
+        <div class="container">
+            <div class="eco-card">
+                <img src="https://wisrovi.dev/assets/img/logo.png" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%234facfe%22/></svg>'" alt="Wisrovi">
+                <h3>Wisrovi <span class="gradient-text">Ecosystem</span></h3>
+                <p>
+                    wpipe is just one of many libraries designed to bridge the gap between 
+                    complex AI/Enterprise systems and practical, elegant solutions.
+                </p>
+                <a href="https://wisrovi.dev/" target="_blank" class="btn btn-main">
+                    Visit wisrovi.dev <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section>
+        <div class="container" style="text-align: center;">
+            <h2 style="font-size: 3.5rem; margin-bottom: 2rem;">Ready to build <span class="gradient-text">Robust</span> systems?</h2>
+            <div class="hero-btns">
+                <a href="https://github.com/wisrovi/wpipe" class="btn btn-main">Star on GitHub</a>
+                <a href="https://pypi.org/project/wpipe/" class="btn btn-outline">Install via PyPI</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024-2026 William Steve Rodriguez Villamizar. WPipe is MIT Licensed.</p>
-        <p>Hecho con <i class="fas fa-heart" style="color: #ff4d4d;"></i> para desarrolladores exigentes.</p>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <i class="fas fa-project-diagram"></i> wpipe
+                    </a>
+                    <p>The definitive Python library for mission-critical pipeline orchestration. Lightweight, Resilient, Fast.</p>
+                    <div class="social-links">
+                        <a href="https://github.com/wisrovi" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://es.linkedin.com/in/wisrovi-rodriguez" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://twitter.com/wisrovi" target="_blank"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="#features">Parallelism</a></li>
+                        <li><a href="#features">Checkpointing</a></li>
+                        <li><a href="#features">SQLite WAL</a></li>
+                        <li><a href="https://wpipe.readthedocs.io/" target="_blank">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/wisrovi/wpipe/releases">Releases</a></li>
+                        <li><a href="https://github.com/wisrovi/wpipe/issues">Issue Tracker</a></li>
+                        <li><a href="https://github.com/wisrovi/wpipe/blob/main/CONTRIBUTING.md">Contributing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Developer</h4>
+                    <ul>
+                        <li><a href="https://wisrovi.dev/">Wisrovi.dev</a></li>
+                        <li><a href="https://github.com/wisrovi">GitHub Profile</a></li>
+                        <li><a href="mailto:wisrovi.rodriguez@gmail.com">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024-2026 William Steve Rodriguez Villamizar. MIT Licensed.</p>
+                <p>Designed with <i class="fas fa-heart" style="color: var(--danger);"></i> for the Python Community.</p>
+            </div>
+        </div>
     </footer>
 
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .tour-card, .eco-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>

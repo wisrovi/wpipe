@@ -1,0 +1,8 @@
+name: viaje_l97_getalertslimit
+registered_at: '2026-04-23T11:41:05.436060'
+step_count: 1
+steps:
+- func: <function task at 0x7f2c69d68400>
+  name: task
+  type: task
+  version: v1.0

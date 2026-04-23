@@ -1,0 +1,7 @@
+*.db
+*.db-shm
+*.db-wal
+pipeline_configs
+logs
+export_output
+output

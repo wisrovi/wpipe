@@ -4,7 +4,7 @@ Logging utilities for wpipe.
 
 import os
 import sys
-from typing import Optional
+from typing import Any, Optional
 
 from loguru import logger as loguru_logger
 
@@ -13,7 +13,7 @@ def new_logger(
     process_name: str = "wpipe",
     path_file: Optional[str] = None,
     filename_format: str = "{time:YYYY-MM-DD}",
-):
+) -> Any:
     """
     Create and configure a new logger instance.
 

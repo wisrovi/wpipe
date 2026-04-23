@@ -6,13 +6,14 @@
 
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
             color: white;
             padding: 80px 40px;
             border-radius: 16px;
             text-align: center;
             margin-bottom: 50px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0, 242, 254, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -35,7 +36,7 @@
             position: relative;
         }
         .hero-section h1 .logo {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -67,8 +68,9 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #020617;
+            font-weight: 800;
         }
         .btn-secondary {
             background: rgba(255,255,255,0.1);
@@ -130,15 +132,17 @@
             margin: 40px 0;
         }
         .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             padding: 30px 20px;
             border-radius: 12px;
             text-align: center;
             color: white;
+            border: 1px solid rgba(0, 242, 254, 0.3);
         }
         .stat-box .value {
             font-size: 3em;
             font-weight: 800;
+            color: #00f2fe;
         }
         .stat-box .label {
             font-size: 0.95em;
@@ -185,17 +189,16 @@
 .. image:: https://img.shields.io/badge/tests-625%20passing-10b981
    :alt: Tests
 
-.. image:: https://img.shields.io/badge/LTS-1.6.1-green
+.. image:: https://img.shields.io/badge/LTS-2.1.1-green
    :alt: LTS
 
 wpipe |version| Documentation
 =============================
 
-**wpipe** is a powerful, industrial-grade Python library for orchestrating high-performance data processing pipelines with native support for parallelism, intelligent recovery, and deep observability.
+**wpipe** is a powerful, industrial-grade Python library for orchestrating high-performance data processing pipelines with native support for parallelism, intelligent recovery, and deep observability. It now includes a **130-level Learning Tour** to master the library.
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
    :caption: 📚 Documentation
 
    getting_started
@@ -233,8 +236,8 @@ Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellen
             <p>Define milestones using logical expressions. Auto-resume exactly where you left off after system failures.</p>
         </div>
         <div class="feature-card">
-            <h3><span>🔍</span> Forensic Error Capture</h3>
-            <p>Get the exact file path and line number of any failure with automatic notification hooks (Telegram/Slack ready).</p>
+            <h3><span>🎓</span> 130-Level Tour</h3>
+            <p>Master the library with a guided tour of 130+ examples, covering everything from basic steps to complex DAGs.</p>
         </div>
         <div class="feature-card">
             <h3><span>🧬</span> Data Contracts</h3>
@@ -287,8 +290,8 @@ Your First Pipeline
             <div class="label">Tests Passing</div>
         </div>
         <div class="stat-box">
-            <div class="value">200+</div>
-            <div class="label">Verified Examples</div>
+            <div class="value">130+</div>
+            <div class="label">Tour Levels</div>
         </div>
         <div class="stat-box">
             <div class="value">100%</div>
@@ -296,7 +299,7 @@ Your First Pipeline
         </div>
         <div class="stat-box">
             <div class="value">LTS</div>
-            <div class="label">1.6.15</div>
+            <div class="label">2.1.1</div>
         </div>
     </div>
 
@@ -307,7 +310,7 @@ Your First Pipeline
 **Author**: William Steve Rodriguez Villamizar
 
 - GitHub: https://github.com/wisrovi
-- LinkedIn: https://linkedin.com/in/wisrovi-rodriguez
+- LinkedIn: https://es.linkedin.com/in/wisrovi-rodriguez
 
 If you find wpipe useful, please ⭐ star the repository on GitHub!
 

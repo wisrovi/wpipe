@@ -1,0 +1,29 @@
+name: total_autonomous_trip
+registered_at: '2026-04-23T10:21:25.804689'
+step_count: 3
+steps:
+- func: <function <lambda> at 0x71e82a38fba0>
+  name: initial_start
+  type: task
+  version: v1.0
+- expression: null
+  iterations: 3
+  steps:
+  - max_workers: 3
+    steps:
+    - <function ai_vision_360 at 0x71e82a38eca0>
+    - <function ai_vision_360 at 0x71e82a38eca0>
+    - <function ai_vision_360 at 0x71e82a38eca0>
+    type: parallel
+    use_processes: true
+  - branch_false: []
+    branch_true:
+    - <function emergency_braking at 0x71e82a38f4c0>
+    expression: obstacle == True
+    type: condition
+  - <function validate_telemetry at 0x71e82a38fce0>
+  type: for
+- func: <function <lambda> at 0x71e82a3a4180>
+  name: finish
+  type: task
+  version: v1.0

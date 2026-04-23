@@ -1,0 +1,12 @@
+name: viaje_l81_exportjson
+registered_at: '2026-04-23T11:40:59.706594'
+step_count: 2
+steps:
+- func: <function start at 0x7b1b3e1271a0>
+  name: start
+  type: task
+  version: v1.0
+- func: <function finish at 0x7b1b3bd72d40>
+  name: finish
+  type: task
+  version: v1.0

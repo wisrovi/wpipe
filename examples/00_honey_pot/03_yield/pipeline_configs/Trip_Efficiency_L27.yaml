@@ -1,0 +1,8 @@
+name: Trip_Efficiency_L27
+registered_at: '2026-04-22T15:45:16.886191'
+step_count: 1
+steps:
+- func: <function medir_eficiencia at 0x78d1c82723e0>
+  name: medir_eficiencia
+  type: task
+  version: v1.0

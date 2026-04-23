@@ -1,0 +1,12 @@
+name: Viaje_L83_ExportStats
+registered_at: '2026-04-22T21:58:27.174032'
+step_count: 2
+steps:
+- func: <function iniciar at 0x7fd1993cde40>
+  name: iniciar
+  type: task
+  version: v1.0
+- func: <function procesar at 0x7fd19730b560>
+  name: procesar
+  type: task
+  version: v1.0

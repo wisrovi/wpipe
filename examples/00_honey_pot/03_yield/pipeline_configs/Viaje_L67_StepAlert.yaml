@@ -1,0 +1,12 @@
+name: Viaje_L67_StepAlert
+registered_at: '2026-04-22T21:55:08.837112'
+step_count: 2
+steps:
+- func: <function paso_rapido at 0x7f904c35bf60>
+  name: paso_rapido
+  type: task
+  version: v1.0
+- func: <function paso_lento at 0x7f9049eeb560>
+  name: ' paso_lento'
+  type: task
+  version: v1.0

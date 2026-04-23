@@ -4,7 +4,7 @@ Alert system for pipeline and step monitoring.
 
 import re
 import uuid
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 from wpipe.sqlite.tables_dto.tracker_models import AlertConfigModel, AlertFiredModel
 
@@ -12,7 +12,20 @@ from wpipe.sqlite.tables_dto.tracker_models import AlertConfigModel, AlertFiredM
 class AlertManager:
     """Handles alert threshold configuration and firing logic."""
 
-    def __init__(self, db_alerts_config, db_alerts_fired, alert_hooks):
+    def __init__(
+        self,
+        db_alerts_config: Any,
+        db_alerts_fired: Any,
+        alert_hooks: Dict[str, List[str]],
+    ):
+        """
+        Initialize the AlertManager.
+
+        Args:
+            db_alerts_config: Database accessor for alert configurations.
+            db_alerts_fired: Database accessor for fired alerts.
+            alert_hooks: Dictionary mapping alert names to step names.
+        """
         self.db_alerts_config = db_alerts_config
         self.db_alerts_fired = db_alerts_fired
         self._alert_hooks = alert_hooks
@@ -24,9 +37,25 @@ class AlertManager:
         name: Optional[str] = None,
         severity: str = "warning",
         message: Optional[str] = None,
-        steps: Optional[list] = None,
+        steps: Optional[List[str]] = None,
     ) -> int:
-        """Add an alert threshold configuration."""
+        """
+        Add an alert threshold configuration.
+
+        Args:
+            metric: The metric to monitor.
+            expression: The comparison expression (e.g., "> 100").
+            name: Optional name for the alert.
+            severity: Alert severity level.
+            message: Custom alert message.
+            steps: Optional list of steps associated with this alert.
+
+        Returns:
+            The ID of the inserted alert configuration.
+
+        Raises:
+            ValueError: If the expression is invalid.
+        """
         match = re.match(r"([><=!]+)\s*(\d+(\.\d+)?)", expression)
         if not match:
             raise ValueError(f"Invalid alert expression: {expression}")
@@ -53,7 +82,17 @@ class AlertManager:
     def evaluate_condition(
         self, condition: str, actual: float, threshold: float
     ) -> bool:
-        """Evaluate if a metric value triggers a condition."""
+        """
+        Evaluate if a metric value triggers a condition.
+
+        Args:
+            condition: Comparison operator (>, <, >=, <=, ==).
+            actual: The actual metric value.
+            threshold: The threshold value.
+
+        Returns:
+            True if the condition is met, False otherwise.
+        """
         ops = {
             ">": actual > threshold,
             "<": actual < threshold,
@@ -65,9 +104,19 @@ class AlertManager:
 
     def check_step_alerts(
         self, pipeline_id: str, step_name: str, duration_ms: float
-    ) -> list:
-        """Check and fire step-level alerts."""
-        fired_hooks = []
+    ) -> List[str]:
+        """
+        Check and fire step-level alerts.
+
+        Args:
+            pipeline_id: Unique identifier for the pipeline.
+            step_name: Name of the step being checked.
+            duration_ms: Execution duration in milliseconds.
+
+        Returns:
+            List of fired hooks (step names).
+        """
+        fired_hooks: List[str] = []
         # Import local constants to avoid circular imports if needed
         configs = self.db_alerts_config.get_by_field(
             metric="step_duration_ms", enabled=1
@@ -95,10 +144,22 @@ class AlertManager:
         pipeline_name: str,
         status: str,
         duration_ms: float,
-        db_pipelines,
-    ) -> list:
-        """Check and fire pipeline-level alerts."""
-        fired_hooks = []
+        db_pipelines: Any,
+    ) -> List[str]:
+        """
+        Check and fire pipeline-level alerts.
+
+        Args:
+            pipeline_id: Unique identifier for the pipeline.
+            pipeline_name: Name of the pipeline.
+            status: Execution status.
+            duration_ms: Execution duration in milliseconds.
+            db_pipelines: Database accessor for pipeline history.
+
+        Returns:
+            List of fired hooks (step names).
+        """
+        fired_hooks: List[str] = []
         configs = self.db_alerts_config.get_by_field(enabled=1)
 
         for config in configs:
