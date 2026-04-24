@@ -16,7 +16,8 @@ from wpipe.api_client.api_client import APIClient
 from wpipe.exception import Codes, TaskError
 from wpipe.tracking import PipelineTracker
 
-from .pipe import Condition, Parallel, SystemMetricsCollector
+from .pipe import Background, Condition, Parallel, SystemMetricsCollector
+from .components.logic_blocks import For
 
 
 def _is_async_callable(func: Any) -> bool:
@@ -418,6 +419,15 @@ class PipelineAsync(APIClient):
         if isinstance(item, Parallel):
             return await self._execute_parallel(item, data, parent_step_id, parallel_group, **kwargs)
 
+        is_background = False
+        capture_error = False
+        if isinstance(item, tuple) and len(item) >= 4 and isinstance(item[3], dict):
+            is_background = item[3].get("_is_background", False)
+            capture_error = item[3].get("_background_capture_error", False)
+
+        if is_background:
+            return await self._execute_background_step(item, data, capture_error, parent_step_id, parallel_group, **kwargs)
+
         return await self._execute_task(item, data, parent_step_id, parallel_group, **kwargs)
 
     async def _execute_parallel(
@@ -468,6 +478,54 @@ class PipelineAsync(APIClient):
             data["error"] = error_msg
         finally:
             self._end_step_tracking(tracked_parallel_id, data if not error_msg else None, error_msg)
+        return data
+
+    async def _execute_error_capture(self, data: Dict[str, Any], error_info: Dict[str, Any]) -> None:
+        """Execute error capture handlers."""
+        if not self._error_capture_tasks:
+            return
+
+        if self.verbose:
+            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info.get('step_name', 'unknown')}'...")
+
+        for handler in self._error_capture_tasks:
+            try:
+                if _is_async_callable(handler):
+                    await handler(data, error_info)
+                else:
+                    handler(data, error_info)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
+
+    async def _execute_background_step(
+        self,
+        item: Any,
+        data: Dict[str, Any],
+        capture_error: bool,
+        parent_step_id: Optional[int],
+        parallel_group: Optional[str],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Execute a background step without blocking the pipeline."""
+        func, name, version = None, "background", "v1.0"
+        if isinstance(item, tuple) and len(item) >= 2:
+            func, name, version = item[0], item[1], item[2] if len(item) > 2 else "v1.0"
+
+        task_data = data.copy()
+        task_data.pop("progress_rich", None)
+
+        async def run_background():
+            try:
+                if func:
+                    await self._execute_task(func, task_data, parent_step_id, parallel_group, **kwargs)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                if capture_error:
+                    error_info = {"step_name": name, "error": str(e)}
+                    await self._execute_error_capture(task_data, error_info)
+                if self.verbose:
+                    print(f"[BACKGROUND ERROR] {name}: {e}")
+
+        asyncio.create_task(run_background())
         return data
 
     async def _execute_task(
@@ -597,4 +655,62 @@ class PipelineAsync(APIClient):
         Args:
             steps: List of steps to be executed.
         """
-        self.tasks_list = steps
+        new_list = []
+
+        def normalize_step(step: Any) -> Any:
+            """Normalize a step tuple to 4 elements (func, name, version, metadata)."""
+            if isinstance(step, tuple):
+                if len(step) == 3 and callable(step[0]):
+                    if isinstance(step[2], dict):
+                        return (step[0], step[1], "v1.0", step[2])
+                    return (step[0], step[1], step[2], {})
+                if len(step) == 2 and callable(step[0]):
+                    return (step[0], step[1], "v1.0", {})
+                if len(step) == 4 and callable(step[0]):
+                    return step
+            return step
+
+        for item in steps:
+            if isinstance(item, Condition):
+                normalized_true = [normalize_step(s) for s in item.branch_true]
+                normalized_false = [normalize_step(s) for s in item.branch_false]
+                new_list.append(Condition(
+                    expression=item.expression,
+                    branch_true=normalized_true,
+                    branch_false=normalized_false,
+                ))
+            elif isinstance(item, For):
+                normalized_steps = [normalize_step(s) for s in item.steps]
+                new_list.append(For(
+                    validation_expression=item.validation_expression,
+                    iterations=item.iterations,
+                    steps=normalized_steps,
+                ))
+            elif isinstance(item, Parallel):
+                normalized_steps = [normalize_step(s) for s in item.steps]
+                new_list.append(Parallel(
+                    steps=normalized_steps,
+                    max_workers=item.max_workers,
+                    use_processes=item.use_processes,
+                ))
+            elif isinstance(item, Background):
+                normalized_step = normalize_step(item.step)
+                if isinstance(normalized_step, tuple):
+                    bg_step = list(normalized_step)
+                else:
+                    name = getattr(normalized_step, "NAME", getattr(normalized_step, "__name__", "background"))
+                    version = getattr(normalized_step, "VERSION", "v1.0")
+                    bg_step = [normalized_step, name, version, {}]
+                bg_step.append({"_is_background": True, "_background_capture_error": item.capture_error})
+                new_list.append(tuple(bg_step))
+            elif callable(item):
+                name = getattr(item, "NAME", getattr(item, "__name__", "unknown"))
+                version = getattr(item, "VERSION", "v1.0")
+                meta = getattr(item, "_wpipe_metadata", {})
+                new_list.append((item, name, version, meta))
+            elif isinstance(item, tuple) and len(item) >= 2 and callable(item[0]):
+                new_list.append(normalize_step(item))
+            else:
+                new_list.append(item)
+
+        self.tasks_list = new_list

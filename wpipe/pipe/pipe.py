@@ -20,7 +20,7 @@ from wpipe.exception.api_error import logger
 from wpipe.tracking import PipelineTracker
 from wpipe.util.utils import clean_for_json
 
-from .components.logic_blocks import Condition, For, Parallel
+from .components.logic_blocks import Background, Condition, For, Parallel
 from .components.metrics import SystemMetricsCollector
 from .components.progress import ProgressManager
 
@@ -520,6 +520,23 @@ class Pipeline(APIClient):
                     max_workers=item.max_workers,
                     use_processes=item.use_processes,
                 ))
+            elif isinstance(item, Background):
+                normalized_step = normalize_step(item.step)
+                if isinstance(normalized_step, tuple):
+                    bg_step = list(normalized_step)
+                    if len(bg_step) >= 4 and isinstance(bg_step[3], dict):
+                        bg_step[3] = {**bg_step[3], "_is_background": True, "_background_capture_error": item.capture_error}
+                    elif len(bg_step) == 3:
+                        bg_step.append({"_is_background": True, "_background_capture_error": item.capture_error})
+                    else:
+                        bg_step = [normalized_step[0], normalized_step[1] if len(normalized_step) > 1 else "background",
+                                   normalized_step[2] if len(normalized_step) > 2 else "v1.0",
+                                   {"_is_background": True, "_background_capture_error": item.capture_error}]
+                else:
+                    name = getattr(normalized_step, "NAME", getattr(normalized_step, "__name__", "background"))
+                    version = getattr(normalized_step, "VERSION", "v1.0")
+                    bg_step = [normalized_step, name, version, {"_is_background": True, "_background_capture_error": item.capture_error}]
+                new_list.append(tuple(bg_step))
             elif isinstance(item, Pipeline):
                 new_list.append((item, item.pipeline_name or "SubPipeline", "v1.0", {}))
             elif callable(item):
@@ -772,6 +789,15 @@ class Pipeline(APIClient):
         if isinstance(item, Parallel):
             return self._execute_parallel(item, data, parent_step_id, parallel_group, **kwargs)
 
+        is_background = False
+        capture_error = False
+        if isinstance(item, tuple) and len(item) >= 4 and isinstance(item[3], dict):
+            is_background = item[3].get("_is_background", False)
+            capture_error = item[3].get("_background_capture_error", False)
+
+        if is_background:
+            return self._execute_background_step(item, data, capture_error, parent_step_id, parallel_group, **kwargs)
+
         return self._execute_task_step(item, data, parent_step_id, parallel_group, **kwargs)
 
     def _execute_parallel(
@@ -857,6 +883,47 @@ class Pipeline(APIClient):
             data["error"] = f"Executor failure: {str(e)}"
         finally:
             self._end_step_tracking(tracked_id, data if "error" not in data else None, data.get("error"))
+        return data
+
+    def _execute_background_step(
+        self,
+        item: Any,
+        data: Dict[str, Any],
+        capture_error: bool,
+        parent_step_id: Optional[int],
+        parallel_group: Optional[str],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Execute a background step without blocking the pipeline."""
+        import threading as bg_thread
+        
+        func, name, version, step_id, step_meta = None, "background", "v1.0", None, {}
+        if isinstance(item, tuple):
+            if len(item) >= 2:
+                func, name, version = item[0], item[1], item[2] if len(item) > 2 else "v1.0"
+                if len(item) >= 4 and isinstance(item[3], dict):
+                    step_meta = item[3]
+        elif callable(item):
+            func = item
+            name = getattr(item, "NAME", getattr(item, "__name__", "background"))
+
+        task_data = data.copy()
+        task_data.pop("progress_rich", None)
+
+        def run_background():
+            try:
+                if func:
+                    self._task_invoke(func, name, task_data, parent_step_id=parent_step_id, parallel_group=parallel_group, **kwargs)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                if capture_error:
+                    error_info = {"step_name": name, "error": str(e), "error_message": str(e)}
+                    self._execute_error_capture(task_data, error_info)
+                if self.verbose:
+                    print(f"[BACKGROUND ERROR] {name}: {e}")
+
+        # Use daemon thread so process can exit without waiting
+        bg_thread.Thread(target=run_background, daemon=True, name=f"wpipe_bg_{name}").start()
+
         return data
 
     def _execute_task_step(
