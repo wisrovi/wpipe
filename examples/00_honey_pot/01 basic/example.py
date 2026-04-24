@@ -21,6 +21,7 @@ from wpipe import (
     ResourceMonitor, Severity, TaskTimer,
     auto_dict_input, object_to_dict, step
 )
+from wpipe.pipe.components.logic_blocks import Background
 
 @step(name="revisar_luces", version="v1.0")
 def revisar_luces(d):
@@ -39,6 +40,16 @@ def notificar_telegram_error(context, error):
     """Simulated error notification."""
     print(f"\n🚨 ALERT: Error in '{error['step_name']}' -> {error['error_message']}")
     return context
+
+
+@step(name="log_background", version="v1.0")
+def log_background(data):
+    """Simulated background logging task - runs without blocking pipeline."""
+    import time
+    print("[BACKGROUND] Logging task started...")
+    time.sleep(30.1)  # Simulate async work
+    print("[BACKGROUND] Logging task completed!")
+    return {}
 
 db_path = "output/wpipe_dashboard.db"
 
@@ -65,6 +76,9 @@ def get_viaje_pipeline():
 
     viaje.set_steps([
         fase_preparacion,
+        # Background task: runs without blocking the pipeline
+        Background(log_background),
+        Print_info(">>> El pipeline continúa mientras el log se procesa en segundo plano..."),
         For(
             iterations=3,
             steps=[
