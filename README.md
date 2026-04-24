@@ -1,8 +1,8 @@
-# 🚀 WPipe v2.1.1
+# 🚀 WPipe v2.2.0
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 
-WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye ahora un **Tour de Aprendizaje con 130 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
+WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye ahora un **Tour de Aprendizaje con 140 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
 
 [![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
 [![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
@@ -26,7 +26,7 @@ Diferénciate de los scripts lineales. WPipe te ofrece superpoderes:
 
 ---
 
-## 📊 Features (24 Features)
+## 📊 Features (25 Features)
 
 | Feature | Descripción |
 |---------|-------------|
@@ -55,6 +55,7 @@ Diferénciate de los scripts lineales. WPipe te ofrece superpoderes:
 | 🔄 Async Pipeline | Soporte completo para pipelines asíncronos |
 | 🏗️ DAG Scheduling | Programación basada en grafos acíclicos dirigida |
 | 🌐 Dashboard Web | Dashboard visual en tiempo real |
+| ⚡ **Background Tasks** | Ejecutar tareas sin bloquear el pipeline (fire & forget) |
 
 ---
 
@@ -74,6 +75,7 @@ WPipe se basa en **4 pilares** que puedes combinar libremente:
 
 ```python
 from wpipe import Pipeline, step, Condition, For, Parallel
+from wpipe.pipe.components.logic_blocks import Background
 ```
 
 | Pilar | Uso |
@@ -83,6 +85,7 @@ from wpipe import Pipeline, step, Condition, For, Parallel
 | **`Condition`** | Ramificación condicional basada en expresiones |
 | **`For`** | Bucles con validación de parada |
 | **`Parallel`** | Ejecución paralela de múltiples pasos |
+| **`Background`** | Tareas en background sin bloquear el pipeline |
 
 ### 2. Tu Primer Pipeline
 
@@ -178,7 +181,36 @@ result = pipeline.run({})
 # Las 3 tareas se ejecutan simultáneamente
 ```
 
-### 6. Checkpoints (Resiliencia)
+### 6. Background Tasks (Fire & Forget)
+
+```python
+from wpipe import Pipeline, step
+from wpipe.pipe.components.logic_blocks import Background
+
+@step(name="tarea_principal")
+def tarea_principal(data):
+    print("Ejecutando tarea principal...")
+    return {"status": "completado"}
+
+@step(name="tarea_lenta")
+def tarea_lenta(data):
+    import time
+    print("Enviando telemetría...")
+    time.sleep(2)  # Simula operación lenta
+    print("¡Telemetría enviada!")
+
+pipeline = Pipeline(pipeline_name="con_background")
+pipeline.set_steps([
+    tarea_principal,
+    Background(tarea_lenta),  # No bloquea el pipeline
+])
+
+result = pipeline.run({})
+# El pipeline NO espera 2 segundos, continúa inmediatamente
+# La tarea lenta se ejecuta en background (daemon thread)
+```
+
+### 7. Checkpoints (Resiliencia)
 
 ```python
 from wpipe import Pipeline, step, CheckpointManager
@@ -425,6 +457,19 @@ exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 | **Test Coverage** | 95%+ pruebas en entornos síncronos y asíncronos |
 | **Arquitectura** | Unificación bajo `wsqlite`, sin SQL crudo en el núcleo |
 | **Python** | Compatible con Python 3.9+ |
+
+---
+
+## 📢 Marketing & Community
+
+Hemos expandido nuestra presencia con **+40 nuevos activos de marketing** diseñados para educar y ayudar a los desarrolladores a elegir la mejor arquitectura de orquestación.
+
+- **Dev.to**: Guías técnicas profundas sobre Green-IT y ahorro de RAM.
+- **DZone**: Análisis arquitectónicos sobre resiliencia industrial y estados persistentes.
+- **Reddit**: Historias reales y debates técnicos en comunidades de Python y DevOps.
+- **Indie Hackers**: Estrategias para escalar startups con infraestructura mínima y bajo coste.
+
+Puedes encontrar todos estos materiales en la carpeta `posters/`, numerados del 79 al 121, cubriendo comparativas con Airflow, n8n, Zapier y más.
 
 ---
 
