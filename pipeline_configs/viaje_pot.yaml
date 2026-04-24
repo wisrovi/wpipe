@@ -1,0 +1,41 @@
+name: viaje_pot
+registered_at: '2026-04-24T12:51:31.916588'
+step_count: 4
+steps:
+- func: <function fase_preparacion at 0x71d1e40fcea0>
+  name: fase_preparacion
+  type: task
+  version: v1.1
+- func: <function log_background at 0x71d1d7f2e840>
+  name: log_background
+  type: task
+  version: v1.0
+- func: <states.print_info.Print_info object at 0x71d1d7fc4910>
+  name: print_info
+  type: task
+  version: v1.0
+- expression: null
+  iterations: 3
+  steps:
+  - <states.print_info.Print_info object at 0x71d1d7fc4a50>
+  - max_workers: 3
+    steps:
+    - <function hechar_gasolina at 0x71d1e4bc18a0>
+    - <function cambiar_aceite at 0x71d1e4e6c0e0>
+    - <function revisar_luces at 0x71d1e5015e40>
+    type: parallel
+    use_processes: false
+  - expression: "nivel_gasolina != 'Vac\xEDo'"
+    iterations: null
+    steps:
+    - <function conducir at 0x71d1e4d20720>
+    - branch_false:
+      - <function desinflar_neumaticos at 0x71d1e4bc1440>
+      branch_true:
+      - <wpipe.pipe.pipe.Pipeline object at 0x71d1e41caa50>
+      - <function inflar_neumaticos at 0x71d1e40e3600>
+      expression: nivel_neumaticos == 'Bajo'
+      type: condition
+    - <function pinchazo_aleatorio at 0x71d1d7f9c400>
+    type: for
+  type: for

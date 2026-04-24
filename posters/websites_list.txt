@@ -1,0 +1,25 @@
+# Platforms and Target Audiences for wpipe
+
+1. LinkedIn
+   - Audience: Architects, Tech Leads, CTOs, IT Managers.
+   - Focus: Architecture, Green-IT, Efficiency, Industrial Resilience.
+
+2. Medium
+   - Audience: Software Engineers, Data Scientists, Python Enthusiasts.
+   - Focus: Deep dives, Code-First vs Low-Code, Technical Tutorials, Long-form thought leadership.
+
+3. Dev.to
+   - Audience: Developers, Hobbyists, Students.
+   - Focus: Performance hacks, Clean Code, Practical examples, RAM savings.
+
+4. Reddit (r/Python)
+   - Audience: Python Community.
+   - Focus: Open source contribution, Show & Tell, Feedback, Technical implementation.
+
+5. Indie Hackers
+   - Audience: Solopreneurs, Bootstrappers, Lean Startup founders.
+   - Focus: Scaling on a budget, Reducing infrastructure costs, Technical simplicity.
+
+6. DZone
+   - Audience: Enterprise Developers, System Architects.
+   - Focus: Industrial grade resilience, Scalable architectures, Enterprise patterns.

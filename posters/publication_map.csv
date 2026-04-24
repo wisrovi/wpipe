@@ -1,0 +1,51 @@
+Archivo,Plataforma,Tecnología/Enfoque,Ángulo,Fecha Sugerida,Frecuencia,Prioridad
+01_LI_n8n_v1.md,LinkedIn,n8n,Evolución Natural (Engineering),2026-04-27,Semanal,Alta
+02_LI_n8n_v2_visual.md,LinkedIn,n8n,Arquitectura de Datos,2026-04-27,Semanal,Alta
+03_MED_n8n_v1.md,Medium,n8n,Límites Arquitectónicos,2026-04-27,Semanal,Alta
+04_MED_n8n_v2.md,Medium,n8n,Micro-Orquestación,2026-04-28,Semanal,Media
+05_MED_n8n_v3.md,Medium,n8n,IoT / Edge Computing,2026-04-29,Semanal,Media
+06_MED_n8n_v4.md,Medium,n8n,Bulletproof Web Scraping,2026-04-30,Semanal,Alta
+07_LI_Zapier_v1.md,LinkedIn,Zapier,Soberanía de Datos,2026-05-01,Semanal,Media
+08_LI_Zapier_v2.md,LinkedIn,Zapier,Orquestación con Integridad,2026-05-01,Semanal,Media
+09_MED_Zapier_v1.md,Medium,Zapier,Eficiencia de Capital,2026-05-02,Semanal,Alta
+10_MED_Zapier_v2.md,Medium,Zapier,AI & Token Efficiency,2026-05-03,Semanal,Media
+11_LI_Make_v1.md,LinkedIn,Make,Estandarización de Procesos,2026-05-04,Semanal,Media
+12_LI_Make_v2.md,LinkedIn,Make,Tracking Forense,2026-05-04,Semanal,Media
+13_MED_Make_v1.md,Medium,Make,Arquitectura Industrial,2026-05-05,Semanal,Alta
+14_MED_Make_v2.md,Medium,Make,Seguridad Local-First,2026-05-06,Semanal,Media
+15_LI_Airflow_v1.md,LinkedIn,Airflow,Orquestación Embebida,2026-05-07,Semanal,Alta
+16_LI_Airflow_v2.md,LinkedIn,Airflow,Zero-Friction DX,2026-05-07,Semanal,Alta
+17_MED_Airflow_v1.md,Medium,Airflow,Overhead Reduction,2026-05-08,Semanal,Alta
+18_MED_Airflow_v2.md,Medium,Airflow,Edge Orchestration,2026-05-09,Semanal,Media
+19_LI_Prefect_v1.md,LinkedIn,Prefect,Resiliencia Soberana,2026-05-10,Semanal,Media
+20_LI_Prefect_v2.md,LinkedIn,Prefect,Long-Running Continuity,2026-05-10,Semanal,Media
+21_MED_Prefect_v1.md,Medium,Prefect,State Machine vs Checkpoints,2026-05-11,Semanal,Alta
+22_MED_Prefect_v2.md,Medium,Prefect,Sustainable / Green IT,2026-05-12,Semanal,Alta
+23_LI_Luigi_v1.md,LinkedIn,Luigi,Sustainable Orchestration,2026-05-13,Semanal,Media
+24_LI_Luigi_v2.md,LinkedIn,Luigi,Modernizing Pipelines,2026-05-13,Semanal,Baja
+25_MED_Luigi_v1.md,Medium,Luigi,Stateful Recovery,2026-05-14,Semanal,Media
+27_LI_Dagster_v1.md,LinkedIn,Dagster,Step-based Resilience,2026-05-16,Semanal,Alta
+29_MED_Dagster_v1.md,Medium,Dagster,Lean Infrastructure,2026-05-17,Semanal,Alta
+31_LI_Celery_v1.md,LinkedIn,Celery,Broker-less Efficiency,2026-05-19,Semanal,Alta
+33_MED_Celery_v1.md,Medium,Celery,Async Resilience,2026-05-20,Semanal,Alta
+35_LI_Cron_v1.md,LinkedIn,Cron,Profesionalización de Tareas,2026-05-22,Semanal,Alta
+37_MED_Cron_v1.md,Medium,Cron,Upgrading to wpipe,2026-05-23,Semanal,Media
+39_LI_MEGA_Comparison.md,LinkedIn,TODAS,Megapost Cuadrante,2026-05-25,Especial,Crítica
+40_MED_MEGA_Comparison.md,Medium,TODAS,The Battle Card,2026-05-26,Especial,Crítica
+41_LI_Arquitecto.md,LinkedIn,Autoridad,Despertar del Arquitecto,2026-05-27,Semanal,Alta
+44_DEV_RAM_Savings.md,Dev.to,Green-IT,Ahorro RAM 50%,2026-05-28,Semanal,Alta
+45_DEV_CleanCode.md,Dev.to,Zen,Clean Logic,2026-05-29,Semanal,Media
+48_RED_Python_ShowTell.md,Reddit,Comunidad,Show & Tell,2026-05-30,Especial,Media
+49_RED_SelfHosted.md,Reddit,Self-Hosted,Ligereza,2026-05-31,Especial,Alta
+52_IH_Scaling_Cheap.md,Indie Hackers,Startup,Escalar Barato,2026-06-01,Semanal,Media
+56_DZ_Resilience_Architecture.md,DZone,Arquitectura,Estabilidad Industrial,2026-06-03,Semanal,Alta
+60_DEV_MEGA_Cybersecurity.md,Dev.to,Ciberseguridad,Peer Recommendation,2026-06-05,Especial,Crítica
+79_DEV_n8n_RAM.md,Dev.to,n8n,RAM Battle & Cold Start,2026-06-07,Semanal,Alta
+80_RED_n8n_Opinion.md,Reddit,n8n,Comunidad,2026-06-08,Especial,Media
+81_IH_n8n_Bootstrapping.md,Indie Hackers,n8n,Negocio,2026-06-09,Semanal,Media
+82_DZ_n8n_Microservices.md,DZone,n8n,Sovereign Micro-Orchestration,2026-06-10,Semanal,Alta
+83_DEV_Zapier_Cost.md,Dev.to,Zapier,Financial Analysis (OPEX),2026-06-12,Semanal,Alta
+88_DZ_Zapier_Architecture.md,DZone,Zapier,Enterprise Integrity,2026-06-15,Semanal,Alta
+91_DEV_Airflow_Lite.md,Dev.to,Airflow,Zero-Infra Resilience,2026-06-17,Semanal,Alta
+240_Victory_Post.md,LinkedIn,TODAS,Victory Revolution (+117k),2026-11-04,Especial,Crítica
+241_LI_Summary_Series.md,LinkedIn,TODAS,Comparativa Final,2026-11-05,Especial,Media
