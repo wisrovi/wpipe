@@ -1,11 +1,11 @@
-La Senda del Maestro: 130 Niveles de Poder
+La Senda del Maestro: 140 Niveles de Poder
 =========================================
 
 .. meta::
    :description: El camino definitivo para dominar la orquestación de datos con WPipe.
    :keywords: academy, tour, mastery, learning path, python, wpipe
 
-Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un entrenamiento intensivo de 130 niveles diseñado para llevarte desde la ignorancia absoluta hasta la maestría en sistemas distribuidos y resilientes.
+Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un entrenamiento intensivo de 140 niveles diseñado para llevarte desde la ignorancia absoluta hasta la maestría en sistemas distribuidos y resilientes.
 
 .. raw:: html
 
@@ -67,7 +67,7 @@ Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un
         :class-card: mission-card-enterprise
         :columns: 12
 
-        **Niveles 111 - 130**
+        **Niveles 111 - 140**
         Integración total en el ecosistema Wisrovi. Microservicios, APIs y Dashboards en tiempo real.
         ^^^
         *Nested Pipelines, API Client, Event Hooks, Industrial Dashboards.*
@@ -237,25 +237,25 @@ A continuación tienes el acceso directo a cada neurona del sistema:
            level120
            level121
            level122
-level123
-            level124
-            level125
-            level126
-            level127
-            level128
-            level129
-            level130
-            level131
-            level132
-            level133
-            level134
-            level135
-            level136
-            level137
-            level138
-            level139
-            level140
-            zen
+           level123
+           level124
+           level125
+           level126
+           level127
+           level128
+           level129
+           level130
+           level131
+           level132
+           level133
+           level134
+           level135
+           level136
+           level137
+           level138
+           level139
+           level140
+           zen
 
 .. raw:: html
 

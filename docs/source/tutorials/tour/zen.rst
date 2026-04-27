@@ -2,7 +2,7 @@
 
     <div style="text-align: center; margin: 50px 0; padding: 40px; border: 3px solid #00f2fe; border-radius: 20px; background: rgba(0, 242, 254, 0.05);">
         <h1 style="color: #00f2fe;">🎓 Certificación: Arquitecto de Pipelines WPipe</h1>
-        <p style="font-size: 1.5em; color: #f8fafc;">¡Has completado los 130 niveles de La Senda del Maestro!</p>
+        <p style="font-size: 1.5em; color: #f8fafc;">¡Has completado los 140 niveles de La Senda del Maestro!</p>
         <div style="margin: 30px 0;">
             <i class="fas fa-medal" style="font-size: 5em; color: #f59e0b;"></i>
         </div>

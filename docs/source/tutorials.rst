@@ -13,7 +13,7 @@ Welcome to the **WPipe Academy**. This section is your definitive guide to becom
         <h2 style="color: #00f2fe; margin-top: 0;">🚀 The Learning Path</h2>
         <p style="color: #94a3b8; font-size: 1.1em;">
             Our curriculum is designed to take you from a curious beginner to a senior pipeline architect. 
-            Follow the 130-level tour for a deep dive, or jump into specific tutorials to solve your immediate problems.
+            Follow the 140-level tour for a deep dive, or jump into specific tutorials to solve your immediate problems.
         </p>
     </div>
 
@@ -41,9 +41,9 @@ The Learning Tour
 
     <div class="feature-grid">
         <div class="feature-card" style="grid-column: span 2; background: rgba(0, 242, 254, 0.05); border: 2px solid rgba(0, 242, 254, 0.3);">
-            <h3><span>🏆</span> The 130-Level Tour de Aprendizaje</h3>
+            <h3><span>🏆</span> The 140-Level Tour de Aprendizaje</h3>
             <p>A massive, step-by-step journey through every single capability of the engine. Each level introduces one new concept, building upon the last.</p>
-            <p><strong>Status:</strong> Available (Levels 1-130)</p>
+            <p><strong>Status:</strong> Available (Levels 1-140)</p>
             <a href="tutorials/tour/index.html" class="btn-primary" style="display: inline-block; margin-top: 15px; text-decoration: none;">Start The Tour →</a>
         </div>
     </div>

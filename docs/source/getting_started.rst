@@ -171,6 +171,6 @@ Next Steps
         </a>
         <a href="tutorials/tour/index.html" style="flex: 1; text-align: center; background: #1e293b; padding: 20px; border-radius: 12px; text-decoration: none; border: 1px solid #334155;">
             <h4 style="color: #f59e0b; margin: 0;">Start The Tour →</h4>
-            <p style="color: #94a3b8; font-size: 0.9em; margin-top: 10px;">Master all 130 levels of the learning path.</p>
+            <p style="color: #94a3b8; font-size: 0.9em; margin-top: 10px;">Master all 140 levels of the learning path.</p>
         </a>
     </div>
