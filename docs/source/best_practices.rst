@@ -2,7 +2,7 @@ Best Practices for Industrial Pipelines
 ========================================
 
 .. meta::
-   :description: Professional engineering guidelines for building robust pipelines with wpipe v2.1.1-LTS.
+   :description: Professional engineering guidelines for building robust pipelines with wpipe v2.3.0-LTS.
    :keywords: best practices, engineering, guidelines, clean code, wpipe, industrial
 
 Building a pipeline is easy. Building an **industrial-grade** pipeline that survives network failures, database locks, and evolving data schemas requires discipline. Follow these standards to ensure your **WPipe** implementations are world-class.

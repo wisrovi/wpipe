@@ -5,7 +5,7 @@ Advanced Patterns Tutorial
    :description: Advanced design patterns for complex pipeline architectures.
    :keywords: design patterns, advanced, parallel, monitor, wpipe
 
-Learn advanced design patterns for complex pipeline scenarios using **WPipe v2.1.1** high-end features. This tutorial is intended for senior developers building distributed systems or high-throughput data processing engines.
+Learn advanced design patterns for complex pipeline scenarios using **WPipe v2.3.0** high-end features. This tutorial is intended for senior developers building distributed systems or high-throughput data processing engines.
 
 .. contents::
    :local:
@@ -79,7 +79,7 @@ Standard logging often misses the context of a failure. WPipe's forensic capture
 4. High-Performance Monitoring
 ------------------------------
 
-WPipe v2.1.1 features a non-blocking ``ResourceMonitor`` using **WAL (Write-Ahead Logging)** mode for SQLite. This allows you to track system health without slowing down the primary processing.
+WPipe v2.3.0 features a non-blocking ``ResourceMonitor`` using **WAL (Write-Ahead Logging)** mode for SQLite. This allows you to track system health without slowing down the primary processing.
 
 .. code-block:: python
 

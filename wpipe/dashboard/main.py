@@ -190,13 +190,13 @@ def create_app(
         return tracker.get_top_slow_steps(limit=limit)
 
     @app.get("/api/analysis/states")
-    async def get_states_analysis() -> List[Dict[str, Any]]:
+    async def get_states_analysis() -> Dict[str, Any]:
         """Get analysis of pipeline states."""
         tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_states_analysis()
 
     @app.get("/api/analysis/pipelines")
-    async def get_pipelines_analysis() -> List[Dict[str, Any]]:
+    async def get_pipelines_analysis() -> Dict[str, Any]:
         """Get analysis of pipeline performance."""
         tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         return tracker.get_pipelines_analysis()

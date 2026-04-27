@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPipe Certificate Editor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px;
+        }
+
+        .editor-panel {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            border: 1px solid #334155;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        input {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .cert-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-green { background: #10b981; color: #020617; }
+        .btn-red { background: #ef4444; color: white; }
+        .btn-cyan { background: #00f2fe; color: #020617; }
+        .btn-download { background: #ffffff; color: #020617; margin-top: 20px; }
+
+        .cert-container {
+            display: none;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Certificate Base Styles */
+        .certificate {
+            width: 800px;
+            height: 500px;
+            margin: 0 auto;
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .cert-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .cert-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cert-name {
+            font-size: 3.5em;
+            color: white;
+            display: inline-block;
+            padding: 0 40px;
+            margin: 0;
+            font-family: serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="editor-panel">
+        <div>
+            <label>Nombre del Alumno:</label>
+            <input type="text" id="name-input" placeholder="Escribe tu nombre..." oninput="updateNames(this.value)">
+        </div>
+        <div class="cert-selector">
+            <button class="btn-green" onclick="showCert('cert-m1')">Nivel 20 (Verde)</button>
+            <button class="btn-red" onclick="showCert('cert-m3')">Nivel 80 (Rojo)</button>
+            <button class="btn-cyan" onclick="showCert('cert-final')">Nivel 140 (Cian)</button>
+        </div>
+    </div>
+
+    <!-- CERTIFICADO NIVEL 20 (MISIÓN 1) -->
+    <div id="cert-m1" class="cert-container active">
+        <div class="certificate" style="background: linear-gradient(135deg, #020617 0%, #064e3b 100%); border: 10px solid #10b981;">
+            <div class="cert-bg" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+            <div class="cert-content">
+                <h1 style="color: #10b981; margin: 0; font-size: 3em; text-transform: uppercase; font-weight: 800;">Certificado de Misión</h1>
+                <p style="font-size: 1.2em; margin-top: 10px; opacity: 0.8;">WPipe Learning Tour: Misión 1 Completada</p>
+                <div style="margin: 40px 0;">
+                    <p style="font-size: 1.5em; margin-bottom: 5px;">Se otorga a:</p>
+                    <h2 class="cert-name-target" style="font-size: 3.5em; border-bottom: 2px solid #10b981; min-width: 300px; display: inline-block;">Arquitecto WPipe</h2>
+                </div>
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #10b981; font-size: 1.8em; margin: 0;">Iniciado del Motor WPipe</h3>
+                    <p style="max-width: 600px; margin: 15px auto; font-size: 1.1em; color: #cbd5e0;">Por demostrar dominio en la instanciación de motores, gestión del Warehouse y orquestación de tareas atómicas.</p>
+                </div>
+                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 40px;">
+                    <div style="text-align: left;"><p style="margin: 0; font-weight: bold;">WPipe v2.1.1 LTS</p><p style="margin: 0; font-size: 0.9em; opacity: 0.7;">Wisrovi Ecosystem</p></div>
+                    <div style="width: 80px; height: 80px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5em; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);">🎖️</div>
+                </div>
+            </div>
+        </div>
+        <center><button class="btn-download" onclick="download('cert-m1', 'Certificado_M1.png')">⬇️ Descargar este PNG</button></center>
+    </div>
+
+    <!-- CERTIFICADO NIVEL 80 (MISIÓN 3) -->
+    <div id="cert-m3" class="cert-container">
+        <div class="certificate" style="background: linear-gradient(135deg, #020617 0%, #7f1d1d 100%); border: 10px solid #ef4444;">
+            <div class="cert-bg" style="background-image: repeating-linear-gradient(45deg, #ffffff 0, #ffffff 1px, transparent 0, transparent 50%); background-size: 10px 10px;"></div>
+            <div class="cert-content">
+                <h1 style="color: #ef4444; margin: 0; font-size: 3em; text-transform: uppercase; font-weight: 800;">Certificado de Misión</h1>
+                <p style="font-size: 1.2em; margin-top: 10px; opacity: 0.8;">WPipe Learning Tour: Misiones 2 y 3 Completadas</p>
+                <div style="margin: 40px 0;">
+                    <p style="font-size: 1.5em; margin-bottom: 5px;">Se otorga a:</p>
+                    <h2 class="cert-name-target" style="font-size: 3.5em; border-bottom: 2px solid #ef4444; min-width: 300px; display: inline-block;">Arquitecto WPipe</h2>
+                </div>
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #ef4444; font-size: 1.8em; margin: 0;">Guardián de la Resiliencia WPipe</h3>
+                    <p style="max-width: 600px; margin: 15px auto; font-size: 1.1em; color: #cbd5e0;">Por dominar la lógica de control avanzada, estrategias de reintento y persistencia mediante Checkpoints en entornos críticos.</p>
+                </div>
+                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 40px;">
+                    <div style="text-align: left;"><p style="margin: 0; font-weight: bold;">WPipe v2.1.1 LTS</p><p style="margin: 0; font-size: 0.9em; opacity: 0.7;">Wisrovi Ecosystem</p></div>
+                    <div style="width: 80px; height: 80px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5em; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);">🛡️</div>
+                </div>
+            </div>
+        </div>
+        <center><button class="btn-download" onclick="download('cert-m3', 'Certificado_Resiliencia.png')">⬇️ Descargar este PNG</button></center>
+    </div>
+
+    <!-- CERTIFICADO NIVEL 140 (FINAL) -->
+    <div id="cert-final" class="cert-container">
+        <div class="certificate" style="background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%); border: 10px solid #00f2fe;">
+            <div class="cert-bg" style="background: url('data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23 47c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6z\' fill=\'%2300f2fe\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'/%3E%3C/svg%3E'); opacity: 0.15;"></div>
+            <div class="cert-content">
+                <h1 style="color: #00f2fe; margin: 0; font-size: 2.8em; text-transform: uppercase; font-weight: 800; letter-spacing: 2px;">Arquitecto de Pipelines</h1>
+                <p style="font-size: 1.2em; margin-top: 5px; opacity: 0.8; letter-spacing: 1px;">CERTIFICACIÓN PROFESIONAL WPipe</p>
+                <div style="margin: 35px 0;">
+                    <p style="font-size: 1.3em; margin-bottom: 5px; opacity: 0.9;">Se certifica que:</p>
+                    <h2 class="cert-name-target" style="font-size: 3.8em; color: white; border-bottom: 3px solid #00f2fe; min-width: 300px; display: inline-block; text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);">Arquitecto WPipe</h2>
+                </div>
+                <div style="margin-top: 20px;">
+                    <p style="max-width: 650px; margin: 0 auto; font-size: 1.15em; line-height: 1.6; color: #cbd5e0;">Ha completado satisfactoriamente los <b>140 niveles</b> de "La Senda del Maestro", demostrando maestría absoluta en orquestación industrial, paralelismo masivo y arquitecturas distribuidas.</p>
+                </div>
+                <div style="margin-top: 35px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 50px;">
+                    <div style="text-align: left;"><p style="margin: 0; font-weight: bold; color: #00f2fe;">WISROVI ECOSYSTEM</p><p style="margin: 0; font-size: 0.85em; opacity: 0.6;">Verification Code: WP-140-ZEN</p></div>
+                    <div style="width: 90px; height: 90px; background: rgba(0, 242, 254, 0.1); border: 2px solid #00f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3em; box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);">🎓</div>
+                </div>
+            </div>
+        </div>
+        <center><button class="btn-download" onclick="download('cert-final', 'Certificado_Maestro.png')">⬇️ Descargar este PNG</button></center>
+    </div>
+
+    <script>
+        function updateNames(val) {
+            const targets = document.querySelectorAll('.cert-name-target');
+            targets.forEach(el => {
+                el.innerText = val.trim() || 'Arquitecto WPipe';
+            });
+        }
+
+        function showCert(id) {
+            document.querySelectorAll('.cert-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function download(containerId, filename) {
+            const element = document.querySelector('#' + containerId + ' .certificate');
+            html2canvas(element, {
+                scale: 3,
+                backgroundColor: null,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>

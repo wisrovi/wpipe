@@ -2,10 +2,10 @@ Getting Started with |wpipe|
 =============================
 
 .. meta::
-   :description: Quick start guide for wpipe v2.1.1-LTS. Learn how to install and build your first pipeline.
+   :description: Quick start guide for wpipe v2.3.0-LTS. Learn how to install and build your first pipeline.
    :keywords: quickstart, installation, tutorial, python, pipeline
 
-Welcome to the future of Python orchestration. This guide will help you set up **wpipe v2.1.1-LTS** and execute your first industrial-grade pipeline in minutes.
+Welcome to the future of Python orchestration. This guide will help you set up **wpipe v2.3.0-LTS** and execute your first industrial-grade pipeline in minutes.
 
 .. raw:: html
 
@@ -60,7 +60,7 @@ Ensure the engine is correctly synchronized with your system.
     from wpipe import Pipeline
     
     print(f"🚀 WPipe v{wpipe.__version__} - Engine Synchronized.")
-    # Expected: 🚀 WPipe v2.1.1 - Engine Synchronized.
+    # Expected: 🚀 WPipe v2.3.0 - Engine Synchronized.
 
 3. Build Your First Pipeline
 ----------------------------
@@ -142,7 +142,7 @@ Here is a complete, production-ready example demonstrating data accumulation.
 5. Enterprise Capabilities at a Glance
 --------------------------------------
 
-WPipe v2.1.1-LTS is not just about sequences. It's about industrial reliability.
+WPipe v2.3.0-LTS is not just about sequences. It's about industrial reliability.
 
 .. list-table::
    :widths: 30 70

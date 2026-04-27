@@ -2,7 +2,7 @@ Installation Guide
 ==================
 
 .. meta::
-   :description: How to install WPipe v2.1.1-LTS on Linux, Windows, and macOS.
+   :description: How to install WPipe v2.3.0-LTS on Linux, Windows, and macOS.
    :keywords: install, pip, source, docker, wpipe
 
 WPipe is distributed via PyPI and is designed to be lightweight with minimal external dependencies.
@@ -76,7 +76,7 @@ Ensure the engine is correctly balanced:
 .. code-block:: python
 
     import wpipe
-    print(wpipe.__version__)  # Should return 2.1.1
+    print(wpipe.__version__)  # Should return 2.3.0
 
 6. Troubleshooting
 ------------------

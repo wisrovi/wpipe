@@ -2,10 +2,10 @@ API Technical Specification
 ===========================
 
 .. meta::
-   :description: Complete technical reference for WPipe v2.1.1-LTS. Detailed classes, methods, and decorators.
+   :description: Complete technical reference for WPipe v2.3.0-LTS. Detailed classes, methods, and decorators.
    :keywords: api, reference, technical, documentation, wpipe, classes
 
-This is the exhaustive technical specification for the **WPipe v2.1.1-LTS** engine. Designed for precision and reliability.
+This is the exhaustive technical specification for the **WPipe v2.3.0-LTS** engine. Designed for precision and reliability.
 
 .. raw:: html
 

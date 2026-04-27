@@ -10,7 +10,7 @@ Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un
 .. raw:: html
 
     <div style="text-align: center; margin-bottom: 40px;">
-        <p style="font-size: 1.2em; color: #94a3b8;">Has iniciado el proceso de sincronización con el motor <strong>v2.1.1-LTS</strong>.</p>
+        <p style="font-size: 1.2em; color: #94a3b8;">Has iniciado el proceso de sincronización con el motor <strong>v2.3.0-LTS</strong>.</p>
     </div>
 
 .. grid:: 1 1 2 2

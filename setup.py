@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import List
 from setuptools import setup, find_packages
 
+
 def get_long_description() -> str:
     """
     Retrieve the long description from the README.md file.
@@ -21,6 +22,7 @@ def get_long_description() -> str:
     if readme_path.exists():
         return readme_path.read_text(encoding="utf-8")
     return "Libreria para crear pipelines conectados a una API"
+
 
 def run_setup() -> None:
     """
@@ -36,7 +38,7 @@ def run_setup() -> None:
 
     setup(
         name="wpipe",
-        version="2.1.1",
+        version="2.3.0",
         description="Library for creating pipelines connected to an API",
         author="William Steve Rodriguez Villamizar",
         author_email="wisrovi.rodriguez@gmail.com",
@@ -55,6 +57,7 @@ def run_setup() -> None:
         license="MIT",
         url="https://github.com/wisrovi/wpipe",
     )
+
 
 if __name__ == "__main__":
     run_setup()

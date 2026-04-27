@@ -2,10 +2,10 @@ System Architecture: The WPipe Engine
 ========================================
 
 .. meta::
-   :description: Architectural deep dive into wpipe v2.1.1-LTS. Learn about the Warehouse model, WSQLite persistence, and parallel execution.
+   :description: Architectural deep dive into wpipe v2.3.0-LTS. Learn about the Warehouse model, WSQLite persistence, and parallel execution.
    :keywords: architecture, design, internal, data flow, persistence, parallel
 
-This document details the internal design and engineering philosophy behind **wpipe v2.1.1-LTS**. Our goal is to provide a zero-boilerplate orchestration engine that remains robust under industrial loads.
+This document details the internal design and engineering philosophy behind **wpipe v2.3.0-LTS**. Our goal is to provide a zero-boilerplate orchestration engine that remains robust under industrial loads.
 
 .. raw:: html
 
@@ -62,7 +62,7 @@ WPipe is structured into four specialized layers:
 3. Persistence Strategy: WSQLite
 -------------------------------
 
-One of the most critical components of v2.1.1-LTS is the **WSQLite unification**. 
+One of the most critical components of v2.3.0-LTS is the **WSQLite unification**. 
 
 *   **Zero Raw SQL**: All internal tracking (logs, steps, metrics) is handled through Pydantic-mapped models.
 *   **Thread Safety**: Connection pooling and locking mechanisms are built-in to prevent `Database is locked` errors during parallel execution.
