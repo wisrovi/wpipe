@@ -3,51 +3,86 @@ Nivel 51: demo_level51.py
 
 Este es el nivel 51 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level51.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
+
 
    
    ============================================================
    🚀 PIPELINE RESUMIBLE: vacaciones_lts_2026
    ============================================================
    
-   ⟲ ¡SISTEMA RECUPERADO! Detectado punto de control anterior.
-     📍 Último hito guardado: step_0
-     🔢 Índice del paso: 0
-     🕒 Fecha del guardado: 2026-04-23T01:11:48.623260
-     📦 Datos recuperados: 12 llaves en bodega
+   ⊘ No se encontró punto de control previo. Startsndo trip desde el garaje...
    
-   >>> PASO 2: Reanudando viaje automáticamente desde el punto exacto...
+   [!] PASO 1: Ejecución inicial con caída simulada.
    ------------------------------------------------------------
+   [PIPELINE STATUS] Registered: PIPE-C0D2E2FD
    
-   [CHECKPOINT] Reanudando 'vacaciones_lts_2026' desde el paso 1
-   
-   [MATRÍCULA] Pipeline registered: PIPE-4496B595
-   [MATRÍCULA] Config YAML: /home/wisrovi/Documentos/w_libraries/wpipe/wpipe/examples/00_honey_pot/03_yield/pipeline_configs/viaje.yaml
-   
-   [CHECKPOINT REACHED] inicio_viaje
-   >>> [CHECKPOINT] Inicio del viaje
-   --- Nuevo viaje --- (Iteración: 0)
-   
-   [DEBUG] item.use_processes value: False
+   [CHECKPOINT REACHED] trip_start
+   >>> [CHECKPOINT] Trip start
+   --- New trip ---_loop_iteration
    [PARALLEL] Executing 3 steps using THREADS (workers=3)
-   viaje - print_info ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+        * Checking front and rear lights... OK
+   [CONDITION] Evaluating: tire_level == 'Low'
+   
+   [ERROR CAPTURE] Processing error in state 'random_flat_tire'...
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 72
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-04-28T08:50:31.123304
+   ------------------------------------------------------------
+   [RETRY] random_flat_tire failed (attempt 1): Random puncture
+   
+   [ERROR CAPTURE] Processing error in state 'random_flat_tire'...
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 72
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 2
+   🕒 TIMESTAMP: 2026-04-28T08:50:31.134084
+   ------------------------------------------------------------
+   [RETRY] random_flat_tire failed (attempt 2): Random puncture
+   [CONDITION] Evaluating: tire_level == 'Low'
+   [non_serializable_obj]: None non_serializable_objv1.0
+   --- New trip ---_loop_iteration
+   [PARALLEL] Executing 3 steps using THREADS (workers=3)
+        * Checking front and rear lights... OK
+   [non_serializable_obj]: None non_serializable_objv1.0
+   --- New trip ---_loop_iteration
+   [PARALLEL] Executing 3 steps using THREADS (workers=3)
+        * Checking front and rear lights... OK
+   [non_serializable_obj]: None non_serializable_objv1.0
+   trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    [HOOKS] Executing post-run tasks...
-   >>> [HOOK] El viaje ha terminado, enviando resumen final...
+   >>> [HOOK] Trip finished sending final summary...
+   [PIPELINE STATUS] PIPE-C0D2E2FD: COMPLETED
    
-   [MATRÍCULA] Pipeline PIPE-4496B595: ERROR
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   ✘ SISTEMA CAÍDO: 🔌 FALLO ELÉCTRICO CRÍTICO: El sistema se ha apagado inesperadamente.
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
-   ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
-   🏁 ¡VIAJE COMPLETADO CON ÉXITO TRAS LA REANUDACIÓN!
-   ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
-
+   >>> INSTRUCCIONES: Ejecuta este script una vez más para ver cómo WPipe
+   >>> reanuda el trip saltándose la fase de preparación.
