@@ -3,32 +3,31 @@ Nivel 40: demo_level40.py
 
 Este es el nivel 40 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level40.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
+
    
-   🚀 INICIANDO EL GRAN VIAJE (Integración de 40 niveles)...
+   🚀 STARTING THE GRAND TRIP (Integration of 40 levels)...
    
-   
-   [CHECKPOINT] Reanudando 'viaje_final_autonomo' desde el paso 3
-   
-   [MATRÍCULA] Pipeline registered: PIPE-B3C1C0FF
-   [MATRÍCULA] Config YAML: /home/wisrovi/Documentos/w_libraries/wpipe/wpipe/examples/00_honey_pot/03_yield/pipeline_configs/VIAJE_AUTONOMO_TOTAL.yaml
-   VIAJE_AUTONOMO_TOTAL - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [CHECKPOINT] Resuming 'final_autonomous_trip' from step 3
+   [PIPELINE STATUS] Registered: PIPE-69F70074
+   total_autonomous_trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    [HOOKS] Executing post-run tasks...
-   🔌 Sistemas desconectados.
+   🔌 Systems disconnected.
+   [PIPELINE STATUS] PIPE-69F70074: COMPLETED
    
-   [MATRÍCULA] Pipeline PIPE-B3C1C0FF: COMPLETED
-   
-   ✅ TOUR DE APRENDIZAJE COMPLETADO. 40 NIVELES DE DOMINIO DE WPIPE.
-
+   ✅ LEARNING TOUR COMPLETED. 40 LEVELS OF WPIPE MASTERY.
