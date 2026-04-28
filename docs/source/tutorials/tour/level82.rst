@@ -3,27 +3,27 @@ Nivel 82: demo_level82.py
 
 Este es el nivel 82 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level82.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   
-   [MATRÍCULA] Pipeline registered: PIPE-E3C6DE28
-   [MATRÍCULA] Config YAML: /home/wisrovi/Documentos/w_libraries/wpipe/wpipe/examples/00_honey_pot/03_yield/pipeline_configs/Viaje_L82_ExportCSV.yaml
+
+   [PIPELINE STATUS] Registered: PIPE-689DA332
    🔑 Motor iniciado
    🏁 Viaje completado
-   Viaje_L82_ExportCSV - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   
-   [MATRÍCULA] Pipeline PIPE-E3C6DE28: COMPLETED
+   viaje_l82_exportcsv ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [PIPELINE STATUS] PIPE-689DA332: COMPLETED
    
    📤 Exportando a CSV...
    ✅ Exportado a output/viaje82.csv
-
