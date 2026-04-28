@@ -3,18 +3,21 @@ Nivel 39: demo_level39.py
 
 Este es el nivel 39 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level39.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> Iniciando sincronización de flota en modo SILENCIOSO (1000 tareas)...
-   ⚡ Sincronización completada en 0.0038s con cero logs.
 
+   >>> Starting fleet synchronization in SILENT mode (1000 tasks)...
+   ⚡ Synchronization completed in 0.0073s with zero logs.
