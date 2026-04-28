@@ -9,13 +9,27 @@ Objetivo
 --------
 Confirmar el comportamiento por defecto: errores en background son ignorados silenciosamente.
 
-Código Fuente
--------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level139.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Key Takeaway
-------------
-`Background(task)` es equivalente a `Background(task, capture_error=False)` - los errores se ignoran.
+
+Resultado de Ejecución
+----------------------
+.. code-block:: text
+
+
+   >>> DEMO 139: Background sin capture_error
+   ==================================================
+   📌 Iniciando...
+   🔄 [BACKGROUND] Tarea que fallará (sin capture)...
+   ✅ Pipeline continúa (error ignorado)...
+   demo_139 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   
+   ✅ El error fue ignorado (silent fail)!
