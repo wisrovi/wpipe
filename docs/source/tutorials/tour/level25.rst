@@ -21,28 +21,27 @@ En este nivel realizamos un benchmark real. Ejecutamos 4 tareas de visión artif
 1. **Eco Mode (Hilos)**: Comparten el mismo núcleo, limitados por el GIL.
 2. **Sport Mode (Procesos)**: Se expanden por todos los núcleos disponibles del sistema.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level25.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Análisis de Resultados
-----------------------
-
-Al ejecutar este nivel, notarás que:
-* El tiempo de los **procesos** es aproximadamente 4 veces menor en sistemas multi-núcleo.
-* WPipe abstrae toda la complejidad de creación de pools y gestión de señales de terminación.
-* Solo necesitas cambiar `use_processes=True` para liberar el poder total de tu hardware.
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> [TEST 1] Processing with THREADS (Sharing resources)...
-   ⏱️ Threads Time: 1.25s
 
+   >>> [TEST 1] Processing with THREADS (Sharing resources)...
+   eco_mode_threads ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   ⏱️ Threads Time: 0.36s
+   
    >>> [TEST 2] Processing with PROCESSES (Total Power)...
-   ⏱️ Processes Time: 0.35s
+   eco_mode_threads     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   sport_mode_processes                                            0% -:--:--
+   ⏱️ Processes Time: 0.01s
