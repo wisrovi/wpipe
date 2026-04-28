@@ -19,38 +19,33 @@ Conceptos Clave
 ----------------------
 Simulamos el sistema de percepción de un vehículo autónomo. En cada iteración del bucle principal (el ciclo de control del coche), debemos leer tres sensores críticos (Cámara, Radar y LiDAR) en paralelo para minimizar la latencia, y luego fusionar esos datos.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level75.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Análisis de la Arquitectura
----------------------------
-
-Este nivel demuestra la **potencia compositiva** de WPipe:
-1. El `For` dicta el ritmo global (2 iteraciones).
-2. Dentro de cada iteración, el `Parallel` lanza 3 hilos de ejecución.
-3. El motor garantiza que la función `process` (fusión de datos) solo se ejecute cuando los 3 sensores hayan terminado su lectura.
-4. Se mantiene un único contexto (`Warehouse`) que se enriquece de forma atómica.
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> Sensores en paralelo dentro de bucle...
 
-   📷 Cámara
-   📡 Radar
-   🔴 LiDAR
-   🧠 Fusionando datos...
    
-   (Iteración 2)
-   📷 Cámara
-   📡 Radar
-   🔴 LiDAR
-   🧠 Fusionando datos...
+   >>> Sensores en paralelo dentro de bucle...
    
-   viaje_l75_forparallel - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [PARALLEL] Executing 3 steps using THREADS (workers=3)
+     📷 Cámara
+     📡 Radar
+     🔴 LiDAR
+   🧠 Fusionando datos...
+   [PARALLEL] Executing 3 steps using THREADS (workers=3)
+     📷 Cámara
+     📡 Radar
+     🔴 LiDAR
+   🧠 Fusionando datos...
+   viaje_l75_forparallel ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
