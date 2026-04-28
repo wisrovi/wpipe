@@ -3,24 +3,24 @@ Nivel 107: demo_level107.py
 
 Este es el nivel 107 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level107.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> Pipeline + Wsqlite...
-   
-   [MATRÍCULA] Pipeline registered: PIPE-44741C5D
-   [MATRÍCULA] Config YAML: /home/wisrovi/Documentos/w_libraries/wpipe/wpipe/examples/00_honey_pot/03_yield/pipeline_configs/Viaje_L107.yaml
-   Viaje_L107 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   
-   [MATRÍCULA] Pipeline PIPE-44741C5D: COMPLETED
-   ✅ Datos guardados
 
+   >>> Pipeline + Wsqlite...
+   [PIPELINE STATUS] Registered: PIPE-0EF130A8
+   viaje_l107 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [PIPELINE STATUS] PIPE-0EF130A8: COMPLETED
+   ✅ Datos guardados
