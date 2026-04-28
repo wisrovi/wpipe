@@ -3,21 +3,24 @@ Nivel 113: demo_level113.py
 
 Este es el nivel 113 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level113.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
+
    >>> Múltiples tags...
-   🔑 Iniciando...
+   🔑 Startsndo...
    ⚡ Procesando...
    ✅ Verificando...
-   Viaje_L113 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-
+   viaje_l113 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
