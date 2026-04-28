@@ -3,17 +3,21 @@ Nivel 73: demo_level73.py
 
 Este es el nivel 73 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level73.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
+
 
    
    >>> For anidados...
@@ -24,5 +28,4 @@ Resultado de Ejecución
    🛣️ Tramo: 1
      📍 Segmento: 0
      📍 Segmento: 1
-   Viaje_L73_NestedFor - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-
+   viaje_l73_nestedfor ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
