@@ -9,13 +9,27 @@ Objetivo
 --------
 Mostrar que Background acepta tuplas como pasos.
 
-Código Fuente
--------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level137.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Key Takeaway
-------------
-`Background((func, "name", "v1.0"))` funciona exactamente igual que `Background(func)`.
+
+Resultado de Ejecución
+----------------------
+.. code-block:: text
+
+
+   >>> DEMO 137: Background con Tuple Step
+   ==================================================
+   📌 Tarea principal...
+   📋 [TUPLE] Ejecutando tarea con nombre personalizado...
+   ✅ Finalizado!
+   demo_137 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   
+   ✅ Background acepta tuplas (func, name, version)!
