@@ -3,23 +3,26 @@ Nivel 32: demo_level32.py
 
 Este es el nivel 32 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level32.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> Entrando en zona de baja cobertura (Túnel)...
-   📡 Satélite: Intento 1 fallido (Túnel)...
-   [RETRY] recuperar_gps failed (attempt 1/4): Sin visibilidad
-   📡 Satélite: Intento 2 fallido (Túnel)...
-   [RETRY] recuperar_gps failed (attempt 2/4): Sin visibilidad
-   📡 Satélite: ¡Señal GPS fijada!
-   GPS_Tunnel_L32 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 
+   >>> Entering low coverage zone (Tunnel)...
+   📡 Satellite: Attempt 1 failed (Tunnel)...
+   [RETRY] recover_gps failed (attempt 1): No visibility
+   📡 Satellite: Attempt 2 failed (Tunnel)...
+   [RETRY] recover_gps failed (attempt 2): No visibility
+   📡 Satellite: GPS signal fixed!
+   gps_tunnel_l32 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
