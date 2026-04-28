@@ -19,30 +19,28 @@ Conceptos Clave
 ----------------------
 Estamos probando la capacidad de "memoria" del motor. Configuramos un umbral de alerta muy sensible (duración > 1ms) para forzar su activación y luego validamos que el sistema es capaz de recordar y listar estas alertas con precisión, diferenciando entre distintas ejecuciones.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level100.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Análisis de la Ejecución
-------------------------
-
-1. Se configura el `tracking_db` en una ubicación común (`output/alerts100.db`).
-2. Se define una alerta crítica sobre la duración total del pipeline.
-3. Se ejecutan dos pipelines distintos.
-4. Se invoca el historial de alertas, lo que devuelve una lista de diccionarios con el `timestamp`, el `mensaje` y la `severidad` de cada incidencia detectada.
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
+
    >>> Alerts history...
-   viaje_l100_history - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   
+   [PIPELINE STATUS] Registered: PIPE-20E0A840
+   viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [PIPELINE STATUS] PIPE-20E0A840: COMPLETED
    >>> Running second pipeline...
+   viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   viaje_l100b        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   🚨 Total in history: 2
-   (Cada ejecución disparó una alerta de rendimiento)
+   🚨 Total in history: 50
