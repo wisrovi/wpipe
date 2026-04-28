@@ -3,20 +3,23 @@ Nivel 3: demo_level3.py
 
 Este es el nivel 3 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level3.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   🔑 Motor encendido.
-   👟 Frenos verificados.
-   ✅ Bodega verificada. Gasolina: 100%
-   Viaje_L3 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 
+   🔑 Engine started. Input data: {'_pipeline_start_time': '2026-04-28T08:50:04.468277', 'progress_rich': <rich.progress.Progress object at 0x71101f84b4d0>}
+   👟 Brakes verified. Input data: {'_pipeline_start_time': '2026-04-28T08:50:04.468277', 'progress_rich': <rich.progress.Progress object at 0x71101f84b4d0>, 'engine': 'ON', 'fuel': 100}
+   ✅ Warehouse verified. Fuel: 100%
+   Trip_L3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
