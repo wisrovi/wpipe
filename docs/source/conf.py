@@ -30,7 +30,16 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "sphinx.ext.autosectionlabel",
+    "sphinx_thebe",
 ]
+
+thebe_config = {
+    "always_load": False,
+    "repository_url": "https://github.com/wisrovi/wpipe",
+    "repository_branch": "main",
+    "selector": ".thebe",
+    "post_install_hook": "pip install rich opencv-python-headless", # Backup installation
+}
 
 templates_path = ["_templates"]
 exclude_patterns = [
@@ -73,6 +82,10 @@ html_output_encoding = "utf-8"
 
 html_css_files = [
     "css/custom.css",
+]
+
+html_js_files = [
+    "js/thebe_init.js",
 ]
 
 html_theme_options = {
