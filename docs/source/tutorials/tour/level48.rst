@@ -3,21 +3,24 @@ Nivel 48: demo_level48.py
 
 Este es el nivel 48 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level48.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   
-   >>> Probando async con métricas...
-   
-   📊 [ASYNC] Procesando datos...
-   [METRIC] datos_procesados: 100 
 
+   
+   >>> Testing async with metrics...
+   
+   📊 [ASYNC] Processing data...
+   [METRIC] processed_data: 100 
