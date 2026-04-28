@@ -9,13 +9,27 @@ Objetivo
 --------
 Mostrar que Background funciona también en `PipelineAsync`.
 
-Código Fuente
--------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level136.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Key Takeaway
-------------
-Background es compatible tanto con Pipeline como con PipelineAsync.
+
+Resultado de Ejecución
+----------------------
+.. code-block:: text
+
+
+   >>> DEMO 136: Background en PipelineAsync
+   ==================================================
+   ⚡ Procesando...
+   🔄 [BG-ASYNC] Iniciando tarea async...
+   🔄 [BG-ASYNC] ¡Completado!
+   ✅ Pipeline async continúa sin esperar!
+   
+   ⏱️ Tiempo: 251ms
