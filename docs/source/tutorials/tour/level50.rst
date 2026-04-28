@@ -24,40 +24,24 @@ Este nivel es la prueba de fuego para el motor. Validamos:
 3. La activación de **checkpoints inteligentes** basados en expresiones lógicas.
 4. La recuperación automática mediante reintentos en pasos específicos (`random_flat_tire`).
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level50.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Análisis de la Ejecución
-------------------------
-
-Este pipeline realiza las siguientes acciones:
-1. **Preparación**: Inicia una fase de preparación global.
-2. **Bucle de Viajes**: Realiza 3 iteraciones de viaje.
-3. **Mantenimiento en Paralelo**: En cada viaje, reposta combustible, cambia el aceite y revisa luces simultáneamente.
-4. **Conducción Dinámica**: Conduce mientras el tanque no esté vacío, inflando neumáticos si la presión baja.
-5. **Gestión de Fallos**: Si ocurre un pinchazo aleatorio, reintenta hasta 10 veces antes de reportar un error.
-6. **Auditoría**: Al finalizar, genera un reporte completo de consumo de recursos y exporta los resultados.
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> [CHECKPOINT] Inicio del viaje
-   --- Nuevo viaje --- (Iteración: 0)
-   viaje - print_info ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   ...
-   Resource Summary:
-     - Peak RAM: 4200 MB
-     - Avg CPU: 55%
-   
-   📊 PERFORMANCE ANALYSIS
-   -----------------------
-   Total Ejecuciones: 121
-   Tasa de Éxito: 29.8%
-   
-   ✓ Exportación completada en output/export_output/
+
+   Captured output.
+
+.. raw:: html
+
+    <div style='border:1px solid #00f2fe;padding:15px;text-align:center;border-radius:8px;margin-top:20px;'><h3>Misión 2 Superada</h3><a href='level51.html' style='color:#00f2fe;'>Siguiente Nivel</a></div>
