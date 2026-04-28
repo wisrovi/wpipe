@@ -23,17 +23,21 @@ Validamos que el pipeline pueda ejecutar tareas secundarias (logging, telemetrí
 2. La tarea background se inicia en paralelo.
 3. El pipeline continúa sin esperar.
 
-Código Fuente
--------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level131.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
+
 
    >>> DEMO 131: Background Task Básico
    ==================================================
@@ -41,10 +45,6 @@ Resultado de Ejecución
    🔄 [BACKGROUND] Iniciando tarea en segundo plano...
    ✅ Continuando con el siguiente paso...
    demo_131 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-
+   
    ⏱️ Tiempo total: 58ms
    ✅ El pipeline NO esperó 200ms del background!
-
-Key Takeaway
-------------
-El pipeline principal took ~58ms aunque la tarea background tomaba 200ms. Esto permite ejecutar operaciones de logging, telemetría o notificaciones sin impacto en el tiempo de respuesta del pipeline.
