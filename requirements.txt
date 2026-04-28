@@ -13,9 +13,9 @@ apprise>=1.7.0
 psutil>=5.9.0
 tqdm>=4.66.0
 
-# Data & Vision (Used in some examples)
+# Data & Vision (Used in Example 10 and others)
 numpy>=1.24.0
 opencv-python-headless>=4.8.0
 
-# WPipe (Installing from source in Binder via postBuild or current repo)
+# WPipe core
 .
