@@ -3,27 +3,27 @@ Nivel 67: demo_level67.py
 
 Este es el nivel 67 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level67.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
+
 
    
    >>> Probando alert threshold para step...
    
-   
-   [MATRÍCULA] Pipeline registered: PIPE-A40B6499
-   [MATRÍCULA] Config YAML: /home/wisrovi/Documentos/w_libraries/wpipe/wpipe/examples/00_honey_pot/03_yield/pipeline_configs/Viaje_L67_StepAlert.yaml
+   [PIPELINE STATUS] Registered: PIPE-36D00657
    ⚡ Paso rápido
    🐢 Paso lento (100ms)
-   Viaje_L67_StepAlert - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   
-   [MATRÍCULA] Pipeline PIPE-A40B6499: COMPLETED
-
+   viaje_l67_stepalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [PIPELINE STATUS] PIPE-36D00657: COMPLETED
