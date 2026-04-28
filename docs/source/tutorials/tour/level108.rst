@@ -3,21 +3,24 @@ Nivel 108: demo_level108.py
 
 Este es el nivel 108 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level108.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   >>> Múltiples datos...
-     ✅ registro 0
-     ✅ registro 1
-     ✅ registro 2
-   ✅ Completado!
 
+   >>> Múltiples datos...
+     ✅ record 0
+     ✅ record 1
+     ✅ record 2
+   ✅ Completado!
