@@ -3,18 +3,21 @@ Nivel 6: demo_level6.py
 
 Este es el nivel 6 del tour de aprendizaje.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level6.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   📸 Cámara frontal: Activada.
-   Viaje_L6 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 
+   📸 Front camera: Activated. Input data: {'_pipeline_start_time': '2026-04-28T08:50:05.557278', 'progress_rich': <rich.progress.Progress object at 0x77ba64154ec0>, 'engine': 'ON', 'gps': 'Valencia'}
+   Trip_L6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
