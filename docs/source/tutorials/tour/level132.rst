@@ -23,17 +23,21 @@ Una tarea en background que falla se captura mediante error handlers sin detener
 2. El error handler lo captura.
 3. El pipeline continúa normalmente.
 
-Código Fuente
--------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level132.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
+
 
    >>> DEMO 132: Background con Capture Error
    ==================================================
@@ -41,9 +45,5 @@ Resultado de Ejecución
    🔄 [BACKGROUND] Iniciando tarea que fallará...
    ✅ Pipeline continúa a pesar del error en background!
    demo_132 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-
+   
    ✅ El pipeline NO se detuvo por el error!
-
-Key Takeaway
-------------
-Background tasks con `capture_error=True` permiten robustez - el pipeline nunca falla por tareas secundarias.
