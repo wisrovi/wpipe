@@ -23,24 +23,29 @@ Validamos el ciclo de vida de un pipeline con observabilidad:
 3. Captura de métricas de negocio en tiempo real.
 4. Finalización exitosa.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level130.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
+
 
    ==================================================
    🎉 DEMO FINAL - API Integration
    ==================================================
    🔑 Starting API system...
    ⚡ Processing data...
-   viaje_l130 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-
+   [METRIC] api_calls: 1 
+   viaje_l130 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   
    ✅ Demo completed with success!
    📊 Metric: api_calls = 1
