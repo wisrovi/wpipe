@@ -1,0 +1,9 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline                                            0% -:--:--
+Pipeline                                            0% -:--:--
+
+
+Worker worker_1: 20
+Worker worker_3: 60
+Worker worker_2: 40
+EXIT_CODE:0

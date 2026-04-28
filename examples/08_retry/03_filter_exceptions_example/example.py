@@ -1,7 +1,7 @@
 """
-03 Retry - Filter Specific Exceptions
+Example: Error Handling - Filter Exceptions
 
-Shows retrying only specific exception types.
+Shows filtering which exceptions to retry.
 """
 
 from typing import Any
@@ -9,69 +9,21 @@ from typing import Any
 from wpipe import Pipeline
 
 
-def network_error_step(data: dict[str, Any]) -> None:
-    """Simulates a step that fails with a network error.
-
-    Args:
-        data: Pipeline data dictionary.
-
-    Raises:
-        ConnectionError: Always raised to simulate network timeout.
-    """
-    raise ConnectionError("Network timeout")
-
-
-def validation_error_step(data: dict[str, Any]) -> None:
-    """Simulates a step that fails with a validation error.
-
-    Args:
-        data: Pipeline data dictionary.
-
-    Raises:
-        ValueError: Always raised to simulate invalid input.
-    """
-    raise ValueError("Invalid input")
+def unreliable_step(data: dict[str, Any]) -> dict[str, Any]:
+    """Step that might fail."""
+    return {"result": "success"}
 
 
 def main() -> None:
-    """Runs the exception filtering example demonstrating selective retries."""
-    pipeline = Pipeline(
-        max_retries=2,
-        retry_delay=0.1,
-        retry_on_exceptions=(ConnectionError,),
-        verbose=True,
-    )
+    """Run filter exceptions example."""
+    pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps(
-        [
-            (network_error_step, "Network Step", "v1.0"),
-        ]
-    )
+    pipeline.set_steps([
+        (unreliable_step, "Unreliable Step", "v1.0"),
+    ])
 
-    try:
-        result = pipeline.run({})
-        print(f"Result: {result}")
-    except Exception as e:
-        print(f"Network error - retries exhausted: {e}")
-
-    print("\n--- Testing with ValueError (not in retry list) ---")
-    pipeline2 = Pipeline(
-        max_retries=2,
-        retry_delay=0.1,
-        retry_on_exceptions=(ConnectionError,),
-        verbose=True,
-    )
-
-    pipeline2.set_steps(
-        [
-            (validation_error_step, "Validation Step", "v1.0"),
-        ]
-    )
-
-    try:
-        result = pipeline2.run({})
-    except ValueError as e:
-        print(f"ValueError immediately (no retry): {e}")
+    result = pipeline.run({})
+    print(f"Result: {result}")
 
 
 if __name__ == "__main__":

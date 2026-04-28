@@ -1,0 +1,16 @@
+Error in POST request to http://invalid-host:9999/newprocess: HTTPConnectionPool(host='invalid-host', port=9999): Max retries exceeded with url: /newprocess (Caused by NameResolutionError("HTTPConnection(host='invalid-host', port=9999): Failed to resolve 'invalid-host' ([Errno -3] Temporary failure in name resolution)"))
+Error in POST request to http://invalid-host:9999/actualizar_task: HTTPConnectionPool(host='invalid-host', port=9999): Max retries exceeded with url: /actualizar_task (Caused by NameResolutionError("HTTPConnection(host='invalid-host', port=9999): Failed to resolve 'invalid-host' ([Errno -3] Temporary failure in name resolution)"))
+Error in POST request to http://invalid-host:9999/actualizar_task: HTTPConnectionPool(host='invalid-host', port=9999): Max retries exceeded with url: /actualizar_task (Caused by NameResolutionError("HTTPConnection(host='invalid-host', port=9999): Failed to resolve 'invalid-host' ([Errno -3] Temporary failure in name resolution)"))
+Error in POST request to http://invalid-host:9999/actualizar_task: HTTPConnectionPool(host='invalid-host', port=9999): Max retries exceeded with url: /actualizar_task (Caused by NameResolutionError("HTTPConnection(host='invalid-host', port=9999): Failed to resolve 'invalid-host' ([Errno -3] Temporary failure in name resolution)"))
+Error in POST request to http://invalid-host:9999/actualizar_task: HTTPConnectionPool(host='invalid-host', port=9999): Max retries exceeded with url: /actualizar_task (Caused by NameResolutionError("HTTPConnection(host='invalid-host', port=9999): Failed to resolve 'invalid-host' ([Errno -3] Temporary failure in name resolution)"))
+[INFO] worker_id defined correctly
+Problem updating Process
+[task] Status update: None
+[task] Status update: None
+[task] Status update: None
+[task] Status update: None
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Error in POST request to http://invalid-host:9999/endprocess: HTTPConnectionPool(host='invalid-host', port=9999): Max retries exceeded with url: /endprocess (Caused by NameResolutionError("HTTPConnection(host='invalid-host', port=9999): Failed to resolve 'invalid-host' ([Errno -3] Temporary failure in name resolution)"))
+[INFO] [END] pipeline update problem: None
+Result: {'_pipeline_start_time': '2026-04-27T18:01:18.258180', 'data': 'fetched from API', 'result': 'processed', 'source': 'fetched from API'}
+EXIT_CODE:0

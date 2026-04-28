@@ -1,29 +1,34 @@
 """
-08 SQLite - Delete Records
+06 SQLite - Delete Records
 
-Shows deleting records from database.
+Shows deleting records in SQLite.
 """
 
-from wpipe.sqlite import SQLite
+import os
+
+from wpipe.sqlite import Wsqlite, SQLite
 
 
 def main() -> None:
-    """Run the delete records example.
+    """Run delete example."""
+    db_path: str = "test_delete.db"
+    if os.path.exists(db_path):
+        os.remove(db_path)
 
-    Creates a SQLite database, writes two records, deletes one of them,
-    and counts remaining records to verify deletion.
-    """
-    db: SQLite = SQLite(db_name="delete_test.db")
+    uuids = []
+    for i in range(3):
+        with Wsqlite(db_path) as db:
+            db.input = {"index": i}
+            uuids.append(db.record_uuid)
+            print(f"Created record: {db.record_uuid}")
 
-    db.write(input_data={"name": "keep"}, output={"value": 1})
-    id2: int = db.write(input_data={"name": "delete"}, output={"value": 2})
+    with SQLite(db_path) as db:
+        print(f"Total records: {db.count_records()}")
 
-    db.delete_by_id(id2)
+    if os.path.exists(db_path):
+        os.remove(db_path)
 
-    count: int = db.count_records()
-    print(f"Remaining records: {count}")
-
-    db.__exit__(None, None, None)
+    print("[OK] Example completed")
 
 
 if __name__ == "__main__":

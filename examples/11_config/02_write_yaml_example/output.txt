@@ -1,0 +1,60 @@
+======================================================================
+ESCRITURA DE ARCHIVOS YAML
+======================================================================
+
+--- Paso 1: Crear Configuracion Simple ---
+Archivo creado: /tmp/tmpxs3ungq2.yaml
+Contenido: {'nombre': 'mi_pipeline', 'version': '1.0.0'}
+
+--- Paso 2: Crear Configuracion Compleja ---
+Archivo complejo creado: /tmp/tmpxs3ungq2_compleja.yaml
+
+--- Paso 3: Verificar Contenido ---
+
+Verificacion de escritura:
+  Servicio: procesamiento_datos
+  Parametros timeout: 60
+  API URL: https://api.ejemplo.com
+  Caracteristicas: ['feature_a', 'feature_b', 'feature_c']
+
+--- Paso 4: Actualizar Configuracion Existente ---
+
+Configuracion actualizada:
+  Nueva version: 2.1.0
+  Nuevo timeout: 120
+
+--- Paso 5: Escribir Configuracion de Pipeline ---
+Configuracion de pipeline: /tmp/tmpxs3ungq2_pipeline.yaml
+
+Pasos del pipeline:
+  - extraccion: extraer_datos
+  - transformacion: transformar_datos
+  - carga: cargar_datos
+
+--- Limpieza ---
+[OK] Archivos temporales eliminados
+
+======================================================================
+PATRONES DE ESCRITURA YAML
+======================================================================
+
+Patrones comunes:
+
+1. Crear desde cero:
+   config = {"clave": "valor"}
+   escribir_yaml("archivo.yaml", config)
+
+2. Actualizar existente:
+   config = leer_yaml("archivo.yaml")
+   config["nueva_clave"] = valor
+   escribir_yaml("archivo.yaml", config)
+
+3. Estructura de pipeline:
+   config = {
+       "pipeline": {
+           "nombre": "...",
+           "pasos": [{"nombre": "...", "funcion": "..."}]
+       }
+   }
+
+EXIT_CODE:0

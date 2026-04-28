@@ -1,0 +1,88 @@
+2026-04-27 18:02:05.432 | INFO     | __main__:__init__:111 - [INIT] servicio_prueba inicializado
+2026-04-27 18:02:05.433 | INFO     | __main__:iniciar:150 - [START] servicio_prueba iniciado
+2026-04-27 18:02:05.433 | INFO     | __main__:procesar_mensaje:131 - [MSG-1] Procesando mensaje...
+======================================================================
+MICROSERVICIO BASICO
+======================================================================
+
+--- Creando Microservicio ---
+
+[MICROSERVICIO] servicio_prueba iniciado
+  Mensajes procesados: 0
+
+--- Simulando Mensajes ---
+
+[MENSAJE 1] Enviando: {'mensaje': 'hola mundo'}
+  [PASO] Validando mensaje...
+  [PASO] Procesando datos...
+  [PASO] Enriqueciendo datos...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.441 | INFO     | __main__:procesar_mensaje:136 - [MSG-1] Completado
+2026-04-27 18:02:05.441 | INFO     | __main__:procesar_mensaje:131 - [MSG-2] Procesando mensaje...
+[RESULTADO 1] {'mensaje': 'hola mundo', 'origen': 'servicio_prueba', '_pipeline_start_time': '2026-04-27T18:02:05.433284', 'validado': True, 'procesado': True, 'mensaje_upper': 'HOLA MUNDO', 'longitud': 10, 'enriquecido': True, 'timestamp': '2026-04-27T18:02:05.440420'}
+
+[MENSAJE 2] Enviando: {'mensaje': 'procesando datos'}
+  [PASO] Validando mensaje...
+  [PASO] Procesando datos...
+  [PASO] Enriqueciendo datos...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.444 | INFO     | __main__:procesar_mensaje:136 - [MSG-2] Completado
+2026-04-27 18:02:05.444 | INFO     | __main__:procesar_mensaje:131 - [MSG-3] Procesando mensaje...
+[RESULTADO 2] {'mensaje': 'procesando datos', 'origen': 'servicio_prueba', '_pipeline_start_time': '2026-04-27T18:02:05.441945', 'validado': True, 'procesado': True, 'mensaje_upper': 'PROCESANDO DATOS', 'longitud': 16, 'enriquecido': True, 'timestamp': '2026-04-27T18:02:05.442511'}
+
+[MENSAJE 3] Enviando: {'mensaje': 'mensaje de prueba'}
+  [PASO] Validando mensaje...
+  [PASO] Procesando datos...
+  [PASO] Enriqueciendo datos...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.446 | INFO     | __main__:procesar_mensaje:136 - [MSG-3] Completado
+2026-04-27 18:02:05.446 | INFO     | __main__:procesar_mensaje:131 - [MSG-4] Procesando mensaje...
+[RESULTADO 3] {'mensaje': 'mensaje de prueba', 'origen': 'servicio_prueba', '_pipeline_start_time': '2026-04-27T18:02:05.444256', 'validado': True, 'procesado': True, 'mensaje_upper': 'MENSAJE DE PRUEBA', 'longitud': 17, 'enriquecido': True, 'timestamp': '2026-04-27T18:02:05.444889'}
+
+[MENSAJE 4] Enviando: {'mensaje': 'otro mensaje'}
+  [PASO] Validando mensaje...
+  [PASO] Procesando datos...
+  [PASO] Enriqueciendo datos...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.448 | INFO     | __main__:procesar_mensaje:136 - [MSG-4] Completado
+2026-04-27 18:02:05.449 | INFO     | __main__:detener:162 - [STOP] servicio_prueba detenido
+[RESULTADO 4] {'mensaje': 'otro mensaje', 'origen': 'servicio_prueba', '_pipeline_start_time': '2026-04-27T18:02:05.446701', 'validado': True, 'procesado': True, 'mensaje_upper': 'OTRO MENSAJE', 'longitud': 12, 'enriquecido': True, 'timestamp': '2026-04-27T18:02:05.447370'}
+
+--- Deteniendo Microservicio ---
+
+[MICROSERVICIO] servicio_prueba detenido
+  Total mensajes procesados: 4
+
+======================================================================
+RESUMEN DE ESTRUCTURA
+======================================================================
+
+Estructura de un Microservicio Basico:
+
+1. Inicializacion:
+   - Crear logger
+   - Crear pipeline con pasos
+   - Configurar servicios
+
+2. Procesamiento:
+   - Recibir mensaje
+   - Validar mensaje
+   - Ejecutar pipeline
+   - Devolver resultado
+
+3. Control de vida:
+   - iniciar(): Iniciar servicios
+   - detener(): Limpiar recursos
+
+Esta estructura puede extenderse con:
+- Kafka para recibir mensajes
+- SQLite para persistencia
+- API para health checks
+
+EXIT_CODE:0

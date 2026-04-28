@@ -1,0 +1,83 @@
+======================================================================
+CONFIGURACION COMPLEJA MULTIENTORNO
+======================================================================
+
+--- Paso 1: Crear Configuracion Multientorno ---
+Configuracion creada: /tmp/tmp81af8kkf.yaml
+
+--- Paso 2: Leer Configuracion Completa ---
+
+Aplicacion: etl_multientorno
+Version: 1.0.0
+
+--- Paso 3: Seleccionar Entorno ---
+
+Entorno seleccionado: desarrollo
+  Base URL: http://localhost:8418
+  Debug: True
+  Workers: 1
+
+--- Paso 4: Configurar Pipeline por Entorno ---
+
+Configuracion del pipeline:
+  Timeout: 300
+  Reintentos: 3
+  Pasos: ['extraccion', 'transformacion', 'carga']
+
+--- Paso 5: Crear Pipelines Segun Pasos ---
+Pipeline configurado con 3 pasos
+
+--- Paso 6: Ejecutar Pipeline ---
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+
+Resultado:
+  fuente: oracle
+  destino: postgresql
+  entorno: desarrollo
+  _pipeline_start_time: 2026-04-27T18:01:45.454027
+  extraido: True
+  datos: oracle
+  transformado: True
+  procesado: True
+  cargado: True
+
+--- Paso 7: Cambiar a Entorno de Produccion ---
+
+Entorno: produccion
+  Base URL: https://api.ejemplo.com
+  Debug: False
+  Workers: 8
+
+--- Paso 8: Conectar a Base de Datos ---
+
+Oracle:
+  Host: oracle.db.local
+  Puerto: 1521
+  SID: ORCL
+
+PostgreSQL:
+  Host: pg.db.local
+  Puerto: 5432
+  Base de datos: mydb
+
+[OK] Archivo temporal eliminado
+
+======================================================================
+BENEFICIOS DE CONFIGURACION COMPLEJA
+======================================================================
+
+Ventajas de configuracion multientorno:
+
+1. Un solo archivo de configuracion
+2. Cambio rapido entre entornos
+3. Parametros especificos por entorno
+4. Secciones organizadas (app, pipeline, conexiones)
+5. Reutilizacion de configuraciones
+
+Estructura recomendada:
+- aplicacion: metadatos
+- entornos: configuracion por ambiente
+- pipeline: parametros de ejecucion
+- conexiones: cadenas de conexion
+
+EXIT_CODE:0

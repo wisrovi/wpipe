@@ -1,0 +1,59 @@
+======================================================================
+LECTURA DE ARCHIVOS YAML
+======================================================================
+
+--- Paso 1: Crear Archivo de Configuracion ---
+Archivo creado: /tmp/tmpg_0nmhxj.yaml
+
+--- Paso 2: Leer Configuracion Completa ---
+
+Configuracion leida:
+  Servicio: pipeline_procesamiento
+  Version: 1.0.0
+  Entorno: desarrollo
+
+--- Paso 3: Leer Secciones Especificas ---
+
+Configuracion:
+  Timeout: 30
+  Reintentos: 3
+  Verbose: True
+
+API:
+  Base URL: http://localhost:8418
+  Token: token_secreto
+
+Base de Datos:
+  Tipo: sqlite
+  Nombre: datos.db
+
+--- Paso 4: Usar Valores en Codigo ---
+
+Usando configuracion:
+  Timeout configurado: 30 segundos
+  Modo verbose: True
+  [VERBOSE] Mostrando logs detallados
+
+--- Paso 5: Manejo de Valores por Defecto ---
+
+Config sin timeout, usando valor por defecto: 30
+
+[OK] Archivo temporal eliminado
+
+======================================================================
+RESUMEN
+======================================================================
+
+Funciones disponibles:
+
+1. leer_yaml(archivo)
+   - Lee un archivo YAML y retorna un diccionario
+   - Lanza error si el archivo no existe
+
+2. escribir_yaml(archivo, datos)
+   - Escribe un diccionario a un archivo YAML
+
+3. get('clave', default)
+   - Obtiene un valor con valor por defecto si no existe
+
+EXIT_CODE:0

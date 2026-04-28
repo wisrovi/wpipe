@@ -1,0 +1,9 @@
+Type A:
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'type': 'A', '_pipeline_start_time': '2026-04-27T18:01:30.163778', 'processed': 'A'}
+
+Type B:
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'type': 'B', '_pipeline_start_time': '2026-04-27T18:01:30.170623', 'processed': 'B'}
+EXIT_CODE:0

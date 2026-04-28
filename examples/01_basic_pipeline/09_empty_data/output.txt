@@ -1,0 +1,6 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result with empty data: {'_pipeline_start_time': '2026-04-27T18:01:14.310026', 'processed': 0, 'result': 0}
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result with data: {'value': 10, 'multiplier': 3, '_pipeline_start_time': '2026-04-27T18:01:14.317685', 'processed': 20, 'result': 60}
+EXIT_CODE:0

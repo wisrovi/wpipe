@@ -1,0 +1,2 @@
+Pipeline name: test
+EXIT_CODE:0

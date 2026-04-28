@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'items': [10, 20, 30, 40, 50], '_pipeline_start_time': '2026-04-27T18:01:17.931145', 'processed': 5, 'count': 5, 'total': 150, 'average': 30.0}
+EXIT_CODE:0

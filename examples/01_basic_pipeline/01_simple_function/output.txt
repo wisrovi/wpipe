@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Input: 5 -> Output: {'input': 5, '_pipeline_start_time': '2026-04-27T18:01:11.552735', 'value': 20, 'result': 400}
+EXIT_CODE:0

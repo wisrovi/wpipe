@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'value': 25, 'multiplier': 2, 'offset': 5, '_pipeline_start_time': '2026-04-27T18:01:12.893304', 'transformed': 25, 'valid': True}
+EXIT_CODE:0

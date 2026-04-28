@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'_pipeline_start_time': '2026-04-27T18:01:20.607740', 'result': 'done', 'worker': 'metadata_test'}
+EXIT_CODE:0

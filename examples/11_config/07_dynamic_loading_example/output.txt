@@ -1,0 +1,2 @@
+Loaded config: {'steps': [{'function': 'step1', 'name': 'Step 1'}, {'function': 'step2', 'name': 'Step 2'}]}
+EXIT_CODE:0

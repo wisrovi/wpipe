@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'token': 'Bearer_valid_token', '_pipeline_start_time': '2026-04-27T18:01:21.628833', 'user': 'authenticated_user', 'token_valid': True, 'resource': 'protected_data', 'access': 'granted', 'processed': True}
+EXIT_CODE:0

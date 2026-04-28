@@ -1,0 +1,30 @@
+============================================================
+Example 04: Conditional Branching
+============================================================
+
+--- Test Case 1: Warm Day ---
+  [read_temperature] Temperature: 25°C
+  [normal_operation] Normal operation at 25°C
+  [log_result] Final action: normal
+weather_check_1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+  Result: normal
+
+--- Test Case 2: Cold Day ---
+  [read_temperature] Temperature: 5°C
+  [activate_heating] Activating heating for 5°C
+  [log_result] Final action: heating_activated
+weather_check_1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+weather_check_2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+  Result: heating_activated
+
+--- Test Case 3: Hot Day ---
+  [read_temperature] Temperature: 35°C
+  [activate_cooling] Activating cooling for 35°C
+  [log_result] Final action: cooling_activated
+weather_check_1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+weather_check_2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+weather_check_3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+  Result: cooling_activated
+
+[Dashboard] Run: python -m wpipe.dashboard --db conditions.db --config-dir ./configs --open
+EXIT_CODE:0

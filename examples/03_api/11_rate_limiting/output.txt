@@ -1,0 +1,8 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Results: [{'request_id': 'req_0', '_pipeline_start_time': '2026-04-27T18:01:20.943291', 'allowed': True, 'requests_in_window': 1, 'processed': True, 'logged': True}, {'request_id': 'req_1', '_pipeline_start_time': '2026-04-27T18:01:20.950004', 'allowed': True, 'requests_in_window': 2, 'processed': True, 'logged': True}, {'request_id': 'req_2', '_pipeline_start_time': '2026-04-27T18:01:20.951559', 'allowed': True, 'requests_in_window': 3, 'processed': True, 'logged': True}]
+EXIT_CODE:0

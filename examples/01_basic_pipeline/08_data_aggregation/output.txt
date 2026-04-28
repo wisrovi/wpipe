@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'_pipeline_start_time': '2026-04-27T18:01:13.964415', 'results': [{'item': 1, 'value': 100}, {'item': 2, 'value': 200}], 'count': 2, 'summary': 'Processed 2 items, total: 300'}
+EXIT_CODE:0

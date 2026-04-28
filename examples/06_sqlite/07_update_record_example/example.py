@@ -1,27 +1,35 @@
 """
-07 SQLite - Update Records
+05 SQLite - Update and Delete Records
 
-Shows updating existing records.
+Shows updating and deleting records in SQLite.
 """
 
-from wpipe.sqlite import SQLite
+import os
+
+from wpipe.sqlite import Wsqlite, SQLite
 
 
 def main() -> None:
-    """Run the update records example.
+    """Run update and delete example."""
+    db_path: str = "test_update.db"
+    if os.path.exists(db_path):
+        os.remove(db_path)
 
-    Creates a SQLite database, writes a record, updates its output
-    data, and reads the record to verify the update.
-    """
-    db: SQLite = SQLite(db_name="update_test.db")
+    with Wsqlite(db_path) as db:
+        db.input = {"name": "original", "value": 10}
+        print(f"Created record ID: {db.record_uuid}")
 
-    record_id: int = db.write(input_data={"name": "original"}, output={"value": 0})
-    db.update_record(record_id, output={"value": 100})
+        db.output = {"name": "updated", "value": 20}
+        print(f"Updated record")
 
-    record: dict = db.read_by_id(record_id)
-    print(f"Updated record: {record}")
+    with SQLite(db_path) as db:
+        total = db.count_records()
+        print(f"Total records: {total}")
 
-    db.__exit__(None, None, None)
+    if os.path.exists(db_path):
+        os.remove(db_path)
+
+    print("[OK] Example completed")
 
 
 if __name__ == "__main__":

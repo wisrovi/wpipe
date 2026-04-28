@@ -1,0 +1,155 @@
+======================================================================
+PROCESADOR DE MENSAJES
+======================================================================
+
+--- Creando Procesador ---
+
+--- Simulando Recepciones ---
+Mensajes a procesar: 5
+
+==================================================
+MENSAJE 1/5
+==================================================
+ID: MSG-0001
+Tipo: producto
+
+[PROCESANDO] Mensaje ID: MSG-0001
+    [EXTRACCION] Extrayendo campos...
+    [TRANSFORMACION] Transformando datos...
+    [ENRIQUECIMIENTO] Agregando metadatos...
+    [PERSISTENCIA] Preparando guardado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.802 | INFO     | __main__:procesar:161 - Mensaje MSG-0001 procesado exitosamente
+
+[RESULTADO]
+  Extraido: True
+  Transformado: True
+  Enriquecido: True
+  Listo para guardar: True
+
+==================================================
+MENSAJE 2/5
+==================================================
+ID: MSG-0002
+Tipo: orden
+
+[PROCESANDO] Mensaje ID: MSG-0002
+    [EXTRACCION] Extrayendo campos...
+    [TRANSFORMACION] Transformando datos...
+    [ENRIQUECIMIENTO] Agregando metadatos...
+    [PERSISTENCIA] Preparando guardado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.804 | INFO     | __main__:procesar:161 - Mensaje MSG-0002 procesado exitosamente
+
+[RESULTADO]
+  Extraido: True
+  Transformado: True
+  Enriquecido: True
+  Listo para guardar: True
+
+==================================================
+MENSAJE 3/5
+==================================================
+ID: MSG-0003
+Tipo: pago
+
+[PROCESANDO] Mensaje ID: MSG-0003
+    [EXTRACCION] Extrayendo campos...
+    [TRANSFORMACION] Transformando datos...
+    [ENRIQUECIMIENTO] Agregando metadatos...
+    [PERSISTENCIA] Preparando guardado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.806 | INFO     | __main__:procesar:161 - Mensaje MSG-0003 procesado exitosamente
+
+[RESULTADO]
+  Extraido: True
+  Transformado: True
+  Enriquecido: True
+  Listo para guardar: True
+
+==================================================
+MENSAJE 4/5
+==================================================
+ID: MSG-0004
+Tipo: usuario
+
+[PROCESANDO] Mensaje ID: MSG-0004
+    [EXTRACCION] Extrayendo campos...
+    [TRANSFORMACION] Transformando datos...
+    [ENRIQUECIMIENTO] Agregando metadatos...
+    [PERSISTENCIA] Preparando guardado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.809 | INFO     | __main__:procesar:161 - Mensaje MSG-0004 procesado exitosamente
+
+[RESULTADO]
+  Extraido: True
+  Transformado: True
+  Enriquecido: True
+  Listo para guardar: True
+
+==================================================
+MENSAJE 5/5
+==================================================
+ID: MSG-0005
+Tipo: producto
+
+[PROCESANDO] Mensaje ID: MSG-0005
+    [EXTRACCION] Extrayendo campos...
+    [TRANSFORMACION] Transformando datos...
+    [ENRIQUECIMIENTO] Agregando metadatos...
+    [PERSISTENCIA] Preparando guardado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:05.811 | INFO     | __main__:procesar:161 - Mensaje MSG-0005 procesado exitosamente
+
+[RESULTADO]
+  Extraido: True
+  Transformado: True
+  Enriquecido: True
+  Listo para guardar: True
+
+======================================================================
+ESTADISTICAS FINALES
+======================================================================
+
+Procesador: procesador_principal
+Mensajes procesados: 5
+Errores: 0
+Tasa de exito: 100.0%
+
+======================================================================
+FLUJO DE PROCESAMIENTO
+======================================================================
+
+Flujo de un mensaje a traves del procesador:
+
+1. RECEPCION
+   - Mensaje llega al procesador
+   - Log de recepcion
+
+2. EXTRACCION
+   - Extrae campos relevantes
+   - Valida estructura
+
+3. TRANSFORMACION
+   - Convierte datos a formato estandar
+   - Normaliza valores
+
+4. ENRIQUECIMIENTO
+   - Agrega metadatos
+   - Anade timestamps
+
+5. PERSISTENCIA
+   - Prepara registro para guardar
+   - Devuelve resultado
+
+EXIT_CODE:0
