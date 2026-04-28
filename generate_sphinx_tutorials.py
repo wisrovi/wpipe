@@ -38,6 +38,12 @@ def generate() -> None:
             output = "Captured output."
 
         # 3. Generar contenido RST LIMPIO y ESTÁNDAR
+        header_lines = header.splitlines()
+        if len(header_lines) >= 1:
+            title_len = len(header_lines[0])
+            header_lines[1] = "=" * title_len
+            header = "\n".join(header_lines)
+
         content = [
             header,
             "\n",
