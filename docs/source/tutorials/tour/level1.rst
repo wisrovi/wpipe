@@ -19,26 +19,21 @@ Conceptos Clave
 ----------------------
 En este nivel validamos la conectividad básica del motor. Estamos probando que una función estándar de Python pueda ser inyectada en el orquestador, ejecutada sin errores y que el sistema sea capaz de mostrar la barra de progreso de `Rich`.
 
+
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
 Código Fuente
 ------------
-
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level1.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Análisis de la Ejecución
-------------------------
-
-Al ejecutar este código, el orquestador:
-1. Registra la función `girar_llave` en la cola de ejecución.
-2. Inicia un nuevo contexto de datos vacío `{}`.
-3. Muestra una barra de progreso indicando el estado de la tarea.
-4. Imprime el log interno de la función.
 
 Resultado de Ejecución
 ----------------------
-
 .. code-block:: text
 
-   🔑 Girando llave: Motor encendido.
-   Viaje_L1 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+
+   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-28T08:50:03.797476', 'progress_rich': <rich.progress.Progress object at 0x761b9c6eb0e0>}
+   Trip_L1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
