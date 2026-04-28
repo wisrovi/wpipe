@@ -9,13 +9,26 @@ Objetivo
 --------
 Mostrar que Background puede usarse dentro de `Condition`.
 
-Código Fuente
--------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level138.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Key Takeaway
-------------
-Background se integra naturalmente con todos los logic blocks de WPipe.
+
+Resultado de Ejecución
+----------------------
+.. code-block:: text
+
+
+   >>> DEMO 138: Background con Condition
+   ==================================================
+   🔍 Verificando condición...
+   ✅ Después de la condición!
+   demo_138 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   
+   ✅ Background funciona dentro de Condition!
