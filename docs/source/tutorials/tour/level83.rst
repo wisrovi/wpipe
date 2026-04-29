@@ -19,9 +19,9 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-D3CDF57C
+   [PIPELINE STATUS] Registered: PIPE-20F31C22
    viaje_l83_exportstats ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-D3CDF57C: COMPLETED
+   [PIPELINE STATUS] PIPE-20F31C22: COMPLETED
    
    📊 Exportando estadísticas...
    ✅ Exportado a output/viaje83_stats.json

@@ -19,10 +19,10 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-F576A3C7
+   [PIPELINE STATUS] Registered: PIPE-5A09F45F
    🚗 Driving through Section A...
    trip_l18_exporter ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-F576A3C7: COMPLETED
+   [PIPELINE STATUS] PIPE-5A09F45F: COMPLETED
    
    >>> Generating CSV report for the insurance company...
    ✅ Report saved in output/trip_report.csv

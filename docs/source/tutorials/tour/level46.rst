@@ -22,5 +22,5 @@ Resultado de Ejecución
    
    >>> Testing async with conditions...
    
-   🚗 [ASYNC] Evaluation: obstacle=False
-   🚀 [ASYNC] Accelerating
+   🚗 [ASYNC] Evaluation: obstacle=True
+   🛑 [ASYNC] Emergency braking

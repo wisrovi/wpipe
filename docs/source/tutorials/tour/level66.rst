@@ -22,7 +22,7 @@ Resultado de Ejecución
    
    >>> Probando alert threshold...
    
-   [PIPELINE STATUS] Registered: PIPE-B5176845
+   [PIPELINE STATUS] Registered: PIPE-DB12877F
    ⏳ Proceso completado (tardó 100ms)
    viaje_l66_alertthreshold ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-B5176845: COMPLETED
+   [PIPELINE STATUS] PIPE-DB12877F: COMPLETED

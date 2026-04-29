@@ -36,31 +36,33 @@ Resultado de Ejecución
                    style="background: #0f172a; border: 2px solid #334155; color: white; padding: 15px 25px; border-radius: 12px; margin-top: 15px; width: 80%; max-width: 500px; text-align: center; font-size: 1.2em; font-weight: bold; outline: none; border-color: #ef4444; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
         </div>
 
-        <div id="cert-container-80" style="width: 1000px; height: 650px; margin: 0 auto; border-radius: 25px; padding: 60px; color: white; position: relative; box-sizing: border-box; overflow: hidden; text-align: center; background: linear-gradient(135deg, #020617 0%, #7f1d1d 100%); border: 15px solid #ef4444; box-shadow: 0 40px 80px rgba(0,0,0,0.9);">
+        <div id="cert-container-80" style="width: 1000px; height: 700px; margin: 0 auto; border-radius: 25px; padding: 60px; color: white; position: relative; box-sizing: border-box; overflow: hidden; text-align: center; background: linear-gradient(135deg, #020617 0%, #7f1d1d 100%); border: 15px solid #ef4444; box-shadow: 0 40px 80px rgba(0,0,0,0.9);">
             <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.15; background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 35px 30px;"></div>
-            <div style="position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-around;">
+            <div style="position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <h1 style="color: #ef4444; margin: 0; font-size: 3.2em; text-transform: uppercase; font-weight: 900; letter-spacing: 3px; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">Certificado de Misión</h1>
                     <p style="font-size: 1.3em; margin-top: 10px; opacity: 0.8; letter-spacing: 1px;">WPipe Engine Certification • Misión 3</p>
                 </div>
                 
-                <div style="margin: 15px 0;">
+                <div style="margin: 10px 0;">
                     <p style="font-size: 1.4em; margin-bottom: 5px; color: #94a3b8;">Se otorga con honor a:</p>
-                    <h2 class="cert-name-display" style="font-size: 4em; border-bottom: 4px solid #ef4444; min-width: 500px; display: inline-block; font-family: 'Times New Roman', serif; text-shadow: 0 0 20px rgba(255,255,255,0.3); margin: 10px 0; color: #fff;">---</h2>
+                    <h2 class="cert-name-display" style="font-size: 4.2em; border-bottom: 4px solid #ef4444; min-width: 500px; display: inline-block; font-family: 'Times New Roman', serif; text-shadow: 0 0 20px rgba(255,255,255,0.3); margin: 10px 0; color: #fff;">---</h2>
                 </div>
 
-                <div style="margin-bottom: 20px;">
+                <div style="margin-bottom: 10px;">
                     <p style="font-size: 1.5em; color: #fff; margin-bottom: 5px; opacity: 0.9;">Con el rango oficial de:</p>
                     <h3 style="color: #ef4444; font-size: 2.8em; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #ef444444;">Arquitecto WPipe Silver</h3>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;">
-                    <div style="text-align: left; opacity: 1; font-family: 'Courier New', monospace; font-size: 1em; line-height: 1.8;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); border-radius: 15px;">
+                    <div style="text-align: left; opacity: 1; font-family: 'Courier New', monospace; line-height: 1.6;">
                         <p style="margin: 0; color: #ef4444; font-weight: bold; font-size: 1.2em; letter-spacing: 1px;">EMITIDO EL: <span class="cert-date-display" style="color: #fff;">--/--/----</span></p>
-                        <p style="margin: 0; color: #64748b; font-size: 0.9em;">ID: WP-80-ARQ-LVER</p>
-                        <p style="margin: 0; font-weight: 900; color: #fff; font-size: 1.2em; margin-top: 10px; border-left: 3px solid #ef4444; padding-left: 10px;">WISROVI.DEV • WPipe Suite</p>
+                        <p style="margin: 0; color: #64748b; font-size: 0.85em; margin-bottom: 10px;">ID: WP-80-ARQ-LVER</p>
+                        <div style="background: #ef4444; color: #020617; padding: 5px 15px; border-radius: 4px; display: inline-block; font-weight: 900; font-size: 1.2em; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                            WISROVI.DEV • WPipe Suite
+                        </div>
                     </div>
-                    <div style="width: 120px; height: 120px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4.5em; box-shadow: 0 0 50px #ef4444aa; border: 5px solid rgba(255,255,255,0.2);">🛡️</div>
+                    <div style="width: 110px; height: 110px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4em; box-shadow: 0 0 40px #ef444488; border: 4px solid rgba(255,255,255,0.2);">🛡️</div>
                 </div>
             </div>
         </div>

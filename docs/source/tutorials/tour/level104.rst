@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipelines...
-   [PIPELINE STATUS] Registered: PIPE-DDC3E001
+   [PIPELINE STATUS] Registered: PIPE-148E4220
    viaje_l104_pipelines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-DDC3E001: COMPLETED
+   [PIPELINE STATUS] PIPE-148E4220: COMPLETED
    
    📊 Análisis:
      Total: 7

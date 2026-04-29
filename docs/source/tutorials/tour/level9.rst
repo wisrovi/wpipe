@@ -19,9 +19,7 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
-   ⚠️ ALERT: Pedestrian in the path!
    [CONDITION] Evaluating: detected == True
    🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
@@ -29,5 +27,7 @@ Resultado de Ejecución
    🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
    ⚠️ ALERT: Pedestrian in the path!
+   🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
+   ⚠️ ALERT: Pedestrian in the path!
    Trip_L9 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

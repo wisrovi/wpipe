@@ -19,10 +19,10 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-6A6D03B8
+   [PIPELINE STATUS] Registered: PIPE-1758E377
    🔑 Motor iniciado
    viaje_l85_exportyaml ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-6A6D03B8: COMPLETED
+   [PIPELINE STATUS] PIPE-1758E377: COMPLETED
    
    📤 Verificando YAML...
    ✅ YAML guardado en pipeline_configs/Viaje_L85_ExportYAML.yaml

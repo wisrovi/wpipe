@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    >>> TIP: Open a terminal and run 'wpipe dashboard output/car_dashboard.db'
-   [PIPELINE STATUS] Registered: PIPE-062576DF
+   [PIPELINE STATUS] Registered: PIPE-ECE080B7
    🗺️  Navigation: Guiding to destination... (Data being recorded for the Dashboard)
    adas_system_l26 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-062576DF: COMPLETED
+   [PIPELINE STATUS] PIPE-ECE080B7: COMPLETED

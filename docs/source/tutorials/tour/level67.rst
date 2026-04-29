@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert threshold para step...
    
-   [PIPELINE STATUS] Registered: PIPE-D19DFFE5
+   [PIPELINE STATUS] Registered: PIPE-DDFF7458
    ⚡ Paso rápido
    🐢 Paso lento (100ms)
    viaje_l67_stepalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-D19DFFE5: COMPLETED
+   [PIPELINE STATUS] PIPE-DDFF7458: COMPLETED

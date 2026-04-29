@@ -35,6 +35,6 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-29T12:55:04.580892', 'progress_rich': <rich.progress.Progress object at 0x7ed3b0fa7230>}
-   👟 Testing pedals: Brakes verified. Input data: {'_pipeline_start_time': '2026-04-29T12:55:04.580892', 'progress_rich': <rich.progress.Progress object at 0x7ed3b0fa7230>, 'engine': 'ON', 'fuel': 100}
+   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-29T13:32:05.166301', 'progress_rich': <rich.progress.Progress object at 0x7bbdb2e53230>}
+   👟 Testing pedals: Brakes verified. Input data: {'_pipeline_start_time': '2026-04-29T13:32:05.166301', 'progress_rich': <rich.progress.Progress object at 0x7bbdb2e53230>, 'engine': 'ON', 'fuel': 100}
    Trip_L2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

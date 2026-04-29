@@ -32,8 +32,5 @@ Resultado de Ejecución
    🔴 [CALLBACK] Error capturado: Operación falló
    📧 Enviando notificación...
    [RETRY] operacion_peligrosa failed (attempt 2): Operación falló
-   
-   [ERROR CAPTURE] Processing error in state 'operacion_peligrosa'...
-   🔴 [CALLBACK] Error capturado: Operación falló
-   📧 Enviando notificación...
+   ✅ Operación completada
    viaje_l62_onexception ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

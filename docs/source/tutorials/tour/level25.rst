@@ -44,4 +44,4 @@ Resultado de Ejecución
    >>> [TEST 2] Processing with PROCESSES (Total Power)...
    eco_mode_threads     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    sport_mode_processes                                            0% -:--:--
-   ⏱️ Processes Time: 0.01s
+   ⏱️ Processes Time: 0.02s

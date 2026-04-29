@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    >>> Pipeline + Wsqlite...
-   [PIPELINE STATUS] Registered: PIPE-E464BC13
+   [PIPELINE STATUS] Registered: PIPE-04BC2414
    viaje_l107 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-E464BC13: COMPLETED
+   [PIPELINE STATUS] PIPE-04BC2414: COMPLETED
    ✅ Datos guardados

@@ -45,7 +45,7 @@ Resultado de Ejecución
    🧠 Fusionando datos...
    [PARALLEL] Executing 3 steps using THREADS (workers=3)
      📷 Cámara
-     🔴 LiDAR
      📡 Radar
+     🔴 LiDAR
    🧠 Fusionando datos...
    viaje_l75_forparallel ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
