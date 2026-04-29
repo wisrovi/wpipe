@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert threshold para step...
    
-   [PIPELINE STATUS] Registered: PIPE-1C12045D
+   [PIPELINE STATUS] Registered: PIPE-BB300AE6
    ⚡ Paso rápido
    🐢 Paso lento (100ms)
    viaje_l67_stepalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-1C12045D: COMPLETED
+   [PIPELINE STATUS] PIPE-BB300AE6: COMPLETED

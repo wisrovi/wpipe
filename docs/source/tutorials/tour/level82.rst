@@ -19,11 +19,11 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-7AF3C4FE
+   [PIPELINE STATUS] Registered: PIPE-6014162F
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l82_exportcsv ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-7AF3C4FE: COMPLETED
+   [PIPELINE STATUS] PIPE-6014162F: COMPLETED
    
    📤 Exportando a CSV...
    ✅ Exportado a output/viaje82.csv

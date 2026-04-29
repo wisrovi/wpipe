@@ -22,7 +22,6 @@ Resultado de Ejecución
    
    >>> Probando retry filter por excepción...
    
-   [RETRY] validar_y_conectar failed (attempt 1): Red no disponible
    ✅ Conexión establecida
    🏁 Proceso finalizado
    viaje_l63_pipelineretryexcept ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

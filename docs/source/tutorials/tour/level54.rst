@@ -97,6 +97,81 @@ Resultado de Ejecución
    Running Create_batch step...
    [DEBUG draw_ia] batch_ids: [30, 31]
    [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [32, 33]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [34, 35]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [36, 37]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [38, 39]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [40, 41]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [42, 43]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [44, 45]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [46, 47]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [48, 49]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [50, 51]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [52, 53]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [54, 55]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [56, 57]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [58, 59]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [60, 61]
+   [DEBUG draw_ia] batch has: 2 items
    
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    🚨 ALERTA DE SISTEMA: ERROR DETECTADO
@@ -106,4 +181,4 @@ Resultado de Ejecución
    🔢 LÍNEA: 192
    ⚠️ MENSAJE: Error: desncronizacion
    ------------------------------------------------------------
-     [ERROR] Loop broken at iteration 15 due to: [Error Code: 502] Error: desncronizacion
+     [ERROR] Loop broken at iteration 30 due to: [Error Code: 502] Error: desncronizacion

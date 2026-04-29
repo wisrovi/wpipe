@@ -19,5 +19,5 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   📸 Front camera: Activated. Input data: {'_pipeline_start_time': '2026-04-29T13:36:12.348970', 'progress_rich': <rich.progress.Progress object at 0x788a805c0ec0>, 'engine': 'ON', 'gps': 'Valencia'}
+   📸 Front camera: Activated. Input data: {'_pipeline_start_time': '2026-04-29T13:56:53.951719', 'progress_rich': <rich.progress.Progress object at 0x77919c450ec0>, 'engine': 'ON', 'gps': 'Valencia'}
    Trip_L6 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -20,8 +20,8 @@ Resultado de Ejecución
 
 
    >>> Filtrar alerts por severity...
-   [PIPELINE STATUS] Registered: PIPE-ED3AFE8A
+   [PIPELINE STATUS] Registered: PIPE-201D6679
    viaje_l98_alertsseverity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-ED3AFE8A: COMPLETED
+   [PIPELINE STATUS] PIPE-201D6679: COMPLETED
    
    🚨 Total: 50, Critical: 50

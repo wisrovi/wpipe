@@ -22,7 +22,6 @@ Resultado de Ejecución
    
    >>> Probando retry con delay...
    
-   [RETRY] conectar_servidor failed (attempt 1): Servidor no responde
    ✅ Conectado al servidor
    📥 Descargando datos...
    viaje_l59_retrydelay ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

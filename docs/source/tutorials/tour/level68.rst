@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando múltiples alerts...
    
-   [PIPELINE STATUS] Registered: PIPE-6AD90D47
+   [PIPELINE STATUS] Registered: PIPE-44BB78B5
    ✅ Datos válidos
    📊Datos procesados
    viaje_l68_multiplealerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-6AD90D47: COMPLETED
+   [PIPELINE STATUS] PIPE-44BB78B5: COMPLETED

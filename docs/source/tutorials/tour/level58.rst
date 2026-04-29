@@ -22,7 +22,6 @@ Resultado de Ejecución
    
    >>> Probando retry selectivo...
    
-   [RETRY] operacion_inestable failed (attempt 1): Conexión perdue
    ✅ Operación completada exitosamente
    ✅ Sistema verificado
    viaje_l58_selectiveretry ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

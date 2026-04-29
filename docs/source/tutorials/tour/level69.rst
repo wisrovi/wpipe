@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert condicional...
    
-   [PIPELINE STATUS] Registered: PIPE-DE9CF5B3
+   [PIPELINE STATUS] Registered: PIPE-2BB2ECAA
    ⚡ Tarea rápida
    📊 Tarea normal
    viaje_l69_conditionalalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-DE9CF5B3: COMPLETED
+   [PIPELINE STATUS] PIPE-2BB2ECAA: COMPLETED

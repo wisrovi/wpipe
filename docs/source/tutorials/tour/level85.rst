@@ -19,10 +19,10 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-9B9917EA
+   [PIPELINE STATUS] Registered: PIPE-33D71CBB
    🔑 Motor iniciado
    viaje_l85_exportyaml ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-9B9917EA: COMPLETED
+   [PIPELINE STATUS] PIPE-33D71CBB: COMPLETED
    
    📤 Verificando YAML...
    ✅ YAML guardado en pipeline_configs/Viaje_L85_ExportYAML.yaml

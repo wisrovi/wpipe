@@ -25,5 +25,5 @@ Resultado de Ejecución
    viaje_l87_heavyprocess ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 Estado final:
-     RAM: 49.9 MB
-     CPU: 0.0%
+     RAM: 49.7 MB
+     CPU: 4.8%

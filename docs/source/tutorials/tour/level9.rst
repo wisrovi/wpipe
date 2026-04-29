@@ -20,10 +20,10 @@ Resultado de Ejecución
 
 
    [CONDITION] Evaluating: detected == True
+   [CONDITION] Evaluating: detected == True
+   [CONDITION] Evaluating: detected == True
+   [CONDITION] Evaluating: detected == True
    🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
    ⚠️ ALERT: Pedestrian in the path!
-   [CONDITION] Evaluating: detected == True
-   [CONDITION] Evaluating: detected == True
-   [CONDITION] Evaluating: detected == True
    Trip_L9 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

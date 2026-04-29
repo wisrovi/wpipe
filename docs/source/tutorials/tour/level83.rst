@@ -19,9 +19,9 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-795AE7E2
+   [PIPELINE STATUS] Registered: PIPE-D890E06A
    viaje_l83_exportstats ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-795AE7E2: COMPLETED
+   [PIPELINE STATUS] PIPE-D890E06A: COMPLETED
    
    📊 Exportando estadísticas...
    ✅ Exportado a output/viaje83_stats.json

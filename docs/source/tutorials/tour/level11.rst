@@ -20,5 +20,10 @@ Resultado de Ejecución
 
 
    >>> Starting trip with security sensors...
-   👀 Sensors clean. Visibility 100%.
+   
+   [ERROR CAPTURE] Processing error in state 'verify_lens'...
+   
+   🔧 SYSTEM: Error detected in 'verify_lens'.
+   🧼 ACTION: Activating sensor self-cleaning...
+   
    trip_l11_faulttolerance ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

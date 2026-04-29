@@ -22,7 +22,7 @@ Resultado de Ejecución
    
    >>> Probando alert threshold...
    
-   [PIPELINE STATUS] Registered: PIPE-C4DF9280
+   [PIPELINE STATUS] Registered: PIPE-AB680469
    ⏳ Proceso completado (tardó 100ms)
    viaje_l66_alertthreshold ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-C4DF9280: COMPLETED
+   [PIPELINE STATUS] PIPE-AB680469: COMPLETED

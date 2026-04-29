@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipelines...
-   [PIPELINE STATUS] Registered: PIPE-E8EF14D9
+   [PIPELINE STATUS] Registered: PIPE-544798C0
    viaje_l104_pipelines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-E8EF14D9: COMPLETED
+   [PIPELINE STATUS] PIPE-544798C0: COMPLETED
    
    📊 Análisis:
      Total: 7

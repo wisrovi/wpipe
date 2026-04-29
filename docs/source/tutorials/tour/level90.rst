@@ -26,5 +26,5 @@ Resultado de Ejecución
    
    📊 Recursos:
      RAM: 49.5 MB
-     Tiempo: 0.107s
+     Tiempo: 0.106s
      Excedido: False

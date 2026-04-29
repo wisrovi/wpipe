@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    >>> Pipeline + Wsqlite...
-   [PIPELINE STATUS] Registered: PIPE-CE1878F5
+   [PIPELINE STATUS] Registered: PIPE-006D6ABF
    viaje_l107 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-CE1878F5: COMPLETED
+   [PIPELINE STATUS] PIPE-006D6ABF: COMPLETED
    ✅ Datos guardados

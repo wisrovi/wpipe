@@ -19,7 +19,7 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-759AD33B
+   [PIPELINE STATUS] Registered: PIPE-0C5CFD12
    🌍 Crossing border: Changing traffic regulations...
    travel_log_l28 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-759AD33B: COMPLETED
+   [PIPELINE STATUS] PIPE-0C5CFD12: COMPLETED

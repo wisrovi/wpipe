@@ -31,5 +31,5 @@ Resultado de Ejecución
      ✅ iteración 2
    
    📊 Total 3 ejecuciones:
-     Peak RAM: 49.8 MB
-     Avg CPU: 13.8%
+     Peak RAM: 49.7 MB
+     Avg CPU: 14.2%

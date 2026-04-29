@@ -93,16 +93,14 @@ Resultado de Ejecución
                     <h3 style="color: #00f2fe; font-size: 2.8em; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #00f2fe44;">Arquitecto WPipe Specialist</h3>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 25px; border-top: 2px solid #00f2fe44; background: rgba(0,0,0,0.3); border-radius: 15px;">
-                    <div style="text-align: left; opacity: 1; font-family: 'Courier New', monospace; line-height: 1.7;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 15px 30px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                    <div style="text-align: left; opacity: 0.9; font-family: 'Courier New', monospace; line-height: 1.4;">
                         <p style="margin: 0; color: #00f2fe; font-weight: bold; font-size: 1.1em; letter-spacing: 1px;">EMITIDO EL: <span class="cert-date-display" style="color: #fff;">--/--/----</span></p>
-                        <p style="margin: 0; color: #64748b; font-size: 0.8em; margin-bottom: 12px;">ID: WP-140-ARQ-LIST</p>
-                        <div style="background: #00f2fe; color: #020617; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 900; font-size: 1.1em; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
-                            WPIPE.WISROVI.DEV • WISROVI SUITE
-                        </div>
-                        <p style="margin: 0; margin-top: 8px; font-size: 0.85em; color: #94a3b8; font-weight: bold;">Explore the full suite at WISROVI.DEV</p>
+                        <p style="margin: 0; color: #64748b; font-size: 0.8em; margin-bottom: 8px;">ID: WP-140-ARQ-LIST</p>
+                        <p style="margin: 0; font-weight: 900; color: #fff; font-size: 1.2em; letter-spacing: 1px;">WISROVI SUITE • <span style="color: #00f2fe;">WISROVI.DEV</span></p>
+                        <p style="margin: 0; margin-top: 3px; font-size: 0.85em; color: #94a3b8;">Oficial Product: <span style="font-weight: bold; color: #cbd5e0;">wpipe.wisrovi.dev</span></p>
                     </div>
-                    <div style="width: 120px; height: 120px; background: #00f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4.5em; box-shadow: 0 0 50px #00f2fe88; border: 5px solid rgba(255,255,255,0.1);">🎓</div>
+                    <div style="width: 100px; height: 100px; background: #00f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5em; box-shadow: 0 0 30px #00f2fe66; border: 4px solid rgba(255,255,255,0.1);">🎓</div>
                 </div>
             </div>
         </div>

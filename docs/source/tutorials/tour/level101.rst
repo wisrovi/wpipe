@@ -20,11 +20,11 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipeline...
-   [PIPELINE STATUS] Registered: PIPE-18A30F24
+   [PIPELINE STATUS] Registered: PIPE-D4EA32A6
    viaje_l101_analysis ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-18A30F24: COMPLETED
+   [PIPELINE STATUS] PIPE-D4EA32A6: COMPLETED
    
    📊 Stats:
-     Pipelines: 113
-     Éxito: 9.7%
+     Pipelines: 114
+     Éxito: 9.6%
      Duración avg: 5.58ms
