@@ -1,5 +1,5 @@
 Nivel 138: Background dentro de Condition
-========================================
+=========================================
 
 .. meta::
    :description: Background funciona dentro de bloques condicionales.

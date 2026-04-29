@@ -1,0 +1,12 @@
+name: data_exporter
+registered_at: '2026-04-27T18:02:08.430496'
+step_count: 2
+steps:
+- func: <function format_output at 0x7a1a5575a700>
+  name: format
+  type: task
+  version: v1.0
+- func: <function write_to_file at 0x7a1a5575a7a0>
+  name: write
+  type: task
+  version: v1.0

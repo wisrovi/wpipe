@@ -1,5 +1,5 @@
 Nivel 75: Orquestación Híbrida (For + Parallel)
-==================================================
+===============================================
 
 .. meta::
    :description: Combinación de bucles For y ejecución paralela para sistemas complejos.
@@ -45,7 +45,7 @@ Resultado de Ejecución
    🧠 Fusionando datos...
    [PARALLEL] Executing 3 steps using THREADS (workers=3)
      📷 Cámara
-     📡 Radar
      🔴 LiDAR
+     📡 Radar
    🧠 Fusionando datos...
    viaje_l75_forparallel ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

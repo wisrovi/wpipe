@@ -20,8 +20,8 @@ Resultado de Ejecución
 
 
    >>> Análisis de estados...
-   [PIPELINE STATUS] Registered: PIPE-C441E03A
+   [PIPELINE STATUS] Registered: PIPE-0C41FB28
    viaje_l105_states ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-C441E03A: COMPLETED
+   [PIPELINE STATUS] PIPE-0C41FB28: COMPLETED
    
-   📊 Estados: {'total_states': 2, 'total_executions': 202, 'total_errors': 0, 'most_used': [{'state_name': 'start', 'execution_count': 101, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 101, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'slowest': [{'state_name': 'start', 'execution_count': 101, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 101, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'most_errors': []}
+   📊 Estados: {'total_states': 2, 'total_executions': 214, 'total_errors': 0, 'most_used': [{'state_name': 'start', 'execution_count': 107, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 107, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'slowest': [{'state_name': 'start', 'execution_count': 107, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 107, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'most_errors': []}

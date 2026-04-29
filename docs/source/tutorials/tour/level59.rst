@@ -19,4 +19,9 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   Captured output.
+   
+   >>> Probando retry con delay...
+   
+   ✅ Conectado al servidor
+   📥 Descargando datos...
+   viaje_l59_retrydelay ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

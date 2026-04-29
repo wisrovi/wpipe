@@ -1,5 +1,5 @@
 Nivel 100: Auditoría de Seguridad (Alerts History)
-======================================================
+==================================================
 
 .. meta::
    :description: Gestión y consulta del historial de alertas disparadas en WPipe.
@@ -36,9 +36,9 @@ Resultado de Ejecución
 
 
    >>> Alerts history...
-   [PIPELINE STATUS] Registered: PIPE-20E0A840
+   [PIPELINE STATUS] Registered: PIPE-DA0C0CFA
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-20E0A840: COMPLETED
+   [PIPELINE STATUS] PIPE-DA0C0CFA: COMPLETED
    >>> Running second pipeline...
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    viaje_l100b        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

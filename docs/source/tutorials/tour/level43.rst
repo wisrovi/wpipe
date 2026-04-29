@@ -22,6 +22,5 @@ Resultado de Ejecución
    
    >>> Testing async retry...
    
-   [ASYNC RETRY] connect_car failed (attempt 1/4): Bluetooth unavailable
    📱 [ASYNC] Car connected
    🔄 [ASYNC] Data synchronized

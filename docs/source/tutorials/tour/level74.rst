@@ -25,7 +25,7 @@ Resultado de Ejecución
    [CONDITION] Evaluating: obstaculo == True
    🚀 ACELERANDO
    [CONDITION] Evaluating: obstaculo == True
-   🛑 FRENANDO
+   🚀 ACELERANDO
    [CONDITION] Evaluating: obstaculo == True
-   🛑 FRENANDO
+   🚀 ACELERANDO
    viaje_l74_forcondition ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -22,9 +22,9 @@ Resultado de Ejecución
    
    >>> Probando alert para step específico...
    
-   [PIPELINE STATUS] Registered: PIPE-A08A768D
+   [PIPELINE STATUS] Registered: PIPE-3CFD103D
    ✅ Normal
    🐢 Lenta (150ms)
    ✅ Otra normal
    viaje_l70_specificalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-A08A768D: COMPLETED
+   [PIPELINE STATUS] PIPE-3CFD103D: COMPLETED

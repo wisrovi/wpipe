@@ -26,4 +26,4 @@ Resultado de Ejecución
    
    📊 Estado final:
      RAM: 49.7 MB
-     CPU: 4.8%
+     CPU: 0.0%

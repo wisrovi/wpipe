@@ -19,10 +19,10 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-4909D72C
+   [PIPELINE STATUS] Registered: PIPE-305F4D03
    🔑 Motor iniciado
    viaje_l85_exportyaml ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-4909D72C: COMPLETED
+   [PIPELINE STATUS] PIPE-305F4D03: COMPLETED
    
    📤 Verificando YAML...
    ✅ YAML guardado en pipeline_configs/Viaje_L85_ExportYAML.yaml

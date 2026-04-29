@@ -22,7 +22,7 @@ Resultado de Ejecución
    
    >>> Probando alert threshold...
    
-   [PIPELINE STATUS] Registered: PIPE-8CD0AD28
+   [PIPELINE STATUS] Registered: PIPE-363BDE17
    ⏳ Proceso completado (tardó 100ms)
    viaje_l66_alertthreshold ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-8CD0AD28: COMPLETED
+   [PIPELINE STATUS] PIPE-363BDE17: COMPLETED

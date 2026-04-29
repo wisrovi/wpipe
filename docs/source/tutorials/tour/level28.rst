@@ -19,7 +19,7 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-B3AF4260
+   [PIPELINE STATUS] Registered: PIPE-8609D3F4
    🌍 Crossing border: Changing traffic regulations...
    travel_log_l28 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-B3AF4260: COMPLETED
+   [PIPELINE STATUS] PIPE-8609D3F4: COMPLETED

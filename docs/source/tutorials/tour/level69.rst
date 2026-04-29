@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert condicional...
    
-   [PIPELINE STATUS] Registered: PIPE-7E8E1055
+   [PIPELINE STATUS] Registered: PIPE-A2122C70
    ⚡ Tarea rápida
    📊 Tarea normal
    viaje_l69_conditionalalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-7E8E1055: COMPLETED
+   [PIPELINE STATUS] PIPE-A2122C70: COMPLETED

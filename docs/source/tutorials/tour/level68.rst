@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando múltiples alerts...
    
-   [PIPELINE STATUS] Registered: PIPE-4F26B5E2
+   [PIPELINE STATUS] Registered: PIPE-2F4A3D23
    ✅ Datos válidos
    📊Datos procesados
    viaje_l68_multiplealerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-4F26B5E2: COMPLETED
+   [PIPELINE STATUS] PIPE-2F4A3D23: COMPLETED

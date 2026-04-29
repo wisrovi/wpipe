@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipelines...
-   [PIPELINE STATUS] Registered: PIPE-913BB328
+   [PIPELINE STATUS] Registered: PIPE-8F6552FB
    viaje_l104_pipelines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-913BB328: COMPLETED
+   [PIPELINE STATUS] PIPE-8F6552FB: COMPLETED
    
    📊 Análisis:
      Total: 7

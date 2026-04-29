@@ -26,6 +26,6 @@ Resultado de Ejecución
    Viaje_103_1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
      ✅ run 1
    
-   📈 Tendencia: 2
-     - Ejecuciones: 32
+   📈 Tendencia: 1
+     - Ejecuciones: 10
      - Éxitos: 0

@@ -25,4 +25,4 @@ Resultado de Ejecución
    
    📊 Resource Summary:
      Peak RAM: 49.8 MB
-     Avg CPU: 17.3%
+     Avg CPU: 0.0%

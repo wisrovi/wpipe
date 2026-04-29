@@ -1,5 +1,5 @@
 Nivel 132: Background con Captura de Errores
-=============================================
+============================================
 
 .. meta::
    :description: Aprende a manejar errores en background tasks sin detener el pipeline.

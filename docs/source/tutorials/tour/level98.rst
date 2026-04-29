@@ -20,8 +20,8 @@ Resultado de Ejecución
 
 
    >>> Filtrar alerts por severity...
-   [PIPELINE STATUS] Registered: PIPE-B0A39A89
+   [PIPELINE STATUS] Registered: PIPE-1A70A593
    viaje_l98_alertsseverity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-B0A39A89: COMPLETED
+   [PIPELINE STATUS] PIPE-1A70A593: COMPLETED
    
    🚨 Total: 50, Critical: 50

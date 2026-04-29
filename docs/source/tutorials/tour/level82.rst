@@ -19,11 +19,11 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-689DA332
+   [PIPELINE STATUS] Registered: PIPE-D9F60530
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l82_exportcsv ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-689DA332: COMPLETED
+   [PIPELINE STATUS] PIPE-D9F60530: COMPLETED
    
    📤 Exportando a CSV...
    ✅ Exportado a output/viaje82.csv

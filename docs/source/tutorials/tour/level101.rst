@@ -20,11 +20,11 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipeline...
-   [PIPELINE STATUS] Registered: PIPE-D42E693E
+   [PIPELINE STATUS] Registered: PIPE-FB8275E7
    viaje_l101_analysis ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-D42E693E: COMPLETED
+   [PIPELINE STATUS] PIPE-FB8275E7: COMPLETED
    
    📊 Stats:
-     Pipelines: 104
-     Éxito: 10.6%
+     Pipelines: 110
+     Éxito: 10.0%
      Duración avg: 5.58ms
