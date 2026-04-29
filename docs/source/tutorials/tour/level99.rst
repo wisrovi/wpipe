@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Múltiples alerts...
-   [PIPELINE STATUS] Registered: PIPE-C643DF7D
+   [PIPELINE STATUS] Registered: PIPE-CE18AA2A
    viaje_l99_multialerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-C643DF7D: COMPLETED
+   [PIPELINE STATUS] PIPE-CE18AA2A: COMPLETED
    
    🚨 Total alerts: 50
      - critical: 125.57ms

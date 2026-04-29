@@ -28,7 +28,7 @@ Resultado de Ejecución
    
    [!] PASO 1: Ejecución inicial con caída simulada.
    ------------------------------------------------------------
-   [PIPELINE STATUS] Registered: PIPE-1010AE84
+   [PIPELINE STATUS] Registered: PIPE-C1B1F00C
    
    [CHECKPOINT REACHED] trip_start
    >>> [CHECKPOINT] Trip start
@@ -47,10 +47,24 @@ Resultado de Ejecución
    🔢 LINE: 72
    ⚠️ MESSAGE: Random puncture
    🔄 ATTEMPT: 1
-   🕒 TIMESTAMP: 2026-04-29T12:45:53.058087
+   🕒 TIMESTAMP: 2026-04-29T12:55:31.437916
    ------------------------------------------------------------
    [RETRY] random_flat_tire failed (attempt 1): Random puncture
    [CONDITION] Evaluating: tire_level == 'Low'
+   
+   [ERROR CAPTURE] Processing error in state 'random_flat_tire'...
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 72
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-04-29T12:55:31.449447
+   ------------------------------------------------------------
+   [RETRY] random_flat_tire failed (attempt 1): Random puncture
    [non_serializable_obj]: None non_serializable_objv1.0
    --- New trip ---_loop_iteration
    [PARALLEL] Executing 3 steps using THREADS (workers=3)
@@ -64,7 +78,7 @@ Resultado de Ejecución
    
    [HOOKS] Executing post-run tasks...
    >>> [HOOK] Trip finished sending final summary...
-   [PIPELINE STATUS] PIPE-1010AE84: COMPLETED
+   [PIPELINE STATUS] PIPE-C1B1F00C: COMPLETED
    
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ✘ SISTEMA CAÍDO: 🔌 FALLO ELÉCTRICO CRÍTICO: El sistema se ha apagado inesperadamente.

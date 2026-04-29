@@ -19,11 +19,11 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-A7FC988A
+   [PIPELINE STATUS] Registered: PIPE-8186F6F8
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l81_exportjson ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-A7FC988A: COMPLETED
+   [PIPELINE STATUS] PIPE-8186F6F8: COMPLETED
    
    📤 Exportando a JSON...
    ✅ Exportado a output/viaje81.json

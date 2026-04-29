@@ -20,11 +20,11 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipeline...
-   [PIPELINE STATUS] Registered: PIPE-FB8275E7
+   [PIPELINE STATUS] Registered: PIPE-BE4647AD
    viaje_l101_analysis ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-FB8275E7: COMPLETED
+   [PIPELINE STATUS] PIPE-BE4647AD: COMPLETED
    
    📊 Stats:
-     Pipelines: 110
-     Éxito: 10.0%
+     Pipelines: 111
+     Éxito: 9.9%
      Duración avg: 5.58ms

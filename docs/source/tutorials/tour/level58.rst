@@ -22,5 +22,6 @@ Resultado de Ejecución
    
    >>> Probando retry selectivo...
    
-   viaje_l58_selectiveretry                                            0% -:--:--
-   Error esperado: [Error Code: 502] Error de valor inválido
+   ✅ Operación completada exitosamente
+   ✅ Sistema verificado
+   viaje_l58_selectiveretry ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

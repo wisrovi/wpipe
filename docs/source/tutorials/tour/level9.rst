@@ -22,10 +22,10 @@ Resultado de Ejecución
    🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
    ⚠️ ALERT: Pedestrian in the path!
+   [CONDITION] Evaluating: detected == True
    🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
    ⚠️ ALERT: Pedestrian in the path!
-   [CONDITION] Evaluating: detected == True
    🔍 YOLO: Detected Pedestrian (0.95)
    [CONDITION] Evaluating: detected == True
    ⚠️ ALERT: Pedestrian in the path!

@@ -62,6 +62,21 @@ Resultado de Ejecución
    Running Create_batch step...
    [DEBUG draw_ia] batch_ids: [16, 17]
    [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [18, 19]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [20, 21]
+   [DEBUG draw_ia] batch has: 2 items
+   save_images called!
+   [save_images] Saving 2 images
+   Running Create_batch step...
+   [DEBUG draw_ia] batch_ids: [22, 23]
+   [DEBUG draw_ia] batch has: 2 items
    
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    🚨 ALERTA DE SISTEMA: ERROR DETECTADO
@@ -71,4 +86,4 @@ Resultado de Ejecución
    🔢 LÍNEA: 192
    ⚠️ MENSAJE: Error: desncronizacion
    ------------------------------------------------------------
-     [ERROR] Loop broken at iteration 8 due to: [Error Code: 502] Error: desncronizacion
+     [ERROR] Loop broken at iteration 11 due to: [Error Code: 502] Error: desncronizacion

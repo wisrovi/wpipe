@@ -19,7 +19,7 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-8609D3F4
+   [PIPELINE STATUS] Registered: PIPE-0C8C34E4
    🌍 Crossing border: Changing traffic regulations...
    travel_log_l28 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-8609D3F4: COMPLETED
+   [PIPELINE STATUS] PIPE-0C8C34E4: COMPLETED

@@ -36,9 +36,9 @@ Resultado de Ejecución
 
 
    >>> Alerts history...
-   [PIPELINE STATUS] Registered: PIPE-DA0C0CFA
+   [PIPELINE STATUS] Registered: PIPE-B642F795
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-DA0C0CFA: COMPLETED
+   [PIPELINE STATUS] PIPE-B642F795: COMPLETED
    >>> Running second pipeline...
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    viaje_l100b        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -19,9 +19,9 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-E622F2B1
+   [PIPELINE STATUS] Registered: PIPE-D3CDF57C
    viaje_l83_exportstats ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-E622F2B1: COMPLETED
+   [PIPELINE STATUS] PIPE-D3CDF57C: COMPLETED
    
    📊 Exportando estadísticas...
    ✅ Exportado a output/viaje83_stats.json

@@ -20,8 +20,8 @@ Resultado de Ejecución
 
 
    >>> Filtrar alerts por severity...
-   [PIPELINE STATUS] Registered: PIPE-1A70A593
+   [PIPELINE STATUS] Registered: PIPE-FEB9E2DA
    viaje_l98_alertsseverity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-1A70A593: COMPLETED
+   [PIPELINE STATUS] PIPE-FEB9E2DA: COMPLETED
    
    🚨 Total: 50, Critical: 50

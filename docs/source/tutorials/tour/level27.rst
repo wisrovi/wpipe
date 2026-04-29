@@ -19,9 +19,9 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-597B8D92
-   [METRIC] fuel_consumption: 6.687613218138811 L/100km
-   [METRIC] average_speed: 128 km/h
-   📊 Telemetry: 128 km/h | 6.7 L/100km
+   [PIPELINE STATUS] Registered: PIPE-4D1E49D4
+   [METRIC] fuel_consumption: 8.036513002679083 L/100km
+   [METRIC] average_speed: 108 km/h
+   📊 Telemetry: 108 km/h | 8.0 L/100km
    trip_efficiency_l27 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-597B8D92: COMPLETED
+   [PIPELINE STATUS] PIPE-4D1E49D4: COMPLETED

@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    >>> Wsqlite + Pipeline integration...
-   [PIPELINE STATUS] Registered: PIPE-C9494AA1
+   [PIPELINE STATUS] Registered: PIPE-D5023915
    viaje_l109 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-C9494AA1: COMPLETED
+   [PIPELINE STATUS] PIPE-D5023915: COMPLETED
    ✅ Datos guardados en pipeline DB

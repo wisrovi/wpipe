@@ -19,7 +19,7 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   🔑 Engine started. Input data: {'_pipeline_start_time': '2026-04-29T12:45:26.947504', 'progress_rich': <rich.progress.Progress object at 0x7be1b108b4d0>}
-   👟 Brakes verified. Input data: {'_pipeline_start_time': '2026-04-29T12:45:26.947504', 'progress_rich': <rich.progress.Progress object at 0x7be1b108b4d0>, 'engine': 'ON', 'fuel': 100}
+   🔑 Engine started. Input data: {'_pipeline_start_time': '2026-04-29T12:55:04.921633', 'progress_rich': <rich.progress.Progress object at 0x730b6bd5f4d0>}
+   👟 Brakes verified. Input data: {'_pipeline_start_time': '2026-04-29T12:55:04.921633', 'progress_rich': <rich.progress.Progress object at 0x730b6bd5f4d0>, 'engine': 'ON', 'fuel': 100}
    ✅ Warehouse verified. Fuel: 100%
    Trip_L3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -32,5 +32,5 @@ Resultado de Ejecución
    💾 Guardando resultado...
    demo_135 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   ⏱️ Pipeline: 7ms
+   ⏱️ Pipeline: 8ms
    💡 La telemetría se envió SIN bloquear el pipeline!

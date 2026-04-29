@@ -23,5 +23,5 @@ Resultado de Ejecución
    🐢 Tarea lenta...
    viaje_l92 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   ⏱️ Tiempo: 0.108s
+   ⏱️ Tiempo: 0.107s
    ⏱️ Excedido: True

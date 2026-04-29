@@ -24,8 +24,6 @@ Resultado de Ejecución
    
    [RETRY] llamar_api failed (attempt 1): API temporalmente no disponible
    [RETRY] llamar_api failed (attempt 2): API temporalmente no disponible
-   [RETRY] llamar_api failed (attempt 3): API temporalmente no disponible
-   [RETRY] llamar_api failed (attempt 4): API temporalmente no disponible
    ✅ API respondiendo
    📊 Processing data...
    viaje_l64_exponentialbackoff ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

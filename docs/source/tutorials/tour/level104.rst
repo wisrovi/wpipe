@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipelines...
-   [PIPELINE STATUS] Registered: PIPE-8F6552FB
+   [PIPELINE STATUS] Registered: PIPE-DDC3E001
    viaje_l104_pipelines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-8F6552FB: COMPLETED
+   [PIPELINE STATUS] PIPE-DDC3E001: COMPLETED
    
    📊 Análisis:
      Total: 7

@@ -24,6 +24,5 @@ Resultado de Ejecución
    [RETRY] connect_gps failed (attempt 1): Weak signal
    🛰️ GPS: Searching for satellite signal...
    [RETRY] connect_gps failed (attempt 2): Weak signal
-   🛰️ GPS: Searching for satellite signal...
-   trip_l22_gps_recovery                                            0% -:--:--
-   Exception [Error Code: 502] Weak signal
+   🛰️ GPS: Position fixed successfully!
+   trip_l22_gps_recovery ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

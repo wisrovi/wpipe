@@ -24,5 +24,5 @@ Resultado de Ejecución
    ✅ Tarea completada
    
    📊 Async Resource:
-     RAM: 49.5 MB
+     RAM: 49.6 MB
      CPU: 0.0%

@@ -39,9 +39,9 @@ Resultado de Ejecución
 
    >>> [TEST 1] Processing with THREADS (Sharing resources)...
    eco_mode_threads ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   ⏱️ Threads Time: 0.51s
+   ⏱️ Threads Time: 0.41s
    
    >>> [TEST 2] Processing with PROCESSES (Total Power)...
    eco_mode_threads     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    sport_mode_processes                                            0% -:--:--
-   ⏱️ Processes Time: 0.02s
+   ⏱️ Processes Time: 0.01s

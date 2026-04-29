@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Obteniendo alerts disparados...
-   [PIPELINE STATUS] Registered: PIPE-775F37A4
+   [PIPELINE STATUS] Registered: PIPE-C0FE8B21
    viaje_l96_getalerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-775F37A4: COMPLETED
+   [PIPELINE STATUS] PIPE-C0FE8B21: COMPLETED
    
    🚨 Alerts disparados: 50
      - {'id': None, 'alert_config_id': 0, 'pipeline_id': 'PIPE-8FC1B08E', 'step_id': None, 'metric': 'pipeline_duration_ms', 'metric_value': 55.359, 'threshold_value': 1.0, 'severity': 'critical', 'message': 'Pipeline viaje_l96_getalerts alert', 'fired_at': '2026-04-23T15:13:27.995398'}
