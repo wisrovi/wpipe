@@ -35,5 +35,5 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-29T13:32:04.847761', 'progress_rich': <rich.progress.Progress object at 0x751a959c30e0>}
+   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-29T13:36:10.556344', 'progress_rich': <rich.progress.Progress object at 0x7674191830e0>}
    Trip_L1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

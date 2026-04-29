@@ -22,9 +22,9 @@ Resultado de Ejecución
    
    >>> Probando alert para step específico...
    
-   [PIPELINE STATUS] Registered: PIPE-7CE4F1AD
+   [PIPELINE STATUS] Registered: PIPE-F9D0FAB5
    ✅ Normal
    🐢 Lenta (150ms)
    ✅ Otra normal
    viaje_l70_specificalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-7CE4F1AD: COMPLETED
+   [PIPELINE STATUS] PIPE-F9D0FAB5: COMPLETED

@@ -20,11 +20,11 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipeline...
-   [PIPELINE STATUS] Registered: PIPE-F96159CE
+   [PIPELINE STATUS] Registered: PIPE-18A30F24
    viaje_l101_analysis ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-F96159CE: COMPLETED
+   [PIPELINE STATUS] PIPE-18A30F24: COMPLETED
    
    📊 Stats:
-     Pipelines: 112
-     Éxito: 9.8%
+     Pipelines: 113
+     Éxito: 9.7%
      Duración avg: 5.58ms

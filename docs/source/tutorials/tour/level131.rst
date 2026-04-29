@@ -46,5 +46,5 @@ Resultado de Ejecución
    ✅ Continuando con el siguiente paso...
    demo_131 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   ⏱️ Tiempo total: 57ms
+   ⏱️ Tiempo total: 58ms
    ✅ El pipeline NO esperó 200ms del background!

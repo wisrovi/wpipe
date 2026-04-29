@@ -19,11 +19,11 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-A9C8402E
+   [PIPELINE STATUS] Registered: PIPE-282B056B
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l81_exportjson ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-A9C8402E: COMPLETED
+   [PIPELINE STATUS] PIPE-282B056B: COMPLETED
    
    📤 Exportando a JSON...
    ✅ Exportado a output/viaje81.json

@@ -24,5 +24,5 @@ Resultado de Ejecución
    viaje_l86_resource ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 Resource Summary:
-     Peak RAM: 49.7 MB
-     Avg CPU: 17.6%
+     Peak RAM: 49.6 MB
+     Avg CPU: 17.4%

@@ -36,9 +36,9 @@ Resultado de Ejecución
 
 
    >>> Alerts history...
-   [PIPELINE STATUS] Registered: PIPE-884B6C3F
+   [PIPELINE STATUS] Registered: PIPE-7BC3AD66
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-884B6C3F: COMPLETED
+   [PIPELINE STATUS] PIPE-7BC3AD66: COMPLETED
    >>> Running second pipeline...
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    viaje_l100b        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -23,6 +23,7 @@ Resultado de Ejecución
    >>> Probando retry a nivel de Pipeline...
    
    [RETRY] conectar_api failed (attempt 1): API no disponible
+   [RETRY] conectar_api failed (attempt 2): API no disponible
    ✅ API conectada
    📝 Procesando respuesta...
    viaje_l61_pipelineretry ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

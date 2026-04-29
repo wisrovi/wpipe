@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    >>> Wsqlite + Pipeline integration...
-   [PIPELINE STATUS] Registered: PIPE-7EE0B637
+   [PIPELINE STATUS] Registered: PIPE-21A060DD
    viaje_l109 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-7EE0B637: COMPLETED
+   [PIPELINE STATUS] PIPE-21A060DD: COMPLETED
    ✅ Datos guardados en pipeline DB

@@ -20,8 +20,8 @@ Resultado de Ejecución
 
 
    >>> Análisis de estados...
-   [PIPELINE STATUS] Registered: PIPE-CA705735
+   [PIPELINE STATUS] Registered: PIPE-4951DC44
    viaje_l105_states ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-CA705735: COMPLETED
+   [PIPELINE STATUS] PIPE-4951DC44: COMPLETED
    
-   📊 Estados: {'total_states': 2, 'total_executions': 218, 'total_errors': 0, 'most_used': [{'state_name': 'start', 'execution_count': 109, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 109, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'slowest': [{'state_name': 'start', 'execution_count': 109, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 109, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'most_errors': []}
+   📊 Estados: {'total_states': 2, 'total_executions': 220, 'total_errors': 0, 'most_used': [{'state_name': 'start', 'execution_count': 110, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 110, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'slowest': [{'state_name': 'start', 'execution_count': 110, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}, {'state_name': 'verificar', 'execution_count': 110, 'total_ms': 0, 'error_count': 0, 'avg_duration_ms': 0.0}], 'most_errors': []}

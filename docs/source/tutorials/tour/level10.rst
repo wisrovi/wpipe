@@ -19,7 +19,7 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   🖥️  HUD [Frame 0]: Visualizing vehicle at 89m
-   🖥️  HUD [Frame 1]: Visualizing vehicle at 33m
-   🖥️  HUD [Frame 2]: Visualizing vehicle at 96m
+   🖥️  HUD [Frame 0]: Visualizing vehicle at 63m
+   🖥️  HUD [Frame 1]: Visualizing vehicle at 11m
+   🖥️  HUD [Frame 2]: Visualizing vehicle at 69m
    Trip_L10_HUD ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

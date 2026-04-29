@@ -25,6 +25,6 @@ Resultado de Ejecución
    viaje_l90 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 Recursos:
-     RAM: 49.7 MB
+     RAM: 49.5 MB
      Tiempo: 0.107s
      Excedido: False

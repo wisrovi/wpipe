@@ -21,7 +21,7 @@ Resultado de Ejecución
 
    >>> Wsqlite + async...
    
-   [ASYNC STATUS] PIPE-4C91F12B: COMPLETED
+   [ASYNC STATUS] PIPE-93BAFF22: COMPLETED
    ✅ Async + Wsqlite
 
 .. raw:: html
@@ -52,15 +52,16 @@ Resultado de Ejecución
                     <h3 style="color: #8b5cf6; font-size: 2.8em; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #8b5cf644;">Arquitecto WPipe Gold</h3>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); border-radius: 15px;">
-                    <div style="text-align: left; opacity: 1; font-family: 'Courier New', monospace; line-height: 1.6;">
-                        <p style="margin: 0; color: #8b5cf6; font-weight: bold; font-size: 1.2em; letter-spacing: 1px;">EMITIDO EL: <span class="cert-date-display" style="color: #fff;">--/--/----</span></p>
-                        <p style="margin: 0; color: #64748b; font-size: 0.85em; margin-bottom: 10px;">ID: WP-110-ARQ-GOLD</p>
-                        <div style="background: #8b5cf6; color: #020617; padding: 5px 15px; border-radius: 4px; display: inline-block; font-weight: 900; font-size: 1.2em; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                            WISROVI.DEV • WPipe Suite
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 25px; border-top: 2px solid #8b5cf644; background: rgba(0,0,0,0.3); border-radius: 15px;">
+                    <div style="text-align: left; opacity: 1; font-family: 'Courier New', monospace; line-height: 1.7;">
+                        <p style="margin: 0; color: #8b5cf6; font-weight: bold; font-size: 1.1em; letter-spacing: 1px;">EMITIDO EL: <span class="cert-date-display" style="color: #fff;">--/--/----</span></p>
+                        <p style="margin: 0; color: #64748b; font-size: 0.8em; margin-bottom: 12px;">ID: WP-110-ARQ-GOLD</p>
+                        <div style="background: #8b5cf6; color: #020617; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 900; font-size: 1.1em; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
+                            WPIPE.WISROVI.DEV • WISROVI SUITE
                         </div>
+                        <p style="margin: 0; margin-top: 8px; font-size: 0.85em; color: #94a3b8; font-weight: bold;">Explore the full suite at WISROVI.DEV</p>
                     </div>
-                    <div style="width: 110px; height: 110px; background: #8b5cf6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4em; box-shadow: 0 0 40px #8b5cf688; border: 4px solid rgba(255,255,255,0.2);">⚡</div>
+                    <div style="width: 120px; height: 120px; background: #8b5cf6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4.5em; box-shadow: 0 0 50px #8b5cf688; border: 5px solid rgba(255,255,255,0.1);">⚡</div>
                 </div>
             </div>
         </div>

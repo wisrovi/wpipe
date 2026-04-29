@@ -32,6 +32,6 @@ Resultado de Ejecución
    ✅ Pipeline terminado. Contador final: 1
    demo_133 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   ⏱️ Tiempo de pipeline: 8ms
+   ⏱️ Tiempo de pipeline: 7ms
    💡 Las 3 tareas background se ejectaron en paralelo!
    💡 (Nota: Algunas pueden no completar antes de que el proceso termine)

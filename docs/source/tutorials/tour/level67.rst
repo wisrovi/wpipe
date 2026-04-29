@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert threshold para step...
    
-   [PIPELINE STATUS] Registered: PIPE-DDFF7458
+   [PIPELINE STATUS] Registered: PIPE-1C12045D
    ⚡ Paso rápido
    🐢 Paso lento (100ms)
    viaje_l67_stepalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-DDFF7458: COMPLETED
+   [PIPELINE STATUS] PIPE-1C12045D: COMPLETED

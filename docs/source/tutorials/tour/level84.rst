@@ -19,11 +19,11 @@ Resultado de Ejecución
 .. code-block:: text
 
 
-   [PIPELINE STATUS] Registered: PIPE-4CD3B251
+   [PIPELINE STATUS] Registered: PIPE-73BD3271
    🔑 Motor iniciado
    📊 Procesando...
    viaje_l84_exportmulti ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-4CD3B251: COMPLETED
+   [PIPELINE STATUS] PIPE-73BD3271: COMPLETED
    
    📤 Exportando en múltiples formatos...
    ✅ JSON exportado
