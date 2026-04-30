@@ -8,7 +8,7 @@ Este es el nivel 53 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level53.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
@@ -26,8 +26,6 @@ Resultado de Ejecución
    [RETRY] unstable_step failed (attempt 1): Error de conexión física
      [!] Fallo de hardware... reintentando
    [RETRY] unstable_step failed (attempt 2): Error de conexión física
-     [!] Fallo de hardware... reintentando
-   [RETRY] unstable_step failed (attempt 3): Error de conexión física
      [✓] Paso inestable completado
    --- Datos validados: Temp=45.5, Hum=30.0%
    [CONDITION] Evaluating: temperature > 40

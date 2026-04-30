@@ -24,7 +24,7 @@ Estamos probando la capacidad de "memoria" del motor. Configuramos un umbral de 
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level100.py
    :language: python
    :class: thebe
@@ -32,15 +32,15 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Alerts history...
-   [PIPELINE STATUS] Registered: PIPE-5708D036
+   [PIPELINE STATUS] Registered: PIPE-E91B7989
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-5708D036: COMPLETED
+   [PIPELINE STATUS] PIPE-E91B7989: COMPLETED
    >>> Running second pipeline...
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    viaje_l100b        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   🚨 Total in history: 50
+   🚨 Total in history: 0

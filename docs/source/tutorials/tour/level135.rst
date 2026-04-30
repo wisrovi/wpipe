@@ -14,7 +14,7 @@ Demostrar el caso de uso más común: enviar logs/telemetría sin impactar el pe
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level135.py
    :language: python
    :class: thebe
@@ -22,7 +22,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> DEMO 135: Background para Logging/Telemetría

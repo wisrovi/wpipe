@@ -28,7 +28,7 @@ Una tarea en background que falla se captura mediante error handlers sin detener
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level132.py
    :language: python
    :class: thebe
@@ -36,7 +36,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> DEMO 132: Background con Capture Error

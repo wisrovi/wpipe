@@ -8,7 +8,7 @@ Este es el nivel 14 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level14.py
    :language: python
    :class: thebe
@@ -16,8 +16,9 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [CHECKPOINT] Resuming 'trip_1' from step 2
+   🛣️  Driving 100km to the service area...
+   ☕ Taking a coffee. The car saves progress automatically.
    trip_l14_checkpoints ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

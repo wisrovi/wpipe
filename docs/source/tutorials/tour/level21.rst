@@ -8,7 +8,7 @@ Este es el nivel 21 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level21.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Safety test: Checking that the radar doesn't block the system...

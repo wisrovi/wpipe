@@ -8,7 +8,7 @@ Este es el nivel 107 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level107.py
    :language: python
    :class: thebe
@@ -16,11 +16,11 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Pipeline + Wsqlite...
-   [PIPELINE STATUS] Registered: PIPE-006D6ABF
+   [PIPELINE STATUS] Registered: PIPE-ED6AFC83
    viaje_l107 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-006D6ABF: COMPLETED
+   [PIPELINE STATUS] PIPE-ED6AFC83: COMPLETED
    ✅ Datos guardados

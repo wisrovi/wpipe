@@ -8,7 +8,7 @@ Este es el nivel 69 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level69.py
    :language: python
    :class: thebe
@@ -16,14 +16,14 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
    >>> Probando alert condicional...
    
-   [PIPELINE STATUS] Registered: PIPE-2BB2ECAA
+   [PIPELINE STATUS] Registered: PIPE-0669E7F3
    ⚡ Tarea rápida
    📊 Tarea normal
    viaje_l69_conditionalalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-2BB2ECAA: COMPLETED
+   [PIPELINE STATUS] PIPE-0669E7F3: COMPLETED

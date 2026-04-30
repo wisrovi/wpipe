@@ -26,7 +26,7 @@ En este nivel realizamos un benchmark real. Ejecutamos 4 tareas de visión artif
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level25.py
    :language: python
    :class: thebe
@@ -34,12 +34,12 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> [TEST 1] Processing with THREADS (Sharing resources)...
    eco_mode_threads ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   ⏱️ Threads Time: 0.47s
+   ⏱️ Threads Time: 0.45s
    
    >>> [TEST 2] Processing with PROCESSES (Total Power)...
    eco_mode_threads     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -8,7 +8,7 @@ Este es el nivel 90 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level90.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Monitoreo completo...
@@ -25,6 +25,6 @@ Resultado de Ejecución
    viaje_l90 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 Recursos:
-     RAM: 49.5 MB
-     Tiempo: 0.106s
+     RAM: 49.3 MB
+     Tiempo: 0.107s
      Excedido: False

@@ -8,7 +8,7 @@ Este es el nivel 83 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level83.py
    :language: python
    :class: thebe
@@ -16,12 +16,12 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-D890E06A
+   [PIPELINE STATUS] Registered: PIPE-F12328AC
    viaje_l83_exportstats ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-D890E06A: COMPLETED
+   [PIPELINE STATUS] PIPE-F12328AC: COMPLETED
    
    📊 Exportando estadísticas...
    ✅ Exportado a output/viaje83_stats.json

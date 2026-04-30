@@ -8,7 +8,7 @@ Este es el nivel 92 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level92.py
    :language: python
    :class: thebe
@@ -16,12 +16,12 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Verificando timeout...
    🐢 Tarea lenta...
    viaje_l92 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   ⏱️ Tiempo: 0.108s
+   ⏱️ Tiempo: 0.106s
    ⏱️ Excedido: True

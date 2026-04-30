@@ -24,7 +24,7 @@ En este nivel probamos la capacidad del motor para extraer metadatos de las func
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level2.py
    :language: python
    :class: thebe
@@ -32,9 +32,9 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-29T13:56:52.661501', 'progress_rich': <rich.progress.Progress object at 0x72e2df9e3230>}
-   👟 Testing pedals: Brakes verified. Input data: {'_pipeline_start_time': '2026-04-29T13:56:52.661501', 'progress_rich': <rich.progress.Progress object at 0x72e2df9e3230>, 'engine': 'ON', 'fuel': 100}
+   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-30T13:36:30.307010', 'progress_rich': <rich.progress.Progress object at 0x72a03f99f230>}
+   👟 Testing pedals: Brakes verified. Input data: {'_pipeline_start_time': '2026-04-30T13:36:30.307010', 'progress_rich': <rich.progress.Progress object at 0x72a03f99f230>, 'engine': 'ON', 'fuel': 100}
    Trip_L2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

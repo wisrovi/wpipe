@@ -8,7 +8,7 @@ Este es el nivel 65 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level65.py
    :language: python
    :class: thebe
@@ -16,15 +16,11 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
    >>> Probando recuperación completa...
    
-   
-   [ERROR CAPTURE] Processing error in state 'sincronizar_datos'...
-   ⚠️ [MANEJADOR] Error: Sincronización falló
-   [RETRY] sincronizar_datos failed (attempt 1): Sincronización falló
    ✅ Datos sincronizados
    viaje_l65_fullrecovery ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

@@ -8,7 +8,7 @@ Este es el nivel 70 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level70.py
    :language: python
    :class: thebe
@@ -16,15 +16,15 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
    >>> Probando alert para step específico...
    
-   [PIPELINE STATUS] Registered: PIPE-72025C44
+   [PIPELINE STATUS] Registered: PIPE-34EFA753
    ✅ Normal
    🐢 Lenta (150ms)
    ✅ Otra normal
    viaje_l70_specificalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-72025C44: COMPLETED
+   [PIPELINE STATUS] PIPE-34EFA753: COMPLETED

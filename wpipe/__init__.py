@@ -66,13 +66,27 @@ Wsqlite_original.insert = patched_insert
 
 @atexit.register
 def _close_connections():
+    """Cleanup connections and threads on exit."""
     with _db_lock:
         for path, conn in list(_db_connections.items()):
             try:
+                # Force commit before closing if possible
+                conn.commit()
                 conn.close()
             except:
                 pass
         _db_connections.clear()
+    
+    # Final attempt to silence lingering daemon threads in environments like Binder/Jupyter
+    import threading
+    for thread in threading.enumerate():
+        if thread.daemon and thread is not threading.current_thread():
+            if "_RefreshThread" in str(thread):
+                try:
+                    # Give it a very short window to finish or just ignore it
+                    thread.join(timeout=0.01)
+                except:
+                    pass
 
 # Lazy loading map
 _LAZY_MAP = {

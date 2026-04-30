@@ -8,7 +8,7 @@ Este es el nivel 33 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level33.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    [PARALLEL] Executing 2 steps using PROCESSES (workers=2)

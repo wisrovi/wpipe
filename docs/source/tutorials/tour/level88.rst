@@ -8,7 +8,7 @@ Este es el nivel 88 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level88.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Múltiples ejecuciones...
@@ -31,5 +31,5 @@ Resultado de Ejecución
      ✅ iteración 2
    
    📊 Total 3 ejecuciones:
-     Peak RAM: 49.7 MB
-     Avg CPU: 14.2%
+     Peak RAM: 49.4 MB
+     Avg CPU: 14.3%

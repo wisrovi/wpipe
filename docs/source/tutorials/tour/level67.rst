@@ -8,7 +8,7 @@ Este es el nivel 67 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level67.py
    :language: python
    :class: thebe
@@ -16,14 +16,14 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
    >>> Probando alert threshold para step...
    
-   [PIPELINE STATUS] Registered: PIPE-BB300AE6
+   [PIPELINE STATUS] Registered: PIPE-034FDF64
    ⚡ Paso rápido
    🐢 Paso lento (100ms)
    viaje_l67_stepalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-BB300AE6: COMPLETED
+   [PIPELINE STATUS] PIPE-034FDF64: COMPLETED

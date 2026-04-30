@@ -29,7 +29,7 @@ Este nivel es la prueba de fuego para el motor. Validamos:
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level50.py
    :language: python
    :class: thebe
@@ -37,10 +37,65 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   Captured output.
+   >>> [CHECKPOINT] Trip start
+   --- New trip ---_loop_iteration
+        * Checking front and rear lights... OK
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 72
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-04-30T13:36:49.198797
+   ------------------------------------------------------------
+   [non_serializable_obj]: <InternalSystemHandler active> non_serializable_objv1.0
+   --- New trip ---_loop_iteration
+        * Checking front and rear lights... OK
+   [non_serializable_obj]: <InternalSystemHandler active> non_serializable_objv1.0
+   --- New trip ---_loop_iteration
+        * Checking front and rear lights... OK
+   [non_serializable_obj]: <InternalSystemHandler active> non_serializable_objv1.0
+   trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   >>> [HOOK] Trip finished sending final summary...
+   
+   Resource Summary:
+     - Peak RAM: 80.47 MB
+     - Avg CPU: 68.68%
+   ✓ Total time monitored: 0.03s
+   
+   Trips completed: 2
+   Final fuel: Empty
+   ======================================================================
+   EXPORTING DATA
+   ======================================================================
+   
+      ✓ Stats saved to: output/export_output/pipeline_statistics.json
+   
+   
+   ======================================================================
+   JSON EXPORT
+   ======================================================================
+   ✓ Exported to: output/export_output/pipeline_logs.json
+     Records: 6
+   
+   ======================================================================
+   CSV EXPORT
+   ======================================================================
+   ✓ Exported to: output/export_output/pipeline_logs.csv
+   
+   ======================================================================
+   📊 PERFORMANCE ANALYSIS
+   ======================================================================
+   
+   Global Summary:
+     - Total Executions: 6
+     - Success Rate: 0.0%
 
 .. raw:: html
 

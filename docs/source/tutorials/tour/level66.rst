@@ -8,7 +8,7 @@ Este es el nivel 66 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level66.py
    :language: python
    :class: thebe
@@ -16,13 +16,13 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
    >>> Probando alert threshold...
    
-   [PIPELINE STATUS] Registered: PIPE-AB680469
+   [PIPELINE STATUS] Registered: PIPE-043B35B6
    ⏳ Proceso completado (tardó 100ms)
    viaje_l66_alertthreshold ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-AB680469: COMPLETED
+   [PIPELINE STATUS] PIPE-043B35B6: COMPLETED

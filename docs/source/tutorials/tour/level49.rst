@@ -8,7 +8,7 @@ Este es el nivel 49 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level49.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
@@ -24,5 +24,5 @@ Resultado de Ejecución
    
    🔑 [ASYNC] Motor started and tracked
    
-   [ASYNC STATUS] PIPE-FE380AE7: COMPLETED
+   [ASYNC STATUS] PIPE-F8AA039C: COMPLETED
    Result: {'motor': 'on'}

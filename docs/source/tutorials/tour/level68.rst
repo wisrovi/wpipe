@@ -8,7 +8,7 @@ Este es el nivel 68 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level68.py
    :language: python
    :class: thebe
@@ -16,14 +16,14 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
    >>> Probando múltiples alerts...
    
-   [PIPELINE STATUS] Registered: PIPE-44BB78B5
+   [PIPELINE STATUS] Registered: PIPE-FE0C4C6F
    ✅ Datos válidos
    📊Datos procesados
    viaje_l68_multiplealerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-44BB78B5: COMPLETED
+   [PIPELINE STATUS] PIPE-FE0C4C6F: COMPLETED

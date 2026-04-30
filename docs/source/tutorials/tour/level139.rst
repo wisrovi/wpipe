@@ -14,7 +14,7 @@ Confirmar el comportamiento por defecto: errores en background son ignorados sil
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level139.py
    :language: python
    :class: thebe
@@ -22,7 +22,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> DEMO 139: Background sin capture_error

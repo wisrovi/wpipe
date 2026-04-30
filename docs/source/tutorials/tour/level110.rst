@@ -8,7 +8,7 @@ Este es el nivel 110 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level110.py
    :language: python
    :class: thebe
@@ -16,12 +16,12 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Wsqlite + async...
    
-   [ASYNC STATUS] PIPE-CCCDFE84: COMPLETED
+   [ASYNC STATUS] PIPE-66AA2B78: COMPLETED
    ✅ Async + Wsqlite
 
 .. raw:: html

@@ -8,7 +8,7 @@ Este es el nivel 98 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level98.py
    :language: python
    :class: thebe
@@ -16,12 +16,12 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Filtrar alerts por severity...
-   [PIPELINE STATUS] Registered: PIPE-201D6679
+   [PIPELINE STATUS] Registered: PIPE-F31CCB58
    viaje_l98_alertsseverity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-201D6679: COMPLETED
+   [PIPELINE STATUS] PIPE-F31CCB58: COMPLETED
    
-   🚨 Total: 50, Critical: 50
+   🚨 Total: 0, Critical: 0

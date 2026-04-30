@@ -8,7 +8,7 @@ Este es el nivel 84 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level84.py
    :language: python
    :class: thebe
@@ -16,14 +16,14 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-C95F5FF7
+   [PIPELINE STATUS] Registered: PIPE-3B19A26C
    🔑 Motor iniciado
    📊 Procesando...
    viaje_l84_exportmulti ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-C95F5FF7: COMPLETED
+   [PIPELINE STATUS] PIPE-3B19A26C: COMPLETED
    
    📤 Exportando en múltiples formatos...
    ✅ JSON exportado

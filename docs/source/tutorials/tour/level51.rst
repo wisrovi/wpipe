@@ -8,7 +8,7 @@ Este es el nivel 51 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level51.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
@@ -28,7 +28,7 @@ Resultado de Ejecución
    
    [!] PASO 1: Ejecución inicial con caída simulada.
    ------------------------------------------------------------
-   [PIPELINE STATUS] Registered: PIPE-99295A92
+   [PIPELINE STATUS] Registered: PIPE-E4419507
    
    [CHECKPOINT REACHED] trip_start
    >>> [CHECKPOINT] Trip start
@@ -48,28 +48,23 @@ Resultado de Ejecución
    🔢 LINE: 72
    ⚠️ MESSAGE: Random puncture
    🔄 ATTEMPT: 1
-   🕒 TIMESTAMP: 2026-04-29T13:57:18.267358
+   🕒 TIMESTAMP: 2026-04-30T13:36:49.655922
    ------------------------------------------------------------
    [RETRY] random_flat_tire failed (attempt 1): Random puncture
    [non_serializable_obj]: None non_serializable_objv1.0
    --- New trip ---_loop_iteration
    [PARALLEL] Executing 3 steps using THREADS (workers=3)
         * Checking front and rear lights... OK
-     [ERROR] Loop broken at iteration 1 due to: 3 validation errors for steps
-   pipeline_id
-     Field required [type=missing, input_value={}, input_type=dict]
-       For further information visit https://errors.pydantic.dev/2.13/v/missing
-   step_order
-     Field required [type=missing, input_value={}, input_type=dict]
-       For further information visit https://errors.pydantic.dev/2.13/v/missing
-   step_name
-     Field required [type=missing, input_value={}, input_type=dict]
-       For further information visit https://errors.pydantic.dev/2.13/v/missing
+   [non_serializable_obj]: None non_serializable_objv1.0
+   --- New trip ---_loop_iteration
+   [PARALLEL] Executing 3 steps using THREADS (workers=3)
+        * Checking front and rear lights... OK
+   [non_serializable_obj]: None non_serializable_objv1.0
    trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    [HOOKS] Executing post-run tasks...
    >>> [HOOK] Trip finished sending final summary...
-   [PIPELINE STATUS] PIPE-99295A92: ERROR
+   [PIPELINE STATUS] PIPE-E4419507: COMPLETED
    
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ✘ SISTEMA CAÍDO: 🔌 FALLO ELÉCTRICO CRÍTICO: El sistema se ha apagado inesperadamente.

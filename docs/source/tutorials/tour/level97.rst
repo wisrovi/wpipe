@@ -8,7 +8,7 @@ Este es el nivel 97 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level97.py
    :language: python
    :class: thebe
@@ -16,12 +16,12 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Alerts con límite...
-   [PIPELINE STATUS] Registered: PIPE-BB5993D4
+   [PIPELINE STATUS] Registered: PIPE-1665D0B1
    viaje_l97_getalertslimit ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-BB5993D4: COMPLETED
+   [PIPELINE STATUS] PIPE-1665D0B1: COMPLETED
    
-   🚨 Alerts: 5
+   🚨 Alerts: 0

@@ -8,7 +8,7 @@ Este es el nivel 29 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level29.py
    :language: python
    :class: thebe
@@ -16,10 +16,10 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [CHECKPOINT] Resuming 'night_trip' from step 1
+   ⛽ Fuel Alert: 10%
    
    [CHECKPOINT REACHED] rescue_point
    safety_first_l29 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

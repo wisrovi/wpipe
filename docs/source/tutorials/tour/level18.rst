@@ -8,7 +8,7 @@ Este es el nivel 18 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level18.py
    :language: python
    :class: thebe
@@ -16,13 +16,13 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-8FA5DC63
+   [PIPELINE STATUS] Registered: PIPE-56977695
    🚗 Driving through Section A...
    trip_l18_exporter ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-8FA5DC63: COMPLETED
+   [PIPELINE STATUS] PIPE-56977695: COMPLETED
    
    >>> Generating CSV report for the insurance company...
    ✅ Report saved in output/trip_report.csv

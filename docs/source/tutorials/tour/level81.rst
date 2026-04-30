@@ -8,7 +8,7 @@ Este es el nivel 81 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level81.py
    :language: python
    :class: thebe
@@ -16,14 +16,14 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-483BE39A
+   [PIPELINE STATUS] Registered: PIPE-888D3009
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l81_exportjson ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-483BE39A: COMPLETED
+   [PIPELINE STATUS] PIPE-888D3009: COMPLETED
    
    📤 Exportando a JSON...
    ✅ Exportado a output/viaje81.json

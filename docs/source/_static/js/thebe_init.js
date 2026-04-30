@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const status = e.detail.status;
         console.log("WPipe Thebe Status:", status);
         
-        const activateBtn = document.querySelector('.thebe-button');
+        const activateBtn = document.querySelector('.thebe-button') || document.querySelector('.thebe-launch-button');
         
         if (status === "building" || status === "starting") {
             if (activateBtn) activateBtn.innerHTML = "🚀 SINCRONIZANDO MOTOR...";
@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. Capturar el clic inicial si el motor no estaba activo
     document.body.addEventListener('click', function(e) {
-        if (e.target.classList.contains('thebe-button')) {
+        const btn = e.target.closest('.thebe-button, .thebe-launch-button');
+        if (btn) {
             sessionStorage.setItem('wpipe_thebe_active', 'true');
             // thebelab.bootstrap() se llama automáticamente por la directiva de Sphinx
             // pero nos aseguramos por si acaso:

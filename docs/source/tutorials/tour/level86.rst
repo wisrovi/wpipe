@@ -8,7 +8,7 @@ Este es el nivel 86 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level86.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Monitor de recursos...
@@ -24,5 +24,5 @@ Resultado de Ejecución
    viaje_l86_resource ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 Resource Summary:
-     Peak RAM: 49.7 MB
+     Peak RAM: 49.5 MB
      Avg CPU: 0.0%

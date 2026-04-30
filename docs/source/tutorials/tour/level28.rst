@@ -8,7 +8,7 @@ Este es el nivel 28 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level28.py
    :language: python
    :class: thebe
@@ -16,10 +16,10 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-0C5CFD12
+   [PIPELINE STATUS] Registered: PIPE-A09F737B
    🌍 Crossing border: Changing traffic regulations...
    travel_log_l28 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-0C5CFD12: COMPLETED
+   [PIPELINE STATUS] PIPE-A09F737B: COMPLETED

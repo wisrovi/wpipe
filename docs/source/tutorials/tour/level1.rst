@@ -24,7 +24,7 @@ En este nivel validamos la conectividad básica del motor. Estamos probando que 
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level1.py
    :language: python
    :class: thebe
@@ -32,8 +32,8 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-29T13:56:52.349849', 'progress_rich': <rich.progress.Progress object at 0x7f02d67bf0e0>}
+   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-30T13:36:30.012986', 'progress_rich': <rich.progress.Progress object at 0x73979271f0e0>}
    Trip_L1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

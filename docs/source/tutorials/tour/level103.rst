@@ -8,7 +8,7 @@ Este es el nivel 103 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level103.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Tendencia de datos...
@@ -27,5 +27,5 @@ Resultado de Ejecución
      ✅ run 1
    
    📈 Tendencia: 1
-     - Ejecuciones: 18
+     - Ejecuciones: 4
      - Éxitos: 0

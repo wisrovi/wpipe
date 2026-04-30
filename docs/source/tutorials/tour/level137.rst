@@ -14,7 +14,7 @@ Mostrar que Background acepta tuplas como pasos.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level137.py
    :language: python
    :class: thebe
@@ -22,7 +22,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> DEMO 137: Background con Tuple Step

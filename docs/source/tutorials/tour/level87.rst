@@ -8,7 +8,7 @@ Este es el nivel 87 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level87.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Proceso monitorizado...
@@ -25,5 +25,5 @@ Resultado de Ejecución
    viaje_l87_heavyprocess ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 Estado final:
-     RAM: 49.7 MB
-     CPU: 4.8%
+     RAM: 49.2 MB
+     CPU: 0.0%

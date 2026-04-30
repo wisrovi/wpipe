@@ -8,7 +8,7 @@ Este es el nivel 82 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level82.py
    :language: python
    :class: thebe
@@ -16,14 +16,14 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-6014162F
+   [PIPELINE STATUS] Registered: PIPE-507953F8
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l82_exportcsv ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-6014162F: COMPLETED
+   [PIPELINE STATUS] PIPE-507953F8: COMPLETED
    
    📤 Exportando a CSV...
    ✅ Exportado a output/viaje82.csv

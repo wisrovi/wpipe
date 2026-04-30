@@ -38,7 +38,7 @@ thebe_config = {
     "repository_url": "https://github.com/wisrovi/wpipe",
     "repository_branch": "main",
     "selector": ".thebe",
-    "post_install_hook": "pip install rich opencv-python-headless", # Backup installation
+    "post_install_hook": "pip install rich opencv-python-headless wsqlite pyyaml tqdm psutil", # Enhanced installation
 }
 
 templates_path = ["_templates"]

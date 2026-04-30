@@ -8,7 +8,7 @@ Este es el nivel 104 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level104.py
    :language: python
    :class: thebe
@@ -16,13 +16,13 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Análisis de pipelines...
-   [PIPELINE STATUS] Registered: PIPE-544798C0
+   [PIPELINE STATUS] Registered: PIPE-1F031972
    viaje_l104_pipelines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-544798C0: COMPLETED
+   [PIPELINE STATUS] PIPE-1F031972: COMPLETED
    
    📊 Análisis:
      Total: 7

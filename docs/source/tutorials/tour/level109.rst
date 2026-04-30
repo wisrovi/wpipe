@@ -8,7 +8,7 @@ Este es el nivel 109 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level109.py
    :language: python
    :class: thebe
@@ -16,11 +16,11 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Wsqlite + Pipeline integration...
-   [PIPELINE STATUS] Registered: PIPE-DA338C85
+   [PIPELINE STATUS] Registered: PIPE-3E279443
    viaje_l109 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-DA338C85: COMPLETED
+   [PIPELINE STATUS] PIPE-3E279443: COMPLETED
    ✅ Datos guardados en pipeline DB

@@ -8,7 +8,7 @@ Este es el nivel 85 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level85.py
    :language: python
    :class: thebe
@@ -16,13 +16,13 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-33D71CBB
+   [PIPELINE STATUS] Registered: PIPE-2C58A975
    🔑 Motor iniciado
    viaje_l85_exportyaml ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-33D71CBB: COMPLETED
+   [PIPELINE STATUS] PIPE-2C58A975: COMPLETED
    
    📤 Verificando YAML...
    ✅ YAML guardado en pipeline_configs/Viaje_L85_ExportYAML.yaml

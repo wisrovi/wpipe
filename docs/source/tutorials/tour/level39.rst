@@ -8,7 +8,7 @@ Este es el nivel 39 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level39.py
    :language: python
    :class: thebe
@@ -16,8 +16,8 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Starting fleet synchronization in SILENT mode (1000 tasks)...
-   ⚡ Synchronization completed in 0.0063s with zero logs.
+   ⚡ Synchronization completed in 0.0061s with zero logs.

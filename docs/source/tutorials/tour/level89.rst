@@ -8,7 +8,7 @@ Este es el nivel 89 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level89.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    >>> Pipeline async con monitor...
@@ -24,5 +24,5 @@ Resultado de Ejecución
    ✅ Tarea completada
    
    📊 Async Resource:
-     RAM: 49.5 MB
+     RAM: 49.3 MB
      CPU: 0.0%

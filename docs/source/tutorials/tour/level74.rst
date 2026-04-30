@@ -8,7 +8,7 @@ Este es el nivel 74 del tour de aprendizaje.
 
 
 Código Fuente
-------------
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level74.py
    :language: python
    :class: thebe
@@ -16,7 +16,7 @@ Código Fuente
 
 Resultado de Ejecución
 ----------------------
-.. code-block:: text
+----------------------
 
 
    
@@ -27,5 +27,5 @@ Resultado de Ejecución
    [CONDITION] Evaluating: obstaculo == True
    🚀 ACELERANDO
    [CONDITION] Evaluating: obstaculo == True
-   🚀 ACELERANDO
+   🛑 FRENANDO
    viaje_l74_forcondition ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
