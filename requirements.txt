@@ -14,7 +14,7 @@ psutil>=5.9.0
 tqdm>=4.66.0
 
 # Data & Vision (Used in Example 10 and others)
-numpy>=1.24.0
+numpy>=2.0.2
 opencv-python-headless>=4.8.0
 
 # WPipe core
