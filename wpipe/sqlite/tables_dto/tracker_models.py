@@ -70,7 +70,7 @@ class StepModel(BaseModel):
         error_traceback (Optional[str]): Full traceback if the step failed.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     pipeline_id: str
     step_order: int
     step_name: str
@@ -103,7 +103,7 @@ class StepHistoryModel(BaseModel):
         recorded_at (Optional[str]): ISO timestamp of the record.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     pipeline_id: str
     step_name: str
     duration_ms: float
@@ -135,7 +135,7 @@ class PerformanceStatsModel(BaseModel):
         created_at (Optional[str]): ISO timestamp of the record creation.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     entity_type: str
     entity_name: str
     period_start: str
@@ -169,7 +169,7 @@ class AlertConfigModel(BaseModel):
         enabled (int): Whether the alert is enabled (1) or disabled (0).
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     name: str
     metric: str
     condition: str
@@ -196,7 +196,7 @@ class AlertFiredModel(BaseModel):
         fired_at (Optional[str]): ISO timestamp of when the alert fired.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     alert_config_id: int
     pipeline_id: str
     step_id: Optional[int] = None
@@ -224,7 +224,7 @@ class EventModel(BaseModel):
         created_at (Optional[str]): ISO timestamp of event creation.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     pipeline_id: str
     step_id: Optional[int] = None
     event_type: str
@@ -250,7 +250,7 @@ class PipelineRelationModel(BaseModel):
         created_at (Optional[str]): ISO timestamp of relation creation.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     parent_pipeline_id: str
     child_pipeline_id: str
     relation_type: str = "triggered"
@@ -276,7 +276,7 @@ class SystemMetricsModel(BaseModel):
         recorded_at (Optional[str]): ISO timestamp of the measurement.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     pipeline_id: str
     cpu_percent: Optional[float] = None
     memory_percent: Optional[float] = None
@@ -304,7 +304,7 @@ class ResourceMetricsModel(BaseModel):
         created_at (Optional[str]): ISO timestamp of record creation.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     task_name: str
     start_ram_mb: Optional[float] = None
     peak_ram_mb: Optional[float] = None
@@ -330,7 +330,7 @@ class CheckpointModel(BaseModel):
         created_at (Optional[str]): ISO timestamp of checkpoint creation.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     pipeline_id: str
     step_order: int
     step_name: str
@@ -356,7 +356,7 @@ class ComparisonModel(BaseModel):
         created_at (Optional[str]): ISO timestamp of comparison creation.
     """
 
-    id: Optional[int] = Field(None, description="Primary Key")
+    id: Optional[int] = Field(None, description="primary key autoincrement")
     comparison_uuid: str
     pipeline_a_id: str
     pipeline_b_id: str

@@ -12,16 +12,14 @@ from typing import Any, Dict
 
 from wsqlite import WSQLite as Wsqlite_original
 
+import wsqlite.core.connection as wconn
+
 # Connection pooling for performance optimization
 _db_connections: Dict[str, sqlite3.Connection] = {}
 _db_lock = threading.RLock()
 
-def patched_get_connection(self) -> sqlite3.Connection:
+def patched_get_shared_connection(db_path: str) -> sqlite3.Connection:
     """Obtain a shared database connection to improve performance."""
-    db_path = getattr(self, 'db_path', None) or self.__dict__.get('db_path')
-    if db_path is None:
-        raise AttributeError(f"WSQLite object has no attribute 'db_path'.")
-
     with _db_lock:
         if db_path in _db_connections:
             try:
@@ -38,28 +36,52 @@ def patched_get_connection(self) -> sqlite3.Connection:
             _db_connections[db_path] = conn
     return _db_connections[db_path]
 
-Wsqlite_original._get_connection = patched_get_connection
+# Redirect wsqlite's internal connection getter to our shared pool
+wconn._get_connection = patched_get_shared_connection
 
-def patched_insert(self, data: Any) -> int:
-    """Insert a new record and return the generated ID."""
-    table_name = self.table_name
-    data_dict = data.model_dump() if hasattr(data, "model_dump") else data
+# Also patch ConnectionPool to use our shared connection
+from wsqlite.core.pool import ConnectionPool
+ConnectionPool._create_connection = lambda self: patched_get_shared_connection(self.db_path)
+
+def _patched_return(self, conn):
+    """Patched return_connection that releases semaphore but avoids rollback."""
+    try:
+        if self._is_healthy(conn):
+            try:
+                self._pool.put_nowait(conn)
+            except:
+                pass
+    finally:
+        self._semaphore.release()
+
+ConnectionPool.return_connection = _patched_return
+
+def patched_insert(self, data: Any) -> Any:
+    """Insert a new record and return the generated ID without committing immediately."""
+    self._call_hook(data, "pre_save")
     
+    data_dict = self._dump(data)
+    # Filter out None values to allow SQLite autoincrement
     columns = [k for k, v in data_dict.items() if v is not None]
     placeholders = ["?" for _ in columns]
     values = [data_dict[k] for k in columns]
 
-    query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
+    query = f"INSERT INTO {self.table_name} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
 
     with _db_lock:
-        conn = self._get_connection()
+        conn = patched_get_shared_connection(self.db_path)
         cursor = conn.cursor()
         try:
             cursor.execute(query, values)
-            # Commit removed for performance. Final commit will be handled by Pipeline.
-            return cursor.lastrowid
+            result = cursor.lastrowid
+            self._call_hook(data, "post_save")
+            return result
         except Exception as e:
-            conn.rollback()
+            # Only rollback if we are in a transaction
+            try:
+                conn.rollback()
+            except:
+                pass
             raise e
 
 Wsqlite_original.insert = patched_insert

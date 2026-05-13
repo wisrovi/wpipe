@@ -143,8 +143,8 @@ def create_app(
         """Get the YAML configuration for a pipeline execution."""
         tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
         pipeline = tracker.get_pipeline(pipeline_id)
-        if pipeline and pipeline.get("config_yaml"):
-            yaml_path = Path(pipeline["config_yaml"])
+        if pipeline and pipeline.get("yaml_path"):
+            yaml_path = Path(pipeline["yaml_path"])
             if not yaml_path.exists() and config_dir:
                 yaml_path = Path(config_dir) / f"{pipeline_id}.yaml"
             if not yaml_path.exists() and config_dir:

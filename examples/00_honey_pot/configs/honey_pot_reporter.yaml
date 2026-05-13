@@ -1,0 +1,20 @@
+name: honey_pot_reporter
+registered_at: '2026-05-13T18:03:04.705047'
+step_count: 2
+steps:
+- func: <bound method Pipeline.run of <wpipe.pipe.pipe.Pipeline object at 0x757fd756bcb0>>
+  name: Inference
+  type: task
+  version: v1.0
+- branch_false:
+  - meta: {}
+    name: unauthorized_person_reporter
+    type: task
+    version: 1.0.0
+  branch_true:
+  - meta: {}
+    name: authorized_person_reporter
+    type: task
+    version: 1.0.0
+  expression: score > 80
+  type: condition

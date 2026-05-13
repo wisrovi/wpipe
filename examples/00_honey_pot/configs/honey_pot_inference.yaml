@@ -1,0 +1,16 @@
+name: honey_pot_inference
+registered_at: '2026-05-13T18:03:04.709353'
+step_count: 3
+steps:
+- func: <states.yaml_read.LoadConfig object at 0x757fd7234d70>
+  name: states.yaml_read
+  type: task
+  version: 1.0.1
+- func: <states.image_inference.ImageInference object at 0x757fd7234ec0>
+  name: states.image_inference
+  type: task
+  version: 1.2.1
+- func: <function choice_random_result at 0x7580c0b974c0>
+  name: choice_random_result
+  type: task
+  version: v1.0
