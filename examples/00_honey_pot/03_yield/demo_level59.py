@@ -52,11 +52,12 @@ def descargar_datos(data: dict) -> None:
     return {"datos": "descargados"}
 
 if __name__ == "__main__":
+    from wpipe.exception.api_error import ProcessError
     pipe = Pipeline(pipeline_name="viaje_l59_retrydelay", verbose=True)
     pipe.set_steps([conectar_servidor, descargar_datos])
     print("\n>>> Probando retry con delay...\n")
     
     try:
         pipe.run({})
-    except ConnectionError as e:
+    except (ConnectionError, ProcessError) as e:
         print(e)

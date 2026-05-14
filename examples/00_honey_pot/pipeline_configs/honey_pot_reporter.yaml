@@ -1,0 +1,8 @@
+name: honey_pot_reporter
+registered_at: '2026-05-13T18:39:37.845512'
+step_count: 1
+steps:
+- func: <wpipe.pipe.pipe.Pipeline object at 0x77e55405bcb0>
+  name: honey_pot_inference
+  type: task
+  version: v1.0

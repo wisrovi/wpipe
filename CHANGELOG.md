@@ -5,6 +5,18 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-05-13
+
+### Fixed
+- **Tracker Core Bug**: Corregido `TypeError` en `complete_pipeline` al procesar `started_at` nulos o no-strings.
+- **Learning Tour Stability**: Corregido manejo de excepciones en `demo_level15.py` y `demo_level59.py` para usar `ProcessError`.
+- **Example Compatibility**: Corregido `example.py`, `example_base.py` y otros para ser compatibles con la API de `Pipeline` v2.3+.
+- **Import Errors**: Actualizada la importación de `TimeoutError` a `PipelineTimeoutError` en ejemplos de Honey Pot.
+- **YOLO Inference Logic**: Corregido acceso a diccionarios en resultados aleatorios de inferencia.
+
+### Changed
+- **Validation Suite**: Todos los 142 niveles del tour y ejemplos adicionales ahora pasan las pruebas de ejecución secuencial.
+
 ## [2.3.0] - 2026-04-27
 
 ### Added

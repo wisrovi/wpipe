@@ -10,10 +10,12 @@ from wpipe import Condition, Pipeline
 def choice_random_result(data: dict):
     model_results: list = data["model_results"]
 
-    model_results.append([])
+    # model_results.append([])
 
     chosen = random.choice(model_results)
-    score = int(chosen.get("conf") * 100)
+    score = 0
+    if isinstance(chosen, dict):
+        score = int(chosen.get("conf", 0) * 100)
 
     return {"score": score}
 

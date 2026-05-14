@@ -23,10 +23,10 @@ from wpipe import (
     Pipeline,
     PipelineContext,
     PipelineExporter,
+    PipelineTimeoutError,
     ResourceMonitor,
     ResourceMonitorRegistry,
     TaskTimer,
-    TimeoutError,
     TypeValidator,
     timeout_sync,
 )

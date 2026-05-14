@@ -15,6 +15,7 @@ import random
 from typing import Any, Dict
 
 from wpipe import CheckpointManager, Pipeline, step
+from wpipe.exception.api_error import ProcessError
 
 @step(name="preparation_phase")
 def preparation_phase(data: Any) -> Dict[str, str]:
@@ -58,5 +59,5 @@ if __name__ == "__main__":
     print(f">>> Can we resume previous trip? {ck_mgr.can_resume(session)}")
     try:
         pipe.run({}, checkpoint_mgr=ck_mgr, checkpoint_id=session)
-    except RuntimeError:
+    except (RuntimeError, ProcessError):
         print("\n[!] The car has stopped. Run again to resume.")

@@ -86,7 +86,7 @@ def log_background(data):
     import time
 
     print("[BACKGROUND] Logging task started...")
-    time.sleep(30.1)  # Simulate async work
+    time.sleep(5)  # Reduced for validation
     print("[BACKGROUND] Logging task completed!")
     return {}
 

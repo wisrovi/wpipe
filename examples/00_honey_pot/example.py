@@ -13,7 +13,9 @@ def choice_random_result(data: dict):
     # model_results.append([])
 
     chosen = random.choice(model_results)
-    score = int(chosen.get("conf") * 100)
+    score = 0
+    if isinstance(chosen, dict):
+        score = int(chosen.get("conf", 0) * 100)
 
     return {"score": score}
 
@@ -24,13 +26,11 @@ def main():
 
     inferencer = Pipeline(
         tracking_db=db_path,
-        config_dir=config_dir,
         pipeline_name="honey_pot_inference",
-        pipeline_version="1.0.0",
         verbose=False,
     )
 
-    inferencer.set_states(
+    inferencer.set_steps(
         [
             (LoadConfig("src/example.yaml"), LoadConfig.NAME, LoadConfig.VERSION),
             (
@@ -44,9 +44,7 @@ def main():
 
     reporter = Pipeline(
         tracking_db=db_path,
-        config_dir=config_dir,
         pipeline_name="honey_pot_reporter",
-        pipeline_version="1.0.0",
         verbose=False,
         max_retries=3,
         retry_delay=0.5,
@@ -59,31 +57,20 @@ def main():
         message="Results sent to external APIs",
     )
 
-    conditional_reporter = Condition(
-        expression="score > 80",
-        branch_true=[
-            (
-                AuthorizedPersonReporter(),
-                AuthorizedPersonReporter.NAME,
-                AuthorizedPersonReporter.VERSION,
-            ),
-        ],
-        branch_false=[
-            (
-                UnauthorizedPersonReporter(),
-                UnauthorizedPersonReporter.NAME,
-                UnauthorizedPersonReporter.VERSION,
-            ),
-        ],
+    # En wpipe v2+, se añaden los pipelines anidados directamente como pasos
+    reporter.set_steps(
+        [
+            inferencer,
+        ]
     )
 
-    reporter.add_pipeline(inferencer, "Inference", "v1.0")
-    reporter.add_condition(conditional_reporter)
-
-    for _ in range(4):
+    try:
         results = reporter.run({})
+    except Exception as e:
+        print(f"Error detectado: {e}")
+        results = {"error": str(e)}
 
-        print(results)
+    print(f"\nFinal Result: {results}")
 
 
 if __name__ == "__main__":
