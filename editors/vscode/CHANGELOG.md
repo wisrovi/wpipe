@@ -1,5 +1,10 @@
 # Changelog - WPipe Tools
 
+## [0.6.1] - 2026-05-28
+### Fixed
+- **Comentarios en Python**: El generador del DAG ahora ignora correctamente los comentarios (`# ...`) dentro del array de `set_steps`, evitando que rompan los IDs de los nodos y el texto de las etiquetas en Mermaid.
+- **Caracteres Especiales**: Se reemplazan automáticamente las comillas dobles internas en los nombres de los pasos para prevenir errores de sintaxis en Mermaid.
+
 ## [0.6.0] - 2026-05-28
 ### Added
 - **Selector de Archivos**: Al usar el comando `Open Dashboard`, ahora se abrirá un diálogo nativo del sistema operativo (Explorador de Archivos) que permite buscar y seleccionar visualmente el archivo de base de datos `.db` o `.sqlite`, en lugar de tener que escribir la ruta a mano.

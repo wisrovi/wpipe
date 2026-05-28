@@ -246,20 +246,23 @@ class DAGPanel {
         let g = "flowchart TD\n";
         g += "  Inicio((Inicio))\n";
         
+        // Remover comentarios de Python para que no rompan el parser
+        const cleanContent = content.replace(/#.*$/gm, '');
+        
         const startRegex = /(?:set_steps\s*\(\s*|steps\s*=\s*)\[/g;
         let match;
         let bestContent = "";
         
-        while ((match = startRegex.exec(content)) !== null) {
+        while ((match = startRegex.exec(cleanContent)) !== null) {
             let start = match.index + match[0].length;
             let depth = 1;
             let i = start;
-            for (; i < content.length; i++) {
-                if (content[i] === '[') depth++;
-                else if (content[i] === ']') depth--;
+            for (; i < cleanContent.length; i++) {
+                if (cleanContent[i] === '[') depth++;
+                else if (cleanContent[i] === ']') depth--;
                 if (depth === 0) break;
             }
-            const currentContent = content.substring(start, i);
+            const currentContent = cleanContent.substring(start, i);
             if (currentContent.length > bestContent.length) {
                 bestContent = currentContent;
             }
@@ -396,6 +399,7 @@ class DAGPanel {
                 }
 
                 if (label) {
+                    label = label.replace(/"/g, "'"); // Escape double quotes for mermaid
                     const id = this.sanitizeID(label, uniqueSuffix);
                     graph += `  ${currentPrev} --> ${id}["${label}"]\n`;
                     currentPrev = id;
