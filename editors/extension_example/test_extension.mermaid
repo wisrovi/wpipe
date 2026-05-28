@@ -1,0 +1,50 @@
+flowchart TD
+  Inicio((Inicio))
+  Inicio --> n_StepClass_L0["StepClass"]
+  n_StepClass_L0 --> n_function_name_L1["function_name"]
+  n_function_name_L1 --> n_Cond_L2{"valor > 100"}
+  n_Cond_L2 -- True --> n_function_name_L2T0["function_name"]
+  n_function_name_L2T0 --> n_StepClass2_L2T1["StepClass2"]
+  n_Cond_L2 -- False --> n_StepClass3_L2F0["StepClass3"]
+  n_Merge_L2(( ))
+  n_StepClass2_L2T1 --> n_Merge_L2
+  n_StepClass3_L2F0 --> n_Merge_L2
+  n_Merge_L2 --> n_ForCall_L3[For Loop]
+  n_ForCall_L3 --> n_SubFor_L3
+  subgraph n_SubFor_L3 [For iterations=10<br/>status != ]
+    n_ForInner_L3(( ))
+    n_ForInner_L3 --> n_function_name5_L3F0["function_name5"]
+    n_function_name5_L3F0 --> n_ParCall_L3F1[Parallel]
+    n_ParCall_L3F1 --> n_SubPar_L3F1
+    subgraph n_SubPar_L3F1 [Parallel max_workers=1]
+    n_PStart_0_L3F1(( ))
+    n_PStart_0_L3F1 --> n_function_name5_L3F1P00["function_name5"]
+
+    n_PStart_1_L3F1(( ))
+    n_PStart_1_L3F1 --> n_function_name6_L3F1P10["function_name6"]
+
+    end
+    n_PMerge_L3F1(( ))
+    n_function_name5_L3F1P00 --> n_PMerge_L3F1
+    n_function_name6_L3F1P10 --> n_PMerge_L3F1
+    n_PMerge_L3F1 --> n_AdvancedStep_L3F2["AdvancedStep"]
+
+  end
+  n_SubFor_L3 --> n_ParCall_L4[Parallel]
+  n_ParCall_L4 --> n_SubPar_L4
+  subgraph n_SubPar_L4 [Parallel max_workers=2]
+    n_PStart_0_L4(( ))
+    n_PStart_0_L4 --> n_function_name5_L4P00["function_name5"]
+
+    n_PStart_1_L4(( ))
+    n_PStart_1_L4 --> n_pipe_2_L4P10["pipe_2"]
+
+  end
+  n_PMerge_L4(( ))
+  n_function_name5_L4P00 --> n_PMerge_L4
+  n_pipe_2_L4P10 --> n_PMerge_L4
+  n_PMerge_L4 --> n_BGCall_L5["Background slow_step"]
+  subgraph n_SubBG_L5 [Background Execution]
+    n_BGExec_L5["slow_step"]
+  end
+  n_BGCall_L5 -. async .-> n_BGExec_L5

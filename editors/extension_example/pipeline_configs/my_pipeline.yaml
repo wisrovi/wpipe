@@ -1,0 +1,40 @@
+name: my_pipeline
+registered_at: '2026-05-28T13:11:13.053594'
+step_count: 6
+steps:
+- func: <state1.StepClass object at 0x721eab5af8c0>
+  name: step_name
+  type: task
+  version: v1.0
+- func: <function function_name at 0x721eac6a6700>
+  name: step_name
+  type: task
+  version: v1.0
+- branch_false:
+  - <state3.StepClass3 object at 0x721eab5afb60>
+  branch_true:
+  - <function function_name at 0x721eac6a6700>
+  - <state4.StepClass2 object at 0x721eab5afa10>
+  expression: valor > 100
+  type: condition
+- expression: status != 'error'
+  iterations: 10
+  steps:
+  - <function function_name5 at 0x721eac6a6f20>
+  - max_workers: 2
+    steps:
+    - <function function_name5 at 0x721eac6a6f20>
+    - <function function_name6 at 0x721eac6a7100>
+    type: parallel
+    use_processes: false
+  type: for
+- max_workers: 2
+  steps:
+  - <function function_name5 at 0x721eac6a6f20>
+  - <wpipe.pipe.pipe.Pipeline object at 0x721eab63a900>
+  type: parallel
+  use_processes: false
+- func: <function slow_step at 0x721eac6a72e0>
+  name: step_name
+  type: task
+  version: v1.0

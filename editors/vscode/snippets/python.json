@@ -1,0 +1,237 @@
+{
+    "WPipe Step (Function)": {
+        "prefix": "wpstep",
+        "body": [
+            "from wpipe import step",
+            "",
+            "@step(name=\"${1:step_name}\", version=\"${2:v1.0}\")",
+            "def ${3:function_name}(data):",
+            "    ${4:# Your logic here}",
+            "    return data"
+        ],
+        "description": "Create a WPipe step (function-based) with import"
+    },
+    "WPipe State (Class)": {
+        "prefix": "wpstate",
+        "body": [
+            "from wpipe import step, to_obj, PipelineContext",
+            "",
+            "class ${1:MyContext}(PipelineContext):",
+            "    ${2:field}: ${3:str}",
+            "",
+            "@step(name=\"${4:step_name}\", version=\"${5:v1.0}\")",
+            "class ${6:StepClass}:",
+            "    def __init__(self, ${7:config_param}=\"${8:value}\"):",
+            "        self.${7:config_param} = ${7:config_param}",
+            "        self.NAME = \"${4:step_name}\"",
+            "        self.VERSION = \"${5:v1.0}\"",
+            "",
+            "    @to_obj(${1:MyContext})",
+            "    def __call__(self, ctx: ${1:MyContext}):",
+            "        ${9:# Access typed data with ctx.field}",
+            "        return {}"
+        ],
+        "description": "Create a WPipe state (class-based) with typed context and imports"
+    },
+    "WPipe Advanced Step (Professional)": {
+        "prefix": "wpstepadv",
+        "body": [
+            "from wpipe import step, to_obj, PipelineContext",
+            "from wpipe.timeout import timeout_sync",
+            "from typing import Any",
+            "",
+            "class ${1:MyContext}(PipelineContext):",
+            "    ${2:field}: ${3:str}",
+            "",
+            "@step(",
+            "    name=\"${4:drive}\",",
+            "    version=\"${5:v1.0}\",",
+            "    timeout=${6:10},",
+            "    description=\"${7:Description of the step}\",",
+            "    tags=[${8:\"tag1\", \"tag2\"}],",
+            "    retry_count=${9:3},",
+            "    retry_delay=${10:0.01},",
+            ")",
+            "class ${11:AdvancedStep}:",
+            "    def __init__(self, ${12:config}=\"value\"):",
+            "        self.${12:config} = ${12:config}",
+            "",
+            "    @timeout_sync(seconds=${13:2})",
+            "    @to_obj(${1:MyContext})",
+            "    def __call__(self, context: Any) -> Any:",
+            "        ${14:# Professional logic here}",
+            "        return context"
+        ],
+        "description": "Create a professional class-based step with typed context, retries, timeouts, and metadata"
+    },
+    "WPipe Pipeline": {
+        "prefix": "wppipe",
+        "body": [
+            "from wpipe import Pipeline",
+            "from wpipe.exception.api_error import ProcessError",
+            "import os",
+            "",
+            "pipeline = Pipeline(",
+            "    pipeline_name=\"${1:my_pipeline}\",",
+            "    tracking_db=\"${2:output/tracking.db}\",",
+            "    collect_system_metrics=True,",
+            "    verbose=True",
+            ")",
+            "",
+            "pipeline.set_steps([",
+            "    ${3:step_1},",
+            "    ${4:step_2}",
+            "])",
+            "",
+            "if __name__ == \"__main__\":",
+            "    try:",
+            "        result = pipeline.run(${5:{}})",
+            "    except ProcessError as e:",
+            "        print(f\"Error occurred: {e}\")"
+        ],
+        "description": "Create a WPipe pipeline with DB tracking and metrics"
+    },
+    "WPipe Advanced Pipeline": {
+        "prefix": "wppipeadv",
+        "body": [
+            "from wpipe import Pipeline",
+            "from wpipe.exception.api_error import ProcessError",
+            "",
+            "db_path = \"${1:output/tracking.db}\"",
+            "config_dir = \"${2:configs}\"",
+            "",
+            "pipeline = Pipeline(",
+            "    pipeline_name=\"${3:professional_pipeline}\",",
+            "    pipeline_version=\"${4:1.0.0}\",",
+            "    tracking_db=db_path,",
+            "    config_dir=config_dir,",
+            "    verbose=${5:True},",
+            "    # Retry configuration",
+            "    max_retries=${6:3},",
+            "    retry_delay=${7:0.5},",
+            "    retry_on_exceptions=(${8:RuntimeError},),",
+            "    # Monitoring",
+            "    collect_system_metrics=${9:True},",
+            "    show_progress=${10:True},",
+            ")",
+            "",
+            "pipeline.set_steps([",
+            "    ${11:step_1}",
+            "])",
+            "",
+            "if __name__ == \"__main__\":",
+            "    try:",
+            "        result = pipeline.run({})",
+            "    except ProcessError as e:",
+            "        print(f\"Error occurred: {e}\")"
+        ],
+        "description": "Create a robust pipeline with retries, metrics and professional configuration"
+    },
+    "WPipe Error Capture": {
+        "prefix": "wperrorcapture",
+        "body": [
+            "from typing import Dict, Any",
+            "from wpipe import to_obj, step",
+            "",
+            "@step(name=\"error_capture\", version=\"v1.0\", tags=[\"error_capture\"])",
+            "@to_obj",
+            "def error_capture(context: Any, error: Dict[str, Any]) -> Any:",
+            "    \"\"\"Captures and logs errors occurring within the pipeline.\"\"\"",
+            "    print(\"\\n\" + \"!\" * 60)",
+            "    print(\"🚨 SYSTEM ALERT: ERROR DETECTED\")",
+            "    print(\"!\" * 60)",
+            "    print(f\"📍 FAILED STEP: {error['step_name']}\")",
+            "    print(f\"📄 FILE: {error['file_path']}\")",
+            "    print(f\"🔢 LINE: {error['line_number']}\")",
+            "    print(f\"⚠️ MESSAGE: {error['error_message']}\")",
+            "    print(\"-\" * 60)",
+            "    return context",
+            "",
+            "pipeline.add_error_capture([error_capture])"
+        ],
+        "description": "Add an error capture state to the pipeline"
+    },
+    "WPipe Event": {
+        "prefix": "wpevent",
+        "body": [
+            "# ⚠️ IMPORTANT: Events will only be recorded if the pipeline was initialized with 'tracking_db'",
+            "pipeline.add_event(",
+            "    event_type=\"${1:notification}\",",
+            "    event_name=\"${2:authorized_person}\",",
+            "    message=\"${3:Results sent to external APIs}\",",
+            ")"
+        ],
+        "description": "Add a custom event to the pipeline (Requires tracking_db)"
+    },
+    "WPipe Alert Threshold": {
+        "prefix": "wpalert",
+        "body": [
+            "from wpipe.tracking import Metric, Severity",
+            "",
+            "# ⚠️ IMPORTANT: Alerts will only be monitored if the pipeline was initialized with 'tracking_db'",
+            "pipeline.tracker.add_alert_threshold(",
+            "    metric=Metric.${1|PIPELINE_DURATION,STEP_DURATION,ERROR_RATE|},",
+            "    expression=\"${2:>100}\",",
+            "    severity=Severity.${3|WARNING,CRITICAL,INFO|},",
+            ")"
+        ],
+        "description": "Add a performance alert threshold to the tracker (Requires tracking_db)"
+    },
+    "WPipe Parallel": {
+        "prefix": "wpparallel",
+        "body": [
+            "from wpipe import Parallel",
+            "",
+            "Parallel(",
+            "    steps=[${1:step1}, ${2:step2}],",
+            "    max_workers=${3:2}",
+            ")"
+        ],
+        "description": "Create a WPipe parallel block with import"
+    },
+    "WPipe Condition": {
+        "prefix": "wpcondition",
+        "body": [
+            "from wpipe import Condition",
+            "",
+            "Condition(",
+            "    expression=\"${1:valor > 100}\",",
+            "    branch_true=[${2:step_true}],",
+            "    branch_false=[${3:step_false}]",
+            ")"
+        ],
+        "description": "Create a WPipe conditional branch with import"
+    },
+    "WPipe For Loop": {
+        "prefix": "wpfor",
+        "body": [
+            "from wpipe import For",
+            "",
+            "For(",
+            "    iterations=${1:10},",
+            "    validation_expression=\"${2:status != 'error'}\",",
+            "    steps=[${3:step_to_repeat}]",
+            ")"
+        ],
+        "description": "Create a WPipe loop with import"
+    },
+    "WPipe Background": {
+        "prefix": "wpbackground",
+        "body": [
+            "from wpipe.pipe.components.logic_blocks import Background",
+            "",
+            "Background(${1:slow_step})"
+        ],
+        "description": "Run a step in the background with import"
+    },
+    "WPipe Checkpoint": {
+        "prefix": "wpcheckpoint",
+        "body": [
+            "pipeline.add_checkpoint(",
+            "    checkpoint_name=\"${1:ready_point}\",",
+            "    expression=\"${2:data_ready == True}\"",
+            ")"
+        ],
+        "description": "Add a resilient checkpoint"
+    }
+}

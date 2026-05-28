@@ -1,0 +1,134 @@
+{
+    "name": "wpipe-vscode",
+    "displayName": "WPipe Tools",
+    "description": "Intelligent tools for WPipe pipeline orchestration",
+    "version": "0.6.0",
+    "publisher": "wpipe",
+    "icon": "icon.png",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Snippets",
+        "Visualization"
+    ],
+    "activationEvents": [
+        "onCommand:wpipe-vscode.previewDAG",
+        "onCommand:wpipe-vscode.openDashboard",
+        "onCommand:wpipe-vscode.showCheatSheet",
+        "onLanguage:python",
+        "onLanguage:yaml",
+        "onView:wpipeSteps"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "wpipe-explorer",
+                    "title": "WPipe",
+                    "icon": "lateral_icon.png"
+                }
+            ]
+        },
+        "views": {
+            "wpipe-explorer": [
+                {
+                    "id": "wpipeSteps",
+                    "name": "Step Registry"
+                }
+            ]
+        },
+        "jsonValidation": [
+            {
+                "fileMatch": "*.wpipe.yaml",
+                "url": "./wpipe-schema.json"
+            },
+            {
+                "fileMatch": "pipeline_configs/*.yaml",
+                "url": "./wpipe-schema.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "wpipe-vscode.helloWorld",
+                "title": "WPipe: Hello World"
+            },
+            {
+                "command": "wpipe-vscode.previewDAG",
+                "title": "WPipe: Preview Pipeline DAG",
+                "icon": "$(graph)"
+            },
+            {
+                "command": "wpipe-vscode.openDashboard",
+                "title": "WPipe: Open Web Dashboard",
+                "icon": "$(dashboard)"
+            },
+            {
+                "command": "wpipe-vscode.showCheatSheet",
+                "title": "WPipe: Show Cheat Sheet / Help",
+                "icon": "$(question)"
+            },
+            {
+                "command": "wpipeSteps.runStep",
+                "title": "Run this Step (One-Click Test)",
+                "icon": "$(play)"
+            },
+            {
+                "command": "wpipeSteps.refreshEntry",
+                "title": "Refresh Steps",
+                "icon": "$(refresh)"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "wpipeSteps.refreshEntry",
+                    "when": "view == wpipeSteps",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "wpipeSteps.runStep",
+                    "when": "view == wpipeSteps",
+                    "group": "inline"
+                }
+            ],
+            "editor/title": [
+                {
+                    "when": "resourceExtname == .yaml || resourceExtname == .yml",
+                    "command": "wpipe-vscode.previewDAG",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "snippets": [
+            {
+                "language": "python",
+                "path": "./snippets/python.json"
+            },
+            {
+                "language": "yaml",
+                "path": "./snippets/yaml.json"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.75.0",
+        "@types/node": "16.x",
+        "typescript": "^4.9.5",
+        "eslint": "^8.34.0",
+        "@typescript-eslint/eslint-plugin": "^5.53.0",
+        "@typescript-eslint/parser": "^5.53.0"
+    }
+}

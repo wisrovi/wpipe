@@ -506,19 +506,19 @@ Puedes encontrar todos estos materiales en la carpeta `posters/`, numerados del 
 
 <img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/71786eb7-f0ff-4262-b0f1-bfc1da4dc236" />
 
+---
 
+## 🛠️ Extensiones para Editores
 
+### Visual Studio Code
+WPipe cuenta con una extensión oficial para mejorar la experiencia de desarrollo:
+- **Snippets:** Autocompletado para `@step`, `Pipeline`, `Parallel` y más.
+- **Validación YAML:** Soporte para esquemas de configuración de pipelines.
+- **Comandos:** Acceso rápido a herramientas de WPipe.
 
+Puedes encontrar la extensión y las instrucciones de instalación en la carpeta `editors/vscode/`.
 
-
-
-
-
-
-
-
-
-
+---
 
 ## 📄 Licencia
 
