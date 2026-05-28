@@ -1,4 +1,7 @@
 flowchart TD
-  Inicio((Inicio))
-  Inicio --> n_step_a_L0["step_a"]
-  n_step_a_L0 --> n_step_b_L1["step_b"]
+  subgraph Pipeline_0 [Pipeline 1]
+    n_Inicio_Pipeline_0((Inicio))
+    n_Inicio_Pipeline_0 --> n_step_a_L0_0["step_a"]
+    n_step_a_L0_0 --> n_step_b_L0_1["step_b"]
+
+  end

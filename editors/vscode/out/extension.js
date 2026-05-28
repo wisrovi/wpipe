@@ -258,12 +258,11 @@ class DAGPanel {
     }
     parsePython(content) {
         let g = "flowchart TD\n";
-        g += "  Inicio((Inicio))\n";
         // Remover comentarios de Python para que no rompan el parser
         const cleanContent = content.replace(/#.*$/gm, '');
         const startRegex = /(?:set_steps\s*\(\s*|steps\s*=\s*)\[/g;
         let match;
-        let bestContent = "";
+        const pipelines = [];
         while ((match = startRegex.exec(cleanContent)) !== null) {
             let start = match.index + match[0].length;
             let depth = 1;
@@ -277,15 +276,30 @@ class DAGPanel {
                     break;
             }
             const currentContent = cleanContent.substring(start, i);
-            if (currentContent.length > bestContent.length) {
-                bestContent = currentContent;
+            if (currentContent.trim()) {
+                pipelines.push(currentContent);
             }
         }
-        if (bestContent) {
-            const result = this.parseRecursive(bestContent, "Inicio");
-            g += result.graph;
+        if (pipelines.length === 0) {
+            return "flowchart TD\n  Inicio --> DefineSteps";
         }
-        return g || "flowchart TD\n  Inicio --> DefineSteps";
+        pipelines.forEach((pipeContent, idx) => {
+            const pipeId = "Pipeline_" + idx;
+            const isMulti = pipelines.length > 1;
+            if (isMulti) {
+                g += `  subgraph ${pipeId} [Pipeline ${idx + 1}]\n`;
+                g += `    direction TD\n`;
+            }
+            const startId = this.sanitizeID("Inicio", pipeId);
+            const prefix = isMulti ? "    " : "  ";
+            g += `${prefix}${startId}((Inicio))\n`;
+            const result = this.parseRecursive(pipeContent, startId, "L" + idx + "_");
+            g += result.graph.split('\n').map(l => l.trim() ? prefix + l.trim() : "").join('\n') + "\n";
+            if (isMulti) {
+                g += `  end\n`;
+            }
+        });
+        return g;
     }
     parseRecursive(content, prevId, levelPrefix = "L") {
         let graph = "";
@@ -297,10 +311,13 @@ class DAGPanel {
                 return;
             const uniqueSuffix = levelPrefix + idx;
             if (trimmed.startsWith('Condition(')) {
-                const condExpr = (trimmed.match(/expression=["'](.*?)["']/) || ["", "Condition"])[1];
+                // Fix regex to match the exact string, handling nested quotes
+                const exprMatch = trimmed.match(/expression\s*=\s*(["'])(.*?)\1/);
+                const condExpr = exprMatch ? exprMatch[2] : "Condition";
                 const id = this.sanitizeID("Cond", uniqueSuffix);
                 const mergeId = this.sanitizeID("Merge", uniqueSuffix);
-                graph += `  ${currentPrev} --> ${id}{"${condExpr}"}\n`;
+                let displayExpr = condExpr.replace(/"/g, "'");
+                graph += `  ${currentPrev} --> ${id}{"${displayExpr}"}\n`;
                 const branchEnds = [];
                 const trueContent = this.extractArg(trimmed, 'branch_true');
                 if (trueContent) {
@@ -328,6 +345,7 @@ class DAGPanel {
                 graph += `  ${currentPrev} --> ${callId}[Parallel]\n`;
                 graph += `  ${callId} --> ${subId}\n`;
                 graph += `  subgraph ${subId} [Parallel max_workers=${workers}]\n`;
+                graph += `    direction TD\n`;
                 const parallelSteps = this.extractArg(trimmed, 'steps');
                 const branchEnds = [];
                 if (parallelSteps) {
@@ -349,11 +367,13 @@ class DAGPanel {
                 const subId = this.sanitizeID("SubFor", uniqueSuffix);
                 const callId = this.sanitizeID("ForCall", uniqueSuffix);
                 const iters = (trimmed.match(/iterations=(\d+|[a-zA-Z_]+)/) || ["", "?"])[1];
-                const cond = (trimmed.match(/validation_expression=["'](.*?)["']/) || ["", ""])[1];
+                const condMatch = trimmed.match(/validation_expression\s*=\s*(["'])(.*?)\1/);
+                const cond = condMatch ? condMatch[2].replace(/"/g, "'") : "";
                 const label = `For iterations=${iters}${cond ? '<br/>' + cond : ''}`;
                 graph += `  ${currentPrev} --> ${callId}[For Loop]\n`;
                 graph += `  ${callId} --> ${subId}\n`;
                 graph += `  subgraph ${subId} [${label}]\n`;
+                graph += `    direction TD\n`;
                 const forSteps = this.extractArg(trimmed, 'steps');
                 let lastInFor = subId;
                 if (forSteps) {
@@ -379,6 +399,7 @@ class DAGPanel {
                 }
                 graph += `  ${currentPrev} --> ${callId}["Background ${label}"]\n`;
                 graph += `  subgraph ${subId} [Background Execution]\n`;
+                graph += `    direction TD\n`;
                 const execId = this.sanitizeID("BGExec", uniqueSuffix);
                 graph += `    ${execId}["${label}"]\n`;
                 graph += `  end\n`;

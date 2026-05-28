@@ -50,12 +50,12 @@ pipeline.set_steps(
                     ],
                     max_workers=1,
                 ),
-                AdvancedStep(),                
+                AdvancedStep(),
                 For(
                     iterations=10,
                     validation_expression="status != 'error'",
-                    steps=[AdvancedStep8(), function_name5]
-                )
+                    steps=[AdvancedStep8(), function_name5],
+                ),
             ],
         ),
         Parallel(
@@ -71,9 +71,9 @@ pipeline.set_steps(
 
 pipeline.add_error_capture([error_capture])
 
+
 if __name__ == "__main__":
     try:
         result = pipeline.run({})
     except ProcessError as e:
         print(f"Error occurred: {e}")
-        

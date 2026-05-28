@@ -1,5 +1,16 @@
 # Changelog - WPipe Tools
 
+## [0.6.3] - 2026-05-28
+### Fixed
+- **Dirección del Grafo**: Se ha añadido explícitamente `direction TD` (Top-Down) a todos los subgrafos generados (`For`, `Parallel`, `Background` y múltiples Pipelines). Esto evita que Mermaid expanda horizontalmente el diagrama y fuerza una estructura vertical mucho más limpia y natural.
+- **Pipelines Únicos**: Cuando un archivo solo contiene un pipeline, ya no se envuelve en un subgrafo general "Pipeline 1", evitando marcos visuales innecesarios.
+
+## [0.6.2] - 2026-05-28
+### Added
+- **Soporte para Múltiples Pipelines**: La extensión ahora es capaz de renderizar múltiples pipelines definidos en un mismo archivo. Cada pipeline se visualiza dentro de su propio subgrafo independiente en el Mermaid generado.
+### Fixed
+- **Comillas Anidadas en Condiciones**: Corregida la expresión regular que extrae el contenido de `expression` y `validation_expression` en los bloques lógicos. Ahora soporta correctamente comillas simples y dobles anidadas (ej. `status != 'error'`), evitando que Mermaid se rompa y deje de renderizar.
+
 ## [0.6.1] - 2026-05-28
 ### Fixed
 - **Comentarios en Python**: El generador del DAG ahora ignora correctamente los comentarios (`# ...`) dentro del array de `set_steps`, evitando que rompan los IDs de los nodos y el texto de las etiquetas en Mermaid.
