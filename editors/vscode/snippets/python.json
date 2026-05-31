@@ -233,5 +233,12 @@
             ")"
         ],
         "description": "Add a resilient checkpoint"
+    },
+    "WPipe Dynamic Add State": {
+        "prefix": "wpaddstate",
+        "body": [
+            "pipeline.add_state(${1|Condition,Parallel,For,Background,step_function|})"
+        ],
+        "description": "Dynamically add a state or logic block to an existing pipeline"
     }
 }

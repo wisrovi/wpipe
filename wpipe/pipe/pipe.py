@@ -274,12 +274,12 @@ class Pipeline(APIClient):
         return self
 
     def _execute_error_capture(self, data: Dict[str, Any], error_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute error capture steps safely."""
+        """Execute error capture steps safely without standard task invocation to avoid recursion."""
         if not self._error_capture_tasks:
             return data
 
         if self.verbose:
-            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info['step_name']}'...")
+            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info.get('step_name', 'unknown')}'...")
 
         for task in self._error_capture_tasks:
             try:
@@ -289,15 +289,20 @@ class Pipeline(APIClient):
                     if isinstance(task, tuple)
                     else (
                         getattr(func, "NAME", None)
-                        or getattr(func, "__name__", "error_handler")
+                        or getattr(func, "__name__", getattr(func.__class__, "__name__", "error_handler"))
                     )
                 )
 
+                # Direct call to avoid standard retry/tracking logic that might fail and recurse
                 sig = inspect.signature(func)
                 if len(sig.parameters) >= 2:
-                    data = self._task_invoke(func, name, data, error_info)
+                    result = func(data, error_info)
                 else:
-                    data = self._task_invoke(func, name, data)
+                    result = func(data)
+                
+                if isinstance(result, dict):
+                    data.update(result)
+
             except Exception as e:  # pylint: disable=broad-exception-caught
                 if self.verbose:
                     print(f"[ERROR CAPTURE FAILED] {e}")
@@ -474,6 +479,10 @@ class Pipeline(APIClient):
             if self.continue_on_error:
                 result["error"] = error
                 return result
+            
+            # Re-raise the original user exception to maintain compatibility with examples
+            if te.__cause__:
+                raise te.__cause__
             raise ProcessError(str(te), Codes.TASK_FAILED) from te
         except ApiError as ae:
             raise ApiError(str(ae), Codes.API_ERROR) from ae
@@ -554,10 +563,10 @@ class Pipeline(APIClient):
 
     def add_state(
         self,
-        name: str,
-        func: Optional[Callable] = None,
+        name: Optional[Any] = None,
+        func: Optional[Any] = None,
         version: str = "v1.0",
-        state: Optional[Callable] = None,
+        state: Optional[Any] = None,
         depends_on: Optional[List[str]] = None,
         timeout: Optional[float] = None,
         retry_count: Optional[int] = None,
@@ -565,11 +574,39 @@ class Pipeline(APIClient):
         retry_on_exceptions: Optional[Tuple[type, ...]] = None,
         **kwargs: Any,
     ) -> "Pipeline":
-        """Add a single step to the pipeline."""
+        """Add a single step or logic block to the pipeline."""
         # pylint: disable=unused-argument
-        step_func = func or state
-        if step_func is None:
-            raise ValueError("Either 'func' or 'state' parameter must be provided")
+        
+        # If the first positional argument 'name' is actually a logic block or a callable instance
+        from .components.logic_blocks import Condition, For, Parallel, Background
+        
+        step_item = state or func
+        
+        if step_item is None:
+            # If name is passed positionally but is a logic block or callable
+            if isinstance(name, (Condition, For, Parallel, Background, Pipeline)):
+                step_item = name
+                name = getattr(step_item, "pipeline_name", "logic_block")
+            elif callable(name):
+                step_item = name
+                # Extract real name from the callable
+                name = getattr(step_item, "NAME", getattr(step_item, "__name__", step_item.__class__.__name__))
+            elif kwargs and list(kwargs.values()):
+                first_val = list(kwargs.values())[0]
+                if isinstance(first_val, (Condition, For, Parallel, Background, Pipeline)) or callable(first_val):
+                    step_item = first_val
+            
+            if step_item is None:
+                raise ValueError("Either 'func', 'state', or a valid logic block must be provided")
+
+        if isinstance(step_item, (Condition, For, Parallel, Background, Pipeline)):
+            current_steps = list(self.tasks_list)
+            current_steps.append(step_item)
+            self.set_steps(current_steps)
+            return self
+
+        if not name or not isinstance(name, str):
+            name = getattr(step_item, "NAME", getattr(step_item, "__name__", "unknown_step"))
 
         meta = {
             "depends_on": depends_on,
@@ -579,14 +616,14 @@ class Pipeline(APIClient):
             "retry_on_exceptions": retry_on_exceptions,
         }
 
-        decorator_meta = getattr(step_func, "_wpipe_metadata", None)
+        decorator_meta = getattr(step_item, "_wpipe_metadata", None)
         if decorator_meta:
             for key, val in meta.items():
                 if val is None:
                     meta[key] = getattr(decorator_meta, key, None)
 
         current_steps = list(self.tasks_list)
-        current_steps.append((step_func, name, version, meta))
+        current_steps.append((step_item, name, version, meta))
         self.set_steps(current_steps)
         return self
 

@@ -25,6 +25,14 @@ class CheckpointManager:
             db_path: Path to the tracking database
         """
         self.db_path = db_path
+        
+        # Ensure the directory for the database exists
+        if db_path:
+            import os
+            db_dir = os.path.dirname(os.path.abspath(db_path))
+            if not os.path.exists(db_dir):
+                os.makedirs(db_dir, exist_ok=True)
+                
         self.db = WSQLite(CheckpointModel, self.db_path)
 
     def save_checkpoint(

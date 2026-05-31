@@ -4,6 +4,7 @@ Step decorators for pipeline definitions.
 Provides @wpipe.step() decorator for inline step definitions.
 """
 
+import inspect
 from dataclasses import dataclass, field
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Tuple
@@ -148,7 +149,7 @@ class DecoratedStep:
 
 
 def step(
-    name: Optional[str] = None,
+    name: Optional[Any] = None,
     version: str = "v1.0",
     timeout: Optional[float] = None,
     depends_on: Optional[List[str]] = None,
@@ -159,36 +160,19 @@ def step(
     description: str = "",
     tags: Optional[List[str]] = None,
 ) -> Callable:
-    """Decorator to mark a function as a pipeline step.
+    """Decorator to mark a function or class as a pipeline step.
 
-    Args:
-        name: Step name (defaults to function name).
-        version: Step version (defaults to "v1.0").
-        timeout: Timeout in seconds.
-        depends_on: List of step names this depends on.
-        retry_count: Number of retries on failure.
-        retry_delay: Delay between retries.
-        retry_on_exceptions: Exceptions to retry on.
-        parallel: Whether this step can run in parallel.
-        description: Step description.
-        tags: List of tags for step.
-
-    Returns:
-        Decorated function.
-
-    Example:
-        @wpipe.step(timeout=30, depends_on=["fetch_data"])
-        def process_data(context: Dict[str, Any]) -> Dict[str, Any]:
-            return {"result": "..."}
+    Supports both @step and @step(name="...") syntax.
     """
 
     def decorator(func: Callable) -> Callable:
-        step_name = name or func.__name__
+        # Determine step name
+        actual_name = name if isinstance(name, str) else func.__name__
 
         # Create decorated step
         decorated = DecoratedStep(
             func=func,
-            name=step_name,
+            name=actual_name,
             version=version,
             timeout=timeout,
             depends_on=depends_on,
@@ -201,9 +185,18 @@ def step(
         )
 
         # Register in global registry
-        _STEP_REGISTRY[step_name] = decorated
+        _STEP_REGISTRY[actual_name] = decorated
 
-        # Preserve original function but add metadata
+        # Preserve original function/class but add metadata
+        if inspect.isclass(func):
+            # For classes, we return the class itself
+            # We add attributes to the original class for metadata detection
+            setattr(func, "_wpipe_step", decorated)
+            setattr(func, "_wpipe_metadata", decorated.get_metadata())
+            setattr(func, "NAME", decorated.NAME)
+            setattr(func, "VERSION", decorated.VERSION)
+            return func
+        
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             return func(*args, **kwargs)
@@ -216,6 +209,13 @@ def step(
         wrapper.VERSION = decorated.VERSION  # pylint: disable=invalid-name
 
         return wrapper
+
+    # If used as @step without parentheses
+    if callable(name) and not isinstance(name, str):
+        func = name
+        # We must re-assign name to None so that actual_name uses func.__name__
+        name = None
+        return decorator(func)
 
     return decorator
 

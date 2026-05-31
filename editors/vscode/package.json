@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.6.3",
+    "version": "0.7.9",
     "publisher": "wpipe",
     "icon": "icon.png",
     "engines": {
@@ -17,6 +17,7 @@
         "onCommand:wpipe-vscode.previewDAG",
         "onCommand:wpipe-vscode.openDashboard",
         "onCommand:wpipe-vscode.showCheatSheet",
+        "onCommand:wpipe-vscode.refreshCatalog",
         "onLanguage:python",
         "onLanguage:yaml",
         "onView:wpipeSteps"
@@ -28,7 +29,7 @@
                 {
                     "id": "wpipe-explorer",
                     "title": "WPipe",
-                    "icon": "lateral_icon.png"
+                    "icon": "icon.svg"
                 }
             ]
         },
@@ -36,7 +37,8 @@
             "wpipe-explorer": [
                 {
                     "id": "wpipeSteps",
-                    "name": "Step Registry"
+                    "name": "Step Registry",
+                    "icon": "icon.svg"
                 }
             ]
         },
@@ -54,6 +56,16 @@
             {
                 "command": "wpipe-vscode.helloWorld",
                 "title": "WPipe: Hello World"
+            },
+            {
+                "command": "wpipe-vscode.refreshCatalog",
+                "title": "WPipe: Refresh Cloud Catalog",
+                "icon": "$(cloud-download)"
+            },
+            {
+                "command": "wpipe-vscode.searchSteps",
+                "title": "WPipe: Search & Import Steps (Catalog)",
+                "icon": "$(search)"
             },
             {
                 "command": "wpipe-vscode.previewDAG",
@@ -84,6 +96,11 @@
         "menus": {
             "view/title": [
                 {
+                    "command": "wpipe-vscode.refreshCatalog",
+                    "when": "view == wpipeSteps",
+                    "group": "navigation"
+                },
+                {
                     "command": "wpipeSteps.refreshEntry",
                     "when": "view == wpipeSteps",
                     "group": "navigation"
@@ -92,7 +109,7 @@
             "view/item/context": [
                 {
                     "command": "wpipeSteps.runStep",
-                    "when": "view == wpipeSteps",
+                    "when": "view == wpipeSteps && viewItem == workspaceStep",
                     "group": "inline"
                 }
             ],

@@ -154,6 +154,13 @@ class PipelineTracker:
             config_dir: Directory to store pipeline configurations.
         """
         self.db_path = db_path
+        
+        # Ensure the directory for the database exists
+        if db_path:
+            db_dir = os.path.dirname(os.path.abspath(db_path))
+            if not os.path.exists(db_dir):
+                os.makedirs(db_dir, exist_ok=True)
+                
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
         self.pipeline_id: Optional[str] = None
 

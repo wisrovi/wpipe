@@ -5,6 +5,19 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.5] - 2026-05-30
+
+### Fixed
+- **Infinite Recursion Fix**: Se ha eliminado la recursión infinita en la captura de errores al invocar los handlers de error de forma directa, evitando fallos en cascada si el motor principal encuentra problemas de serialización.
+- **Serialization Robustness**: Los decoradores `to_obj` y `object_to_dict` ahora ignoran automáticamente objetos de sistema (como barras de progreso y locks), eliminando el error `cannot pickle RLock` en ejecuciones con timeouts o hilos.
+- **Extreme add_state Flexibility**: El método `add_state` ahora acepta cualquier combinación de funciones, instancias de clase o bloques lógicos como primer argumento, unificando su comportamiento con `set_steps`.
+- **Auto-Directory Creation**: El tracker ahora crea automáticamente los directorios de base de datos si no existen.
+
+## [2.3.4] - 2026-05-30
+
+### Fixed
+- **add_state enhancement**: El método `add_state` ahora soporta la inserción dinámica de bloques lógicos (`Parallel`, `Condition`, `For`, `Background`) y sub-pipelines, unificando su comportamiento con `set_steps`.
+
 ## [2.3.0] - 2026-04-27
 
 ### Added

@@ -9,7 +9,7 @@
         "sourceMap": true,
         "rootDir": "src",
         "strict": true,
-        "noImplicitAny": true,
+        "resolveJsonModule": true,
         "esModuleInterop": true
     },
     "exclude": [

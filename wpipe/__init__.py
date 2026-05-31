@@ -90,12 +90,7 @@ def _close_connections():
 
 # Lazy loading map
 _LAZY_MAP = {
-    "Pipeline": (".pipe", "Pipeline"),
     "PipelineAsync": (".pipe.pipe_async", "PipelineAsync"),
-    "Condition": (".pipe", "Condition"),
-    "For": (".pipe", "For"),
-    "Parallel": (".pipe", "Parallel"),
-    "step": (".decorators", "step"),
     "ResourceMonitor": (".resource_monitor", "ResourceMonitor"),
     "TaskTimer": (".timeout", "TaskTimer"),
     "auto_dict_input": (".util", "auto_dict_input"),
@@ -124,6 +119,10 @@ _LAZY_MAP = {
     "ResourceMonitorRegistry": (".resource_monitor", "ResourceMonitorRegistry"),
 }
 
+# Direct imports for core components to ensure availability and IDE support
+from .pipe import Condition, For, Parallel, Pipeline
+from .decorators import step
+
 def __getattr__(name: str) -> Any:
     """Handle lazy loading of modules."""
     if name == "Wsqlite":
@@ -139,4 +138,4 @@ def __getattr__(name: str) -> Any:
     
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-__all__ = list(_LAZY_MAP.keys()) + ["Wsqlite"]
+__all__ = list(_LAZY_MAP.keys()) + ["Wsqlite", "Pipeline", "Condition", "For", "Parallel", "step"]
