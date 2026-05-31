@@ -6,7 +6,7 @@ class MyContext(PipelineContext):
     field: str
 
 @step(
-    name="drive",
+    name="AdvancedStep8",
     version="v1.0",
     timeout=10,
     description="Description of the step",

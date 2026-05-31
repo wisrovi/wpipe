@@ -1,68 +1,69 @@
-# WPipe VS Code Extension 🚀
+# 🚀 WPipe VS Code Tools
 
-Esta extensión proporciona herramientas inteligentes para trabajar con la librería **WPipe** directamente en Visual Studio Code.
+**The Swiss Army Knife for Pipeline Orchestration with WPipe.**
 
-## Características actuales
-
-- **Snippets para Python:**
-  - `wpstep`: Crea rápidamente un paso de pipeline con decorador (basado en función).
-  - `wpstate`: Crea un estado basado en clase con `@to_obj` y `PipelineContext` (recomendado para validación de tipos).
-  - `wppipe`: Estructura básica de un pipeline con **base de datos y métricas activas**.
-  - `wpparallel`, `wpcondition`, `wpfor`, `wpbackground`: Estructuras lógicas con **importaciones automáticas**.
-
-- **Step Registry Explorer:**
-  - Nueva vista en la barra lateral que muestra todos los pasos (`@step`) definidos en tu workspace.
-  - Haz clic en cualquier paso para saltar directamente a su código.
-
-- **Visualización de DAG en Tiempo Real:**
-  - Renderiza el flujo del pipeline mientras lo construyes.
-  - Soporte para archivos `.py` (basado en `set_steps`) y archivos `.yaml`.
-  - Se actualiza automáticamente al guardar o editar el archivo.
-- **Snippets para YAML:**
-  - `wpyaml`: Estructura base para configuraciones de pipeline en YAML.
-- **Comandos:**
-  - `WPipe: Hello World`: Comando de prueba para verificar la activación.
-
-## Próximos pasos (Roadmap)
-
-1. **Visualización de DAG:** Renderizar el flujo del pipeline en un panel lateral.
-2. **Validación de YAML:** Autocompletado y validación de esquemas para archivos `.yaml` de WPipe.
-3. **Monitoreo en tiempo real:** Integración con el dashboard de WPipe.
-
-## Cómo crear e instalar la extensión (Local)
-
-Si deseas generar el instalador manualmente para usarlo en tu VS Code local o compartirlo, sigue estos pasos:
-
-### 1. Requisitos previos
-- Tener instalado **Node.js** y **npm**.
-- Tener instalado el empaquetador oficial de VS Code:
-  ```bash
-  npm install -g @vscode/vsce
-  ```
-
-### 2. Generar el paquete (.vsix)
-Desde la carpeta raíz del proyecto o desde `editors/vscode`, ejecuta el script de empaquetado automático:
-```bash
-cd editors/vscode
-./package_local.sh
-```
-Este script se encargará de instalar las dependencias necesarias, compilar el código TypeScript y generar un archivo llamado `wpipe-vscode-0.1.0.vsix`.
-
-### 3. Instalar en VS Code
-Una vez generado el archivo `.vsix`, instálalo siguiendo estos pasos:
-1. Abre **Visual Studio Code**.
-2. Ve a la vista de **Extensiones** (`Ctrl+Shift+X`).
-3. Haz clic en el menú de "tres puntos" (`...`) en la esquina superior derecha del panel de extensiones.
-4. Selecciona la opción **"Install from VSIX..."**.
-5. Busca y selecciona el archivo `wpipe-vscode-0.1.0.vsix` que acabas de generar.
-
-## Cómo publicar en el Marketplace
-Para subir la extensión de forma oficial:
-1. Asegúrate de tener un **Personal Access Token (PAT)** de Azure DevOps con permisos de "Marketplace Manage".
-2. Ejecuta el script de publicación:
-   ```bash
-   ./publish_marketplace.sh TU_TOKEN_DE_AZURE
-   ```
+Elevate your Python data engineering with intelligent tools designed to maximize speed, clarity, and resilience. This extension provides a deep, seamless integration of the **WPipe** engine directly into your favorite editor, turning complex orchestration into a visual and intuitive experience.
 
 ---
-Desarrollado para potenciar la orquestación de datos con WPipe.
+
+## 💎 Why WPipe Tools?
+
+Traditional pipeline development can be opaque and error-prone. **WPipe Tools** changes the game by giving you visual superpowers and intelligent automation.
+
+### 📊 Real-Time DAG Visualization
+Stop guessing how your data flows. Watch your architecture come to life as you write code.
+- **Instant Insights:** Generate high-fidelity Directed Acyclic Graphs (DAG) from your `.py` and `.yaml` configurations.
+- **Live Feedback:** The visualization panel refreshes instantly on save, helping you catch logic errors before they hit production.
+- **Interactive Exploration:** Zoom, pan, and navigate through complex architectures with professional-grade controls.
+
+### 🔍 Step Registry Explorer
+Master your ecosystem of reusable components.
+- **Centralized Hub:** A dedicated sidebar view maps every `@step` across your entire workspace.
+- **Precision Navigation:** Click any step to teleport directly to its implementation.
+- **One-Click Testing:** Run and validate individual steps in isolation without launching the full pipeline.
+
+### 🌐 Cloud Catalog Integration
+Join a global community of data engineers.
+- **Always Updated:** The extension automatically fetches the latest official and community-contributed steps from the cloud.
+- **Plug & Play:** Find the perfect component, click to import, and stay focused on your core logic.
+
+### 🧠 Intelligent snippets (The "Pro" Way)
+Don't just write code—write *excellent* code.
+- **`wpstep` / `wpstepadv`**: Create everything from simple functions to robust classes with built-in retries and timeouts.
+- **`wppipe` / `wppipeadv`**: Scaffold production-ready pipelines with metric tracking and persistence in seconds.
+- **Flow Control**: Rapidly insert `Parallel`, `Condition`, `For`, and `Background` blocks with automatic imports.
+
+### 🛡️ World-Class YAML Validation
+Safety first. Eliminate configuration errors before they happen.
+- **Smart Autocomplete:** Intelligent schema-aware suggestions for your `*.wpipe.yaml` files.
+- **Zero-Error Syntax:** Real-time validation ensures your YAML is always clean and compatible.
+
+---
+
+## 🚀 Getting Started
+
+1. **Install:** Search for `WPipe Tools` in the VS Code Marketplace or press `Ctrl+P` and type `ext install wpipe.wpipe-vscode`.
+2. **Activate:** Open any Python (`.py`) or WPipe YAML (`.yaml`) file.
+3. **Visualize:** Open the Command Palette (`Ctrl+Shift+P`) and run `WPipe: Preview Pipeline DAG`.
+
+---
+
+## 🛠️ Key Commands
+
+| Command | Action |
+|---------|--------|
+| `WPipe: Preview Pipeline DAG` | Open the interactive graph visualizer. |
+| `WPipe: Open Web Dashboard` | Launch the real-time monitoring dashboard. |
+| `WPipe: Search & Import Steps` | Browse the global component library. |
+| `WPipe: Show Cheat Sheet / Help` | Instant access to the pro-tips guide. |
+
+---
+
+## 📄 License
+
+MIT License - Crafted with ❤️ by **William Rodriguez** (wisrovi).
+
+---
+
+**Built for engineers who demand excellence in data orchestration.**
+[Visit the official WPipe repository](https://github.com/wisrovi/wpipe)

@@ -3,7 +3,7 @@ from wpipe import step, to_obj, PipelineContext
 class MyContext(PipelineContext):
     field: str
 
-@step(name="step_1", version="v1.0")
+@step(name="StepClass_1", version="v1.0")
 class StepClass:
     def __init__(self, config_param="value"):
         self.config_param = config_param

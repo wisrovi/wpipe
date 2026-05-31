@@ -1,5 +1,35 @@
 # Changelog - WPipe Tools
 
+## [0.8.1] - 2026-05-31
+### Changed
+- **README Polishing**: Streamlined the documentation to be strictly user-facing, removing technical build instructions for a cleaner marketing focus.
+- **Onboarding Experience**: Simplified the "Getting Started" guide to prioritize immediate visual feedback for new users.
+
+## [0.8.0] - 2026-05-31
+### Added
+- **International Documentation**: Complete re-write of the extension's README in professional English, optimized for global developers.
+- **Enhanced Visual Communication**: Improved feature descriptions and command documentation for better clarity and onboarding.
+- **Build Optimization**: Refined local packaging scripts for more reliable version deployments.
+- **Marketplace Readiness**: Prepared all metadata and documentation for high-visibility publishing.
+
+## [0.7.9] - 2026-05-30
+### Added
+- **Suite de Análisis High-Fidelity**: Transformación del DAG en un panel de análisis profesional con cabecera enterprise, barra lateral de estadísticas y pie de página con versión del motor.
+- **Análisis de Complejidad (Big O)**: Cálculo automático del coste computacional teórico de la orquestación (O(n), O(n²), etc.) basado en la profundidad de los bucles y ramificaciones.
+- **Interactividad Total (Zoom & Pan)**: Integración de `svg-pan-zoom` que permite navegar por grafos complejos usando la rueda del ratón y arrastre de lienzo.
+- **Barra de Herramientas Flotante**: Controles rápidos de Zoom In, Zoom Out y Reset/Center en el visor de arquitectura.
+- **Catálogo Cloud-Native**: Sincronización en tiempo real con GitHub para descargar los 130+ estados oficiales y de comunidad sin necesidad de actualizar la extensión.
+- **Reconocimiento de Autor**: Tooltips enriquecidos en el panel lateral que muestran el nombre del autor y el repositorio de origen para cada plugin.
+- **Auto-Importación Inteligente**: Al hacer clic en un estado de la librería, se inyecta automáticamente el `import` y la instancia (con paréntesis si es clase) en el editor activo.
+- **Semántica de Flujo**: Etiquetas claras de "True" e "False" en las flechas de condiciones y nuevos iconos visuales (Cohete para pasos, Rayo para Paralelo).
+- **Icono de Actividad**: Actualizado el icono de la barra lateral de VS Code al cohete oficial de WPipe para una identidad de marca coherente.
+
+### Fixed
+- **Estabilidad de Activación**: La carga del catálogo ahora es no-bloqueante (background task), resolviendo conflictos con IntelliCode y otros servicios de lenguaje.
+- **Soporte `add_state`**: El DAG y el explorador lateral ahora reflejan fielmente los estados añadidos dinámicamente mediante llamadas a `.add_state()`.
+- **Navegación Precisa**: Al hacer clic en un estado del workspace, el editor se posiciona exactamente en la línea de la implementación (`def` o `class`) en lugar del decorador.
+- **Filtrado de Workspace**: Se ignoran automáticamente carpetas de sistema (`.venv`, `node_modules`, `wpipe` core) para evitar ruido en la lista de estados del usuario.
+
 ## [0.6.3] - 2026-05-28
 ### Fixed
 - **Dirección del Grafo**: Se ha añadido explícitamente `direction TD` (Top-Down) a todos los subgrafos generados (`For`, `Parallel`, `Background` y múltiples Pipelines). Esto evita que Mermaid expanda horizontalmente el diagrama y fuerza una estructura vertical mucho más limpia y natural.

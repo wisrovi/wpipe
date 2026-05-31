@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.7.9",
+    "version": "0.8.1",
     "publisher": "wpipe",
     "icon": "icon.png",
     "engines": {
