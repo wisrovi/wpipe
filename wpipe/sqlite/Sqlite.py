@@ -225,13 +225,14 @@ class SQLite:
         """
         self.db_name = db_name
         self.executor = ThreadPoolExecutor(max_workers=10)
-        self.db = PatchedWSQLite(RecordModel, db_name)
+        self.db = PatchedWSQLite(WsqliteModel, db_name)
 
     def write(
         self,
         input_data: Optional[Union[Dict[str, Any], str]] = None,
         output: Optional[Union[Dict[str, Any], str]] = None,
         details: Optional[Union[Dict[str, Any], str]] = None,
+        error: Optional[str] = None,
         record_id: Optional[int] = None,
     ) -> Optional[int]:
         """
@@ -241,6 +242,7 @@ class SQLite:
             input_data: Input data to store.
             output: Output data to store.
             details: Additional details to store.
+            error: Error message to store.
             record_id: If provided, updates the record with this ID.
 
         Returns:
@@ -260,12 +262,14 @@ class SQLite:
         table = self.db.table_name
         conn = self.db._get_connection()
         if record_id:
-            query = f"UPDATE {table} SET input=?, output=?, details=? WHERE rowid=?"
-            conn.execute(query, (input_str, output_str, details_str, record_id))
+            query = f"UPDATE {table} SET input=?, output=?, details=?, error=? WHERE rowid=?"
+            conn.execute(
+                query, (input_str, output_str, details_str, error, record_id)
+            )
             conn.commit()
             return record_id
 
-        query = f"INSERT INTO {table} (input, output, details, datetime) VALUES (?, ?, ?, ?)"
+        query = f"INSERT INTO {table} (input, output, details, error, datetime) VALUES (?, ?, ?, ?, ?)"
         cursor = conn.cursor()
         cursor.execute(
             query,
@@ -273,6 +277,7 @@ class SQLite:
                 input_str,
                 output_str,
                 details_str,
+                error,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             ),
         )
