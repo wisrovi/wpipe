@@ -99,7 +99,7 @@ def process_data_step(context: dict) -> dict:
     time.sleep(1)
 
     # Simulate data processing
-    raw_data = context["raw_data"]
+    raw_data = context.get("raw_data", [random.randint(1, 100) for _ in range(100)])
     processed = [x * 2 + 1 for x in raw_data]  # Simple transformation
 
     # Calculate statistics
@@ -145,9 +145,9 @@ def export_results_step(context: dict) -> dict:
     output_file.write_text(
         json.dumps(
             {
-                "dataset_id": context["dataset_id"],
-                "record_count": len(context["processed_data"]),
-                "statistics": context["statistics"],
+                "dataset_id": context.get("dataset_id", 0),
+                "record_count": len(context.get("processed_data", [])),
+                "statistics": context.get("statistics", {}),
             },
             indent=2,
         )

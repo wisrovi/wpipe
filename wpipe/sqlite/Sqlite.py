@@ -113,6 +113,11 @@ class Wsqlite:
         self._error_db = self._serialize_dict(value)
         self._save_state()
 
+    @property
+    def id(self) -> Optional[int]:
+        """Gets the ID of the last inserted or updated record."""
+        return self._last_id
+
     def _serialize_dict(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Converts non-serializable objects to strings within a dictionary.
@@ -297,6 +302,27 @@ class SQLite:
                 "details": row[3],
             }
         return None
+
+    def get_all(self) -> Any:
+        """
+        Retrieves all records from the database.
+
+        Returns:
+            Any: A list of all records.
+        """
+        return self.db.get_all()
+
+    def export_to_dataframe(self) -> Any:
+        """
+        Exports all records from the database to a pandas DataFrame.
+
+        Returns:
+            Any: A pandas DataFrame containing all records.
+        """
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+        table = self.db.table_name
+        conn = self.db._get_connection()
+        return pd.read_sql_query(f"SELECT * FROM {table}", conn)
 
     def count_records(self) -> int:
         """

@@ -78,6 +78,7 @@ class Pipeline(APIClient):
     _step_ids: Dict[str, Any] = {}
     _metrics_collector: Optional[SystemMetricsCollector] = None
     parent_pipeline_id: Optional[str] = None
+    pipeline_version: str = "1.0.0"
 
     def __init__(
         self,
@@ -90,6 +91,7 @@ class Pipeline(APIClient):
         retry_on_exceptions: Tuple[type, ...] = (Exception,),
         tracking_db: Optional[str] = None,
         pipeline_name: Optional[str] = None,
+        pipeline_version: Optional[str] = None,
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
@@ -138,6 +140,8 @@ class Pipeline(APIClient):
         self.continue_on_error = continue_on_error
         self.show_progress = show_progress
         self.tracking_db = tracking_db
+        self.pipeline_name = pipeline_name or "Pipeline"
+        self.pipeline_version = pipeline_version or "1.0.0"
 
         # Internal queues for events and post-run tasks
         self._pending_events: List[Dict[str, Any]] = []
@@ -147,9 +151,9 @@ class Pipeline(APIClient):
 
         # Initialize tracking if database path provided
         if tracking_db:
+            from wpipe.tracking import PipelineTracker
             self.tracker = PipelineTracker(tracking_db, config_dir)
 
-        self.pipeline_name = pipeline_name or "Pipeline"
 
     def add_event(
         self,
@@ -559,6 +563,24 @@ class Pipeline(APIClient):
                 raise ValueError("Invalid step type in tasks list")
 
         self.tasks_list = new_list
+        return self
+
+    def set_states(self, steps: List[Any]) -> "Pipeline":
+        """Alias for set_steps for backward compatibility."""
+        return self.set_steps(steps)
+
+    def add_pipeline(self, pipeline: Any, name: str, version: str = "v1.0") -> "Pipeline":
+        """
+        Alias to add another pipeline as a step.
+        """
+        self.add_state(name=name, func=pipeline.run, version=version)
+        return self
+
+    def add_condition(self, condition: Any) -> "Pipeline":
+        """
+        Add a condition to the pipeline.
+        """
+        self.add_state(func=condition)
         return self
 
     def add_state(

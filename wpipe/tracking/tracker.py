@@ -341,8 +341,16 @@ class PipelineTracker:
         if not pipeline_records:
             return []
         model = pipeline_records[0]
-        started = datetime.fromisoformat(model.started_at)
-        duration_ms = (datetime.now() - started).total_seconds() * 1000
+        started_at = model.started_at
+        if started_at:
+            if isinstance(started_at, str):
+                started = datetime.fromisoformat(started_at)
+            else:
+                started = started_at
+            duration_ms = (datetime.now() - started).total_seconds() * 1000
+        else:
+            duration_ms = 0
+            
         model.status = "error" if error_message else "completed"
         model.completed_at = datetime.now().isoformat()
         model.total_duration_ms = duration_ms
