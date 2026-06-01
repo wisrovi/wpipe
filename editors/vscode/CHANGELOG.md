@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.4] - 2026-06-01
+
+### Added
+- **Acceso Directo al Dashboard**: Ahora aparece un botón `📊 Open Dashboard` directamente sobre tu código si el Pipeline tiene configurada una `tracking_db`. La extensión detecta automáticamente la ruta de la base de datos y la pre-carga, permitiéndote abrir el dashboard con un solo clic sin tener que buscar el archivo manualmente.
+
 ## [0.9.3] - 2026-06-01
 
 ### Fixed

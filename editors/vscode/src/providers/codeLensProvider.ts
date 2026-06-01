@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { parser } from '@lezer/python';
 
 export class WPipeCodeLensProvider implements vscode.CodeLensProvider {
@@ -45,6 +46,26 @@ export class WPipeCodeLensProvider implements vscode.CodeLensProvider {
                                 title: "$(graph) Preview DAG",
                                 command: "wpipe-vscode.previewDAG"
                             }));
+
+                            // Detect tracking_db to offer "Open Dashboard"
+                            const dbMatch = callText.match(/tracking_db\s*=\s*['"](.*?)['"]/);
+                            if (dbMatch) {
+                                const relativeDbPath = dbMatch[1];
+                                // Attempt to resolve absolute path if it's relative
+                                let absoluteDbPath = relativeDbPath;
+                                if (!path.isAbsolute(relativeDbPath)) {
+                                    const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                                    if (workspaceFolder) {
+                                        absoluteDbPath = path.join(workspaceFolder.uri.fsPath, relativeDbPath);
+                                    }
+                                }
+
+                                lenses.push(new vscode.CodeLens(range, {
+                                    title: "$(dashboard) Open Dashboard",
+                                    command: "wpipe-vscode.openDashboard",
+                                    arguments: [absoluteDbPath]
+                                }));
+                            }
                         }
 
                         // set_steps assistance - Narrowed to specifically .set_steps

@@ -4968,35 +4968,47 @@ function showCheatSheet() {
 
 // src/commands/dashboard.ts
 var vscode6 = __toESM(require("vscode"));
-async function openDashboard() {
+async function openDashboard(dbPath) {
+  console.log("\u{1F680} WPipe: openDashboard called with:", dbPath);
   if (vscode6.env.uiKind === vscode6.UIKind.Web) {
-    vscode6.window.showErrorMessage("WPipe Dashboard requires a local Python environment and is not available in VS Code for Web.");
+    vscode6.window.showErrorMessage("WPipe Dashboard requires a local Python environment.");
     return;
   }
-  const dbUri = await vscode6.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    filters: { "Database": ["db", "sqlite", "sqlite3"] },
-    title: "Select WPipe Tracking Database"
-  });
-  if (!dbUri) return;
-  const configUri = await vscode6.window.showOpenDialog({
-    canSelectFiles: false,
-    canSelectFolders: true,
-    canSelectMany: false,
-    title: "Select WPipe Config Directory (Optional)"
-  });
+  let finalDbPath;
+  if (typeof dbPath === "string" && dbPath.length > 0) {
+    finalDbPath = dbPath;
+  } else if (dbPath && typeof dbPath === "object" && "fsPath" in dbPath) {
+    finalDbPath = dbPath.fsPath;
+  }
+  if (!finalDbPath) {
+    const dbUri = await vscode6.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      filters: { "Database": ["db", "sqlite", "sqlite3"] },
+      title: "Select WPipe Tracking Database"
+    });
+    if (!dbUri) return;
+    finalDbPath = dbUri[0].fsPath;
+  }
+  const useConfig = await vscode6.window.showQuickPick(["No", "Yes"], { placeHolder: "Select WPipe Config Directory? (Optional)" });
+  let configPath = "";
+  if (useConfig === "Yes") {
+    const configUri = await vscode6.window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      title: "Select WPipe Config Directory"
+    });
+    if (configUri) configPath = configUri[0].fsPath;
+  }
   const port = await vscode6.window.showInputBox({
     placeHolder: "5000",
     prompt: "Enter port for the dashboard",
     value: "5000"
-  });
-  if (!port) return;
+  }) || "5000";
   const terminal = vscode6.window.createTerminal("WPipe Dashboard");
-  const dbPath = dbUri[0].fsPath;
-  const configPath = configUri ? configUri[0].fsPath : "";
-  let cmd = `python -m wpipe.dashboard --db "${dbPath}" --port ${port}`;
+  let cmd = `python -m wpipe.dashboard --db "${finalDbPath}" --port ${port}`;
   if (configPath) cmd += ` --config "${configPath}"`;
   terminal.show();
   terminal.sendText(cmd);
@@ -5008,6 +5020,7 @@ async function openDashboard() {
 
 // src/providers/codeLensProvider.ts
 var vscode7 = __toESM(require("vscode"));
+var path = __toESM(require("path"));
 var WPipeCodeLensProvider = class {
   async provideCodeLenses(document, token) {
     const lenses = [];
@@ -5045,6 +5058,22 @@ var WPipeCodeLensProvider = class {
                 title: "$(graph) Preview DAG",
                 command: "wpipe-vscode.previewDAG"
               }));
+              const dbMatch = callText.match(/tracking_db\s*=\s*['"](.*?)['"]/);
+              if (dbMatch) {
+                const relativeDbPath = dbMatch[1];
+                let absoluteDbPath = relativeDbPath;
+                if (!path.isAbsolute(relativeDbPath)) {
+                  const workspaceFolder = vscode7.workspace.getWorkspaceFolder(document.uri);
+                  if (workspaceFolder) {
+                    absoluteDbPath = path.join(workspaceFolder.uri.fsPath, relativeDbPath);
+                  }
+                }
+                lenses.push(new vscode7.CodeLens(range, {
+                  title: "$(dashboard) Open Dashboard",
+                  command: "wpipe-vscode.openDashboard",
+                  arguments: [absoluteDbPath]
+                }));
+              }
             }
             if (callText.includes(".set_steps(")) {
               const range = new vscode7.Range(
@@ -5111,7 +5140,7 @@ Click to insert import and usage.`);
 
 // src/wizards/stepWizard.ts
 var vscode9 = __toESM(require("vscode"));
-var path = __toESM(require("path"));
+var path2 = __toESM(require("path"));
 async function createNewStepWizard() {
   const workspaceFolders = vscode9.workspace.workspaceFolders;
   if (!workspaceFolders) {
@@ -5119,7 +5148,7 @@ async function createNewStepWizard() {
     return;
   }
   const rootPath = workspaceFolders[0].uri.fsPath;
-  const statesPath = path.join(rootPath, "states");
+  const statesPath = path2.join(rootPath, "states");
   const stepName = await vscode9.window.showInputBox({
     prompt: "Enter the name of the new step (e.g. DataProcessor)",
     placeHolder: "MyNewStep",
@@ -5132,7 +5161,7 @@ async function createNewStepWizard() {
   if (!stepName) return;
   const formattedStepName = stepName.split(/[_-]/).map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("");
   const fileName = stepName.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase() + ".py";
-  const filePath = path.join(statesPath, fileName);
+  const filePath = path2.join(statesPath, fileName);
   const template = `from wpipe import step, to_obj
 from wpipe.timeout import timeout_sync
 from typing import Any
@@ -5193,7 +5222,7 @@ class ${formattedStepName}:
 }
 
 // src/extension.ts
-var path2 = __toESM(require("path"));
+var path3 = __toESM(require("path"));
 async function activate(context) {
   console.log("\u{1F680} WPipe Tools: Activation started...");
   CatalogManager.init(context);
@@ -5251,7 +5280,7 @@ async function activate(context) {
         vscode10.window.showErrorMessage("Running pipelines requires a local Python environment.");
         return;
       }
-      const terminal = vscode10.window.createTerminal(`Pipeline: ${path2.basename(filePath)}`);
+      const terminal = vscode10.window.createTerminal(`Pipeline: ${path3.basename(filePath)}`);
       terminal.show();
       terminal.sendText(`python "${filePath}"`);
     }),
@@ -5307,7 +5336,7 @@ async function activate(context) {
         vscode10.window.showErrorMessage("Running steps requires a local Python environment.");
         return;
       }
-      const fileName = path2.basename(filePath);
+      const fileName = path3.basename(filePath);
       const terminal = vscode10.window.createTerminal(`Run Step: ${fileName}`);
       terminal.show();
       terminal.sendText(`python "${filePath}"`);

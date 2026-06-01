@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.9.3",
+    "version": "0.9.5",
     "publisher": "wpipe",
     "author": {
         "name": "William Rodriguez (wisrovi)",
