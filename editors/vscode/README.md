@@ -1,5 +1,9 @@
 # 🚀 WPipe VS Code Tools
 
+
+<img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
+
+
 **The Swiss Army Knife for Pipeline Orchestration with WPipe.**
 
 Elevate your Python data engineering with intelligent tools designed to maximize speed, clarity, and resilience. This extension provides a deep, seamless integration of the **WPipe** engine directly into your favorite editor, turning complex orchestration into a visual and intuitive experience.
