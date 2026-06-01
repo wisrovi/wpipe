@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.8.5",
+    "version": "0.8.7",
     "publisher": "wpipe",
     "author": {
         "name": "William Rodriguez (wisrovi)",
@@ -35,6 +35,24 @@
     "main": "./out/extension.js",
     "browser": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "WPipe Tools",
+            "properties": {
+                "wpipe.excludePaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "description": "Additional glob patterns to exclude when searching for workspace steps."
+                },
+                "wpipe.maxSearchFiles": {
+                    "type": "number",
+                    "default": 500,
+                    "description": "Maximum number of files to scan when looking for workspace steps."
+                }
+            }
+        },
         "viewsContainers": {
             "activitybar": [
                 {
@@ -145,18 +163,22 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
+        "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && cp src/steps_catalog.json out/",
+        "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-        "@types/vscode": "^1.75.0",
         "@types/node": "16.x",
-        "typescript": "^4.9.5",
-        "eslint": "^8.34.0",
+        "@types/vscode": "^1.75.0",
         "@typescript-eslint/eslint-plugin": "^5.53.0",
-        "@typescript-eslint/parser": "^5.53.0"
+        "@typescript-eslint/parser": "^5.53.0",
+        "esbuild": "^0.28.0",
+        "eslint": "^8.34.0",
+        "typescript": "^4.9.5"
+    },
+    "dependencies": {
+        "@lezer/python": "^1.1.19"
     }
 }

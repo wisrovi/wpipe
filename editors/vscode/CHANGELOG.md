@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.7] - 2026-06-01
+
+### Added
+- **Parser AST de Nivel Enterprise**: Integrado `@lezer/python` (el motor que usa CodeMirror) para el análisis de los archivos de Python. La búsqueda de pasos ahora comprende la estructura real del código (Abstract Syntax Tree), haciéndola 100% resistente a formateos de código complejos, comentarios multi-línea o cadenas de texto extrañas. ¡Adiós a las expresiones regulares frágiles!
+- **Arquitectura Modular**: Refactorización completa del código base de la extensión (`src/extension.ts`), separando la lógica en un diseño escalable con módulos para Webviews, Proveedores y Servicios, preparando el terreno para futuras herramientas de UI visuales.
+- **Esbuild Bundler**: Migrada la compilación de `tsc` a `esbuild`, resultando en tiempos de build de ~14ms y permitiendo incrustar librerías avanzadas sin romper la compatibilidad web ni aumentar el peso drásticamente.
+
+## [0.8.6] - 2026-06-01
+
+### Added
+- **Configuración de Usuario**: Ahora puedes personalizar las rutas excluidas y el límite de búsqueda desde los ajustes de VS Code (`wpipe.excludePaths` y `wpipe.maxSearchFiles`).
+- **Exclusión de Caché y Builds**: Se ignoran automáticamente directorios de caché (`__pycache__`, `.pytest_cache`, etc.) y carpetas de construcción (`build`, `dist`), mejorando drásticamente la velocidad de escaneo.
+
 ## [0.8.5] - 2026-06-01
 
 ### Fixed

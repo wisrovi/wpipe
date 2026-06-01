@@ -1,912 +1,912 @@
 [
-    {
-        "name": "rss_parser",
-        "func_name": "RSSParserStep",
-        "namespace": "wpipe_steps.connectivity",
-        "repo": "Official",
-        "file": "wpipe_steps/connectivity/rss.py"
-    },
-    {
-        "name": "sftp_transfer",
-        "func_name": "SftpTransferStep",
-        "namespace": "wpipe_steps.connectivity",
-        "repo": "Official",
-        "file": "wpipe_steps/connectivity/sftp.py"
-    },
-    {
-        "name": "webhook_trigger",
-        "func_name": "WebhookTriggerStep",
-        "namespace": "wpipe_steps.connectivity",
-        "repo": "Official",
-        "file": "wpipe_steps/connectivity/webhook.py"
-    },
-    {
-        "name": "oauth2_auth",
-        "func_name": "OAuth2AuthStep",
-        "namespace": "wpipe_steps.connectivity",
-        "repo": "Official",
-        "file": "wpipe_steps/connectivity/oauth2.py"
-    },
-    {
-        "name": "graphql_query",
-        "func_name": "GraphQLQueryStep",
-        "namespace": "wpipe_steps.connectivity",
-        "repo": "Official",
-        "file": "wpipe_steps/connectivity/graphql.py"
-    },
-    {
-        "name": "http_request",
-        "func_name": "HttpRequestStep",
-        "namespace": "wpipe_steps.connectivity",
-        "repo": "Official",
-        "file": "wpipe_steps/connectivity/http.py"
-    },
-    {
-        "name": "excel_parse",
-        "func_name": "ExcelParseStep",
-        "namespace": "wpipe_steps.data",
-        "repo": "Official",
-        "file": "wpipe_steps/data/excel_parse.py"
-    },
-    {
-        "name": "csv_to_json",
-        "func_name": "CsvToJsonStep",
-        "namespace": "wpipe_steps.data",
-        "repo": "Official",
-        "file": "wpipe_steps/data/csv_to_json.py"
-    },
-    {
-        "name": "text_translator",
-        "func_name": "TextTranslatorStep",
-        "namespace": "wpipe_steps.data",
-        "repo": "Official",
-        "file": "wpipe_steps/data/text_translator.py"
-    },
-    {
-        "name": "zip_compressor",
-        "func_name": "ZipCompressorStep",
-        "namespace": "wpipe_steps.data",
-        "repo": "Official",
-        "file": "wpipe_steps/data/zip_compressor.py"
-    },
-    {
-        "name": "pdf_generator",
-        "func_name": "PdfGeneratorStep",
-        "namespace": "wpipe_steps.data",
-        "repo": "Official",
-        "file": "wpipe_steps/data/pdf_generator.py"
-    },
-    {
-        "name": "slack_alert",
-        "func_name": "SlackAlertStep",
-        "namespace": "wpipe_steps.communication",
-        "repo": "Official",
-        "file": "wpipe_steps/communication/slack.py"
-    },
-    {
-        "name": "discord_bot",
-        "func_name": "DiscordBotStep",
-        "namespace": "wpipe_steps.communication",
-        "repo": "Official",
-        "file": "wpipe_steps/communication/discord.py"
-    },
-    {
-        "name": "twitter_post",
-        "func_name": "TwitterPostStep",
-        "namespace": "wpipe_steps.communication",
-        "repo": "Official",
-        "file": "wpipe_steps/communication/twitter.py"
-    },
-    {
-        "name": "sendgrid_email",
-        "func_name": "SendGridMailStep",
-        "namespace": "wpipe_steps.communication",
-        "repo": "Official",
-        "file": "wpipe_steps/communication/sendgrid.py"
-    },
-    {
-        "name": "twilio_sms",
-        "func_name": "TwilioSmsStep",
-        "namespace": "wpipe_steps.communication",
-        "repo": "Official",
-        "file": "wpipe_steps/communication/twilio.py"
-    },
-    {
-        "name": "telegram_notify",
-        "func_name": "TelegramNotifyStep",
-        "namespace": "wpipe_steps.communication",
-        "repo": "Official",
-        "file": "wpipe_steps/communication/telegram.py"
-    },
-    {
-        "name": "kubernetes_pod_check",
-        "func_name": "KubernetesPodCheckStep",
-        "namespace": "wpipe_steps.infrastructure",
-        "repo": "Official",
-        "file": "wpipe_steps/infrastructure/kubernetes.py"
-    },
-    {
-        "name": "docker_container",
-        "func_name": "DockerContainerStep",
-        "namespace": "wpipe_steps.infrastructure",
-        "repo": "Official",
-        "file": "wpipe_steps/infrastructure/docker.py"
-    },
-    {
-        "name": "s3_upload",
-        "func_name": "S3BucketUploadStep",
-        "namespace": "wpipe_steps.infrastructure",
-        "repo": "Official",
-        "file": "wpipe_steps/infrastructure/s3.py"
-    },
-    {
-        "name": "whisper_transcribe",
-        "func_name": "WhisperTranscribeStep",
-        "namespace": "wpipe_steps.multimedia",
-        "repo": "Official",
-        "file": "wpipe_steps/multimedia/whisper_transcribe.py"
-    },
-    {
-        "name": "audio_normalizer",
-        "func_name": "AudioNormalizerStep",
-        "namespace": "wpipe_steps.multimedia",
-        "repo": "Official",
-        "file": "wpipe_steps/multimedia/audio_normalizer.py"
-    },
-    {
-        "name": "tts_generate",
-        "func_name": "TtsGenerateStep",
-        "namespace": "wpipe_steps.multimedia",
-        "repo": "Official",
-        "file": "wpipe_steps/multimedia/tts_generate.py"
-    },
-    {
-        "name": "image_resizer",
-        "func_name": "ImageResizerStep",
-        "namespace": "wpipe_steps.multimedia",
-        "repo": "Official",
-        "file": "wpipe_steps/multimedia/image_resizer.py"
-    },
-    {
-        "name": "video_frame_extract",
-        "func_name": "VideoFrameExtractStep",
-        "namespace": "wpipe_steps.multimedia",
-        "repo": "Official",
-        "file": "wpipe_steps/multimedia/video_frame_extract.py"
-    },
-    {
-        "name": "redis_sortsets_get_score_sync",
-        "func_name": "RedisSortsetsGetScoreSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_score_sync.py"
-    },
-    {
-        "name": "redis_sortsets_increment_score_async",
-        "func_name": "RedisSortsetsIncrementScoreAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/increment_score_async.py"
-    },
-    {
-        "name": "redis_sortsets_delete_async",
-        "func_name": "RedisSortsetsDeleteAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/delete_sorted_set_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_rank_sync",
-        "func_name": "RedisSortsetsGetRankSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_rank_sync.py"
-    },
-    {
-        "name": "redis_sortsets_remove_sync",
-        "func_name": "RedisSortsetsRemoveSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/remove_from_sorted_set_sync.py"
-    },
-    {
-        "name": "redis_sortsets_increment_score_sync",
-        "func_name": "RedisSortsetsIncrementScoreSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/increment_score_sync.py"
-    },
-    {
-        "name": "redis_sortsets_delete_sync",
-        "func_name": "RedisSortsetsDeleteSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/delete_sorted_set_sync.py"
-    },
-    {
-        "name": "redis_sorted_set_get_ttl_async",
-        "func_name": "__call__",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_ttl_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_by_score_sync",
-        "func_name": "RedisSortsetsGetByScoreSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_by_score_sync.py"
-    },
-    {
-        "name": "redis_sortsets_get_reverse_async",
-        "func_name": "RedisSortsetsGetReverseAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_reverse_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_reverse_sync",
-        "func_name": "RedisSortsetsGetReverseSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_reverse_sync.py"
-    },
-    {
-        "name": "redis_sortsets_add_sync",
-        "func_name": "RedisSortsetsAddSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/add_to_sorted_set_sync.py"
-    },
-    {
-        "name": "redis_sortsets_add_async",
-        "func_name": "RedisSortsetsAddAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/add_to_sorted_set_async.py"
-    },
-    {
-        "name": "redis_sortsets_set_ttl_async",
-        "func_name": "RedisSortsetsSetTtlAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/set_ttl_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_async",
-        "func_name": "RedisSortsetsGetAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_score_async",
-        "func_name": "RedisSortsetsGetScoreAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_score_async.py"
-    },
-    {
-        "name": "redis_sortsets_remove_async",
-        "func_name": "RedisSortsetsRemoveAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/remove_from_sorted_set_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_sync",
-        "func_name": "RedisSortsetsGetSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_sync.py"
-    },
-    {
-        "name": "redis_sorted_set_get_ttl_sync",
-        "func_name": "__call__",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_ttl_sync.py"
-    },
-    {
-        "name": "redis_sortsets_set_ttl_sync",
-        "func_name": "RedisSortsetsSetTtlSync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/set_ttl_sync.py"
-    },
-    {
-        "name": "redis_sortsets_get_by_score_async",
-        "func_name": "RedisSortsetsGetByScoreAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_by_score_async.py"
-    },
-    {
-        "name": "redis_sortsets_get_rank_async",
-        "func_name": "RedisSortsetsGetRankAsync",
-        "namespace": "wpipe_steps.database.redis.sortsets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sortsets/get_rank_async.py"
-    },
-    {
-        "name": "redis_queue_publish_sync",
-        "func_name": "RedisQueuePublishSync",
-        "namespace": "wpipe_steps.database.redis.queue",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/queue/publish_sync.py"
-    },
-    {
-        "name": "redis_queue_publish_async",
-        "func_name": "RedisQueuePublishAsync",
-        "namespace": "wpipe_steps.database.redis.queue",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/queue/publish_async.py"
-    },
-    {
-        "name": "redis_queue_get_length_async",
-        "func_name": "RedisQueueGetLengthAsync",
-        "namespace": "wpipe_steps.database.redis.queue",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/queue/get_queue_length_async.py"
-    },
-    {
-        "name": "redis_queue_on_message_sync",
-        "func_name": "RedisQueueOnMessageSync",
-        "namespace": "wpipe_steps.database.redis.queue",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/queue/on_message_sync.py"
-    },
-    {
-        "name": "redis_queue_get_length_sync",
-        "func_name": "RedisQueueGetLengthSync",
-        "namespace": "wpipe_steps.database.redis.queue",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/queue/get_queue_length_sync.py"
-    },
-    {
-        "name": "redis_queue_on_message_async",
-        "func_name": "RedisQueueOnMessageAsync",
-        "namespace": "wpipe_steps.database.redis.queue",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/queue/on_message_async.py"
-    },
-    {
-        "name": "redis_geo_get_distance_async",
-        "func_name": "RedisGeoGetDistanceAsync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/get_distance_async.py"
-    },
-    {
-        "name": "redis_geo_search_nearby_async",
-        "func_name": "RedisGeoSearchNearbyAsync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/search_nearby_async.py"
-    },
-    {
-        "name": "redis_geo_search_nearby_dist_sync",
-        "func_name": "RedisGeoSearchNearbyDistSync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/search_nearby_with_distance_sync.py"
-    },
-    {
-        "name": "redis_geo_search_nearby_dist_async",
-        "func_name": "RedisGeoSearchNearbyDistAsync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/search_nearby_with_distance_async.py"
-    },
-    {
-        "name": "redis_geo_add_sync",
-        "func_name": "RedisGeoAddSync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/add_location_sync.py"
-    },
-    {
-        "name": "redis_geo_get_positions_async",
-        "func_name": "RedisGeoGetPositionsAsync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/get_positions_async.py"
-    },
-    {
-        "name": "redis_geo_get_positions_sync",
-        "func_name": "RedisGeoGetPositionsSync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/get_positions_sync.py"
-    },
-    {
-        "name": "redis_geo_get_distance_sync",
-        "func_name": "RedisGeoGetDistanceSync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/get_distance_sync.py"
-    },
-    {
-        "name": "redis_geo_add_async",
-        "func_name": "RedisGeoAddAsync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/add_location_async.py"
-    },
-    {
-        "name": "redis_geo_search_nearby_sync",
-        "func_name": "RedisGeoSearchNearbySync",
-        "namespace": "wpipe_steps.database.redis.geo",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/geo/search_nearby_sync.py"
-    },
-    {
-        "name": "redis_hll_count_sync",
-        "func_name": "RedisHLLCountSync",
-        "namespace": "wpipe_steps.database.redis.hyperloglog",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hyperloglog/count_sync.py"
-    },
-    {
-        "name": "redis_hll_add_async",
-        "func_name": "RedisHLLAddAsync",
-        "namespace": "wpipe_steps.database.redis.hyperloglog",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hyperloglog/add_async.py"
-    },
-    {
-        "name": "redis_hll_count_async",
-        "func_name": "RedisHLLCountAsync",
-        "namespace": "wpipe_steps.database.redis.hyperloglog",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hyperloglog/count_async.py"
-    },
-    {
-        "name": "redis_hll_add_sync",
-        "func_name": "RedisHLLAddSync",
-        "namespace": "wpipe_steps.database.redis.hyperloglog",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hyperloglog/add_sync.py"
-    },
-    {
-        "name": "redis_transaction_execute_sync",
-        "func_name": "RedisTransactionExecuteSync",
-        "namespace": "wpipe_steps.database.redis.transactions",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/transactions/execute_transaction_sync.py"
-    },
-    {
-        "name": "redis_transaction_execute_async",
-        "func_name": "RedisTransactionExecuteAsync",
-        "namespace": "wpipe_steps.database.redis.transactions",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/transactions/execute_transaction_async.py"
-    },
-    {
-        "name": "redis_set_is_member_async",
-        "func_name": "RedisSetIsMemberAsync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/is_member_async.py"
-    },
-    {
-        "name": "redis_set_get_members_async",
-        "func_name": "RedisSetGetMembersAsync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/get_set_members_async.py"
-    },
-    {
-        "name": "redis_set_get_ttl_async",
-        "func_name": "RedisSetGetTtlAsync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/get_ttl_async.py"
-    },
-    {
-        "name": "redis_set_add_async",
-        "func_name": "RedisSetAddAsync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/add_to_set_async.py"
-    },
-    {
-        "name": "redis_set_add_sync",
-        "func_name": "RedisSetAddSync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/add_to_set_sync.py"
-    },
-    {
-        "name": "redis_set_is_member_sync",
-        "func_name": "RedisSetIsMemberSync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/is_member_sync.py"
-    },
-    {
-        "name": "redis_set_extend_ttl_sync",
-        "func_name": "RedisSetExtendTtlSync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/extend_ttl_sync.py"
-    },
-    {
-        "name": "redis_set_get_members_sync",
-        "func_name": "RedisSetGetMembersSync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/get_set_members_sync.py"
-    },
-    {
-        "name": "redis_set_extend_ttl_async",
-        "func_name": "RedisSetExtendTtlAsync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/extend_ttl_async.py"
-    },
-    {
-        "name": "redis_set_remove_sync",
-        "func_name": "RedisSetRemoveSync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/remove_from_set_sync.py"
-    },
-    {
-        "name": "redis_set_get_ttl_sync",
-        "func_name": "RedisSetGetTtlSync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/get_ttl_sync.py"
-    },
-    {
-        "name": "redis_set_remove_async",
-        "func_name": "RedisSetRemoveAsync",
-        "namespace": "wpipe_steps.database.redis.sets",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/sets/remove_from_set_async.py"
-    },
-    {
-        "name": "redis_stream_on_message_sync",
-        "func_name": "RedisStreamOnMessageSync",
-        "namespace": "wpipe_steps.database.redis.streams",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/streams/on_message_sync.py"
-    },
-    {
-        "name": "redis_stream_add_sync",
-        "func_name": "RedisStreamAddSync",
-        "namespace": "wpipe_steps.database.redis.streams",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/streams/add_to_stream_sync.py"
-    },
-    {
-        "name": "redis_stream_add_async",
-        "func_name": "RedisStreamAddAsync",
-        "namespace": "wpipe_steps.database.redis.streams",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/streams/add_to_stream_async.py"
-    },
-    {
-        "name": "redis_stream_on_message_async",
-        "func_name": "RedisStreamOnMessageAsync",
-        "namespace": "wpipe_steps.database.redis.streams",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/streams/on_message_async.py"
-    },
-    {
-        "name": "redis_stream_read_async",
-        "func_name": "RedisStreamReadAsync",
-        "namespace": "wpipe_steps.database.redis.streams",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/streams/read_from_stream_async.py"
-    },
-    {
-        "name": "redis_stream_read_sync",
-        "func_name": "RedisStreamReadSync",
-        "namespace": "wpipe_steps.database.redis.streams",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/streams/read_from_stream_sync.py"
-    },
-    {
-        "name": "redis_pubsub_publish_async",
-        "func_name": "RedisPubsubPublishAsync",
-        "namespace": "wpipe_steps.database.redis.pubsub",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/pubsub/publish_message_async.py"
-    },
-    {
-        "name": "redis_pubsub_on_message_sync",
-        "func_name": "RedisPubsubOnMessageSync",
-        "namespace": "wpipe_steps.database.redis.pubsub",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/pubsub/on_message_sync.py"
-    },
-    {
-        "name": "redis_pubsub_on_message_async",
-        "func_name": "RedisPubsubOnMessageAsync",
-        "namespace": "wpipe_steps.database.redis.pubsub",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/pubsub/on_message_async.py"
-    },
-    {
-        "name": "redis_pubsub_publish_sync",
-        "func_name": "RedisPubsubPublishSync",
-        "namespace": "wpipe_steps.database.redis.pubsub",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/pubsub/publish_message_sync.py"
-    },
-    {
-        "name": "redis_pipeline_execute_async",
-        "func_name": "RedisPipelineExecuteAsync",
-        "namespace": "wpipe_steps.database.redis.pipeline",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/pipeline/execute_pipeline_async.py"
-    },
-    {
-        "name": "redis_pipeline_execute_sync",
-        "func_name": "RedisPipelineExecuteSync",
-        "namespace": "wpipe_steps.database.redis.pipeline",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/pipeline/execute_pipeline_sync.py"
-    },
-    {
-        "name": "redis_bitmap_count_bits_async",
-        "func_name": "RedisBitmapCountBitsAsync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/count_bits_async.py"
-    },
-    {
-        "name": "redis_bitmap_get_bit_sync",
-        "func_name": "RedisBitmapGetBitSync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/get_bit_sync.py"
-    },
-    {
-        "name": "redis_bitmap_get_ttl_async",
-        "func_name": "RedisBitmapGetTtlAsync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/get_ttl_async.py"
-    },
-    {
-        "name": "redis_bitmap_count_bits_sync",
-        "func_name": "RedisBitmapCountBitsSync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/count_bits_sync.py"
-    },
-    {
-        "name": "redis_bitmap_get_bit_async",
-        "func_name": "RedisBitmapGetBitAsync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/get_bit_async.py"
-    },
-    {
-        "name": "redis_bitmap_extend_ttl_sync",
-        "func_name": "RedisBitmapExtendTtlSync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/extend_ttl_sync.py"
-    },
-    {
-        "name": "redis_bitmap_set_bit_sync",
-        "func_name": "RedisBitmapSetBitSync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/set_bit_sync.py"
-    },
-    {
-        "name": "redis_bitmap_extend_ttl_async",
-        "func_name": "RedisBitmapExtendTtlAsync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/extend_ttl_async.py"
-    },
-    {
-        "name": "redis_bitmap_get_ttl_sync",
-        "func_name": "RedisBitmapGetTtlSync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/get_ttl_sync.py"
-    },
-    {
-        "name": "redis_bitmap_set_bit_async",
-        "func_name": "RedisBitmapSetBitAsync",
-        "namespace": "wpipe_steps.database.redis.bitmaps",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/bitmaps/set_bit_async.py"
-    },
-    {
-        "name": "redis_hash_read_all_async",
-        "func_name": "RedisHashReadAllAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/read_all_hash_async.py"
-    },
-    {
-        "name": "redis_hash_create_async",
-        "func_name": "RedisHashCreateAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/create_hash_async.py"
-    },
-    {
-        "name": "redis_hash_update_async",
-        "func_name": "RedisHashUpdateAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/update_hash_async.py"
-    },
-    {
-        "name": "redis_hash_read_all_sync",
-        "func_name": "RedisHashReadAllSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/read_all_hash_sync.py"
-    },
-    {
-        "name": "redis_hash_create_sync",
-        "func_name": "RedisHashCreateSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/create_hash_sync.py"
-    },
-    {
-        "name": "redis_hash_get_ttl_async",
-        "func_name": "RedisHashGetTtlAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/get_ttl_async.py"
-    },
-    {
-        "name": "redis_hash_update_sync",
-        "func_name": "RedisHashUpdateSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/update_hash_sync.py"
-    },
-    {
-        "name": "redis_hash_delete_sync",
-        "func_name": "RedisHashDeleteSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/delete_hash_field_sync.py"
-    },
-    {
-        "name": "redis_hash_extend_ttl_sync",
-        "func_name": "RedisHashExtendTtlSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/extend_ttl_sync.py"
-    },
-    {
-        "name": "redis_hash_extend_ttl_async",
-        "func_name": "RedisHashExtendTtlAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/extend_ttl_async.py"
-    },
-    {
-        "name": "redis_hash_get_ttl_sync",
-        "func_name": "RedisHashGetTtlSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/get_ttl_sync.py"
-    },
-    {
-        "name": "redis_hash_read_async",
-        "func_name": "RedisHashReadAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/read_hash_async.py"
-    },
-    {
-        "name": "redis_hash_read_sync",
-        "func_name": "RedisHashReadSync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/read_hash_sync.py"
-    },
-    {
-        "name": "redis_hash_delete_async",
-        "func_name": "RedisHashDeleteAsync",
-        "namespace": "wpipe_steps.database.redis.hash",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/hash/delete_hash_field_async.py"
-    },
-    {
-        "name": "redis_retry_decorator_sync",
-        "func_name": "RedisRetryDecoratorSync",
-        "namespace": "wpipe_steps.database.redis.cache",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/cache/retry_decorator_sync.py"
-    },
-    {
-        "name": "redis_cache_decorator_sync",
-        "func_name": "RedisCacheDecoratorSync",
-        "namespace": "wpipe_steps.database.redis.cache",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/cache/cache_decorator_sync.py"
-    },
-    {
-        "name": "redis_async_cache_decorator",
-        "func_name": "RedisAsyncCacheDecorator",
-        "namespace": "wpipe_steps.database.redis.cache",
-        "repo": "Official",
-        "file": "wpipe_steps/database/redis/cache/async_cache_decorator.py"
-    },
-    {
-        "name": "huggingface_inference",
-        "func_name": "HuggingFaceInferenceStep",
-        "namespace": "wpipe_steps.ai",
-        "repo": "Official",
-        "file": "wpipe_steps/ai/huggingface_inference.py"
-    },
-    {
-        "name": "openai_prompt",
-        "func_name": "OpenAiPromptStep",
-        "namespace": "wpipe_steps.ai",
-        "repo": "Official",
-        "file": "wpipe_steps/ai/openai_prompt.py"
-    },
-    {
-        "name": "sentiment_analysis",
-        "func_name": "SentimentAnalysisStep",
-        "namespace": "wpipe_steps.ai",
-        "repo": "Official",
-        "file": "wpipe_steps/ai/sentiment_analysis.py"
-    },
-    {
-        "name": "LoadYaml",
-        "func_name": "LoadYaml",
-        "namespace": "wpipe_steps.utils",
-        "repo": "Official",
-        "file": "wpipe_steps/utils/read_yaml.py"
-    },
-    {
-        "name": "waf_filter",
-        "func_name": "WafFilterStep",
-        "namespace": "wpipe_steps.security",
-        "repo": "Official",
-        "file": "wpipe_steps/security/waf.py"
-    },
-    {
-        "name": "fail2ban_check",
-        "func_name": "Fail2BanCheckStep",
-        "namespace": "wpipe_steps.security",
-        "repo": "Official",
-        "file": "wpipe_steps/security/fail2ban.py"
-    },
-    {
-        "name": "shodan_search",
-        "func_name": "ShodanSearchStep",
-        "namespace": "wpipe_steps.security",
-        "repo": "Official",
-        "file": "wpipe_steps/security/shodan.py"
-    },
-    {
-        "name": "hash_generator",
-        "func_name": "HashGeneratorStep",
-        "namespace": "wpipe_steps.security",
-        "repo": "Official",
-        "file": "wpipe_steps/security/hash.py"
-    },
-    {
-        "name": "vault_secrets",
-        "func_name": "VaultSecretsStep",
-        "namespace": "wpipe_steps.security",
-        "repo": "Official",
-        "file": "wpipe_steps/security/vault.py"
-    },
-    {
-        "name": "nmap_scan",
-        "func_name": "NmapScanStep",
-        "namespace": "wpipe_steps.security",
-        "repo": "Official",
-        "file": "wpipe_steps/security/nmap.py"
-    }
+  {
+    "name": "rss_parser",
+    "func_name": "RSSParserStep",
+    "namespace": "wpipe_steps.connectivity",
+    "repo": "Official",
+    "file": "wpipe_steps/connectivity/rss.py"
+  },
+  {
+    "name": "sftp_transfer",
+    "func_name": "SftpTransferStep",
+    "namespace": "wpipe_steps.connectivity",
+    "repo": "Official",
+    "file": "wpipe_steps/connectivity/sftp.py"
+  },
+  {
+    "name": "webhook_trigger",
+    "func_name": "WebhookTriggerStep",
+    "namespace": "wpipe_steps.connectivity",
+    "repo": "Official",
+    "file": "wpipe_steps/connectivity/webhook.py"
+  },
+  {
+    "name": "oauth2_auth",
+    "func_name": "OAuth2AuthStep",
+    "namespace": "wpipe_steps.connectivity",
+    "repo": "Official",
+    "file": "wpipe_steps/connectivity/oauth2.py"
+  },
+  {
+    "name": "graphql_query",
+    "func_name": "GraphQLQueryStep",
+    "namespace": "wpipe_steps.connectivity",
+    "repo": "Official",
+    "file": "wpipe_steps/connectivity/graphql.py"
+  },
+  {
+    "name": "http_request",
+    "func_name": "HttpRequestStep",
+    "namespace": "wpipe_steps.connectivity",
+    "repo": "Official",
+    "file": "wpipe_steps/connectivity/http.py"
+  },
+  {
+    "name": "excel_parse",
+    "func_name": "ExcelParseStep",
+    "namespace": "wpipe_steps.data",
+    "repo": "Official",
+    "file": "wpipe_steps/data/excel_parse.py"
+  },
+  {
+    "name": "csv_to_json",
+    "func_name": "CsvToJsonStep",
+    "namespace": "wpipe_steps.data",
+    "repo": "Official",
+    "file": "wpipe_steps/data/csv_to_json.py"
+  },
+  {
+    "name": "text_translator",
+    "func_name": "TextTranslatorStep",
+    "namespace": "wpipe_steps.data",
+    "repo": "Official",
+    "file": "wpipe_steps/data/text_translator.py"
+  },
+  {
+    "name": "zip_compressor",
+    "func_name": "ZipCompressorStep",
+    "namespace": "wpipe_steps.data",
+    "repo": "Official",
+    "file": "wpipe_steps/data/zip_compressor.py"
+  },
+  {
+    "name": "pdf_generator",
+    "func_name": "PdfGeneratorStep",
+    "namespace": "wpipe_steps.data",
+    "repo": "Official",
+    "file": "wpipe_steps/data/pdf_generator.py"
+  },
+  {
+    "name": "slack_alert",
+    "func_name": "SlackAlertStep",
+    "namespace": "wpipe_steps.communication",
+    "repo": "Official",
+    "file": "wpipe_steps/communication/slack.py"
+  },
+  {
+    "name": "discord_bot",
+    "func_name": "DiscordBotStep",
+    "namespace": "wpipe_steps.communication",
+    "repo": "Official",
+    "file": "wpipe_steps/communication/discord.py"
+  },
+  {
+    "name": "twitter_post",
+    "func_name": "TwitterPostStep",
+    "namespace": "wpipe_steps.communication",
+    "repo": "Official",
+    "file": "wpipe_steps/communication/twitter.py"
+  },
+  {
+    "name": "sendgrid_email",
+    "func_name": "SendGridMailStep",
+    "namespace": "wpipe_steps.communication",
+    "repo": "Official",
+    "file": "wpipe_steps/communication/sendgrid.py"
+  },
+  {
+    "name": "twilio_sms",
+    "func_name": "TwilioSmsStep",
+    "namespace": "wpipe_steps.communication",
+    "repo": "Official",
+    "file": "wpipe_steps/communication/twilio.py"
+  },
+  {
+    "name": "telegram_notify",
+    "func_name": "TelegramNotifyStep",
+    "namespace": "wpipe_steps.communication",
+    "repo": "Official",
+    "file": "wpipe_steps/communication/telegram.py"
+  },
+  {
+    "name": "kubernetes_pod_check",
+    "func_name": "KubernetesPodCheckStep",
+    "namespace": "wpipe_steps.infrastructure",
+    "repo": "Official",
+    "file": "wpipe_steps/infrastructure/kubernetes.py"
+  },
+  {
+    "name": "docker_container",
+    "func_name": "DockerContainerStep",
+    "namespace": "wpipe_steps.infrastructure",
+    "repo": "Official",
+    "file": "wpipe_steps/infrastructure/docker.py"
+  },
+  {
+    "name": "s3_upload",
+    "func_name": "S3BucketUploadStep",
+    "namespace": "wpipe_steps.infrastructure",
+    "repo": "Official",
+    "file": "wpipe_steps/infrastructure/s3.py"
+  },
+  {
+    "name": "whisper_transcribe",
+    "func_name": "WhisperTranscribeStep",
+    "namespace": "wpipe_steps.multimedia",
+    "repo": "Official",
+    "file": "wpipe_steps/multimedia/whisper_transcribe.py"
+  },
+  {
+    "name": "audio_normalizer",
+    "func_name": "AudioNormalizerStep",
+    "namespace": "wpipe_steps.multimedia",
+    "repo": "Official",
+    "file": "wpipe_steps/multimedia/audio_normalizer.py"
+  },
+  {
+    "name": "tts_generate",
+    "func_name": "TtsGenerateStep",
+    "namespace": "wpipe_steps.multimedia",
+    "repo": "Official",
+    "file": "wpipe_steps/multimedia/tts_generate.py"
+  },
+  {
+    "name": "image_resizer",
+    "func_name": "ImageResizerStep",
+    "namespace": "wpipe_steps.multimedia",
+    "repo": "Official",
+    "file": "wpipe_steps/multimedia/image_resizer.py"
+  },
+  {
+    "name": "video_frame_extract",
+    "func_name": "VideoFrameExtractStep",
+    "namespace": "wpipe_steps.multimedia",
+    "repo": "Official",
+    "file": "wpipe_steps/multimedia/video_frame_extract.py"
+  },
+  {
+    "name": "redis_sortsets_get_score_sync",
+    "func_name": "RedisSortsetsGetScoreSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_score_sync.py"
+  },
+  {
+    "name": "redis_sortsets_increment_score_async",
+    "func_name": "RedisSortsetsIncrementScoreAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/increment_score_async.py"
+  },
+  {
+    "name": "redis_sortsets_delete_async",
+    "func_name": "RedisSortsetsDeleteAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/delete_sorted_set_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_rank_sync",
+    "func_name": "RedisSortsetsGetRankSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_rank_sync.py"
+  },
+  {
+    "name": "redis_sortsets_remove_sync",
+    "func_name": "RedisSortsetsRemoveSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/remove_from_sorted_set_sync.py"
+  },
+  {
+    "name": "redis_sortsets_increment_score_sync",
+    "func_name": "RedisSortsetsIncrementScoreSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/increment_score_sync.py"
+  },
+  {
+    "name": "redis_sortsets_delete_sync",
+    "func_name": "RedisSortsetsDeleteSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/delete_sorted_set_sync.py"
+  },
+  {
+    "name": "redis_sorted_set_get_ttl_async",
+    "func_name": "__call__",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_ttl_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_by_score_sync",
+    "func_name": "RedisSortsetsGetByScoreSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_by_score_sync.py"
+  },
+  {
+    "name": "redis_sortsets_get_reverse_async",
+    "func_name": "RedisSortsetsGetReverseAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_reverse_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_reverse_sync",
+    "func_name": "RedisSortsetsGetReverseSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_reverse_sync.py"
+  },
+  {
+    "name": "redis_sortsets_add_sync",
+    "func_name": "RedisSortsetsAddSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/add_to_sorted_set_sync.py"
+  },
+  {
+    "name": "redis_sortsets_add_async",
+    "func_name": "RedisSortsetsAddAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/add_to_sorted_set_async.py"
+  },
+  {
+    "name": "redis_sortsets_set_ttl_async",
+    "func_name": "RedisSortsetsSetTtlAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/set_ttl_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_async",
+    "func_name": "RedisSortsetsGetAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_score_async",
+    "func_name": "RedisSortsetsGetScoreAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_score_async.py"
+  },
+  {
+    "name": "redis_sortsets_remove_async",
+    "func_name": "RedisSortsetsRemoveAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/remove_from_sorted_set_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_sync",
+    "func_name": "RedisSortsetsGetSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_sync.py"
+  },
+  {
+    "name": "redis_sorted_set_get_ttl_sync",
+    "func_name": "__call__",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_ttl_sync.py"
+  },
+  {
+    "name": "redis_sortsets_set_ttl_sync",
+    "func_name": "RedisSortsetsSetTtlSync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/set_ttl_sync.py"
+  },
+  {
+    "name": "redis_sortsets_get_by_score_async",
+    "func_name": "RedisSortsetsGetByScoreAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_sorted_set_by_score_async.py"
+  },
+  {
+    "name": "redis_sortsets_get_rank_async",
+    "func_name": "RedisSortsetsGetRankAsync",
+    "namespace": "wpipe_steps.database.redis.sortsets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sortsets/get_rank_async.py"
+  },
+  {
+    "name": "redis_queue_publish_sync",
+    "func_name": "RedisQueuePublishSync",
+    "namespace": "wpipe_steps.database.redis.queue",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/queue/publish_sync.py"
+  },
+  {
+    "name": "redis_queue_publish_async",
+    "func_name": "RedisQueuePublishAsync",
+    "namespace": "wpipe_steps.database.redis.queue",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/queue/publish_async.py"
+  },
+  {
+    "name": "redis_queue_get_length_async",
+    "func_name": "RedisQueueGetLengthAsync",
+    "namespace": "wpipe_steps.database.redis.queue",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/queue/get_queue_length_async.py"
+  },
+  {
+    "name": "redis_queue_on_message_sync",
+    "func_name": "RedisQueueOnMessageSync",
+    "namespace": "wpipe_steps.database.redis.queue",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/queue/on_message_sync.py"
+  },
+  {
+    "name": "redis_queue_get_length_sync",
+    "func_name": "RedisQueueGetLengthSync",
+    "namespace": "wpipe_steps.database.redis.queue",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/queue/get_queue_length_sync.py"
+  },
+  {
+    "name": "redis_queue_on_message_async",
+    "func_name": "RedisQueueOnMessageAsync",
+    "namespace": "wpipe_steps.database.redis.queue",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/queue/on_message_async.py"
+  },
+  {
+    "name": "redis_geo_get_distance_async",
+    "func_name": "RedisGeoGetDistanceAsync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/get_distance_async.py"
+  },
+  {
+    "name": "redis_geo_search_nearby_async",
+    "func_name": "RedisGeoSearchNearbyAsync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/search_nearby_async.py"
+  },
+  {
+    "name": "redis_geo_search_nearby_dist_sync",
+    "func_name": "RedisGeoSearchNearbyDistSync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/search_nearby_with_distance_sync.py"
+  },
+  {
+    "name": "redis_geo_search_nearby_dist_async",
+    "func_name": "RedisGeoSearchNearbyDistAsync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/search_nearby_with_distance_async.py"
+  },
+  {
+    "name": "redis_geo_add_sync",
+    "func_name": "RedisGeoAddSync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/add_location_sync.py"
+  },
+  {
+    "name": "redis_geo_get_positions_async",
+    "func_name": "RedisGeoGetPositionsAsync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/get_positions_async.py"
+  },
+  {
+    "name": "redis_geo_get_positions_sync",
+    "func_name": "RedisGeoGetPositionsSync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/get_positions_sync.py"
+  },
+  {
+    "name": "redis_geo_get_distance_sync",
+    "func_name": "RedisGeoGetDistanceSync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/get_distance_sync.py"
+  },
+  {
+    "name": "redis_geo_add_async",
+    "func_name": "RedisGeoAddAsync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/add_location_async.py"
+  },
+  {
+    "name": "redis_geo_search_nearby_sync",
+    "func_name": "RedisGeoSearchNearbySync",
+    "namespace": "wpipe_steps.database.redis.geo",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/geo/search_nearby_sync.py"
+  },
+  {
+    "name": "redis_hll_count_sync",
+    "func_name": "RedisHLLCountSync",
+    "namespace": "wpipe_steps.database.redis.hyperloglog",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hyperloglog/count_sync.py"
+  },
+  {
+    "name": "redis_hll_add_async",
+    "func_name": "RedisHLLAddAsync",
+    "namespace": "wpipe_steps.database.redis.hyperloglog",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hyperloglog/add_async.py"
+  },
+  {
+    "name": "redis_hll_count_async",
+    "func_name": "RedisHLLCountAsync",
+    "namespace": "wpipe_steps.database.redis.hyperloglog",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hyperloglog/count_async.py"
+  },
+  {
+    "name": "redis_hll_add_sync",
+    "func_name": "RedisHLLAddSync",
+    "namespace": "wpipe_steps.database.redis.hyperloglog",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hyperloglog/add_sync.py"
+  },
+  {
+    "name": "redis_transaction_execute_sync",
+    "func_name": "RedisTransactionExecuteSync",
+    "namespace": "wpipe_steps.database.redis.transactions",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/transactions/execute_transaction_sync.py"
+  },
+  {
+    "name": "redis_transaction_execute_async",
+    "func_name": "RedisTransactionExecuteAsync",
+    "namespace": "wpipe_steps.database.redis.transactions",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/transactions/execute_transaction_async.py"
+  },
+  {
+    "name": "redis_set_is_member_async",
+    "func_name": "RedisSetIsMemberAsync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/is_member_async.py"
+  },
+  {
+    "name": "redis_set_get_members_async",
+    "func_name": "RedisSetGetMembersAsync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/get_set_members_async.py"
+  },
+  {
+    "name": "redis_set_get_ttl_async",
+    "func_name": "RedisSetGetTtlAsync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/get_ttl_async.py"
+  },
+  {
+    "name": "redis_set_add_async",
+    "func_name": "RedisSetAddAsync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/add_to_set_async.py"
+  },
+  {
+    "name": "redis_set_add_sync",
+    "func_name": "RedisSetAddSync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/add_to_set_sync.py"
+  },
+  {
+    "name": "redis_set_is_member_sync",
+    "func_name": "RedisSetIsMemberSync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/is_member_sync.py"
+  },
+  {
+    "name": "redis_set_extend_ttl_sync",
+    "func_name": "RedisSetExtendTtlSync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/extend_ttl_sync.py"
+  },
+  {
+    "name": "redis_set_get_members_sync",
+    "func_name": "RedisSetGetMembersSync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/get_set_members_sync.py"
+  },
+  {
+    "name": "redis_set_extend_ttl_async",
+    "func_name": "RedisSetExtendTtlAsync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/extend_ttl_async.py"
+  },
+  {
+    "name": "redis_set_remove_sync",
+    "func_name": "RedisSetRemoveSync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/remove_from_set_sync.py"
+  },
+  {
+    "name": "redis_set_get_ttl_sync",
+    "func_name": "RedisSetGetTtlSync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/get_ttl_sync.py"
+  },
+  {
+    "name": "redis_set_remove_async",
+    "func_name": "RedisSetRemoveAsync",
+    "namespace": "wpipe_steps.database.redis.sets",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/sets/remove_from_set_async.py"
+  },
+  {
+    "name": "redis_stream_on_message_sync",
+    "func_name": "RedisStreamOnMessageSync",
+    "namespace": "wpipe_steps.database.redis.streams",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/streams/on_message_sync.py"
+  },
+  {
+    "name": "redis_stream_add_sync",
+    "func_name": "RedisStreamAddSync",
+    "namespace": "wpipe_steps.database.redis.streams",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/streams/add_to_stream_sync.py"
+  },
+  {
+    "name": "redis_stream_add_async",
+    "func_name": "RedisStreamAddAsync",
+    "namespace": "wpipe_steps.database.redis.streams",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/streams/add_to_stream_async.py"
+  },
+  {
+    "name": "redis_stream_on_message_async",
+    "func_name": "RedisStreamOnMessageAsync",
+    "namespace": "wpipe_steps.database.redis.streams",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/streams/on_message_async.py"
+  },
+  {
+    "name": "redis_stream_read_async",
+    "func_name": "RedisStreamReadAsync",
+    "namespace": "wpipe_steps.database.redis.streams",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/streams/read_from_stream_async.py"
+  },
+  {
+    "name": "redis_stream_read_sync",
+    "func_name": "RedisStreamReadSync",
+    "namespace": "wpipe_steps.database.redis.streams",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/streams/read_from_stream_sync.py"
+  },
+  {
+    "name": "redis_pubsub_publish_async",
+    "func_name": "RedisPubsubPublishAsync",
+    "namespace": "wpipe_steps.database.redis.pubsub",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/pubsub/publish_message_async.py"
+  },
+  {
+    "name": "redis_pubsub_on_message_sync",
+    "func_name": "RedisPubsubOnMessageSync",
+    "namespace": "wpipe_steps.database.redis.pubsub",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/pubsub/on_message_sync.py"
+  },
+  {
+    "name": "redis_pubsub_on_message_async",
+    "func_name": "RedisPubsubOnMessageAsync",
+    "namespace": "wpipe_steps.database.redis.pubsub",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/pubsub/on_message_async.py"
+  },
+  {
+    "name": "redis_pubsub_publish_sync",
+    "func_name": "RedisPubsubPublishSync",
+    "namespace": "wpipe_steps.database.redis.pubsub",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/pubsub/publish_message_sync.py"
+  },
+  {
+    "name": "redis_pipeline_execute_async",
+    "func_name": "RedisPipelineExecuteAsync",
+    "namespace": "wpipe_steps.database.redis.pipeline",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/pipeline/execute_pipeline_async.py"
+  },
+  {
+    "name": "redis_pipeline_execute_sync",
+    "func_name": "RedisPipelineExecuteSync",
+    "namespace": "wpipe_steps.database.redis.pipeline",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/pipeline/execute_pipeline_sync.py"
+  },
+  {
+    "name": "redis_bitmap_count_bits_async",
+    "func_name": "RedisBitmapCountBitsAsync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/count_bits_async.py"
+  },
+  {
+    "name": "redis_bitmap_get_bit_sync",
+    "func_name": "RedisBitmapGetBitSync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/get_bit_sync.py"
+  },
+  {
+    "name": "redis_bitmap_get_ttl_async",
+    "func_name": "RedisBitmapGetTtlAsync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/get_ttl_async.py"
+  },
+  {
+    "name": "redis_bitmap_count_bits_sync",
+    "func_name": "RedisBitmapCountBitsSync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/count_bits_sync.py"
+  },
+  {
+    "name": "redis_bitmap_get_bit_async",
+    "func_name": "RedisBitmapGetBitAsync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/get_bit_async.py"
+  },
+  {
+    "name": "redis_bitmap_extend_ttl_sync",
+    "func_name": "RedisBitmapExtendTtlSync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/extend_ttl_sync.py"
+  },
+  {
+    "name": "redis_bitmap_set_bit_sync",
+    "func_name": "RedisBitmapSetBitSync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/set_bit_sync.py"
+  },
+  {
+    "name": "redis_bitmap_extend_ttl_async",
+    "func_name": "RedisBitmapExtendTtlAsync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/extend_ttl_async.py"
+  },
+  {
+    "name": "redis_bitmap_get_ttl_sync",
+    "func_name": "RedisBitmapGetTtlSync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/get_ttl_sync.py"
+  },
+  {
+    "name": "redis_bitmap_set_bit_async",
+    "func_name": "RedisBitmapSetBitAsync",
+    "namespace": "wpipe_steps.database.redis.bitmaps",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/bitmaps/set_bit_async.py"
+  },
+  {
+    "name": "redis_hash_read_all_async",
+    "func_name": "RedisHashReadAllAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/read_all_hash_async.py"
+  },
+  {
+    "name": "redis_hash_create_async",
+    "func_name": "RedisHashCreateAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/create_hash_async.py"
+  },
+  {
+    "name": "redis_hash_update_async",
+    "func_name": "RedisHashUpdateAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/update_hash_async.py"
+  },
+  {
+    "name": "redis_hash_read_all_sync",
+    "func_name": "RedisHashReadAllSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/read_all_hash_sync.py"
+  },
+  {
+    "name": "redis_hash_create_sync",
+    "func_name": "RedisHashCreateSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/create_hash_sync.py"
+  },
+  {
+    "name": "redis_hash_get_ttl_async",
+    "func_name": "RedisHashGetTtlAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/get_ttl_async.py"
+  },
+  {
+    "name": "redis_hash_update_sync",
+    "func_name": "RedisHashUpdateSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/update_hash_sync.py"
+  },
+  {
+    "name": "redis_hash_delete_sync",
+    "func_name": "RedisHashDeleteSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/delete_hash_field_sync.py"
+  },
+  {
+    "name": "redis_hash_extend_ttl_sync",
+    "func_name": "RedisHashExtendTtlSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/extend_ttl_sync.py"
+  },
+  {
+    "name": "redis_hash_extend_ttl_async",
+    "func_name": "RedisHashExtendTtlAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/extend_ttl_async.py"
+  },
+  {
+    "name": "redis_hash_get_ttl_sync",
+    "func_name": "RedisHashGetTtlSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/get_ttl_sync.py"
+  },
+  {
+    "name": "redis_hash_read_async",
+    "func_name": "RedisHashReadAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/read_hash_async.py"
+  },
+  {
+    "name": "redis_hash_read_sync",
+    "func_name": "RedisHashReadSync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/read_hash_sync.py"
+  },
+  {
+    "name": "redis_hash_delete_async",
+    "func_name": "RedisHashDeleteAsync",
+    "namespace": "wpipe_steps.database.redis.hash",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/hash/delete_hash_field_async.py"
+  },
+  {
+    "name": "redis_retry_decorator_sync",
+    "func_name": "RedisRetryDecoratorSync",
+    "namespace": "wpipe_steps.database.redis.cache",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/cache/retry_decorator_sync.py"
+  },
+  {
+    "name": "redis_cache_decorator_sync",
+    "func_name": "RedisCacheDecoratorSync",
+    "namespace": "wpipe_steps.database.redis.cache",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/cache/cache_decorator_sync.py"
+  },
+  {
+    "name": "redis_async_cache_decorator",
+    "func_name": "RedisAsyncCacheDecorator",
+    "namespace": "wpipe_steps.database.redis.cache",
+    "repo": "Official",
+    "file": "wpipe_steps/database/redis/cache/async_cache_decorator.py"
+  },
+  {
+    "name": "huggingface_inference",
+    "func_name": "HuggingFaceInferenceStep",
+    "namespace": "wpipe_steps.ai",
+    "repo": "Official",
+    "file": "wpipe_steps/ai/huggingface_inference.py"
+  },
+  {
+    "name": "openai_prompt",
+    "func_name": "OpenAiPromptStep",
+    "namespace": "wpipe_steps.ai",
+    "repo": "Official",
+    "file": "wpipe_steps/ai/openai_prompt.py"
+  },
+  {
+    "name": "sentiment_analysis",
+    "func_name": "SentimentAnalysisStep",
+    "namespace": "wpipe_steps.ai",
+    "repo": "Official",
+    "file": "wpipe_steps/ai/sentiment_analysis.py"
+  },
+  {
+    "name": "LoadYaml",
+    "func_name": "LoadYaml",
+    "namespace": "wpipe_steps.utils",
+    "repo": "Official",
+    "file": "wpipe_steps/utils/read_yaml.py"
+  },
+  {
+    "name": "waf_filter",
+    "func_name": "WafFilterStep",
+    "namespace": "wpipe_steps.security",
+    "repo": "Official",
+    "file": "wpipe_steps/security/waf.py"
+  },
+  {
+    "name": "fail2ban_check",
+    "func_name": "Fail2BanCheckStep",
+    "namespace": "wpipe_steps.security",
+    "repo": "Official",
+    "file": "wpipe_steps/security/fail2ban.py"
+  },
+  {
+    "name": "shodan_search",
+    "func_name": "ShodanSearchStep",
+    "namespace": "wpipe_steps.security",
+    "repo": "Official",
+    "file": "wpipe_steps/security/shodan.py"
+  },
+  {
+    "name": "hash_generator",
+    "func_name": "HashGeneratorStep",
+    "namespace": "wpipe_steps.security",
+    "repo": "Official",
+    "file": "wpipe_steps/security/hash.py"
+  },
+  {
+    "name": "vault_secrets",
+    "func_name": "VaultSecretsStep",
+    "namespace": "wpipe_steps.security",
+    "repo": "Official",
+    "file": "wpipe_steps/security/vault.py"
+  },
+  {
+    "name": "nmap_scan",
+    "func_name": "NmapScanStep",
+    "namespace": "wpipe_steps.security",
+    "repo": "Official",
+    "file": "wpipe_steps/security/nmap.py"
+  }
 ]
