@@ -198,4 +198,5 @@ def __getattr__(name: str) -> Any:
     
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
+__version__ = "2.4.0"
 __all__ = list(_LAZY_MAP.keys()) + ["Wsqlite", "Pipeline", "Condition", "For", "Parallel", "step"]

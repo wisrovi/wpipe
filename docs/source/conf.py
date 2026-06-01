@@ -208,7 +208,7 @@ add_function_parentheses = True
 
 rst_prolog = """
 .. |wpipe| replace:: **wpipe**
-.. |version| replace:: 2.3.0 LTS
+.. |version| replace:: 2.4.0 LTS
 .. |date| replace:: {date}
 """.format(date=datetime.now().strftime("%B %d, %Y"))
 

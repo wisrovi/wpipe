@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "publisher": "wpipe",
     "icon": "icon.png",
     "engines": {
@@ -23,13 +23,14 @@
         "onView:wpipeSteps"
     ],
     "main": "./out/extension.js",
+    "browser": "./out/extension.js",
     "contributes": {
         "viewsContainers": {
             "activitybar": [
                 {
                     "id": "wpipe-explorer",
                     "title": "WPipe",
-                    "icon": "icon.svg"
+                    "icon": "lateral_icon.png"
                 }
             ]
         },
@@ -38,7 +39,7 @@
                 {
                     "id": "wpipeSteps",
                     "name": "Step Registry",
-                    "icon": "icon.svg"
+                    "icon": "icon.png"
                 }
             ]
         },

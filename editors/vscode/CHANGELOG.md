@@ -1,4 +1,23 @@
-# Changelog - WPipe Tools
+# Changelog
+
+## [0.8.2] - 2026-06-01
+
+### Added
+- **Compatibilidad con Antigravity**: Refactorización completa para soportar entornos web (vscode.dev, GitHub Codespaces, etc.) eliminando dependencias de Node.js nativo.
+- **Implementación de Dashboard**: El comando `WPipe: Open Web Dashboard` ahora es funcional, permitiendo seleccionar la DB de tracking y el puerto de forma interactiva.
+- **Hoja de trucos (Cheat Sheet)**: Nuevo comando `WPipe: Show Cheat Sheet` con acceso rápido a snippets y comandos.
+- **Ejecución de Pasos**: Comando `Run this Step` en el explorador lateral para probar estados individuales.
+
+### Changed
+- **Iconos Optimizados**: Rediseño y ajuste de dimensiones de los iconos (`icon.png` a 128x128 y `lateral_icon.png` a 24x24) para cumplir con los estándares de VS Code.
+- **Refactorización de Código**: Migración de `fs` y `https` a `vscode.workspace.fs` y `fetch` para compatibilidad multiplataforma.
+
+### Fixed
+- Error en el registro de comandos que impedía el funcionamiento del Dashboard.
+- Problemas de visualización de iconos en temas oscuros y claros.
+
+---
+ - WPipe Tools
 
 ## [0.8.1] - 2026-05-31
 ### Changed
