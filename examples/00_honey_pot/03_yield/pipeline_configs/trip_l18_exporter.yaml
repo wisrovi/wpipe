@@ -1,0 +1,8 @@
+name: trip_l18_exporter
+registered_at: '2026-06-01T16:29:01.465991'
+step_count: 1
+steps:
+- func: <function drive_section_a at 0x7d6ae2d4f380>
+  name: drive_section_a
+  type: task
+  version: v1.0

@@ -1,0 +1,8 @@
+name: viaje_l107
+registered_at: '2026-06-01T16:28:46.509087'
+step_count: 1
+steps:
+- func: <function task at 0x77c4e7f271a0>
+  name: task
+  type: task
+  version: v1.0

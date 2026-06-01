@@ -1,0 +1,12 @@
+name: viaje_l105_states
+registered_at: '2026-06-01T16:28:45.779531'
+step_count: 2
+steps:
+- func: <function start at 0x714bd5a03740>
+  name: start
+  type: task
+  version: v1.0
+- func: <function verificar at 0x714bd5a28680>
+  name: verificar
+  type: task
+  version: v1.0

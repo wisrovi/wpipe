@@ -1,0 +1,42 @@
+name: viaje_async
+registered_at: '2026-06-01T16:29:19.146774'
+step_count: 2
+steps:
+- func: <function preparation_phase at 0x7fada8765120>
+  name: preparation_phase
+  type: task
+  version: v1.1
+- expression: null
+  iterations: 3
+  steps:
+  - <states.car_info_printer.CarInfoPrinter object at 0x7fada8591220>
+  - max_workers: 3
+    steps:
+    - <function refuel at 0x7fada874b380>
+    - <function change_oil at 0x7fada874a2a0>
+    - <function check_lights at 0x7fada87665c0>
+    type: parallel
+    use_processes: false
+  - <states.car_info_printer.CarInfoPrinter object at 0x7fada8591480>
+  - meta: {}
+    name: Mostrar fuel
+    type: task
+    version: v1.0
+  - expression: "nivel_gasolina != 'Vac\xEDo'"
+    iterations: null
+    steps:
+    - <function drive at 0x7fada874a660>
+    - branch_false:
+      - <function deflate_tires at 0x7fada874b060>
+      branch_true:
+      - <wpipe.pipe.pipe.Pipeline object at 0x7fada883aba0>
+      - <function inflate_tires at 0x7fada874b740>
+      expression: nivel_neumaticos == 'Bajo'
+      type: condition
+    - meta: {}
+      name: Mostrar fuel
+      type: task
+      version: v1.0
+    - <function random_flat_tire at 0x7fada8766e80>
+    type: for
+  type: for

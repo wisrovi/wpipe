@@ -1,0 +1,12 @@
+name: Viaje_L102_1
+registered_at: '2026-06-01T16:28:44.680321'
+step_count: 2
+steps:
+- func: <function rapido at 0x761d985f7740>
+  name: rapido
+  type: task
+  version: v1.0
+- func: <function lento at 0x761d98618680>
+  name: lento
+  type: task
+  version: v1.0

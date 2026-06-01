@@ -1,0 +1,8 @@
+name: trip_efficiency_l27
+registered_at: '2026-06-01T16:29:07.239026'
+step_count: 1
+steps:
+- func: <function measure_efficiency at 0x7eefc736f6a0>
+  name: measure_efficiency
+  type: task
+  version: v1.0

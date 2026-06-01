@@ -1,0 +1,16 @@
+name: metrics_export_demo
+registered_at: '2026-06-01T16:31:34.192990'
+step_count: 3
+steps:
+- func: <function step_1_fetch_data at 0x79e48b89b920>
+  name: fetch_data
+  type: task
+  version: v1.0
+- func: <function step_2_validate at 0x79e489573880>
+  name: validate_data
+  type: task
+  version: v1.0
+- func: <function step_3_transform at 0x79e4895736a0>
+  name: transform_data
+  type: task
+  version: v1.0

@@ -1,0 +1,12 @@
+name: viaje_l83_exportstats
+registered_at: '2026-06-01T16:29:46.805196'
+step_count: 2
+steps:
+- func: <function start at 0x780598ee3560>
+  name: start
+  type: task
+  version: v1.0
+- func: <function process at 0x780598efc860>
+  name: process
+  type: task
+  version: v1.0

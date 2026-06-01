@@ -172,7 +172,8 @@ cython_debug/
 
 # WPipe execution files
 *.db
+*.db-wal
+*.db-shm
 configs/*.yaml
 exports/
 *.zip
-*.db

@@ -5,7 +5,8 @@ import pytest
 # List of directories to skip
 SKIP_DIRS = {
     'states', 'utils', 'dto', 'configs', 'extra_readmes', 
-    'extras', 'test', 'pipelines', '__pycache__', '.git', '.github', '.vscode', 'output', 'export_output'
+    'extras', 'test', 'pipelines', '__pycache__', '.git', '.github', '.vscode', 
+    'output', 'export_output', '.venv', 'venv', 'env', 'virtualenv', '.pytest_cache', '.ruff_cache'
 }
 
 def find_examples():

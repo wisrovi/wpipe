@@ -1,0 +1,8 @@
+name: trip_l49_asynctracking
+registered_at: '2026-06-01T16:29:16.588862'
+step_count: 1
+steps:
+- func: <function start_motor at 0x7878cf52b1a0>
+  name: start_motor
+  type: task
+  version: v1.0

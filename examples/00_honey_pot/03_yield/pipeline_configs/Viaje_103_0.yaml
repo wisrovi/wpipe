@@ -1,0 +1,8 @@
+name: Viaje_103_0
+registered_at: '2026-06-01T16:28:45.113007'
+step_count: 1
+steps:
+- func: <function task at 0x76c3ab3eb600>
+  name: task
+  type: task
+  version: v1.0
