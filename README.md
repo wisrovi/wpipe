@@ -463,19 +463,6 @@ exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 
 ---
 
-## 📢 Marketing & Community
-
-Hemos expandido nuestra presencia con **+40 nuevos activos de marketing** diseñados para educar y ayudar a los desarrolladores a elegir la mejor arquitectura de orquestación.
-
-- **Dev.to**: Guías técnicas profundas sobre Green-IT y ahorro de RAM.
-- **DZone**: Análisis arquitectónicos sobre resiliencia industrial y estados persistentes.
-- **Reddit**: Historias reales y debates técnicos en comunidades de Python y DevOps.
-- **Indie Hackers**: Estrategias para escalar startups con infraestructura mínima y bajo coste.
-
-Puedes encontrar todos estos materiales en la carpeta `posters/`, numerados del 79 al 121, cubriendo comparativas con Airflow, n8n, Zapier y más.
-
----
-
 ## DASHBOARD
 
 ### Tutorial
