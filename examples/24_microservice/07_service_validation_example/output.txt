@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Valid request result: {'required_field': 'present', '_pipeline_start_time': '2026-04-27T18:02:07.133715', 'validated': True, 'processed': True}
+EXIT_CODE:0

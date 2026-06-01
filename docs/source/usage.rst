@@ -2,10 +2,10 @@ Mastering |wpipe|: Usage Guide
 ==================================
 
 .. meta::
-   :description: Comprehensive usage guide for wpipe v2.1.1-LTS. From basic functions to complex enterprise patterns.
+   :description: Comprehensive usage guide for wpipe v2.4.0-LTS. From basic functions to complex enterprise patterns.
    :keywords: usage, examples, advanced, patterns, orchestration, python
 
-This guide provides deep-dive examples for every capability of the **WPipe v2.1.1-LTS** engine. Use the tabs below to navigate through different complexity levels.
+This guide provides deep-dive examples for every capability of the **WPipe v2.4.0-LTS** engine. Use the tabs below to navigate through different complexity levels.
 
 .. raw:: html
 
@@ -201,4 +201,4 @@ WPipe integrates seamlessly with your infrastructure.
             version: v1.1
 
 Looking for more? 
-Check the 130-level :doc:`tutorials/tour/index` for specialized patterns.
+Check the 140-level :doc:`tutorials/tour/index` for specialized patterns.

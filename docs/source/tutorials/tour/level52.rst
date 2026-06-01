@@ -3,29 +3,33 @@ Nivel 52: demo_level52.py
 
 Este es el nivel 52 del tour de aprendizaje.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level52.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
-   Carro inicial: Medio
+   Carro inicial: Medium
    
    
-   [ASYNC CHECKPOINT REACHED] inicio_viaje
-   >>> [CHECKPOINT] Inicio del viaje
+   [ASYNC CHECKPOINT REACHED] trip_start
+   >>> [CHECKPOINT] Inicio del trip
    
-   [MATRÍCULA ASYNC] PIPE-FBBBE12D: COMPLETED
+   [ASYNC STATUS] PIPE-D438CE14: COMPLETED
    
    Resource Summary (Async):
-     - Peak RAM: 1132.38 MB
-     - Avg CPU: 79.64%
+     - Peak RAM: 51.2 MB
+     - Avg CPU: 0.0%
    ✓ Total time monitored: 0.01s
    
    Viajes completados: None
@@ -33,6 +37,5 @@ Resultado de Ejecución
    ======================================================================
    📊 ANÁLISIS DE RENDIMIENTO ASÍNCRONO
    ======================================================================
-     - Total Ejecuciones: 16
-     - Tasa de Éxito: 100.0%
-
+     - Total Ejecuciones: 2
+     - Tasa de Éxito: 0.0%

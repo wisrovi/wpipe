@@ -1,0 +1,3 @@
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'_pipeline_start_time': '2026-04-27T18:01:22.316367', 'discovered_services': {'api': 'http://api.example.com', 'database': 'postgresql://db:5432', 'cache': 'redis://cache:6379'}, 'service_count': 3, 'configured': True, 'config': {'base_url': 'http://api.example.com', 'database_url': 'postgresql://db:5432', 'cache_url': 'redis://cache:6379'}, 'connection_tests': {'api_tested': True, 'db_tested': True, 'cache_tested': True}, 'all_passed': True}
+EXIT_CODE:0

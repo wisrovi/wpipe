@@ -1,0 +1,40 @@
+name: journey
+registered_at: '2026-04-27T18:05:59.604674'
+step_count: 4
+steps:
+- func: <class '__main__.Refuel'>
+  name: Refuel
+  type: task
+  version: v1.0
+- func: <class '__main__.ChangeOil'>
+  name: ChangeOil
+  type: task
+  version: v1.0
+- expression: car_obj.gasoline_level != Levels.empty
+  iterations: null
+  steps:
+  - meta: {}
+    name: Drive
+    type: task
+    version: v1.0
+  - branch_false:
+    - meta: {}
+      name: DeflateTires
+      type: task
+      version: v1.0
+    branch_true:
+    - meta: {}
+      name: InflateTires
+      type: task
+      version: v1.0
+    expression: car_obj.tire_level == Levels.low
+    type: condition
+  - meta: {}
+    name: print_gasoline_level
+    type: task
+    version: v1.0
+  type: for
+- func: <function main.<locals>.<lambda> at 0x78fa98303a60>
+  name: print_journey_complete
+  type: task
+  version: v1.0

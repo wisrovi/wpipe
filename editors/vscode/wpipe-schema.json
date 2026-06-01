@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "WPipe Pipeline Schema",
+    "type": "object",
+    "required": ["name", "steps"],
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Unique identifier for the pipeline"
+        },
+        "version": {
+            "type": "string",
+            "default": "v1.0.0",
+            "description": "Semantic version of the pipeline"
+        },
+        "registered_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "steps": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/step"
+            }
+        }
+    },
+    "definitions": {
+        "step": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["task", "parallel", "condition", "for", "background"],
+                    "description": "Logic type of the step"
+                },
+                "name": { "type": "string" },
+                "function": { "type": "string" },
+                "version": { "type": "string" },
+                "max_workers": { "type": "integer", "minimum": 1 },
+                "use_processes": { "type": "boolean" },
+                "expression": { "type": "string" },
+                "iterations": { "type": "integer", "minimum": 1 },
+                "branch_true": { "type": "array", "items": { "$ref": "#/definitions/step" } },
+                "branch_false": { "type": "array", "items": { "$ref": "#/definitions/step" } },
+                "steps": { "type": "array", "items": { "$ref": "#/definitions/step" } },
+                "step": { "$ref": "#/definitions/step" }
+            },
+            "allOf": [
+                {
+                    "if": { "properties": { "type": { "const": "task" } } },
+                    "then": { "required": ["function"] }
+                },
+                {
+                    "if": { "properties": { "type": { "const": "parallel" } } },
+                    "then": { "required": ["steps"] }
+                },
+                {
+                    "if": { "properties": { "type": { "const": "condition" } } },
+                    "then": { "required": ["expression", "branch_true"] }
+                },
+                {
+                    "if": { "properties": { "type": { "const": "for" } } },
+                    "then": { "required": ["steps"] }
+                },
+                {
+                    "if": { "properties": { "type": { "const": "background" } } },
+                    "then": { "required": ["step"] }
+                }
+            ]
+        }
+    }
+}

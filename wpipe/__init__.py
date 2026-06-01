@@ -51,37 +51,105 @@ def patched_insert(self, data: Any) -> int:
 
     query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
 
-    with _db_lock:
-        conn = self._get_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute(query, values)
-            # Commit removed for performance. Final commit will be handled by Pipeline.
-            return cursor.lastrowid
-        except Exception as e:
-            conn.rollback()
-            raise e
+    import time
+    max_retries = 5
+    retry_delay = 0.5
+
+    for attempt in range(max_retries):
+        with _db_lock:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+            try:
+                cursor.execute(query, values)
+                conn.commit()
+                return cursor.lastrowid
+            except sqlite3.OperationalError as e:
+                if "no such table" in str(e):
+                    # Table might not exist, try to create it
+                    try:
+                        if hasattr(self, '_sync'):
+                            self._sync.create_if_not_exists()
+                            cursor.execute(query, values)
+                            conn.commit()
+                            return cursor.lastrowid
+                    except:
+                        pass
+                
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay * (attempt + 1))
+                    continue
+                conn.rollback()
+                raise e
+            except Exception as e:
+                conn.rollback()
+                raise e
+    return -1
 
 Wsqlite_original.insert = patched_insert
 
+def patched_update(self, record_id: Any, data: Any) -> bool:
+    """Update a record and commit change."""
+    table_name = self.table_name
+    data_dict = data.model_dump() if hasattr(data, "model_dump") else data
+    
+    columns = [f"{k} = ?" for k, v in data_dict.items() if v is not None]
+    values = [data_dict[k] for k, v in data_dict.items() if v is not None]
+    values.append(record_id)
+
+    query = f"UPDATE {table_name} SET {', '.join(columns)} WHERE id = ?"
+
+    import time
+    max_retries = 5
+    retry_delay = 0.5
+
+    for attempt in range(max_retries):
+        with _db_lock:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+            try:
+                cursor.execute(query, values)
+                conn.commit()
+                return True
+            except sqlite3.OperationalError as e:
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay * (attempt + 1))
+                    continue
+                conn.rollback()
+                raise e
+            except Exception as e:
+                conn.rollback()
+                raise e
+    return False
+
+Wsqlite_original.update = patched_update
+
 @atexit.register
 def _close_connections():
+    """Cleanup connections and threads on exit."""
     with _db_lock:
         for path, conn in list(_db_connections.items()):
             try:
+                # Force commit before closing if possible
+                conn.commit()
                 conn.close()
             except:
                 pass
         _db_connections.clear()
+    
+    # Final attempt to silence lingering daemon threads in environments like Binder/Jupyter
+    import threading
+    for thread in threading.enumerate():
+        if thread.daemon and thread is not threading.current_thread():
+            if "_RefreshThread" in str(thread):
+                try:
+                    # Give it a very short window to finish or just ignore it
+                    thread.join(timeout=0.01)
+                except:
+                    pass
 
 # Lazy loading map
 _LAZY_MAP = {
-    "Pipeline": (".pipe", "Pipeline"),
     "PipelineAsync": (".pipe.pipe_async", "PipelineAsync"),
-    "Condition": (".pipe", "Condition"),
-    "For": (".pipe", "For"),
-    "Parallel": (".pipe", "Parallel"),
-    "step": (".decorators", "step"),
     "ResourceMonitor": (".resource_monitor", "ResourceMonitor"),
     "TaskTimer": (".timeout", "TaskTimer"),
     "auto_dict_input": (".util", "auto_dict_input"),
@@ -100,6 +168,7 @@ _LAZY_MAP = {
     "SQLite": (".sqlite", "SQLite"),
     "timeout_sync": (".timeout", "timeout_sync"),
     "timeout_async": (".timeout", "timeout_async"),
+    "TimeoutError": (".timeout", "TimeoutError"),
     "PipelineTimeoutError": (".timeout", "TimeoutError"),
     "memory": (".ram", "memory"),
     "new_logger": (".log", "new_logger"),
@@ -109,6 +178,10 @@ _LAZY_MAP = {
     "get_step_registry": (".decorators", "get_step_registry"),
     "ResourceMonitorRegistry": (".resource_monitor", "ResourceMonitorRegistry"),
 }
+
+# Direct imports for core components to ensure availability and IDE support
+from .pipe import Condition, For, Parallel, Pipeline
+from .decorators import step
 
 def __getattr__(name: str) -> Any:
     """Handle lazy loading of modules."""
@@ -125,4 +198,5 @@ def __getattr__(name: str) -> Any:
     
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-__all__ = list(_LAZY_MAP.keys()) + ["Wsqlite"]
+__version__ = "2.4.0"
+__all__ = list(_LAZY_MAP.keys()) + ["Wsqlite", "Pipeline", "Condition", "For", "Parallel", "step"]

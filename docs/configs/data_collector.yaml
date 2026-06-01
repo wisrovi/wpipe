@@ -1,0 +1,12 @@
+name: data_collector
+registered_at: '2026-04-27T18:02:08.423782'
+step_count: 2
+steps:
+- func: <function collect_from_api at 0x7a1a57730540>
+  name: collect_api
+  type: task
+  version: v1.0
+- func: <function validate_collection at 0x7a1a577304a0>
+  name: validate_collection
+  type: task
+  version: v1.0

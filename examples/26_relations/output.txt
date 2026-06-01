@@ -1,0 +1,34 @@
+============================================================
+Example 08: Pipeline Relationships
+============================================================
+
+[Creating Pipeline Hierarchy]
+
+[Running Parent Pipeline...]
+
+[PIPELINE STATUS] Registered: PIPE-4EEF7AFE
+  [collect_api] Collecting data from API...
+  [validate_collection] Validating collection...
+data_workflow                                             0% -:--:--
+data_collector ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+  [transform] Transforming data...
+  [enrich] Enriching data...
+  [aggregate] Aggregating data...
+data_workflow  ━━━━━━━━━━                                25% -:--:--
+data_collector ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+data_processor ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+  [format] Formatting output...
+  [write] Writing to file...
+data_workflow  ━━━━━━━━━━━━━━━━━━━━                      50% 0:00:01
+data_collector ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+data_processor ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+data_exporter  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+  [notification] Sending notification...
+
+[WARNING] Tracker completion failed: database is locked
+[PIPELINE STATUS] PIPE-4EEF7AFE: COMPLETED
+
+[Result] {'source': 'api', 'destination': 'file', '_pipeline_start_time': '2026-04-27T18:02:08.430295', 'records': [{'id': 0, 'value': 0}, {'id': 1, 'value': 10}, {'id': 2, 'value': 20}, {'id': 3, 'value': 30}, {'id': 4, 'value': 40}, {'id': 5, 'value': 50}, {'id': 6, 'value': 60}, {'id': 7, 'value': 70}, {'id': 8, 'value': 80}, {'id': 9, 'value': 90}], 'valid': True, 'count': 10, 'transformed': [{'id': 0, 'value': 0}, {'id': 1, 'value': 20}, {'id': 2, 'value': 40}, {'id': 3, 'value': 60}, {'id': 4, 'value': 80}, {'id': 5, 'value': 100}, {'id': 6, 'value': 120}, {'id': 7, 'value': 140}, {'id': 8, 'value': 160}, {'id': 9, 'value': 180}], 'enriched': [{'id': 0, 'value': 0, 'category': 'A'}, {'id': 1, 'value': 20, 'category': 'A'}, {'id': 2, 'value': 40, 'category': 'A'}, {'id': 3, 'value': 60, 'category': 'A'}, {'id': 4, 'value': 80, 'category': 'A'}, {'id': 5, 'value': 100, 'category': 'B'}, {'id': 6, 'value': 120, 'category': 'B'}, {'id': 7, 'value': 140, 'category': 'B'}, {'id': 8, 'value': 160, 'category': 'B'}, {'id': 9, 'value': 180, 'category': 'B'}], 'aggregated': {'A': 200, 'B': 700}, 'formatted': {'summary': {'A': 200, 'B': 700}, 'timestamp': '2024-01-01'}, 'written': True, 'path': '/tmp/output.json', 'notified': True}
+
+[Dashboard] Run: python -m wpipe.dashboard --db relations_example.db --config-dir ./configs --open
+EXIT_CODE:0

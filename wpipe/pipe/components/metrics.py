@@ -77,6 +77,11 @@ class SystemMetricsCollector:
     def stop(self) -> None:
         """Stop the background collection thread."""
         self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            try:
+                self._thread.join(timeout=1.0)
+            except:
+                pass
 
     def _collect_loop(self) -> None:
         """Continuous collection loop executed in the background thread."""

@@ -1,16 +1,16 @@
 name: viaje_l70_specificalert
-registered_at: '2026-04-23T11:40:55.531364'
+registered_at: '2026-06-01T16:29:41.752898'
 step_count: 3
 steps:
-- func: <function tarea_normal at 0x71a231034360>
+- func: <function tarea_normal at 0x744439e53560>
   name: tarea_normal
   type: task
   version: v1.0
-- func: <function tarea_lenta at 0x71a22ef47420>
+- func: <function tarea_lenta at 0x744439e644a0>
   name: tarea_lenta
   type: task
   version: v1.0
-- func: <function otra_normal at 0x71a22ef47b00>
+- func: <function otra_normal at 0x744439e645e0>
   name: otra_normal
   type: task
   version: v1.0

@@ -133,6 +133,11 @@ class ResourceMonitor:
             return
 
         self._monitoring = False
+        if self._monitor_thread and self._monitor_thread.is_alive():
+            try:
+                self._monitor_thread.join(timeout=1.0)
+            except:
+                pass
 
         self.end_time = time.time()
         try:

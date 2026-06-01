@@ -1,0 +1,16 @@
+============================================================
+Example 02: Error Handling
+============================================================
+
+[Running Pipeline...]
+
+[PIPELINE STATUS] Registered: PIPE-D66234D9
+error_example                                            0% -:--:--
+[PIPELINE STATUS] PIPE-D66234D9: COMPLETED
+
+[Expected Error] ProcessError: [Error Code: 502] Input data cannot be None
+
+[Info] Error is tracked in the database and visible in dashboard
+
+[Dashboard] Run: python -m wpipe.dashboard --db error_handling.db --config-dir ./configs --open
+EXIT_CODE:0

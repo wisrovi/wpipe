@@ -1,12 +1,12 @@
 name: viaje_l84_exportmulti
-registered_at: '2026-04-23T11:41:00.948297'
+registered_at: '2026-06-01T16:29:47.160531'
 step_count: 2
 steps:
-- func: <function start at 0x7117c2992480>
+- func: <function start at 0x7c70f67e3560>
   name: start
   type: task
   version: v1.0
-- func: <function process at 0x7117c0877600>
+- func: <function process at 0x7c70f67f8860>
   name: process
   type: task
   version: v1.0

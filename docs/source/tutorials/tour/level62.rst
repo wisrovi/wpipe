@@ -3,21 +3,29 @@ Nivel 62: demo_level62.py
 
 Este es el nivel 62 del tour de aprendizaje.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level62.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
    
    >>> Probando callback de excepciones...
    
+   
+   [ERROR CAPTURE] Processing error in state 'operacion_peligrosa'...
+   🔴 [CALLBACK] Error capturado: Operación falló
+   📧 Enviando notificación...
+   [RETRY] operacion_peligrosa failed (attempt 1): Operación falló
    ✅ Operación completada
-   Viaje_L62_OnException - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-
+   viaje_l62_onexception ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

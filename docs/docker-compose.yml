@@ -1,0 +1,14 @@
+services:
+  docs:
+    image: nginx:stable-alpine
+    container_name: wpipe-docs
+    volumes:
+      - ./build/html:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

@@ -44,7 +44,10 @@ def choice_random_result(data: Dict[str, Any]) -> Dict[str, Any]:
     model_results: list = data["model_results"]
     model_results.append([])
     chosen = random.choice(model_results)
-    score = int(chosen.get("conf") * 100)
+    if isinstance(chosen, dict):
+        score = int(chosen.get("conf", 0) * 100)
+    else:
+        score = 0
     return {"score": score}
 
 

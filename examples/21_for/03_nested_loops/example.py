@@ -5,11 +5,10 @@ This example demonstrates nested For loops.
 Shows multiple @state decorated functions in a For loop.
 """
 
-from wpipe import For, Pipeline
-from wpipe.util import state
+from wpipe import For, Pipeline, step
 
 
-@state(name="track", version="v1.0")
+@step(name="track", version="v1.0")
 def track_iterations(data):
     iteration = data.get("_loop_iteration", 0)
     data["history"] = data.get("history", [])

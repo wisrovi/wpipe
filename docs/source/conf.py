@@ -15,8 +15,8 @@ project = "wpipe"
 copyright = f"2024-{datetime.now().year}, William Steve Rodriguez Villamizar"
 author = "William Steve Rodriguez Villamizar"
 author_url = "https://github.com/wisrovi"
-version = "2.1.1"
-release = "2.1.1"
+version = "2.4.0"
+release = "2.4.0"
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -30,7 +30,16 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "sphinx.ext.autosectionlabel",
+    "sphinx_thebe",
 ]
+
+thebe_config = {
+    "always_load": False,
+    "repository_url": "https://github.com/wisrovi/wpipe",
+    "repository_branch": "main",
+    "selector": ".thebe",
+    "post_install_hook": "pip install rich opencv-python-headless wsqlite pyyaml tqdm psutil", # Enhanced installation
+}
 
 templates_path = ["_templates"]
 exclude_patterns = [
@@ -73,6 +82,10 @@ html_output_encoding = "utf-8"
 
 html_css_files = [
     "css/custom.css",
+]
+
+html_js_files = [
+    "js/thebe_init.js",
 ]
 
 html_theme_options = {
@@ -195,7 +208,7 @@ add_function_parentheses = True
 
 rst_prolog = """
 .. |wpipe| replace:: **wpipe**
-.. |version| replace:: 2.1.1 LTS
+.. |version| replace:: 2.4.0 LTS
 .. |date| replace:: {date}
 """.format(date=datetime.now().strftime("%B %d, %Y"))
 

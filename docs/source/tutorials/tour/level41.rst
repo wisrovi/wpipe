@@ -3,21 +3,24 @@ Nivel 41: demo_level41.py
 
 Este es el nivel 41 del tour de aprendizaje.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level41.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
    
-   >>> Iniciando pipeline asíncrono...
+   >>> Starting asynchronous pipeline...
    
-   🔑 [ASYNC] Motor iniciado
-   📡 [ASYNC] Sensores verificados
-
+   🔑 [ASYNC] Motor started
+   📡 [ASYNC] Sensors verified

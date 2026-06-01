@@ -4,11 +4,10 @@ Example 05: For loop with data accumulation
 Demonstrates how For can accumulate data across iterations.
 """
 
-from wpipe import For, Pipeline
-from wpipe.util import state
+from wpipe import For, Pipeline, step
 
 
-@state(name="collect", version="v1.0")
+@step(name="collect", version="v1.0")
 def collect_data(data):
     iteration = data.get("_loop_iteration", 0)
     data["items"] = data.get("items", [])

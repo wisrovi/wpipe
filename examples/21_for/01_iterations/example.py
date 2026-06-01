@@ -2,14 +2,12 @@
 Example 01: For loop with fixed iterations
 
 Demonstrates how to use For with a fixed number of iterations.
-Also shows how to use @state decorated functions directly.
 """
 
-from wpipe import For, Pipeline
-from wpipe.util import state
+from wpipe import For, Pipeline, step
 
 
-@state(name="increment", version="v1.0")
+@step(name="increment", version="v1.0")
 def increment(data):
     data["counter"] = data.get("counter", 0) + 1
     data["value"] = data.get("value", 0) + 10

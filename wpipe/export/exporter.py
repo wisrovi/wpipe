@@ -37,6 +37,7 @@ class PipelineExporter:
         pipeline_id: Optional[str] = None,
         export_format: str = "json",
         output_path: Optional[str] = None,
+        **kwargs
     ) -> str:
         """
         Exports pipeline execution logs.
@@ -45,6 +46,7 @@ class PipelineExporter:
             pipeline_id (Optional[str]): ID of the pipeline to export. If None, exports all.
             export_format (str): Export format ('json' or 'csv'). Defaults to 'json'.
             output_path (Optional[str]): File path to save the export. If None, returns string.
+            **kwargs: Support 'format' as alias for 'export_format'.
 
         Returns:
             str: Exported data as a string or the path to the saved file.
@@ -52,6 +54,8 @@ class PipelineExporter:
         Raises:
             ValueError: If the requested format is not supported.
         """
+        if "format" in kwargs:
+            export_format = kwargs["format"]
         # Force the table name to 'pipelines' as used by the Tracker.
         db = WSQLite(PipelineModel, self.db_path)
         db.table_name = "pipelines"
@@ -75,6 +79,7 @@ class PipelineExporter:
         pipeline_id: Optional[str] = None,
         export_format: str = "json",
         output_path: Optional[str] = None,
+        **kwargs
     ) -> str:
         """
         Exports system metrics data.
@@ -83,6 +88,7 @@ class PipelineExporter:
             pipeline_id (Optional[str]): ID of the pipeline to export metrics for.
             export_format (str): Export format ('json' or 'csv'). Defaults to 'json'.
             output_path (Optional[str]): File path to save the export.
+            **kwargs: Support 'format' as alias for 'export_format'.
 
         Returns:
             str: Exported data as a string or the path to the saved file.
@@ -90,6 +96,8 @@ class PipelineExporter:
         Raises:
             ValueError: If the requested format is not supported.
         """
+        if "format" in kwargs:
+            export_format = kwargs["format"]
         db = WSQLite(SystemMetricsModel, self.db_path)
         db.table_name = "system_metrics"
 
@@ -112,6 +120,7 @@ class PipelineExporter:
         pipeline_id: Optional[str] = None,
         export_format: str = "json",
         output_path: Optional[str] = None,
+        **kwargs
     ) -> str:
         """
         Exports calculated pipeline statistics.
@@ -120,6 +129,7 @@ class PipelineExporter:
             pipeline_id (Optional[str]): ID of the pipeline to calculate stats for.
             export_format (str): Export format (only 'json' is supported). Defaults to 'json'.
             output_path (Optional[str]): File path to save the export.
+            **kwargs: Support 'format' as alias for 'export_format'.
 
         Returns:
             str: Exported statistics as a string or the path to the saved file.
@@ -127,6 +137,8 @@ class PipelineExporter:
         Raises:
             ValueError: If the requested format is not supported.
         """
+        if "format" in kwargs:
+            export_format = kwargs["format"]
         stats = self._calculate_statistics(pipeline_id)
 
         if export_format == "json":

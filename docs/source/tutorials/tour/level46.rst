@@ -3,21 +3,24 @@ Nivel 46: demo_level46.py
 
 Este es el nivel 46 del tour de aprendizaje.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level46.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
    
-   >>> Probando async con condiciones...
+   >>> Testing async with conditions...
    
-   🚗 [ASYNC] Evaluación: obstáculo=False
-   🚀 [ASYNC] Acelerando
-
+   🚗 [ASYNC] Evaluation: obstacle=False
+   🚀 [ASYNC] Accelerating

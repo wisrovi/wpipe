@@ -154,6 +154,13 @@ class PipelineTracker:
             config_dir: Directory to store pipeline configurations.
         """
         self.db_path = db_path
+        
+        # Ensure the directory for the database exists
+        if db_path:
+            db_dir = os.path.dirname(os.path.abspath(db_path))
+            if not os.path.exists(db_dir):
+                os.makedirs(db_dir, exist_ok=True)
+                
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
         self.pipeline_id: Optional[str] = None
 
@@ -334,8 +341,16 @@ class PipelineTracker:
         if not pipeline_records:
             return []
         model = pipeline_records[0]
-        started = datetime.fromisoformat(model.started_at)
-        duration_ms = (datetime.now() - started).total_seconds() * 1000
+        started_at = model.started_at
+        if started_at:
+            if isinstance(started_at, str):
+                started = datetime.fromisoformat(started_at)
+            else:
+                started = started_at
+            duration_ms = (datetime.now() - started).total_seconds() * 1000
+        else:
+            duration_ms = 0
+            
         model.status = "error" if error_message else "completed"
         model.completed_at = datetime.now().isoformat()
         model.total_duration_ms = duration_ms

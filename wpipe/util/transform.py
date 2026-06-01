@@ -13,6 +13,10 @@ from typing import Any, Callable, Set, Optional
 from pydantic import BaseModel
 
 
+# Internal keys that should not be converted/recursed by decorators
+SYSTEM_KEYS = {"progress_rich", "_loop_iteration", "_pipeline_start_time"}
+
+
 def dict_to_sns(data: Any, _seen: Optional[Set[int]] = None) -> Any:
     """Recursively convert a dictionary to SimpleNamespace.
 
@@ -35,7 +39,11 @@ def dict_to_sns(data: Any, _seen: Optional[Set[int]] = None) -> Any:
 
     try:
         if isinstance(data, dict):
-            return SimpleNamespace(**{k: dict_to_sns(v, _seen) for k, v in data.items()})
+            # Skip system keys to avoid processing non-serializable objects like progress bars
+            return SimpleNamespace(**{
+                k: (v if k in SYSTEM_KEYS else dict_to_sns(v, _seen))
+                for k, v in data.items()
+            })
         if isinstance(data, list):
             return [dict_to_sns(i, _seen) for i in data]
         return data
@@ -71,7 +79,10 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
     try:
         # Handle dict
         if isinstance(obj, dict):
-            return {k: object_to_dict(v, _seen) for k, v in obj.items()}
+            return {
+                k: (v if k in SYSTEM_KEYS else object_to_dict(v, _seen))
+                for k, v in obj.items()
+            }
 
         # Handle list
         if isinstance(obj, list):
@@ -87,7 +98,14 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
 
         # Handle objects with __dict__
         if hasattr(obj, "__dict__"):
-            return {k: object_to_dict(v, _seen) for k, v in obj.__dict__.items()}
+            # Avoid recursing into known system or external complex objects
+            if obj.__class__.__module__.startswith(("rich.", "threading.", "multiprocessing.")):
+                return obj
+                
+            return {
+                k: (v if k in SYSTEM_KEYS else object_to_dict(v, _seen))
+                for k, v in obj.__dict__.items()
+            }
 
         # Return primitive types as-is
         return obj

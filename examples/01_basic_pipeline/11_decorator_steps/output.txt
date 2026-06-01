@@ -1,0 +1,7 @@
+  [LOG] Calling step_a
+  [LOG] step_a returned: {'a': 6}
+  [LOG] Calling step_b
+  [LOG] step_b returned: {'b': 12}
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Result: {'value': 5, '_pipeline_start_time': '2026-04-27T18:01:15.003563', 'a': 6, 'b': 12}
+EXIT_CODE:0

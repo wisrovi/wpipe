@@ -1,8 +1,8 @@
 name: viaje_l98_alertsseverity
-registered_at: '2026-04-23T11:41:05.867516'
+registered_at: '2026-06-01T16:29:55.281321'
 step_count: 1
 steps:
-- func: <function task at 0x7822eba38400>
+- func: <function task at 0x7d98763fb600>
   name: task
   type: task
   version: v1.0

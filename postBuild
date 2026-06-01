@@ -1,0 +1,9 @@
+#!/bin/bash
+# Instalar dependencias de sistema necesarias para OpenCV y Rich
+sudo apt-get update && sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
+
+# Instalar las librerías de Python desde el requirements.txt
+pip install --no-cache-dir -r requirements.txt
+
+# Instalar el paquete actual en modo editable para que los ejemplos encuentren 'wpipe'
+pip install -e .

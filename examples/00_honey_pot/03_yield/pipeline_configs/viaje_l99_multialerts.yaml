@@ -1,12 +1,12 @@
 name: viaje_l99_multialerts
-registered_at: '2026-04-23T11:41:06.262567'
+registered_at: '2026-06-01T16:29:55.632023'
 step_count: 2
 steps:
-- func: <function tarea1 at 0x754ec8438540>
+- func: <function tarea1 at 0x7bb35603f740>
   name: tarea1
   type: task
   version: v1.0
-- func: <function tarea2 at 0x754ec6373600>
+- func: <function tarea2 at 0x7bb356050680>
   name: tarea2
   type: task
   version: v1.0

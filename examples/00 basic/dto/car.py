@@ -211,31 +211,7 @@ def get_traditional_car_dict() -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    # Instantiate objects using different representations
     pydantic_car = Car(make="Toyota", model="Corolla")
     dataclass_car = Car2(make="Toyota", model="Corolla")
     traditional_car_obj = Car3(make="Toyota", model="Corolla")
-    dict_car_data = get_traditional_car_dict()
-
-    car_objects: list[Any] = [pydantic_car, dataclass_car, traditional_car_obj, dict_car_data]
-
-    for i, car_obj in enumerate(car_objects, 1):
-        # print(f"
---- Processing Car Object {i} ---") # Commented out as per instructions
-
-        # Attempt to convert the object to a dictionary using the utility function
-        try:
-            # Check if the object is already a dict, if so, use it directly.
-            if isinstance(car_obj, dict):
-                car_dict_representation = car_obj
-            else:
-                car_dict_representation = to_dict(car_obj)
-        except TypeError as e:
-            # Handle cases where conversion to dict is not straightforward
-            print(f"Warning: Could not convert object of type {type(car_obj).__name__} to dict: {e}")
-            continue # Skip to the next object if conversion fails
-
-        # print(f"Original object type: {type(car_obj).__name__}") # Commented out
-        print(f"Dictionary representation: {car_dict_representation}")
-        # print(f"Resulting dictionary type: {type(car_dict_representation).__name__}") # Commented out
-out
+    print("Car DTO module loaded successfully")

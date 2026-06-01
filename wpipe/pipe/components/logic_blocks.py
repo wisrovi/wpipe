@@ -193,6 +193,43 @@ class For:
         return False
 
 
+class Background:
+    """
+    A background task that executes without blocking the pipeline.
+
+    The step runs in a separate thread and the pipeline continues immediately
+    without waiting for completion. The return value is ignored.
+
+    Attributes:
+        step: The step to execute in background (callable or tuple).
+        capture_error: If True and step fails, run error capture handlers.
+    """
+
+    def __init__(self, step: Any, capture_error: bool = False) -> None:
+        """
+        Initialize a Background block.
+
+        Args:
+            step: The step to execute in background (function, class, or tuple).
+            capture_error: Whether to run error handlers if the step fails.
+        """
+        self.step = step
+        self.capture_error: bool = capture_error
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert the block to a dictionary for serialization.
+
+        Returns:
+            Dict[str, Any]: Serialized representation of the background block.
+        """
+        return {
+            "type": "background",
+            "capture_error": self.capture_error,
+            "step": _serialize_step(self.step),
+        }
+
+
 class Parallel:
     """
     Represents a parallel execution block in the pipeline.

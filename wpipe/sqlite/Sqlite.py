@@ -113,6 +113,11 @@ class Wsqlite:
         self._error_db = self._serialize_dict(value)
         self._save_state()
 
+    @property
+    def id(self) -> Optional[int]:
+        """Gets the ID of the last inserted or updated record."""
+        return self._last_id
+
     def _serialize_dict(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Converts non-serializable objects to strings within a dictionary.
@@ -220,13 +225,14 @@ class SQLite:
         """
         self.db_name = db_name
         self.executor = ThreadPoolExecutor(max_workers=10)
-        self.db = PatchedWSQLite(RecordModel, db_name)
+        self.db = PatchedWSQLite(WsqliteModel, db_name)
 
     def write(
         self,
         input_data: Optional[Union[Dict[str, Any], str]] = None,
         output: Optional[Union[Dict[str, Any], str]] = None,
         details: Optional[Union[Dict[str, Any], str]] = None,
+        error: Optional[str] = None,
         record_id: Optional[int] = None,
     ) -> Optional[int]:
         """
@@ -236,6 +242,7 @@ class SQLite:
             input_data: Input data to store.
             output: Output data to store.
             details: Additional details to store.
+            error: Error message to store.
             record_id: If provided, updates the record with this ID.
 
         Returns:
@@ -255,12 +262,14 @@ class SQLite:
         table = self.db.table_name
         conn = self.db._get_connection()
         if record_id:
-            query = f"UPDATE {table} SET input=?, output=?, details=? WHERE rowid=?"
-            conn.execute(query, (input_str, output_str, details_str, record_id))
+            query = f"UPDATE {table} SET input=?, output=?, details=?, error=? WHERE rowid=?"
+            conn.execute(
+                query, (input_str, output_str, details_str, error, record_id)
+            )
             conn.commit()
             return record_id
 
-        query = f"INSERT INTO {table} (input, output, details, datetime) VALUES (?, ?, ?, ?)"
+        query = f"INSERT INTO {table} (input, output, details, error, datetime) VALUES (?, ?, ?, ?, ?)"
         cursor = conn.cursor()
         cursor.execute(
             query,
@@ -268,6 +277,7 @@ class SQLite:
                 input_str,
                 output_str,
                 details_str,
+                error,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             ),
         )
@@ -297,6 +307,27 @@ class SQLite:
                 "details": row[3],
             }
         return None
+
+    def get_all(self) -> Any:
+        """
+        Retrieves all records from the database.
+
+        Returns:
+            Any: A list of all records.
+        """
+        return self.db.get_all()
+
+    def export_to_dataframe(self) -> Any:
+        """
+        Exports all records from the database to a pandas DataFrame.
+
+        Returns:
+            Any: A pandas DataFrame containing all records.
+        """
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+        table = self.db.table_name
+        conn = self.db._get_connection()
+        return pd.read_sql_query(f"SELECT * FROM {table}", conn)
 
     def count_records(self) -> int:
         """

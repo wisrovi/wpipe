@@ -1,0 +1,16 @@
+name: log_export_demo
+registered_at: '2026-06-01T16:31:40.955150'
+step_count: 3
+steps:
+- func: <function step_1_collect at 0x77efad49b740>
+  name: collect_data
+  type: task
+  version: v1.0
+- func: <function step_2_filter at 0x77efab1589a0>
+  name: filter_data
+  type: task
+  version: v1.0
+- func: <function step_3_enrich at 0x77efab1587c0>
+  name: enrich_data
+  type: task
+  version: v1.0

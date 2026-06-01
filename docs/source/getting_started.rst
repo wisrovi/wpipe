@@ -2,10 +2,10 @@ Getting Started with |wpipe|
 =============================
 
 .. meta::
-   :description: Quick start guide for wpipe v2.1.1-LTS. Learn how to install and build your first pipeline.
+   :description: Quick start guide for wpipe v2.4.0-LTS. Learn how to install and build your first pipeline.
    :keywords: quickstart, installation, tutorial, python, pipeline
 
-Welcome to the future of Python orchestration. This guide will help you set up **wpipe v2.1.1-LTS** and execute your first industrial-grade pipeline in minutes.
+Welcome to the future of Python orchestration. This guide will help you set up **wpipe v2.4.0-LTS** and execute your first industrial-grade pipeline in minutes.
 
 .. raw:: html
 
@@ -60,7 +60,7 @@ Ensure the engine is correctly synchronized with your system.
     from wpipe import Pipeline
     
     print(f"🚀 WPipe v{wpipe.__version__} - Engine Synchronized.")
-    # Expected: 🚀 WPipe v2.1.1 - Engine Synchronized.
+    # Expected: 🚀 WPipe v2.4.0 - Engine Synchronized.
 
 3. Build Your First Pipeline
 ----------------------------
@@ -142,7 +142,7 @@ Here is a complete, production-ready example demonstrating data accumulation.
 5. Enterprise Capabilities at a Glance
 --------------------------------------
 
-WPipe v2.1.1-LTS is not just about sequences. It's about industrial reliability.
+WPipe v2.4.0-LTS is not just about sequences. It's about industrial reliability.
 
 .. list-table::
    :widths: 30 70
@@ -171,6 +171,6 @@ Next Steps
         </a>
         <a href="tutorials/tour/index.html" style="flex: 1; text-align: center; background: #1e293b; padding: 20px; border-radius: 12px; text-decoration: none; border: 1px solid #334155;">
             <h4 style="color: #f59e0b; margin: 0;">Start The Tour →</h4>
-            <p style="color: #94a3b8; font-size: 0.9em; margin-top: 10px;">Master all 130 levels of the learning path.</p>
+            <p style="color: #94a3b8; font-size: 0.9em; margin-top: 10px;">Master all 140 levels of the learning path.</p>
         </a>
     </div>

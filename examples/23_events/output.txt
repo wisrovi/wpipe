@@ -1,0 +1,19 @@
+============================================================
+Example 06: Events and Annotations
+============================================================
+
+[Running Pipeline...]
+
+[PIPELINE STATUS] Registered: PIPE-F14A034F
+  [initialize] System initialized
+  [process_batch_1] Processing 100 items...
+  [checkpoint] Creating checkpoint...
+  [process_batch_2] Processing second batch...
+  [finalize] Finalizing...
+annotated_pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[PIPELINE STATUS] PIPE-F14A034F: COMPLETED
+
+[Result] {'batch_size': 100, '_pipeline_start_time': '2026-04-27T18:02:05.067853', 'initialized': True, 'timestamp': '2024-01-01T00:00:00', 'batch1_processed': 100, 'checkpoint': 'completed', 'batch2_processed': 50, 'finalized': True}
+
+[Dashboard] Run: python -m wpipe.dashboard --db events_example.db --config-dir ./configs --open
+EXIT_CODE:0

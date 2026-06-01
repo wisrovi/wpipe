@@ -1,0 +1,92 @@
+2026-04-27 18:02:06.143 | INFO     | __main__:__init__:127 - Microservicio microservicio_ejemplo v1.0.0 iniciado
+Error in POST request to http://localhost:8418/matricula: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /matricula (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-04-27 18:02:06.145 | INFO     | __main__:ejecutar:202 - Procesando mensaje 1
+======================================================================
+MICROSERVICIO CON PIPELINE INTEGRADO
+======================================================================
+
+--- Creando Microservicio ---
+
+Configuracion:
+  Nombre: microservicio_ejemplo
+  Version: 1.0.0
+  Archivo config: /tmp/tmpw0upddia.yaml
+
+--- Registrando Worker ---
+  Registro no disponible (modo offline)
+
+--- Procesando Mensajes ---
+
+[MENSAJE 1] Tipo: usuario
+    [STEP] Validando mensaje...
+    [STEP] Procesando datos...
+    [STEP] Guardando resultado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:06.152 | INFO     | __main__:ejecutar:207 - Mensaje procesado exitosamente
+2026-04-27 18:02:06.152 | INFO     | __main__:ejecutar:202 - Procesando mensaje 2
+  Validado: True
+  Procesado: True
+  Guardado: True
+
+[MENSAJE 2] Tipo: producto
+    [STEP] Validando mensaje...
+    [STEP] Procesando datos...
+    [STEP] Guardando resultado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:06.154 | INFO     | __main__:ejecutar:207 - Mensaje procesado exitosamente
+2026-04-27 18:02:06.154 | INFO     | __main__:ejecutar:202 - Procesando mensaje 3
+  Validado: True
+  Procesado: True
+  Guardado: True
+
+[MENSAJE 3] Tipo: orden
+    [STEP] Validando mensaje...
+    [STEP] Procesando datos...
+    [STEP] Guardando resultado...
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+2026-04-27 18:02:06.156 | INFO     | __main__:ejecutar:207 - Mensaje procesado exitosamente
+  Validado: True
+  Procesado: True
+  Guardado: True
+
+--- Estado del Microservicio ---
+
+Estado actual:
+  nombre: microservicio_ejemplo
+  version: 1.0.0
+  mensajes_procesados: 3
+  pipeline_activo: True
+  worker_id: None
+
+[OK] Archivo temporal eliminado
+
+======================================================================
+COMPONENTES DEL MICROSERVICIO
+======================================================================
+
+Componentes integrados:
+
+1. CONFIGURACION (YAML)
+   - Lee configuracion de archivo
+   - Parametros por entorno
+
+2. PIPELINE (wpipe)
+   - Pasos de procesamiento
+   - Manejo de errores
+
+3. WORKER (API)
+   - Registro con API
+   - Health checking
+
+4. PERSISTENCIA (SQLite)
+   - Guardar resultados
+   - Historial de mensajes
+
+5. LOGGING
+   - Registro de eventos
+   - Diagnosticos
+
+EXIT_CODE:0

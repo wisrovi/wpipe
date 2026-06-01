@@ -1,16 +1,16 @@
-La Senda del Maestro: 130 Niveles de Poder
+La Senda del Maestro: 140 Niveles de Poder
 =========================================
 
 .. meta::
    :description: El camino definitivo para dominar la orquestación de datos con WPipe.
    :keywords: academy, tour, mastery, learning path, python, wpipe
 
-Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un entrenamiento intensivo de 130 niveles diseñado para llevarte desde la ignorancia absoluta hasta la maestría en sistemas distribuidos y resilientes.
+Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un entrenamiento intensivo de 140 niveles diseñado para llevarte desde la ignorancia absoluta hasta la maestría en sistemas distribuidos y resilientes.
 
 .. raw:: html
 
     <div style="text-align: center; margin-bottom: 40px;">
-        <p style="font-size: 1.2em; color: #94a3b8;">Has iniciado el proceso de sincronización con el motor <strong>v2.1.1-LTS</strong>.</p>
+        <p style="font-size: 1.2em; color: #94a3b8;">Has iniciado el proceso de sincronización con el motor <strong>v2.4.0-LTS</strong>.</p>
     </div>
 
 .. grid:: 1 1 2 2
@@ -67,7 +67,7 @@ Bienvenido, Arquitecto. **La Senda del Maestro** no es un simple tutorial; es un
         :class-card: mission-card-enterprise
         :columns: 12
 
-        **Niveles 111 - 130**
+        **Niveles 111 - 140**
         Integración total en el ecosistema Wisrovi. Microservicios, APIs y Dashboards en tiempo real.
         ^^^
         *Nested Pipelines, API Client, Event Hooks, Industrial Dashboards.*
@@ -245,6 +245,16 @@ A continuación tienes el acceso directo a cada neurona del sistema:
            level128
            level129
            level130
+           level131
+           level132
+           level133
+           level134
+           level135
+           level136
+           level137
+           level138
+           level139
+           level140
            zen
 
 .. raw:: html

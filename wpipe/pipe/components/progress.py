@@ -5,6 +5,7 @@ This module provides a singleton manager for handling Rich-based progress bars
 across multiple pipeline executions.
 """
 
+import threading
 from typing import Any, Optional
 
 from rich.progress import Progress
@@ -18,6 +19,7 @@ class ProgressManager:
     """
 
     _instance: Optional["ProgressManager"] = None
+    _lock = threading.Lock()
 
     def __new__(cls) -> "ProgressManager":
         """
@@ -26,9 +28,10 @@ class ProgressManager:
         Returns:
             ProgressManager: The shared instance.
         """
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance.progress = Progress()
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super().__new__(cls)
+                cls._instance.progress = Progress()
         return cls._instance
 
     def __init__(self) -> None:

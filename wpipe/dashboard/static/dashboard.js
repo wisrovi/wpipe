@@ -1245,8 +1245,11 @@ function renderAlerts(alerts) {
 }
 
 window.filterAlerts = function(severity) {
-    document.querySelectorAll('#tab-alerts .chip').forEach(c => c.classList.remove('active'));
-    event.target.classList.add('active');
+    const tab = document.getElementById('tab-alerts');
+    if (tab) {
+        tab.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
+        tab.querySelector(`.chip[data-severity="${severity}"]`)?.classList.add('active');
+    }
     const filtered = severity ? currentAlerts.filter(a => a.severity === severity) : currentAlerts;
     renderAlerts(filtered);
 };

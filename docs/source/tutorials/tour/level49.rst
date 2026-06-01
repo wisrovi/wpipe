@@ -3,23 +3,26 @@ Nivel 49: demo_level49.py
 
 Este es el nivel 49 del tour de aprendizaje.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level49.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
    
-   >>> Probando async con tracking...
+   >>> Testing async with tracking...
    
-   🔑 [ASYNC] Motor iniciado y trackeado
+   🔑 [ASYNC] Motor started and tracked
    
-   [MATRÍCULA ASYNC] PIPE-7C9C6960: COMPLETED
+   [ASYNC STATUS] PIPE-F8AA039C: COMPLETED
    Result: {'motor': 'on'}
-

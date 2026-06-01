@@ -38,5 +38,5 @@ for demo in $demos; do
 done
 
 echo -e "\n${BLUE}====================================================${NC}"
-echo -e "${BLUE}   🏁 TOUR COMPLETADO CON ÉXITO (130 NIVELES)       ${NC}"
+echo -e "${BLUE}   🏁 TOUR COMPLETADO CON ÉXITO (140 NIVELES)       ${NC}"
 echo -e "${BLUE}====================================================${NC}"

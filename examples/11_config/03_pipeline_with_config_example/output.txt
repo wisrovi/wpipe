@@ -1,0 +1,45 @@
+======================================================================
+PIPELINE CON CONFIGURACION YAML
+======================================================================
+
+--- Paso 1: Crear Configuracion ---
+Configuracion creada: /tmp/tmp6lfsbhpa.yaml
+
+--- Paso 2: Leer Configuracion ---
+
+Configuracion cargada:
+  Nombre: pipeline_ejemplo
+  Valor: 42
+  Multiplicador: 10
+  Verbose: True
+
+--- Paso 3: Crear Pipeline con Configuracion ---
+Pasos configurados: 3
+
+--- Paso 4: Ejecutar Pipeline ---
+Datos de entrada: {'datos': 'datos_ejemplo', 'valor': 42, 'multiplicador': 10}
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+
+--- Paso 5: Resultado ---
+
+Resultado del pipeline:
+  Validado: True
+  Procesado: True
+  Resultado: 420
+  Formateado: True
+  Salida: Resultado: 420
+
+[OK] Archivo temporal eliminado
+
+======================================================================
+FLUJO DE TRABAJO
+======================================================================
+
+1. Crear archivo de configuracion YAML
+2. Leer configuracion con leer_yaml()
+3. Extraer parametros de configuracion
+4. Crear pipeline con parametros leidos
+5. Configurar pasos basados en habilitadores
+6. Ejecutar pipeline con datos
+
+EXIT_CODE:0

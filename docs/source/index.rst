@@ -189,13 +189,13 @@
 .. image:: https://img.shields.io/badge/tests-625%20passing-10b981
    :alt: Tests
 
-.. image:: https://img.shields.io/badge/LTS-2.1.1-green
+.. image:: https://img.shields.io/badge/LTS-2.4.0-green
    :alt: LTS
 
 wpipe |version| Documentation
 =============================
 
-**wpipe** is a powerful, industrial-grade Python library for orchestrating high-performance data processing pipelines with native support for parallelism, intelligent recovery, and deep observability. It now includes a **130-level Learning Tour** to master the library.
+**wpipe** is a powerful, industrial-grade Python library for orchestrating high-performance data processing pipelines with native support for parallelism, intelligent recovery, and deep observability. It now includes a **140-level Learning Tour** to master the library.
 
 .. toctree::
    :maxdepth: 2
@@ -236,8 +236,8 @@ Traditional workflow tools like Apache Airflow, Prefect, or Dagster are excellen
             <p>Define milestones using logical expressions. Auto-resume exactly where you left off after system failures.</p>
         </div>
         <div class="feature-card">
-            <h3><span>🎓</span> 130-Level Tour</h3>
-            <p>Master the library with a guided tour of 130+ examples, covering everything from basic steps to complex DAGs.</p>
+            <h3><span>🎓</span> 140-Level Tour</h3>
+            <p>Master the library with a guided tour of 140+ examples, covering everything from basic steps to complex DAGs.</p>
         </div>
         <div class="feature-card">
             <h3><span>🧬</span> Data Contracts</h3>
@@ -299,7 +299,7 @@ Your First Pipeline
         </div>
         <div class="stat-box">
             <div class="value">LTS</div>
-            <div class="label">2.1.1</div>
+            <div class="label">2.4.0</div>
         </div>
     </div>
 

@@ -1,0 +1,14 @@
+============================================================
+Example 01: Basic Pipeline Tracking
+============================================================
+
+[Running Pipeline...]
+
+[PIPELINE STATUS] Registered: PIPE-4334CA5F
+data_generation ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[PIPELINE STATUS] PIPE-4334CA5F: COMPLETED
+
+[Result] {'count': 5, '_pipeline_start_time': '2026-04-27T18:01:16.894573', 'numbers': [1, 2, 3, 4, 5], 'doubled': [2, 4, 6, 8, 10], 'sum': 30}
+
+[Dashboard] Run: python -m wpipe.dashboard --db basic_tracking.db --config-dir ./configs --open
+EXIT_CODE:0

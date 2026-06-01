@@ -20,7 +20,7 @@ from wpipe.exception.api_error import logger
 from wpipe.tracking import PipelineTracker
 from wpipe.util.utils import clean_for_json
 
-from .components.logic_blocks import Condition, For, Parallel
+from .components.logic_blocks import Background, Condition, For, Parallel
 from .components.metrics import SystemMetricsCollector
 from .components.progress import ProgressManager
 
@@ -78,6 +78,7 @@ class Pipeline(APIClient):
     _step_ids: Dict[str, Any] = {}
     _metrics_collector: Optional[SystemMetricsCollector] = None
     parent_pipeline_id: Optional[str] = None
+    pipeline_version: str = "1.0.0"
 
     def __init__(
         self,
@@ -90,6 +91,7 @@ class Pipeline(APIClient):
         retry_on_exceptions: Tuple[type, ...] = (Exception,),
         tracking_db: Optional[str] = None,
         pipeline_name: Optional[str] = None,
+        pipeline_version: Optional[str] = None,
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
@@ -138,6 +140,8 @@ class Pipeline(APIClient):
         self.continue_on_error = continue_on_error
         self.show_progress = show_progress
         self.tracking_db = tracking_db
+        self.pipeline_name = pipeline_name or "Pipeline"
+        self.pipeline_version = pipeline_version or "1.0.0"
 
         # Internal queues for events and post-run tasks
         self._pending_events: List[Dict[str, Any]] = []
@@ -147,9 +151,9 @@ class Pipeline(APIClient):
 
         # Initialize tracking if database path provided
         if tracking_db:
+            from wpipe.tracking import PipelineTracker
             self.tracker = PipelineTracker(tracking_db, config_dir)
 
-        self.pipeline_name = pipeline_name or "Pipeline"
 
     def add_event(
         self,
@@ -274,12 +278,12 @@ class Pipeline(APIClient):
         return self
 
     def _execute_error_capture(self, data: Dict[str, Any], error_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute error capture steps safely."""
+        """Execute error capture steps safely without standard task invocation to avoid recursion."""
         if not self._error_capture_tasks:
             return data
 
         if self.verbose:
-            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info['step_name']}'...")
+            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info.get('step_name', 'unknown')}'...")
 
         for task in self._error_capture_tasks:
             try:
@@ -289,15 +293,20 @@ class Pipeline(APIClient):
                     if isinstance(task, tuple)
                     else (
                         getattr(func, "NAME", None)
-                        or getattr(func, "__name__", "error_handler")
+                        or getattr(func, "__name__", getattr(func.__class__, "__name__", "error_handler"))
                     )
                 )
 
+                # Direct call to avoid standard retry/tracking logic that might fail and recurse
                 sig = inspect.signature(func)
                 if len(sig.parameters) >= 2:
-                    data = self._task_invoke(func, name, data, error_info)
+                    result = func(data, error_info)
                 else:
-                    data = self._task_invoke(func, name, data)
+                    result = func(data)
+                
+                if isinstance(result, dict):
+                    data.update(result)
+
             except Exception as e:  # pylint: disable=broad-exception-caught
                 if self.verbose:
                     print(f"[ERROR CAPTURE FAILED] {e}")
@@ -474,6 +483,10 @@ class Pipeline(APIClient):
             if self.continue_on_error:
                 result["error"] = error
                 return result
+            
+            # Re-raise the original user exception to maintain compatibility with examples
+            if te.__cause__:
+                raise te.__cause__
             raise ProcessError(str(te), Codes.TASK_FAILED) from te
         except ApiError as ae:
             raise ApiError(str(ae), Codes.API_ERROR) from ae
@@ -520,6 +533,23 @@ class Pipeline(APIClient):
                     max_workers=item.max_workers,
                     use_processes=item.use_processes,
                 ))
+            elif isinstance(item, Background):
+                normalized_step = normalize_step(item.step)
+                if isinstance(normalized_step, tuple):
+                    bg_step = list(normalized_step)
+                    if len(bg_step) >= 4 and isinstance(bg_step[3], dict):
+                        bg_step[3] = {**bg_step[3], "_is_background": True, "_background_capture_error": item.capture_error}
+                    elif len(bg_step) == 3:
+                        bg_step.append({"_is_background": True, "_background_capture_error": item.capture_error})
+                    else:
+                        bg_step = [normalized_step[0], normalized_step[1] if len(normalized_step) > 1 else "background",
+                                   normalized_step[2] if len(normalized_step) > 2 else "v1.0",
+                                   {"_is_background": True, "_background_capture_error": item.capture_error}]
+                else:
+                    name = getattr(normalized_step, "NAME", getattr(normalized_step, "__name__", "background"))
+                    version = getattr(normalized_step, "VERSION", "v1.0")
+                    bg_step = [normalized_step, name, version, {"_is_background": True, "_background_capture_error": item.capture_error}]
+                new_list.append(tuple(bg_step))
             elif isinstance(item, Pipeline):
                 new_list.append((item, item.pipeline_name or "SubPipeline", "v1.0", {}))
             elif callable(item):
@@ -535,12 +565,30 @@ class Pipeline(APIClient):
         self.tasks_list = new_list
         return self
 
+    def set_states(self, steps: List[Any]) -> "Pipeline":
+        """Alias for set_steps for backward compatibility."""
+        return self.set_steps(steps)
+
+    def add_pipeline(self, pipeline: Any, name: str, version: str = "v1.0") -> "Pipeline":
+        """
+        Alias to add another pipeline as a step.
+        """
+        self.add_state(name=name, func=pipeline.run, version=version)
+        return self
+
+    def add_condition(self, condition: Any) -> "Pipeline":
+        """
+        Add a condition to the pipeline.
+        """
+        self.add_state(func=condition)
+        return self
+
     def add_state(
         self,
-        name: str,
-        func: Optional[Callable] = None,
+        name: Optional[Any] = None,
+        func: Optional[Any] = None,
         version: str = "v1.0",
-        state: Optional[Callable] = None,
+        state: Optional[Any] = None,
         depends_on: Optional[List[str]] = None,
         timeout: Optional[float] = None,
         retry_count: Optional[int] = None,
@@ -548,11 +596,39 @@ class Pipeline(APIClient):
         retry_on_exceptions: Optional[Tuple[type, ...]] = None,
         **kwargs: Any,
     ) -> "Pipeline":
-        """Add a single step to the pipeline."""
+        """Add a single step or logic block to the pipeline."""
         # pylint: disable=unused-argument
-        step_func = func or state
-        if step_func is None:
-            raise ValueError("Either 'func' or 'state' parameter must be provided")
+        
+        # If the first positional argument 'name' is actually a logic block or a callable instance
+        from .components.logic_blocks import Condition, For, Parallel, Background
+        
+        step_item = state or func
+        
+        if step_item is None:
+            # If name is passed positionally but is a logic block or callable
+            if isinstance(name, (Condition, For, Parallel, Background, Pipeline)):
+                step_item = name
+                name = getattr(step_item, "pipeline_name", "logic_block")
+            elif callable(name):
+                step_item = name
+                # Extract real name from the callable
+                name = getattr(step_item, "NAME", getattr(step_item, "__name__", step_item.__class__.__name__))
+            elif kwargs and list(kwargs.values()):
+                first_val = list(kwargs.values())[0]
+                if isinstance(first_val, (Condition, For, Parallel, Background, Pipeline)) or callable(first_val):
+                    step_item = first_val
+            
+            if step_item is None:
+                raise ValueError("Either 'func', 'state', or a valid logic block must be provided")
+
+        if isinstance(step_item, (Condition, For, Parallel, Background, Pipeline)):
+            current_steps = list(self.tasks_list)
+            current_steps.append(step_item)
+            self.set_steps(current_steps)
+            return self
+
+        if not name or not isinstance(name, str):
+            name = getattr(step_item, "NAME", getattr(step_item, "__name__", "unknown_step"))
 
         meta = {
             "depends_on": depends_on,
@@ -562,14 +638,14 @@ class Pipeline(APIClient):
             "retry_on_exceptions": retry_on_exceptions,
         }
 
-        decorator_meta = getattr(step_func, "_wpipe_metadata", None)
+        decorator_meta = getattr(step_item, "_wpipe_metadata", None)
         if decorator_meta:
             for key, val in meta.items():
                 if val is None:
                     meta[key] = getattr(decorator_meta, key, None)
 
         current_steps = list(self.tasks_list)
-        current_steps.append((step_func, name, version, meta))
+        current_steps.append((step_item, name, version, meta))
         self.set_steps(current_steps)
         return self
 
@@ -772,6 +848,15 @@ class Pipeline(APIClient):
         if isinstance(item, Parallel):
             return self._execute_parallel(item, data, parent_step_id, parallel_group, **kwargs)
 
+        is_background = False
+        capture_error = False
+        if isinstance(item, tuple) and len(item) >= 4 and isinstance(item[3], dict):
+            is_background = item[3].get("_is_background", False)
+            capture_error = item[3].get("_background_capture_error", False)
+
+        if is_background:
+            return self._execute_background_step(item, data, capture_error, parent_step_id, parallel_group, **kwargs)
+
         return self._execute_task_step(item, data, parent_step_id, parallel_group, **kwargs)
 
     def _execute_parallel(
@@ -857,6 +942,47 @@ class Pipeline(APIClient):
             data["error"] = f"Executor failure: {str(e)}"
         finally:
             self._end_step_tracking(tracked_id, data if "error" not in data else None, data.get("error"))
+        return data
+
+    def _execute_background_step(
+        self,
+        item: Any,
+        data: Dict[str, Any],
+        capture_error: bool,
+        parent_step_id: Optional[int],
+        parallel_group: Optional[str],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Execute a background step without blocking the pipeline."""
+        import threading as bg_thread
+        
+        func, name, version, step_id, step_meta = None, "background", "v1.0", None, {}
+        if isinstance(item, tuple):
+            if len(item) >= 2:
+                func, name, version = item[0], item[1], item[2] if len(item) > 2 else "v1.0"
+                if len(item) >= 4 and isinstance(item[3], dict):
+                    step_meta = item[3]
+        elif callable(item):
+            func = item
+            name = getattr(item, "NAME", getattr(item, "__name__", "background"))
+
+        task_data = data.copy()
+        task_data.pop("progress_rich", None)
+
+        def run_background():
+            try:
+                if func:
+                    self._task_invoke(func, name, task_data, parent_step_id=parent_step_id, parallel_group=parallel_group, **kwargs)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                if capture_error:
+                    error_info = {"step_name": name, "error": str(e), "error_message": str(e)}
+                    self._execute_error_capture(task_data, error_info)
+                if self.verbose:
+                    print(f"[BACKGROUND ERROR] {name}: {e}")
+
+        # Use daemon thread so process can exit without waiting
+        bg_thread.Thread(target=run_background, daemon=True, name=f"wpipe_bg_{name}").start()
+
         return data
 
     def _execute_task_step(

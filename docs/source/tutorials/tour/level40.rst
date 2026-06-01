@@ -3,32 +3,33 @@ Nivel 40: demo_level40.py
 
 Este es el nivel 40 del tour de aprendizaje.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level40.py
    :language: python
-   :linenos:
+   :class: thebe
+
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
    
-   🚀 INICIANDO EL GRAN VIAJE (Integración de 40 niveles)...
+   🚀 STARTING THE GRAND TRIP (Integration of 40 levels)...
    
-   
-   [CHECKPOINT] Reanudando 'viaje_final_autonomo' desde el paso 3
-   
-   [MATRÍCULA] Pipeline registered: PIPE-B3C1C0FF
-   [MATRÍCULA] Config YAML: /home/wisrovi/Documentos/w_libraries/wpipe/wpipe/examples/00_honey_pot/03_yield/pipeline_configs/VIAJE_AUTONOMO_TOTAL.yaml
-   VIAJE_AUTONOMO_TOTAL - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   [PIPELINE STATUS] Registered: PIPE-4D2FBA2B
+   [PARALLEL] Executing 3 steps using PROCESSES (workers=3)
+     [ERROR] Loop broken at iteration 0 due to: Can't pickle <function <lambda> at 0x7ce967c96020>: attribute lookup <lambda> on __main__ failed | Can't pickle <function <lambda> at 0x7ce967c96020>: attribute lookup <lambda> on __main__ failed | Can't pickle <function <lambda> at 0x7ce967c96020>: attribute lookup <lambda> on __main__ failed
+   🏁 DESTINATION REACHED: The car has arrived on its own.
+   total_autonomous_trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    [HOOKS] Executing post-run tasks...
-   🔌 Sistemas desconectados.
+   🔌 Systems disconnected.
+   [PIPELINE STATUS] PIPE-4D2FBA2B: COMPLETED
    
-   [MATRÍCULA] Pipeline PIPE-B3C1C0FF: COMPLETED
-   
-   ✅ TOUR DE APRENDIZAJE COMPLETADO. 40 NIVELES DE DOMINIO DE WPIPE.
-
+   ✅ LEARNING TOUR COMPLETED. 40 LEVELS OF WPIPE MASTERY.

@@ -1,0 +1,3 @@
+Database host: localhost
+Cache enabled: True
+EXIT_CODE:0

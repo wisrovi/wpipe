@@ -1,0 +1,16 @@
+Error in POST request to http://localhost:8418/newprocess: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /newprocess (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+Error in POST request to http://localhost:8418/actualizar_task: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /actualizar_task (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+Error in POST request to http://localhost:8418/actualizar_task: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /actualizar_task (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+Error in POST request to http://localhost:8418/actualizar_task: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /actualizar_task (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+Error in POST request to http://localhost:8418/actualizar_task: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /actualizar_task (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+[INFO] worker_id defined correctly
+Problem updating Process
+[task] Status update: None
+[task] Status update: None
+[task] Status update: None
+[task] Status update: None
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Error in POST request to http://localhost:8418/endprocess: HTTPConnectionPool(host='localhost', port=8418): Max retries exceeded with url: /endprocess (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8418): Failed to establish a new connection: [Errno 111] Connection refused"))
+[INFO] [END] pipeline update problem: None
+Result: {'_pipeline_start_time': '2026-04-27T18:01:17.555845', 'data': [1, 2, 3, 4, 5], 'transformed': [2, 4, 6, 8, 10]}
+EXIT_CODE:0

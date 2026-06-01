@@ -1,0 +1,192 @@
+{
+    "name": "wpipe-vscode",
+    "displayName": "WPipe Tools",
+    "description": "Intelligent tools for WPipe pipeline orchestration",
+    "version": "0.9.9",
+    "publisher": "wpipe",
+    "author": {
+        "name": "William Rodriguez (wisrovi)",
+        "email": "wisrovi.rodriguez@gmail.com",
+        "url": "https://github.com/wisrovi"
+    },
+    "homepage": "https://github.com/wisrovi/wpipe",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wisrovi/wpipe.git"
+    },
+    "icon": "icon.png",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Snippets",
+        "Visualization"
+    ],
+    "activationEvents": [
+        "onCommand:wpipe-vscode.previewDAG",
+        "onCommand:wpipe-vscode.openDashboard",
+        "onCommand:wpipe-vscode.showCheatSheet",
+        "onCommand:wpipe-vscode.refreshCatalog",
+        "onLanguage:python",
+        "onLanguage:yaml",
+        "onView:wpipeSteps"
+    ],
+    "main": "./out/extension.js",
+    "browser": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "WPipe Tools",
+            "properties": {
+                "wpipe.excludePaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "description": "Additional glob patterns to exclude when searching for workspace steps."
+                },
+                "wpipe.maxSearchFiles": {
+                    "type": "number",
+                    "default": 500,
+                    "description": "Maximum number of files to scan when looking for workspace steps."
+                }
+            }
+        },
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "wpipe-explorer",
+                    "title": "WPipe",
+                    "icon": "lateral_icon.png"
+                }
+            ]
+        },
+        "views": {
+            "wpipe-explorer": [
+                {
+                    "id": "wpipeSteps",
+                    "name": "Step Registry",
+                    "icon": "icon.png"
+                }
+            ]
+        },
+        "jsonValidation": [
+            {
+                "fileMatch": "*.wpipe.yaml",
+                "url": "./wpipe-schema.json"
+            },
+            {
+                "fileMatch": "pipeline_configs/*.yaml",
+                "url": "./wpipe-schema.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "wpipe-vscode.helloWorld",
+                "title": "WPipe: Hello World"
+            },
+            {
+                "command": "wpipe-vscode.refreshCatalog",
+                "title": "WPipe: Refresh Cloud Catalog",
+                "icon": "$(cloud-download)"
+            },
+            {
+                "command": "wpipe-vscode.searchSteps",
+                "title": "WPipe: Search & Import Steps (Catalog)",
+                "icon": "$(search)"
+            },
+            {
+                "command": "wpipe-vscode.previewDAG",
+                "title": "WPipe: Preview Pipeline DAG",
+                "icon": "$(graph)"
+            },
+            {
+                "command": "wpipe-vscode.openDashboard",
+                "title": "WPipe: Open Web Dashboard",
+                "icon": "$(dashboard)"
+            },
+            {
+                "command": "wpipe-vscode.showCheatSheet",
+                "title": "WPipe: Show Cheat Sheet / Help",
+                "icon": "$(question)"
+            },
+            {
+                "command": "wpipeSteps.runStep",
+                "title": "Run this Step (One-Click Test)",
+                "icon": "$(play)"
+            },
+            {
+                "command": "wpipe-vscode.createNewStep",
+                "title": "WPipe: Create New Advanced Step",
+                "icon": "$(new-file)"
+            },
+            {
+                "command": "wpipeSteps.refreshEntry",
+                "title": "Refresh Steps",
+                "icon": "$(refresh)"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "wpipe-vscode.createNewStep",
+                    "when": "view == wpipeSteps",
+                    "group": "navigation"
+                },
+                {
+                    "command": "wpipe-vscode.refreshCatalog",
+                    "when": "view == wpipeSteps",
+                    "group": "navigation"
+                },
+                {
+                    "command": "wpipeSteps.refreshEntry",
+                    "when": "view == wpipeSteps",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "wpipeSteps.runStep",
+                    "when": "view == wpipeSteps && viewItem == workspaceStep",
+                    "group": "inline"
+                }
+            ],
+            "editor/title": [
+                {
+                    "when": "resourceExtname == .yaml || resourceExtname == .yml",
+                    "command": "wpipe-vscode.previewDAG",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "snippets": [
+            {
+                "language": "python",
+                "path": "./snippets/python.json"
+            },
+            {
+                "language": "yaml",
+                "path": "./snippets/yaml.json"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && cp src/steps_catalog.json out/",
+        "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.75.0",
+        "@types/node": "16.x",
+        "typescript": "^4.9.5",
+        "eslint": "^8.34.0",
+        "@typescript-eslint/eslint-plugin": "^5.53.0",
+        "@typescript-eslint/parser": "^5.53.0",
+        "@lezer/python": "^1.1.19",
+        "esbuild": "^0.25.0"
+    }
+}

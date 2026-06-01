@@ -1,0 +1,64 @@
+{
+    "WPipe YAML Base": {
+        "prefix": "wpyaml",
+        "body": [
+            "name: ${1:pipeline_name}",
+            "version: ${2:v1.0.0}",
+            "steps:",
+            "  $0"
+        ],
+        "description": "Base structure for WPipe YAML"
+    },
+    "WPipe YAML Step": {
+        "prefix": "ypstep",
+        "body": [
+            "- name: \"${1:Step Name}\"",
+            "  function: \"${2:function_name}\"",
+            "  type: task",
+            "  version: \"${3:v1.0}\""
+        ],
+        "description": "Standard task step in YAML"
+    },
+    "WPipe YAML Parallel": {
+        "prefix": "ypparallel",
+        "body": [
+            "- type: parallel",
+            "  max_workers: ${1:3}",
+            "  steps:",
+            "    - ${2:step_1}",
+            "    - ${3:step_2}"
+        ],
+        "description": "Parallel block in YAML"
+    },
+    "WPipe YAML Condition": {
+        "prefix": "ypcondition",
+        "body": [
+            "- type: condition",
+            "  expression: \"${1:valor > 100}\"",
+            "  branch_true:",
+            "    - ${2:step_true}",
+            "  branch_false:",
+            "    - ${3:step_false}"
+        ],
+        "description": "Condition block in YAML"
+    },
+    "WPipe YAML For": {
+        "prefix": "ypfor",
+        "body": [
+            "- type: for",
+            "  iterations: ${1:10}",
+            "  expression: \"${2:status == 'ok'}\"",
+            "  steps:",
+            "    - ${3:step_to_repeat}"
+        ],
+        "description": "For loop block in YAML"
+    },
+    "WPipe YAML Background": {
+        "prefix": "ypbackground",
+        "body": [
+            "- type: background",
+            "  step: ${1:background_task}"
+        ],
+        "description": "Background task in YAML"
+    }
+}

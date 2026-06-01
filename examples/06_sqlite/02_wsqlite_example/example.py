@@ -21,10 +21,10 @@ def main() -> None:
 
     with Wsqlite(db_name=db_path) as db:
         db.input = {"name": "pipeline_run", "id": 123}
-        print(f"Input set, record ID: {db.id}")
+        print(f"Input set, record UUID: {db.record_uuid}")
 
         db.output = {"result": "completed", "value": 42}
-        print(f"Output set, record ID: {db.id}")
+        print(f"Output set, record UUID: {db.record_uuid}")
 
         print(f"Total records: {db.count_records()}")
 

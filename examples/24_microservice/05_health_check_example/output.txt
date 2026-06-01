@@ -1,0 +1,4 @@
+Health check: {'service': 'test_service', 'status': 'healthy', 'pipeline_ready': True}
+Pipeline ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Process result: {'test': 'data', '_pipeline_start_time': '2026-04-27T18:02:06.486789', 'status': 'ok', 'processed': True}
+EXIT_CODE:0

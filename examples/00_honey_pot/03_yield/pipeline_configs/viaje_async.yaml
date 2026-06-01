@@ -1,39 +1,42 @@
 name: viaje_async
-registered_at: '2026-04-22T11:48:59.202617'
+registered_at: '2026-06-01T16:29:19.146774'
 step_count: 2
 steps:
-- <function fase_preparacion at 0x707559a8fce0>
+- func: <function preparation_phase at 0x7fada8765120>
+  name: preparation_phase
+  type: task
+  version: v1.1
 - expression: null
   iterations: 3
   steps:
-  - <states.print_info.Print_info object at 0x707559a8a7b0>
+  - <states.car_info_printer.CarInfoPrinter object at 0x7fada8591220>
   - max_workers: 3
     steps:
-    - <function hechar_gasolina at 0x707559a8f240>
-    - <function cambiar_aceite at 0x70755a6de8e0>
-    - <function revisar_luces at 0x707559be36a0>
+    - <function refuel at 0x7fada874b380>
+    - <function change_oil at 0x7fada874a2a0>
+    - <function check_lights at 0x7fada87665c0>
     type: parallel
     use_processes: false
-  - <states.print_info.Print_info object at 0x707559a8b140>
+  - <states.car_info_printer.CarInfoPrinter object at 0x7fada8591480>
   - meta: {}
-    name: Mostrar gasolina
+    name: Mostrar fuel
     type: task
     version: v1.0
   - expression: "nivel_gasolina != 'Vac\xEDo'"
     iterations: null
     steps:
-    - <function conducir at 0x707559a8e5c0>
+    - <function drive at 0x7fada874a660>
     - branch_false:
-      - <function desinflar_neumaticos at 0x707559a8f100>
+      - <function deflate_tires at 0x7fada874b060>
       branch_true:
-      - <wpipe.pipe.pipe.Pipeline object at 0x707559a89910>
-      - <function inflar_neumaticos at 0x707559a8f560>
+      - <wpipe.pipe.pipe.Pipeline object at 0x7fada883aba0>
+      - <function inflate_tires at 0x7fada874b740>
       expression: nivel_neumaticos == 'Bajo'
       type: condition
     - meta: {}
-      name: Mostrar gasolina
+      name: Mostrar fuel
       type: task
       version: v1.0
-    - <function pinchazo_aleatorio at 0x707559a3b560>
+    - <function random_flat_tire at 0x7fada8766e80>
     type: for
   type: for

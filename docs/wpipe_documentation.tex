@@ -1,0 +1,334 @@
+% PREÁMBULO EXACTO - COPIAR LITERALMENTE:
+\documentclass[12pt,a4paper]{report}
+
+% Fuentes CRÍTICAS para compatibilidad Word
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet} % Helvetica para texto principal
+\usepackage{courier} % Courier para código
+\renewcommand{\familydefault}{\sfdefault} % Helvetica como default
+
+% Paquetes esenciales
+\usepackage{tocbibind}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{appendix}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Configuración de márgenes
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm,
+    headheight=15pt
+}
+
+% Configuración listings EXACTA para código
+\lstset{
+    basicstyle=\ttfamily\footnotesize\fontfamily{pcr}\selectfont,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    frameround=tttt,
+    rulecolor=\color{gray!50},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    captionpos=b,
+    xleftmargin=2em,
+    framexleftmargin=1.5em,
+    belowskip=1em,
+    aboveskip=1em
+}
+
+% Headers y footers con sans-serif
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\color{blue!70!black}\textbf{\sffamily\leftmark}}
+\fancyhead[R]{\color{blue!70!black}\textbf{\sffamily\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[C]{\color{gray}\small\sffamily Kubernetes GPU Integration for MLOps Workloads}
+
+% Estilos de capítulos y secciones con sans-serif
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\sffamily\color{blue!70!black}}
+{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-30pt}{20pt}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\sffamily\color{blue!70!black}}
+{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{15pt}{10pt}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\sffamily\color{orange!80!black}}
+{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{5pt}
+
+% Configuración hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=blue!70!black,
+    urlcolor=blue!70!black,
+    citecolor=orange!80!black,
+    pdftitle={Kubernetes GPU Integration for MLOps Workloads},
+    pdfauthor={William Rodriguez},
+    pdfsubject={MLOps, Kubernetes, GPU},
+    pdfkeywords={Kubernetes, GPU, MLOps, Docker, Minikube}
+}
+
+\begin{document}
+
+% Página de título SIMPLE
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    \includegraphics[width=0.25\textwidth]{sources/kubernetes-logo.png}
+    \vspace{1cm}
+    {\color{blue!70!black}\Huge\textbf{Kubernetes GPU Integration}}\\[0.5cm]
+    {\color{orange!80!black}\Large\textbf{for MLOps Workloads}}\\[1cm]
+    {\large\textit{A Modern Implementation Guide for}}\\[0.3cm]
+    {\Large\textbf{Production-Ready GPU Computing Infrastructure}}\\[1.5cm]
+    {\large\textbf{\today}}
+    \vfill
+    \colorbox{blue!70!black}{
+        \color{white}\textbf{Docker + Minikube + Kubernetes + GPU}
+    }
+\end{titlepage}
+
+% Página de autor SEPARADA
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    {\color{blue!70!black}\Large\textbf{Author}}\\[1cm]
+    {\Large\textbf{William Rodriguez}}\\[0.5cm]
+    \textit{Líder de IA y Arquitecto de Soluciones}\\[0.3cm]
+    \textit{eCaptureDtech}\\[0.2cm]
+    \textit{Badajoz, Extremadura, España}\\[1cm]
+    \begin{tabular}{c}
+        \textbf{Contact Information:}\\[0.5cm]
+        LinkedIn: es.linkedin.com/in/wisrovi-rodriguez\\[0.2cm]
+        Email: william.rodriguez@ecapturedtech.com\\[0.2cm]
+        GitHub: github.com/wisrovi
+    \end{tabular}
+    \vfill
+    \colorbox{orange!80!black}{
+        \color{white}\textbf{Expert in MLOps and Cloud Architecture}
+    }
+\end{titlepage}
+
+% Tabla de contenidos
+\tableofcontents
+\cleardoublepage
+
+% Listas
+\listoffigures
+\cleardoublepage
+\listoftables
+\cleardoublepage
+\lstlistoflistings
+\cleardoublepage
+
+% CAPÍTULOS CON \cleardoublepage OBLIGATORIO
+\chapter{Executive Summary}
+\cleardoublepage
+The rapid evolution of Machine Learning Operations (MLOps) requires robust, scalable, and resilient infrastructure. This documentation details the integration of Kubernetes with GPU-accelerated environments using the WPipe framework. WPipe v2.4.0 introduces sophisticated orchestration primitives including \texttt{Parallel} execution, \texttt{Condition} branching, \texttt{For} loops, and \texttt{Background} tasks. These features, combined with intelligent checkpointing and nested pipeline support, enable the construction of highly efficient MLOps workflows. Furthermore, official editor extensions for Visual Studio Code enhance developer productivity through specialized snippets and validation tools. This guide serves as the definitive reference for building and maintaining production-ready GPU computing infrastructure powered by WPipe.
+
+\chapter{Introduction}
+\cleardoublepage
+
+\section{Background}
+Contemporary MLOps requires coordination of concurrent tasks across distributed nodes. Frameworks like WPipe have emerged as powerful engines offering native parallelism and strict data contracts. By integrating WPipe with Kubernetes and GPU resources, organizations can maximize throughput for training and inference phases.
+
+\chapter{Technical Architecture}
+\cleardoublepage
+
+\section{Core Pillars of WPipe}
+WPipe v2.4.0 is engineered around several core pillars that allow for complex logic definition:
+\begin{itemize}
+    \item \textbf{\texttt{step}:} Atomic unit with retry and timeout support.
+    \item \textbf{\texttt{Condition}:} Dynamic branching logic.
+    \item \textbf{\texttt{For}:} Iterative loops with validation.
+    \item \textbf{\texttt{Parallel}:} Native concurrent execution.
+    \item \textbf{\texttt{Background}:} Non-blocking daemon operations.
+\end{itemize}
+
+\chapter{Installation and Editor Extensions}
+\cleardoublepage
+
+\section{WPipe Core Installation}
+Install via \texttt{pip}:
+\begin{lstlisting}[language=bash, caption=Installing WPipe]
+pip install wpipe
+\end{lstlisting}
+
+\section{WPipe Extension for Visual Studio Code}
+The WPipe ecosystem includes a professional-grade extension for Visual Studio Code (located in \texttt{editors/vscode/}), designed to accelerate the development lifecycle of complex pipelines.
+
+\subsection{Intelligent Code Snippets}
+The extension provides a comprehensive set of snippets that minimize boilerplate code and prevent syntax errors. These are available in both Python and YAML files.
+
+\begin{table}[H]
+    \centering
+    \caption{Essential Python Snippets for WPipe}
+    \begin{tabular}{llp{7cm}}
+        \toprule
+        \textbf{Prefix} & \textbf{Component} & \textbf{Description} \\
+        \midrule
+        \texttt{wp-step} & \texttt{@step} & Generates a decorated step function with default parameters. \\
+        \texttt{wp-pipe} & \texttt{Pipeline} & Boilerplate for a new synchronous pipeline instance. \\
+        \texttt{wp-parallel} & \texttt{Parallel} & Template for parallel step execution blocks. \\
+        \texttt{wp-for} & \texttt{For} & Loop structure with validation expression placeholders. \\
+        \texttt{wp-ctx} & \texttt{PipelineContext} & Typed class for data contract definition. \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Schema Validation and IntelliSense}
+WPipe pipelines can be configured via YAML. The extension integrates a custom JSON Schema that validates configurations in real-time.
+\begin{itemize}
+    \item \textbf{Type Checking:} Detects incorrect types for timeouts, retry counts, and worker limits.
+    \item \textbf{Autocompletion:} Provides suggestions for available keys within \texttt{pipeline\_config} blocks.
+    \item \textbf{Hover Info:} Displays documentation for specific parameters directly within the editor.
+\end{itemize}
+
+\subsection{Pipeline Visualization and Explorer}
+The extension adds a dedicated sidebar icon to VS Code, enabling:
+\begin{itemize}
+    \item \textbf{Graph Preview:} A live view of the pipeline's DAG (Directed Acyclic Graph) as defined in code.
+    \item \textbf{Execution Logs:} Integration with the local SQLite database to display recent execution statuses.
+    \item \textbf{Environment Validation:} Checks if the current Python environment has \texttt{wpipe} installed and correctly configured.
+\end{itemize}
+
+\subsection{Customizing the Developer Environment}
+Administrators can extend the extension's behavior by modifying \texttt{.vscode/settings.json}. This allows for defining custom step registries or adjusting the default port for the integrated dashboard.
+
+\chapter{Advanced Orchestration Components}
+\cleardoublepage
+
+\section{Conditional Branching (\texttt{Condition})}
+Branching logic is handled via expression evaluation.
+
+\begin{lstlisting}[language=Python, caption=Conditional Logic Example]
+from wpipe import Pipeline, step, Condition
+
+@step(name="procesar")
+def procesar(data): return {"resultado": "ok"}
+
+@step(name="alerta")
+def alertar(data): return {"alerta": "error"}
+
+pipeline = Pipeline(pipeline_name="condicional")
+pipeline.set_steps([
+    Condition(
+        expression="valor > 100",
+        branch_true=[procesar],
+        branch_false=[alertar]
+    )
+])
+\end{lstlisting}
+
+\section{Iterative Loops (\texttt{For})}
+Loops with early-exit validation.
+
+\begin{lstlisting}[language=Python, caption=Iterative Loop with Validation]
+from wpipe import Pipeline, step, For
+
+@step(name="conducir")
+def conducir(data):
+    return {"nivel_gasolina": data.get("nivel_gasolina", 100) - 10}
+
+viaje = Pipeline(pipeline_name="bucle")
+viaje.set_steps([
+    For(
+        iterations=10,
+        validation_expression="nivel_gasolina > 0",
+        steps=[conducir]
+    )
+])
+\end{lstlisting}
+
+\section{Background Tasks (\texttt{Background})}
+Fire-and-forget asynchronous execution.
+
+\begin{lstlisting}[language=Python, caption=Non-blocking Background Task]
+from wpipe import Pipeline, step
+from wpipe.pipe.components.logic_blocks import Background
+
+@step(name="telemetria")
+def enviar_telemetria(data):
+    import time
+    time.sleep(2)
+    print("Telemetry sent!")
+
+p = Pipeline(pipeline_name="background_demo")
+p.set_steps([
+    Background(enviar_telemetria),
+    tarea_principal
+])
+\end{lstlisting}
+
+\chapter{Resilience and Data Management}
+\cleardoublepage
+
+\section{Checkpointing Strategy}
+State persistence across pod lifecycles.
+
+\chapter{Performance and Use Cases}
+\cleardoublepage
+
+\section{Benchmark Results}
+\begin{table}[H]
+    \centering
+    \caption{Component Performance Overview}
+    \begin{tabular}{llc}
+        \toprule
+        \textbf{Component} & \textbf{Optimization Type} & \textbf{Typical Gain} \\
+        \midrule
+        Parallel (I/O) & ThreadPool & 3x - 5x \\
+        Parallel (CPU) & ProcessPool & 1.5x - 2x \\
+        Background & Daemon Thread & Immediate return \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\chapter{Conclusions and Roadmap}
+\cleardoublepage
+WPipe 2.4.0 provides a comprehensive toolset for MLOps.
+
+\chapter{Bibliography}
+\cleardoublepage
+\begin{thebibliography}{9}
+\bibitem{wpipe} W. Rodriguez, \textit{WPipe Documentation}, 2024.
+\end{thebibliography}
+
+\appendix
+\chapter{Advanced Settings}
+\cleardoublepage
+\section{VS Code Extension Config}
+The extension configuration can be found in \texttt{.vscode/settings.json}.
+
+\end{document}

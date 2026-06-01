@@ -18,9 +18,17 @@ export_dir.mkdir(exist_ok=True)
 def setup_sample_data():
     """Setup sample execution data using WSQLite."""
     db_path = "export_example.db"
+    
+    # Limpiamos ejecuciones previas para evitar IntegrityError
+    if Path(db_path).exists():
+        Path(db_path).unlink()
+
     # Forzamos el nombre de tabla 'pipelines' para que el Exporter lo encuentre
     db = WSQLite(PipelineModel, db_path)
     db.table_name = "pipelines"
+    db._sync.table_name = "pipelines"
+    # Aseguramos que la tabla exista con el nuevo nombre
+    db._sync.create_if_not_exists()
 
     # Insert sample data using PipelineModel
     sample_data = [

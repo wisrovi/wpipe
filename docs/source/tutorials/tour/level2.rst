@@ -19,26 +19,22 @@ Conceptos Clave
 ----------------------
 En este nivel probamos la capacidad del motor para extraer metadatos de las funciones decoradas. Validamos que el orquestador respete el nombre y la versión definidos en el decorador, y que mantenga la integridad del flujo de datos entre un paso simple y un paso decorado.
 
-Código Fuente
-------------
 
+.. thebe-button:: ACTIVAR MODO INTERACTIVO
+
+
+Código Fuente
+-------------
 .. literalinclude:: ../../../../examples/00_honey_pot/03_yield/demo_level2.py
    :language: python
-   :linenos:
+   :class: thebe
 
-Análisis de la Ejecución
-------------------------
-
-Al ejecutar este código, observarás:
-1. `start_engine`: Un paso simple que inicializa el contexto con `engine: ON`.
-2. `check_brakes`: Un paso decorado que recibe el contexto anterior y añade la validación de frenos.
-3. La barra de progreso ahora muestra los nombres configurados en lugar de los nombres técnicos de las funciones si así se prefiere.
 
 Resultado de Ejecución
 ----------------------
+----------------------
 
-.. code-block:: text
 
-   🔑 Turning key: Engine started. Input data: {}
-   👟 Testing pedals: Brakes verified. Input data: {'engine': 'ON', 'fuel': 100}
-   Trip_L2 - Processing pipeline tasks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   🔑 Turning key: Engine started. Input data: {'_pipeline_start_time': '2026-04-30T13:36:30.307010', 'progress_rich': <rich.progress.Progress object at 0x72a03f99f230>}
+   👟 Testing pedals: Brakes verified. Input data: {'_pipeline_start_time': '2026-04-30T13:36:30.307010', 'progress_rich': <rich.progress.Progress object at 0x72a03f99f230>, 'engine': 'ON', 'fuel': 100}
+   Trip_L2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

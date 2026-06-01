@@ -96,6 +96,15 @@ class DAGScheduler:
         return [[self.steps[name] for name in group] for group in groups]
 
 
+def _parallel_step_runner(func, context):
+    """Standalone function to execute a step in a separate process."""
+    try:
+        result = func(context)
+        return result or {}
+    except Exception as e:
+        print(f"Error in parallel step: {e}")
+        raise
+
 class ParallelExecutor:
     """Executes pipeline steps in parallel with dependency resolution."""
 
@@ -186,7 +195,7 @@ class ParallelExecutor:
                 with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
                     futures = {
                         executor.submit(
-                            self._execute_step_safe, step, current_context
+                            _parallel_step_runner, step.func, current_context
                         ): step
                         for step in cpu_tasks
                     }
