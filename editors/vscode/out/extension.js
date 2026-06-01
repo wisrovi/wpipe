@@ -357,8 +357,8 @@ class WPipeStepProvider {
     }
     async searchWorkspace() {
         const steps = [];
-        const exclude = '**/node_modules/**, **/.venv/**, **/site-packages/**, **/wpipe/wpipe/**';
-        const files = await vscode.workspace.findFiles('**/*.py', exclude, 50); // Limit to 50 files for performance
+        const exclude = '{**/node_modules/**,**/.venv/**,**/venv/**,**/.env/**,**/env/**,**/.conda/**,**/conda/**,**/site-packages/**,**/wpipe/wpipe/**}';
+        const files = await vscode.workspace.findFiles('**/*.py', exclude, 500); // Increased limit with better exclusion
         for (const f of files) {
             try {
                 const contentData = await vscode.workspace.fs.readFile(f);

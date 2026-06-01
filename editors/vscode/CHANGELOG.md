@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.5] - 2026-06-01
+
+### Fixed
+- **Broadened Exclusion Logic**: Expanded the workspace search exclusion list to include more virtual environment patterns (`.env`, `env`, `.conda`, `conda`, `venv`). This prevents scanning internal package files which could lead to performance issues or missing user steps.
+
+## [0.8.4] - 2026-06-01
+
+### Fixed
+- **Workspace Step Search**: Corrected the glob exclude pattern in `findFiles`. Previously, the malformed pattern caused the extension to scan thousands of files in `.venv` and `node_modules`, often hitting the 50-file limit before finding actual project steps.
+- **Search Performance**: Increased the workspace search limit to 500 files and optimized the exclusion of library directories, significantly improving responsiveness and reliability when refreshing steps.
+
 ## [0.8.3] - 2026-06-01
 
 ### Added
