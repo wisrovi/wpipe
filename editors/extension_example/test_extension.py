@@ -12,7 +12,7 @@ from state9 import AdvancedStep9
 from error_capture import error_capture
 from state10 import StepClass10
 from state11 import function_name11
-from states.state12 import State12
+from states import State12, State13
 
 from wpipe import Pipeline, Condition, For, Parallel, ResourceMonitor, TaskTimer
 from wpipe.exception.api_error import ProcessError
@@ -70,7 +70,8 @@ pipeline.set_steps(
             max_workers=2,
         ),
         Background(slow_step),
-        State12(my_param="custom_value"),
+        State12(config="custom_value"),
+        State13(config="custom_config"),
     ]
 )
 
