@@ -1,0 +1,15 @@
+.vscode/*
+!/.vscode/launch.json
+!/.vscode/tasks.json
+node_modules/**
+src/**
+out/*.map
+*.vsix
+package-lock.json
+tsconfig.json
+package_local.sh
+publish_marketplace.sh
+GEMINI.md
+wpipe-schema.json
+.vscodeignore
+.gitignore
