@@ -34,7 +34,7 @@ __export(extension_exports, {
   deactivate: () => deactivate
 });
 module.exports = __toCommonJS(extension_exports);
-var vscode6 = __toESM(require("vscode"));
+var vscode10 = __toESM(require("vscode"));
 
 // src/core/catalog.ts
 var vscode = __toESM(require("vscode"));
@@ -114,6 +114,9 @@ var CatalogManager = class {
 };
 
 // src/providers/stepProvider.ts
+var vscode3 = __toESM(require("vscode"));
+
+// src/core/workspaceIndex.ts
 var vscode2 = __toESM(require("vscode"));
 
 // node_modules/@lezer/common/dist/index.js
@@ -4383,37 +4386,12 @@ var parser = LRParser.deserialize({
   tokenPrec: 7668
 });
 
-// src/providers/stepProvider.ts
-var WPipeStepProvider = class {
-  constructor() {
-    this._onDidChangeTreeData = new vscode2.EventEmitter();
-    this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+// src/core/workspaceIndex.ts
+var WorkspaceIndex = class {
+  static {
+    this.steps = /* @__PURE__ */ new Map();
   }
-  refresh() {
-    this._onDidChangeTreeData.fire();
-  }
-  getTreeItem(e) {
-    return e;
-  }
-  async getChildren(e) {
-    if (!e) {
-      return [
-        new vscode2.TreeItem("\u{1F6E0}\uFE0F Workspace Steps", vscode2.TreeItemCollapsibleState.Expanded),
-        new vscode2.TreeItem("\u{1F4E6} Official Library", vscode2.TreeItemCollapsibleState.Collapsed),
-        new vscode2.TreeItem("\u{1F91D} Community Plugins", vscode2.TreeItemCollapsibleState.Collapsed)
-      ];
-    }
-    const label = e.label;
-    if (label.includes("Workspace")) return this.searchWorkspace();
-    if (label.includes("Official")) return this.getLibItems("Official");
-    if (label.includes("Community")) return this.getLibItems("Community");
-    return [];
-  }
-  getLibItems(repo) {
-    return CatalogManager.getSteps().filter((s) => s.repo === repo).map((s) => new LibraryItem(s));
-  }
-  async searchWorkspace() {
-    const steps = [];
+  static async indexWorkspace() {
     const config = vscode2.workspace.getConfiguration("wpipe");
     const userExcludes = config.get("excludePaths", []);
     const maxFiles = config.get("maxSearchFiles", 500);
@@ -4439,6 +4417,7 @@ var WPipeStepProvider = class {
     const combinedExcludes = Array.from(/* @__PURE__ */ new Set([...defaultExcludes, ...userExcludes]));
     const excludePattern = `{${combinedExcludes.join(",")}}`;
     const files = await vscode2.workspace.findFiles("**/*.py", excludePattern, maxFiles);
+    const newSteps = /* @__PURE__ */ new Map();
     for (const f of files) {
       try {
         const contentData = await vscode2.workspace.fs.readFile(f);
@@ -4451,8 +4430,14 @@ var WPipeStepProvider = class {
               const decText = content2.substring(node.from, node.to);
               if (decText.startsWith("@step")) {
                 let name2 = "";
-                const match = decText.match(/name\s*=\s*['"](.*?)['"]/);
-                if (match) name2 = match[1];
+                let version = "v1.0";
+                let description = "";
+                const nameMatch = decText.match(/name\s*=\s*['"](.*?)['"]/);
+                if (nameMatch) name2 = nameMatch[1];
+                const verMatch = decText.match(/version\s*=\s*['"](.*?)['"]/);
+                if (verMatch) version = verMatch[1];
+                const descMatch = decText.match(/description\s*=\s*['"](.*?)['"]/);
+                if (descMatch) description = descMatch[1];
                 if (!name2 && node.node.parent) {
                   let funcDef = node.node.parent.getChild("FunctionDefinition") || node.node.parent.getChild("ClassDefinition");
                   if (funcDef) {
@@ -4460,52 +4445,80 @@ var WPipeStepProvider = class {
                     if (varName) name2 = content2.substring(varName.from, varName.to);
                   }
                 }
-                const line = content2.substring(0, node.from).split("\n").length - 1;
-                steps.push(new StepItem(name2 || "Step", f.fsPath, line));
-              }
-            } else if (node.name === "CallExpression") {
-              const callText = content2.substring(node.from, node.to);
-              if (callText.includes(".add_state(")) {
-                const m = callText.match(/\.add_state\s*\((?:name\s*=\s*)?["'](.*?)["']/);
-                const line = content2.substring(0, node.from).split("\n").length - 1;
-                if (m) {
-                  steps.push(new StepItem(m[1], f.fsPath, line));
-                } else {
-                  const m2 = callText.match(/\.add_state\s*\(\s*(\w+)/);
-                  if (m2 && !["name", "state", "func", "Condition", "Parallel", "For", "Background"].includes(m2[1])) {
-                    steps.push(new StepItem(m2[1], f.fsPath, line));
-                  }
+                if (name2) {
+                  const line = content2.substring(0, node.from).split("\n").length - 1;
+                  newSteps.set(name2, { name: name2, version, filePath: f.fsPath, line, description });
                 }
               }
             }
           }
         });
       } catch (e) {
-        console.error("Error parsing file:", f.fsPath, e);
       }
     }
-    return steps;
+    this.steps = newSteps;
+  }
+  static getStep(name2) {
+    return this.steps.get(name2);
+  }
+  static getAllSteps() {
+    return Array.from(this.steps.values());
   }
 };
-var StepItem = class extends vscode2.TreeItem {
+
+// src/providers/stepProvider.ts
+var WPipeStepProvider = class {
+  constructor() {
+    this._onDidChangeTreeData = new vscode3.EventEmitter();
+    this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+  }
+  refresh() {
+    this._onDidChangeTreeData.fire();
+  }
+  getTreeItem(e) {
+    return e;
+  }
+  async getChildren(e) {
+    if (!e) {
+      return [
+        new vscode3.TreeItem("\u{1F6E0}\uFE0F Workspace Steps", vscode3.TreeItemCollapsibleState.Expanded),
+        new vscode3.TreeItem("\u{1F4E6} Official Library", vscode3.TreeItemCollapsibleState.Collapsed),
+        new vscode3.TreeItem("\u{1F91D} Community Plugins", vscode3.TreeItemCollapsibleState.Collapsed)
+      ];
+    }
+    const label = e.label;
+    if (label.includes("Workspace")) return this.searchWorkspace();
+    if (label.includes("Official")) return this.getLibItems("Official");
+    if (label.includes("Community")) return this.getLibItems("Community");
+    return [];
+  }
+  getLibItems(repo) {
+    return CatalogManager.getSteps().filter((s) => s.repo === repo).map((s) => new LibraryItem(s));
+  }
+  async searchWorkspace() {
+    await WorkspaceIndex.indexWorkspace();
+    return WorkspaceIndex.getAllSteps().map((s) => new StepItem(s.name, s.filePath, s.line));
+  }
+};
+var StepItem = class extends vscode3.TreeItem {
   constructor(label, filePath, line) {
     super(label);
     this.filePath = filePath;
     this.line = line;
     this.funcName = "";
-    this.iconPath = new vscode2.ThemeIcon("rocket");
+    this.iconPath = new vscode3.ThemeIcon("rocket");
     this.description = label;
     this.contextValue = "workspaceStep";
     this.command = { command: "wpipeSteps.openFile", title: "Open", arguments: [filePath, line] };
   }
 };
-var LibraryItem = class extends vscode2.TreeItem {
+var LibraryItem = class extends vscode3.TreeItem {
   constructor(step) {
     super(step.name);
     this.step = step;
-    this.iconPath = new vscode2.ThemeIcon("cloud");
+    this.iconPath = new vscode3.ThemeIcon("cloud");
     this.description = step.namespace;
-    this.tooltip = new vscode2.MarkdownString(`**Step:** ${step.name}
+    this.tooltip = new vscode3.MarkdownString(`**Step:** ${step.name}
 **Author:** ${step.author || "Official"}
 **Repo:** ${step.repo}
 **Module:** ${step.namespace}
@@ -4518,7 +4531,7 @@ Click to insert import and usage.`);
 };
 
 // src/webviews/dagPanel.ts
-var vscode3 = __toESM(require("vscode"));
+var vscode4 = __toESM(require("vscode"));
 var DAGPanel = class _DAGPanel {
   constructor(p, doc) {
     this._disposables = [];
@@ -4527,10 +4540,10 @@ var DAGPanel = class _DAGPanel {
       _DAGPanel.currentPanel = void 0;
     }, null, this._disposables);
     this._update(doc);
-    vscode3.workspace.onDidChangeTextDocument((e) => {
+    vscode4.workspace.onDidChangeTextDocument((e) => {
       if (e.document === doc) this._update(doc);
     }, null, this._disposables);
-    vscode3.window.onDidChangeActiveTextEditor((e) => {
+    vscode4.window.onDidChangeActiveTextEditor((e) => {
       if (e && e.document.languageId === "python") this._update(e.document);
     }, null, this._disposables);
   }
@@ -4540,7 +4553,7 @@ var DAGPanel = class _DAGPanel {
       _DAGPanel.currentPanel._update(doc);
       return;
     }
-    const p = vscode3.window.createWebviewPanel("wpipeDAG", "WPipe Analysis", vscode3.ViewColumn.Two, { enableScripts: true });
+    const p = vscode4.window.createWebviewPanel("wpipeDAG", "WPipe Analysis", vscode4.ViewColumn.Two, { enableScripts: true });
     _DAGPanel.currentPanel = new _DAGPanel(p, doc);
   }
   _update(doc) {
@@ -4820,9 +4833,9 @@ var DAGPanel = class _DAGPanel {
 };
 
 // src/webviews/cheatSheet.ts
-var vscode4 = __toESM(require("vscode"));
+var vscode5 = __toESM(require("vscode"));
 function showCheatSheet() {
-  const panel = vscode4.window.createWebviewPanel("wpipeCheatSheet", "\u{1F680} WPipe Professional Cheat Sheet", vscode4.ViewColumn.Beside, { enableScripts: true });
+  const panel = vscode5.window.createWebviewPanel("wpipeCheatSheet", "\u{1F680} WPipe Professional Cheat Sheet", vscode5.ViewColumn.Beside, { enableScripts: true });
   panel.webview.html = `
         <html>
         <head>
@@ -4954,13 +4967,13 @@ function showCheatSheet() {
 }
 
 // src/commands/dashboard.ts
-var vscode5 = __toESM(require("vscode"));
+var vscode6 = __toESM(require("vscode"));
 async function openDashboard() {
-  if (vscode5.env.uiKind === vscode5.UIKind.Web) {
-    vscode5.window.showErrorMessage("WPipe Dashboard requires a local Python environment and is not available in VS Code for Web.");
+  if (vscode6.env.uiKind === vscode6.UIKind.Web) {
+    vscode6.window.showErrorMessage("WPipe Dashboard requires a local Python environment and is not available in VS Code for Web.");
     return;
   }
-  const dbUri = await vscode5.window.showOpenDialog({
+  const dbUri = await vscode6.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
@@ -4968,87 +4981,336 @@ async function openDashboard() {
     title: "Select WPipe Tracking Database"
   });
   if (!dbUri) return;
-  const configUri = await vscode5.window.showOpenDialog({
+  const configUri = await vscode6.window.showOpenDialog({
     canSelectFiles: false,
     canSelectFolders: true,
     canSelectMany: false,
     title: "Select WPipe Config Directory (Optional)"
   });
-  const port = await vscode5.window.showInputBox({
+  const port = await vscode6.window.showInputBox({
     placeHolder: "5000",
     prompt: "Enter port for the dashboard",
     value: "5000"
   });
   if (!port) return;
-  const terminal = vscode5.window.createTerminal("WPipe Dashboard");
+  const terminal = vscode6.window.createTerminal("WPipe Dashboard");
   const dbPath = dbUri[0].fsPath;
   const configPath = configUri ? configUri[0].fsPath : "";
   let cmd = `python -m wpipe.dashboard --db "${dbPath}" --port ${port}`;
   if (configPath) cmd += ` --config "${configPath}"`;
   terminal.show();
   terminal.sendText(cmd);
-  vscode5.window.showInformationMessage(`\u{1F680} Dashboard starting at http://localhost:${port}`);
+  vscode6.window.showInformationMessage(`\u{1F680} Dashboard starting at http://localhost:${port}`);
   setTimeout(() => {
-    vscode5.env.openExternal(vscode5.Uri.parse(`http://localhost:${port}`));
+    vscode6.env.openExternal(vscode6.Uri.parse(`http://localhost:${port}`));
   }, 2e3);
 }
 
+// src/providers/codeLensProvider.ts
+var vscode7 = __toESM(require("vscode"));
+var WPipeCodeLensProvider = class {
+  async provideCodeLenses(document, token) {
+    const lenses = [];
+    const content2 = document.getText();
+    try {
+      const tree = parser.parse(content2);
+      tree.iterate({
+        enter: (node) => {
+          if (node.name === "Decorator") {
+            const decText = content2.substring(node.from, node.to);
+            if (decText.startsWith("@step")) {
+              const range = new vscode7.Range(
+                document.positionAt(node.from),
+                document.positionAt(node.to)
+              );
+              lenses.push(new vscode7.CodeLens(range, {
+                title: "$(play) Run Step",
+                command: "wpipeSteps.runStepFromCode",
+                arguments: [document.fileName, range.start.line]
+              }));
+            }
+          } else if (node.name === "CallExpression") {
+            const callText = content2.substring(node.from, node.to);
+            if (callText.includes("Pipeline(") || callText.includes(".run(")) {
+              const range = new vscode7.Range(
+                document.positionAt(node.from),
+                document.positionAt(node.to)
+              );
+              lenses.push(new vscode7.CodeLens(range, {
+                title: "$(play) Run Pipeline",
+                command: "wpipe-vscode.runPipeline",
+                arguments: [document.fileName]
+              }));
+              lenses.push(new vscode7.CodeLens(range, {
+                title: "$(graph) Preview DAG",
+                command: "wpipe-vscode.previewDAG"
+              }));
+            }
+            if (callText.includes(".set_steps(")) {
+              const range = new vscode7.Range(
+                document.positionAt(node.from),
+                document.positionAt(node.to)
+              );
+              lenses.push(new vscode7.CodeLens(range, {
+                title: "$(plus) Add Logic Block",
+                command: "wpipe-vscode.addLogicBlock",
+                arguments: [range]
+              }));
+            }
+          }
+        }
+      });
+    } catch (e) {
+    }
+    return lenses;
+  }
+};
+
+// src/providers/hoverProvider.ts
+var vscode8 = __toESM(require("vscode"));
+var WPipeHoverProvider = class {
+  provideHover(document, position) {
+    const range = document.getWordRangeAtPosition(position);
+    if (!range) return null;
+    const word = document.getText(range);
+    const wsStep = WorkspaceIndex.getStep(word);
+    if (wsStep) {
+      const md = new vscode8.MarkdownString();
+      md.appendMarkdown(`### \u{1F680} WPipe Step: ${wsStep.name}
+`);
+      md.appendMarkdown(`**Version:** ${wsStep.version}
+
+`);
+      if (wsStep.description) md.appendMarkdown(`**Description:** ${wsStep.description}
+
+`);
+      md.appendMarkdown(`---
+*Location:* ${vscode8.workspace.asRelativePath(wsStep.filePath)}:${wsStep.line + 1}`);
+      return new vscode8.Hover(md);
+    }
+    const catStep = CatalogManager.getSteps().find((s) => s.name === word || s.func_name === word);
+    if (catStep) {
+      const md = new vscode8.MarkdownString();
+      md.appendMarkdown(`### \u{1F4E6} WPipe Library: ${catStep.name}
+`);
+      md.appendMarkdown(`**Module:** \`${catStep.namespace}\`
+
+`);
+      md.appendMarkdown(`**Author:** ${catStep.author || "Official"}
+`);
+      md.appendMarkdown(`**Repo:** ${catStep.repo}
+
+`);
+      md.appendMarkdown(`---
+Click to insert import and usage.`);
+      return new vscode8.Hover(md);
+    }
+    return null;
+  }
+};
+
+// src/wizards/stepWizard.ts
+var vscode9 = __toESM(require("vscode"));
+var path = __toESM(require("path"));
+async function createNewStepWizard() {
+  const workspaceFolders = vscode9.workspace.workspaceFolders;
+  if (!workspaceFolders) {
+    vscode9.window.showErrorMessage("Please open a workspace before creating a new step.");
+    return;
+  }
+  const rootPath = workspaceFolders[0].uri.fsPath;
+  const statesPath = path.join(rootPath, "states");
+  const stepName = await vscode9.window.showInputBox({
+    prompt: "Enter the name of the new step (e.g. DataProcessor)",
+    placeHolder: "MyNewStep",
+    validateInput: (value) => {
+      if (!value) return "Step name is required";
+      if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(value)) return "Invalid Python identifier";
+      return null;
+    }
+  });
+  if (!stepName) return;
+  const formattedStepName = stepName.split(/[_-]/).map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("");
+  const fileName = stepName.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase() + ".py";
+  const filePath = path.join(statesPath, fileName);
+  const template = `from wpipe import step, to_obj
+from wpipe.timeout import timeout_sync
+from typing import Any
+from pydantic import BaseModel
+
+class ${formattedStepName}Context(BaseModel):
+    field: str
+
+@step(
+    name="${formattedStepName}",
+    version="v1.0",
+    timeout=10,
+    description="Description of the step ${formattedStepName}",
+    tags=["custom"],
+    retry_count=3,
+    retry_delay=0.01,
+)
+class ${formattedStepName}:
+    """
+    Advanced WPipe State: ${formattedStepName}
+    Generated by WPipe Tools Wizard.
+    """
+    
+    def __init__(self, config: str = "value"):
+        self.config = config
+
+    @timeout_sync(seconds=2)
+    @to_obj(${formattedStepName}Context)
+    def __call__(self, context: Any) -> Any:
+        # Professional logic here
+        print(f"\u{1F680} Executing ${formattedStepName} with config: {self.config}")
+        return context
+`;
+  try {
+    const statesUri = vscode9.Uri.file(statesPath);
+    await vscode9.workspace.fs.createDirectory(statesUri);
+    const initUri = vscode9.Uri.joinPath(statesUri, "__init__.py");
+    let initContent = "";
+    try {
+      const existingInit = await vscode9.workspace.fs.readFile(initUri);
+      initContent = new TextDecoder().decode(existingInit);
+    } catch {
+    }
+    const importLine = `from .${fileName.replace(".py", "")} import ${formattedStepName}
+`;
+    if (!initContent.includes(importLine)) {
+      initContent += importLine;
+      await vscode9.workspace.fs.writeFile(initUri, new TextEncoder().encode(initContent));
+    }
+    const fileUri = vscode9.Uri.file(filePath);
+    await vscode9.workspace.fs.writeFile(fileUri, new TextEncoder().encode(template));
+    const doc = await vscode9.workspace.openTextDocument(fileUri);
+    await vscode9.window.showTextDocument(doc);
+    vscode9.window.showInformationMessage(`\u2705 Step '${formattedStepName}' created successfully in states/${fileName}`);
+  } catch (err) {
+    vscode9.window.showErrorMessage(`\u274C Failed to create step: ${err.message}`);
+  }
+}
+
 // src/extension.ts
+var path2 = __toESM(require("path"));
 async function activate(context) {
   console.log("\u{1F680} WPipe Tools: Activation started...");
   CatalogManager.init(context);
+  WorkspaceIndex.indexWorkspace();
   const stepProvider = new WPipeStepProvider();
-  vscode6.window.registerTreeDataProvider("wpipeSteps", stepProvider);
+  vscode10.window.registerTreeDataProvider("wpipeSteps", stepProvider);
   context.subscriptions.push(
-    vscode6.commands.registerCommand("wpipeSteps.refreshEntry", () => stepProvider.refresh()),
-    vscode6.commands.registerCommand("wpipe-vscode.refreshCatalog", () => CatalogManager.update(context, true)),
-    vscode6.commands.registerCommand("wpipeSteps.openFile", async (f, l) => {
-      const doc = await vscode6.workspace.openTextDocument(vscode6.Uri.file(f));
-      const editor = await vscode6.window.showTextDocument(doc);
-      const p = new vscode6.Position(l, 0);
-      editor.selection = new vscode6.Selection(p, p);
-      editor.revealRange(new vscode6.Range(p, p), vscode6.TextEditorRevealType.InCenter);
+    vscode10.languages.registerCodeLensProvider({ language: "python" }, new WPipeCodeLensProvider()),
+    vscode10.languages.registerHoverProvider({ language: "python" }, new WPipeHoverProvider())
+  );
+  context.subscriptions.push(
+    vscode10.commands.registerCommand("wpipeSteps.refreshEntry", () => stepProvider.refresh()),
+    vscode10.commands.registerCommand("wpipe-vscode.refreshCatalog", () => CatalogManager.update(context, true)),
+    vscode10.commands.registerCommand("wpipe-vscode.createNewStep", createNewStepWizard),
+    vscode10.commands.registerCommand("wpipeSteps.openFile", async (f, l) => {
+      const doc = await vscode10.workspace.openTextDocument(vscode10.Uri.file(f));
+      const editor = await vscode10.window.showTextDocument(doc);
+      const p = new vscode10.Position(l, 0);
+      editor.selection = new vscode10.Selection(p, p);
+      editor.revealRange(new vscode10.Range(p, p), vscode10.TextEditorRevealType.InCenter);
     }),
-    vscode6.commands.registerCommand("wpipeSteps.insertStep", (step) => {
-      const editor = vscode6.window.activeTextEditor;
+    vscode10.commands.registerCommand("wpipeSteps.insertStep", (step) => {
+      const editor = vscode10.window.activeTextEditor;
       if (editor) {
         editor.edit((eb) => {
           const importCode = `from ${step.namespace} import ${step.func_name}
 `;
-          eb.insert(new vscode6.Position(0, 0), importCode);
+          eb.insert(new vscode10.Position(0, 0), importCode);
           const isClass = /^[A-Z]/.test(step.func_name);
           eb.insert(editor.selection.active, isClass ? `${step.func_name}(),` : `${step.func_name},`);
         });
-        vscode6.window.showInformationMessage(`\u2705 Estado '${step.name}' insertado con \xE9xito.`);
+        vscode10.window.showInformationMessage(`\u2705 Estado '${step.name}' insertado con \xE9xito.`);
       }
     }),
-    vscode6.commands.registerCommand("wpipe-vscode.searchSteps", async () => {
+    vscode10.commands.registerCommand("wpipe-vscode.searchSteps", async () => {
       const items = CatalogManager.getSteps().map((s) => ({
         label: `$(rocket) ${s.name}`,
         description: `${s.repo} | Author: ${s.author || "Official"}`,
         detail: `Module: ${s.namespace}`,
         step: s
       }));
-      const sel = await vscode6.window.showQuickPick(items, { placeHolder: "Buscar estado en el cat\xE1logo oficial o comunidad..." });
+      const sel = await vscode10.window.showQuickPick(items, { placeHolder: "Buscar estado en el cat\xE1logo oficial o comunidad..." });
       if (sel) {
-        vscode6.commands.executeCommand("wpipeSteps.insertStep", sel.step);
+        vscode10.commands.executeCommand("wpipeSteps.insertStep", sel.step);
       }
     }),
-    vscode6.commands.registerCommand("wpipe-vscode.previewDAG", () => {
-      const editor = vscode6.window.activeTextEditor;
+    vscode10.commands.registerCommand("wpipe-vscode.previewDAG", () => {
+      const editor = vscode10.window.activeTextEditor;
       if (editor) DAGPanel.createOrShow(context.extensionUri, editor.document);
     }),
-    vscode6.commands.registerCommand("wpipe-vscode.openDashboard", openDashboard),
-    vscode6.commands.registerCommand("wpipe-vscode.showCheatSheet", showCheatSheet),
-    vscode6.commands.registerCommand("wpipeSteps.runStep", async (item) => {
-      if (vscode6.env.uiKind === vscode6.UIKind.Web) {
-        vscode6.window.showErrorMessage("Running steps requires a local Python environment.");
+    vscode10.commands.registerCommand("wpipe-vscode.openDashboard", openDashboard),
+    vscode10.commands.registerCommand("wpipe-vscode.showCheatSheet", showCheatSheet),
+    vscode10.commands.registerCommand("wpipe-vscode.runPipeline", async (filePath) => {
+      if (vscode10.env.uiKind === vscode10.UIKind.Web) {
+        vscode10.window.showErrorMessage("Running pipelines requires a local Python environment.");
+        return;
+      }
+      const terminal = vscode10.window.createTerminal(`Pipeline: ${path2.basename(filePath)}`);
+      terminal.show();
+      terminal.sendText(`python "${filePath}"`);
+    }),
+    vscode10.commands.registerCommand("wpipe-vscode.addLogicBlock", async (range) => {
+      const editor = vscode10.window.activeTextEditor;
+      if (!editor) return;
+      const text = editor.document.getText(range);
+      const openBracketIndex = text.indexOf("[");
+      if (openBracketIndex !== -1) {
+        const offset = editor.document.offsetAt(range.start) + openBracketIndex + 1;
+        const pos = editor.document.positionAt(offset);
+        editor.selection = new vscode10.Selection(pos, pos);
+      }
+      const items = [
+        {
+          label: "$(split-horizontal) Condition",
+          detail: "Boolean branching (True/False)",
+          snippet: 'Condition(\n    expression="${1:valor > 100}",\n    branch_true=[${2:step_true}],\n    branch_false=[${3:step_false}]\n)'
+        },
+        {
+          label: "$(sync) For Loop",
+          detail: "Iterative loop with validation",
+          snippet: "For(\n    iterations=${1:10},\n    validation_expression=\"${2:status != 'error'}\",\n    steps=[${3:step_to_repeat}]\n)"
+        },
+        {
+          label: "$(zap) Parallel",
+          detail: "Concurrent multi-step execution",
+          snippet: "Parallel(\n    steps=[${1:step1}, ${2:step2}],\n    max_workers=${3:2}\n)"
+        },
+        {
+          label: "$(run-all) Background",
+          detail: "Asynchronous fire-and-forget task",
+          snippet: "Background(${1:slow_step})"
+        }
+      ];
+      const sel = await vscode10.window.showQuickPick(items, { placeHolder: "Select a logic block to insert inside set_steps..." });
+      if (sel) {
+        editor.insertSnippet(new vscode10.SnippetString(sel.snippet));
+      }
+    }),
+    vscode10.commands.registerCommand("wpipeSteps.runStep", async (item) => {
+      if (vscode10.env.uiKind === vscode10.UIKind.Web) {
+        vscode10.window.showErrorMessage("Running steps requires a local Python environment.");
         return;
       }
       if (!item || !item.filePath) return;
-      const terminal = vscode6.window.createTerminal(`Run Step: ${item.label}`);
+      const terminal = vscode10.window.createTerminal(`Run Step: ${item.label}`);
       terminal.show();
       terminal.sendText(`python "${item.filePath}"`);
+    }),
+    vscode10.commands.registerCommand("wpipeSteps.runStepFromCode", async (filePath, line) => {
+      if (vscode10.env.uiKind === vscode10.UIKind.Web) {
+        vscode10.window.showErrorMessage("Running steps requires a local Python environment.");
+        return;
+      }
+      const fileName = path2.basename(filePath);
+      const terminal = vscode10.window.createTerminal(`Run Step: ${fileName}`);
+      terminal.show();
+      terminal.sendText(`python "${filePath}"`);
     })
   );
 }

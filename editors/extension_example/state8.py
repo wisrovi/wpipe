@@ -9,7 +9,7 @@ class MyContext(PipelineContext):
     name="AdvancedStep8",
     version="v1.0",
     timeout=10,
-    description="Description of the step",
+    description="Description of the step by AdvancedStep8",
     tags=["tag1", "tag2"],
     retry_count=3,
     retry_delay=0.01,

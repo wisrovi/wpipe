@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { CatalogManager, StepEntry } from '../core/catalog';
+import { WorkspaceIndex } from '../core/workspaceIndex';
 
 import { parser } from '@lezer/python';
 
@@ -38,86 +39,8 @@ export class WPipeStepProvider implements vscode.TreeDataProvider<vscode.TreeIte
     }
 
     private async searchWorkspace(): Promise<StepItem[]> {
-        const steps: StepItem[] = [];
-        const config = vscode.workspace.getConfiguration('wpipe');
-        const userExcludes = config.get<string[]>('excludePaths', []);
-        const maxFiles = config.get<number>('maxSearchFiles', 500);
-
-        const defaultExcludes = [
-            '**/node_modules/**',
-            '**/.venv/**',
-            '**/venv/**',
-            '**/.env/**',
-            '**/env/**',
-            '**/.conda/**',
-            '**/conda/**',
-            '**/site-packages/**',
-            '**/wpipe/wpipe/**',
-            '**/__pycache__/**',
-            '**/.pytest_cache/**',
-            '**/.mypy_cache/**',
-            '**/.ruff_cache/**',
-            '**/.tox/**',
-            '**/build/**',
-            '**/dist/**',
-            '**/*.egg-info/**'
-        ];
-
-        const combinedExcludes = Array.from(new Set([...defaultExcludes, ...userExcludes]));
-        const excludePattern = `{${combinedExcludes.join(',')}}`;
-
-        const files = await vscode.workspace.findFiles('**/*.py', excludePattern, maxFiles);
-        
-        for (const f of files) {
-            try {
-                const contentData = await vscode.workspace.fs.readFile(f);
-                if (contentData.length > 500000) continue; // Skip huge files
-                
-                const content = new TextDecoder().decode(contentData);
-                const tree = parser.parse(content);
-                
-                tree.iterate({
-                    enter: (node) => {
-                        if (node.name === 'Decorator') {
-                            const decText = content.substring(node.from, node.to);
-                            if (decText.startsWith('@step')) {
-                                let name = '';
-                                const match = decText.match(/name\s*=\s*['"](.*?)['"]/);
-                                if (match) name = match[1];
-                                
-                                if (!name && node.node.parent) {
-                                    let funcDef = node.node.parent.getChild('FunctionDefinition') || node.node.parent.getChild('ClassDefinition');
-                                    if (funcDef) {
-                                        let varName = funcDef.getChild('VariableName');
-                                        if (varName) name = content.substring(varName.from, varName.to);
-                                    }
-                                }
-                                
-                                const line = content.substring(0, node.from).split('\n').length - 1;
-                                steps.push(new StepItem(name || 'Step', f.fsPath, line));
-                            }
-                        } else if (node.name === 'CallExpression') {
-                            const callText = content.substring(node.from, node.to);
-                            if (callText.includes('.add_state(')) {
-                                const m = callText.match(/\.add_state\s*\((?:name\s*=\s*)?["'](.*?)["']/);
-                                const line = content.substring(0, node.from).split('\n').length - 1;
-                                if (m) {
-                                    steps.push(new StepItem(m[1], f.fsPath, line));
-                                } else {
-                                    const m2 = callText.match(/\.add_state\s*\(\s*(\w+)/);
-                                    if (m2 && !['name', 'state', 'func', 'Condition', 'Parallel', 'For', 'Background'].includes(m2[1])) {
-                                        steps.push(new StepItem(m2[1], f.fsPath, line));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            } catch (e) {
-                console.error('Error parsing file:', f.fsPath, e);
-            }
-        }
-        return steps;
+        await WorkspaceIndex.indexWorkspace();
+        return WorkspaceIndex.getAllSteps().map(s => new StepItem(s.name, s.filePath, s.line));
     }
 }
 

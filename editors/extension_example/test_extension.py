@@ -12,6 +12,7 @@ from state9 import AdvancedStep9
 from error_capture import error_capture
 from state10 import StepClass10
 from state11 import function_name11
+from states.state12 import State12
 
 from wpipe import Pipeline, Condition, For, Parallel, ResourceMonitor, TaskTimer
 from wpipe.exception.api_error import ProcessError
@@ -26,7 +27,6 @@ pipeline = Pipeline(
     verbose=False,
     collect_system_metrics=True,
 )
-
 
 pipeline.set_steps(
     [
@@ -70,6 +70,7 @@ pipeline.set_steps(
             max_workers=2,
         ),
         Background(slow_step),
+        State12(my_param="custom_value"),
     ]
 )
 
@@ -91,40 +92,41 @@ if __name__ == "__main__":
             "key": "test_key",
             "field": "test_field",  # For StepClass10
         }
-        
+
         with ResourceMonitor("test_pipeline_ResourceMonitor") as monitor:
-            with TaskTimer("test_pipeline_TaskTimer", timeout_seconds=900) as timer:        
+            with TaskTimer("test_pipeline_TaskTimer", timeout_seconds=900) as timer:
                 with Wsqlite(db_name="output/test_Wsqlite.db") as db:
                     db.input = initial_data
                     print(f"Input set, record UUID: {db.record_uuid}")
                     result = pipeline.run(initial_data)
-                    
+
                     db.output = result
                     print(f"Output set, record UUID: {db.record_uuid}")
                     print(f"Total records: {db.count_records()}")
-                    
+
                     db.details = {
                         "monitoring_summary": monitor.get_summary(),
                         "task_time_seconds": timer.elapsed_seconds,
                     }
-                    
+
                     db.error = {
-                        "there_were_errors": monitor.get_summary().get("total_errors", 0) > 0,
+                        "there_were_errors": monitor.get_summary().get(
+                            "total_errors", 0
+                        )
+                        > 0,
                     }
-                    
-                    
+
                     if timer.exceeded_timeout():
                         # print("⚠ Work exceeded timeout!")
                         pass
                     else:
                         # print("✓ Work completed within timeout")
                         pass
-                
+
         summary = monitor.get_summary()
         print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
         print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
         print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
-        
-        
+
     except ProcessError as e:
         print(f"Error occurred: {e}")

@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.8.7",
+    "version": "0.9.3",
     "publisher": "wpipe",
     "author": {
         "name": "William Rodriguez (wisrovi)",
@@ -117,6 +117,11 @@
                 "icon": "$(play)"
             },
             {
+                "command": "wpipe-vscode.createNewStep",
+                "title": "WPipe: Create New Advanced Step",
+                "icon": "$(new-file)"
+            },
+            {
                 "command": "wpipeSteps.refreshEntry",
                 "title": "Refresh Steps",
                 "icon": "$(refresh)"
@@ -124,6 +129,11 @@
         ],
         "menus": {
             "view/title": [
+                {
+                    "command": "wpipe-vscode.createNewStep",
+                    "when": "view == wpipeSteps",
+                    "group": "navigation"
+                },
                 {
                     "command": "wpipe-vscode.refreshCatalog",
                     "when": "view == wpipeSteps",
@@ -170,15 +180,13 @@
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-        "@types/node": "16.x",
         "@types/vscode": "^1.75.0",
+        "@types/node": "16.x",
+        "typescript": "^4.9.5",
+        "eslint": "^8.34.0",
         "@typescript-eslint/eslint-plugin": "^5.53.0",
         "@typescript-eslint/parser": "^5.53.0",
-        "esbuild": "^0.28.0",
-        "eslint": "^8.34.0",
-        "typescript": "^4.9.5"
-    },
-    "dependencies": {
-        "@lezer/python": "^1.1.19"
+        "@lezer/python": "^1.1.19",
+        "esbuild": "^0.25.0"
     }
 }

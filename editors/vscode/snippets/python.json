@@ -36,11 +36,12 @@
     "WPipe Advanced Step (Professional)": {
         "prefix": "wpstepadv",
         "body": [
-            "from wpipe import step, to_obj, PipelineContext",
+            "from wpipe import step, to_obj",
             "from wpipe.timeout import timeout_sync",
+            "from pydantic import BaseModel",
             "from typing import Any",
             "",
-            "class ${1:MyContext}(PipelineContext):",
+            "class ${1:MyContext}(BaseModel):",
             "    ${2:field}: ${3:str}",
             "",
             "@step(",

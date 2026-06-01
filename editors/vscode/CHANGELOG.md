@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.9.3] - 2026-06-01
+
+### Fixed
+- **CodeLens Refinement**: Se ha eliminado el botón `Preview DAG` de los decoradores de estados individuales (`@step`), ya que el análisis de arquitectura solo es relevante a nivel de Pipeline. Ahora, el botón de previsualización del DAG aparece exclusivamente sobre las definiciones y ejecuciones de `Pipeline`.
+
+## [0.9.2] - 2026-06-01
+
+### Changed
+- **Plantilla de Estado Profesional**: El asistente de creación de estados ahora genera archivos que siguen exactamente el estándar `wpstepadv`. Esto incluye el uso de Pydantic `BaseModel` para el contexto tipado, decoradores de `@timeout_sync` y `@to_obj`, y todos los parámetros avanzados de `@step` (retries, timeouts, tags).
+
+## [0.9.1] - 2026-06-01
+
+### Added
+- **Hover Documentation**: Al pasar el ratón sobre un paso dentro de `set_steps`, ahora verás un popup con el nombre, versión y descripción del estado (tanto de tu workspace como de la librería oficial).
+- **Inserción Contextual**: El botón `Add Logic Block` ahora es inteligente: detecta automáticamente los corchetes `[]` de `set_steps` e inserta el bloque directamente en su interior, sin importar dónde esté tu cursor.
+
+## [0.9.0] - 2026-06-01
+
+### Added
+- **Snippets de Lógica Enriquecidos**: El asistente de `Add Logic Block` ahora inserta bloques completos con placeholders idénticos a los atajos de teclado (`wpfor`, `wpcondition`, etc.), facilitando el rellenado rápido de parámetros.
+- **PascalCase Automático**: El mago de creación de estados ahora convierte automáticamente nombres como `mi_paso` a `MiPaso` para la definición de la clase, siguiendo las PEP8.
+- **Scoping de CodeLens**: Se ha afinado la visibilidad de los CodeLens de ayuda; ahora el botón `Add Logic Block` solo aparece cuando detecta específicamente el método `.set_steps()` de un Pipeline.
+
+## [0.8.9] - 2026-06-01
+
+### Added
+- **Asistente de Estados Inteligente**: El mago de creación de estados ahora capitaliza automáticamente el nombre de la clase y actualiza el archivo `states/__init__.py` con el export correspondiente, permitiendo importaciones limpias.
+- **CodeLens para Pipeline**: Nuevo botón `▶ Run Pipeline` que aparece automáticamente sobre las definiciones de tu pipeline para ejecutar el script completo con un clic.
+- **Asistente de set_steps**: Nuevo botón `➕ Add Logic Block` sobre los bloques de pasos que permite insertar rápidamente estructuras de `Condition`, `For`, `Parallel` o `Background` con placeholders inteligentes.
+
+## [0.8.8] - 2026-06-01
+
+### Added
+- **CodeLenses en el Editor**: Ahora aparecen enlaces interactivos (`Run Step` y `Preview DAG`) directamente encima de cada decorador `@step` en el código. Ejecuta tus estados sin quitar las manos del teclado.
+- **Asistente de Creación de Estados**: Nuevo comando `WPipe: Create New Advanced Step` que genera automáticamente una clase de estado profesional en una carpeta `states/` con su `__init__.py`, usando la plantilla de clase avanzada (LTS) de WPipe.
+
 ## [0.8.7] - 2026-06-01
 
 ### Added
