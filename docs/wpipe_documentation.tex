@@ -1,0 +1,375 @@
+% PREÁMBULO EXACTO - COPIAR LITERALMENTE:
+\documentclass[12pt,a4paper]{report}
+
+% Fuentes CRÍTICAS para compatibilidad Word
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet} % Helvetica para texto principal
+\usepackage{courier} % Courier para código
+\renewcommand{\familydefault}{\sfdefault} % Helvetica como default
+
+% Paquetes esenciales
+\usepackage{tocbibind}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{appendix}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Configuración de márgenes
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm,
+    headheight=15pt
+}
+
+% Configuración listings EXACTA para código
+\lstset{
+    basicstyle=\ttfamily\footnotesize\fontfamily{pcr}\selectfont,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    frameround=tttt,
+    rulecolor=\color{gray!50},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    captionpos=b,
+    xleftmargin=2em,
+    framexleftmargin=1.5em,
+    belowskip=1em,
+    aboveskip=1em
+}
+
+% Headers y footers con sans-serif
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\color{blue!70!black}\textbf{\sffamily\leftmark}}
+\fancyhead[R]{\color{blue!70!black}\textbf{\sffamily\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[C]{\color{gray}\small\sffamily Kubernetes GPU Integration for MLOps Workloads}
+
+% Estilos de capítulos y secciones con sans-serif
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\sffamily\color{blue!70!black}}
+{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-30pt}{20pt}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\sffamily\color{blue!70!black}}
+{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{15pt}{10pt}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\sffamily\color{orange!80!black}}
+{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{5pt}
+
+% Configuración hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=blue!70!black,
+    urlcolor=blue!70!black,
+    citecolor=orange!80!black,
+    pdftitle={Kubernetes GPU Integration for MLOps Workloads},
+    pdfauthor={William Rodriguez},
+    pdfsubject={MLOps, Kubernetes, GPU},
+    pdfkeywords={Kubernetes, GPU, MLOps, Docker, Minikube}
+}
+
+\begin{document}
+
+% Página de título SIMPLE
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    \includegraphics[width=0.25\textwidth]{sources/kubernetes-logo.png}
+    \vspace{1cm}
+    {\color{blue!70!black}\Huge\textbf{Kubernetes GPU Integration}}\\[0.5cm]
+    {\color{orange!80!black}\Large\textbf{for MLOps Workloads}}\\[1cm]
+    {\large\textit{A Modern Implementation Guide for}}\\[0.3cm]
+    {\Large\textbf{Production-Ready GPU Computing Infrastructure}}\\[1.5cm]
+    {\large\textbf{\today}}
+    \vfill
+    \colorbox{blue!70!black}{
+        \color{white}\textbf{Docker + Minikube + Kubernetes + GPU}
+    }
+\end{titlepage}
+
+% Página de autor SEPARADA
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    {\color{blue!70!black}\Large\textbf{Author}}\\[1cm]
+    {\Large\textbf{William Rodriguez}}\\[0.5cm]
+    \textit{Líder de IA y Arquitecto de Soluciones}\\[0.3cm]
+    \textit{eCaptureDtech}\\[0.2cm]
+    \textit{Badajoz, Extremadura, España}\\[1cm]
+    \begin{tabular}{c}
+        \textbf{Contact Information:}\\[0.5cm]
+        LinkedIn: es.linkedin.com/in/wisrovi-rodriguez\\[0.2cm]
+        Email: william.rodriguez@ecapturedtech.com\\[0.2cm]
+        GitHub: github.com/wisrovi
+    \end{tabular}
+    \vfill
+    \colorbox{orange!80!black}{
+        \color{white}\textbf{Expert in MLOps and Cloud Architecture}
+    }
+\end{titlepage}
+
+% Tabla de contenidos
+\tableofcontents
+\cleardoublepage
+
+% Listas
+\listoffigures
+\cleardoublepage
+\listoftables
+\cleardoublepage
+\lstlistoflistings
+\cleardoublepage
+
+% CAPÍTULOS CON \cleardoublepage OBLIGATORIO
+\chapter{Executive Summary}
+\cleardoublepage
+The rapid evolution of Machine Learning Operations (MLOps) requires robust, scalable, and resilient infrastructure. This comprehensive documentation details the integration of Kubernetes with GPU-accelerated environments to orchestrate complex MLOps workloads using the WPipe framework. WPipe is a professional pipeline orchestration library engineered for extreme optimization, parallel execution, and forensic error handling. By harnessing Kubernetes for container orchestration and GPUs for intensive computation, WPipe enables data engineers and MLOps practitioners to construct highly efficient, fault-tolerant pipelines. This guide provides a deep dive into the technical architecture, installation procedures, and practical implementations of deploying WPipe within a Kubernetes ecosystem. From basic local Minikube configurations to production-grade deployments with intelligent checkpoints and nested pipeline execution, this document serves as the definitive reference for building a modern GPU computing infrastructure powered by WPipe.
+
+\chapter{Introduction}
+\cleardoublepage
+
+\section{Background}
+In contemporary MLOps, orchestrating data workflows involves coordinating thousands of concurrent tasks, managing massive datasets, and ensuring zero downtime. Traditional linear scripting falls short in addressing these challenges. Consequently, frameworks like WPipe have emerged as powerful engines offering native parallelism, strict data contracts, and synchronous/asynchronous parity. Concurrently, Kubernetes has established itself as the de facto standard for container orchestration, while GPUs provide the computational muscle required for training and inference phases in machine learning. Integrating WPipe with Kubernetes and GPU resources creates a synergy that maximizes throughput and resilience.
+
+\section{Objectives}
+The primary objective of this documentation is to outline the methodology for integrating WPipe into a Kubernetes-managed environment with GPU acceleration. It aims to:
+\begin{itemize}
+    \item Explain the fundamental architecture of WPipe and its role in MLOps.
+    \item Detail step-by-step procedures for deploying WPipe in Docker and Minikube environments.
+    \item Showcase advanced features such as intelligent checkpoints, automatic retries, and parallel execution.
+    \item Provide real-world code examples and configurations for GPU-intensive workloads.
+    \item Discuss best practices, performance metrics, and future roadmap capabilities including distributed execution.
+\end{itemize}
+
+\chapter{Technical Architecture}
+\cleardoublepage
+
+\section{WPipe Orchestration Engine}
+WPipe v2.4.0 is engineered around four core pillars: \texttt{step}, \texttt{Pipeline}, \texttt{Condition}, and \texttt{Parallel}. The engine bypasses traditional GIL limitations via robust multiprocessing and ThreadPoolExecutor for I/O bounds, optimizing task execution across multiple cores and distributed nodes. Its architecture ensures resilient state management utilizing a heavily optimized SQLite engine configured in WAL (Write-Ahead Logging) mode, delivering lightning-fast database interactions crucial for micro-transactions during pipeline execution.
+
+\section{Kubernetes Integration Layer}
+In an MLOps context, Kubernetes orchestrates the underlying pods where WPipe nodes execute. WPipe's background tasks (fire-and-forget) and parallel step execution naturally map to Kubernetes' ability to scale out pods horizontally. By declaring GPU resources in Kubernetes manifests, WPipe tasks that are CPU/GPU-bound can be dynamically assigned to specialized nodes, leveraging the Nvidia Device Plugin for Kubernetes.
+
+\section{Resilience and Checkpointing}
+WPipe's Intelligent Checkpoints allow state persistence across pod lifecycles. If a Kubernetes node fails or a pod is evicted, the \texttt{CheckpointManager} resumes the pipeline exactly where it stopped. This feature is particularly valuable in MLOps, where training jobs can last for days, and losing progress is cost-prohibitive. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{sources/kubernetes-logo.png}
+    \caption{Architecture Diagram representation with Kubernetes.}
+\end{figure}
+
+\chapter{Installation Guide}
+\cleardoublepage
+
+\section{Prerequisites}
+Before deploying the integrated environment, ensure the following are installed:
+\begin{itemize}
+    \item Python 3.9+
+    \item Docker and Docker Compose
+    \item Minikube or a managed Kubernetes service (EKS, GKE, AKS)
+    \item Nvidia Container Toolkit (for GPU support)
+\end{itemize}
+
+\section{Installing WPipe}
+WPipe can be installed seamlessly via \texttt{pip} inside your Docker containers:
+\begin{lstlisting}[language=bash, caption=Installing WPipe]
+pip install wpipe
+\end{lstlisting}
+
+\section{Kubernetes Setup for GPUs}
+To enable GPU scheduling in Minikube, execute the following commands:
+\begin{lstlisting}[language=bash, caption=Minikube GPU Configuration]
+minikube start --driver docker --container-runtime docker --gpus all
+kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.14.0/nvidia-device-plugin.yml
+\end{lstlisting}
+
+\chapter{Code Examples and Configs}
+\cleardoublepage
+
+\section{Basic WPipe Execution}
+The following example demonstrates a foundational WPipe implementation utilizing type validation and the \texttt{@step} decorator.
+
+\begin{lstlisting}[language=Python, caption=Basic WPipe with Data Contracts]
+from wpipe import Pipeline, step, PipelineContext
+
+class Usuario(PipelineContext):
+    nombre: str
+    edad: int
+    email: str
+
+@step(name="validar_usuario")
+def validar(usuario: Usuario):
+    if usuario.edad < 18:
+        return {"validado": False, "razon": "menor de edad"}
+    return {"validado": True}
+
+pipeline = Pipeline(pipeline_name="validacion")
+pipeline.set_steps([validar])
+result = pipeline.run({"nombre": "Ana", "edad": 25, "email": "ana@ejemplo.com"})
+print(result)
+\end{lstlisting}
+
+\section{Kubernetes Job Configuration}
+To deploy a WPipe pipeline that utilizes GPU resources, you must define a Kubernetes Job.
+
+\begin{lstlisting}[language=XML, caption=Kubernetes Job Manifest with GPU Request]
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wpipe-mlops-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: wpipe-container
+        image: my-wpipe-mlops:latest
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+      restartPolicy: Never
+\end{lstlisting}
+
+\section{Parallel Execution for ML Inference}
+WPipe's \texttt{ParallelExecutor} simplifies scaling CPU-bound ML inference tasks across available cores or distributed workers.
+
+\begin{lstlisting}[language=Python, caption=Parallel Execution in WPipe]
+from wpipe import Pipeline, step, Parallel
+
+@step(name="inference_model_a")
+def inference_a(data):
+    return {"model_a_result": [0.95, 0.05]}
+
+@step(name="inference_model_b")
+def inference_b(data):
+    return {"model_b_result": [0.88, 0.12]}
+
+pipeline = Pipeline(pipeline_name="parallel_inference")
+pipeline.set_steps([
+    Parallel(
+        steps=[inference_a, inference_b],
+        max_workers=2
+    )
+])
+result = pipeline.run({"input_tensor": [...]})
+\end{lstlisting}
+
+\chapter{Practical Use Cases}
+\cleardoublepage
+
+\section{Automated Data Preprocessing Pipeline}
+In MLOps, data must be cleaned, transformed, and validated before model training. WPipe allows engineers to nest pipelines, separating the ETL logic from the training logic. The \texttt{Condition} step routing permits dynamic branching if data quality metrics fall below a defined threshold, routing problematic datasets to an anomaly detection step.
+
+\section{Distributed Model Training with Checkpointing}
+Model training on GPUs can occasionally fail due to out-of-memory errors or hardware faults. WPipe's \texttt{CheckpointManager} saves the state of the pipeline after each epoch or data batch. If the Kubernetes pod restarts, WPipe resumes exactly from the last saved state, mitigating wasted compute hours.
+
+\section{Real-Time Inference Dashboards}
+WPipe includes a built-in dashboard for tracking pipeline progress and metrics. When deployed in Kubernetes, an Ingress controller can route traffic to the WPipe dashboard service, providing the MLOps team with real-time analytics on latency, execution time, and error rates.
+
+\chapter{Performance Metrics}
+\cleardoublepage
+
+\section{Sequential vs Parallel Execution}
+WPipe introduces significant speedups through its native parallelism. Internal benchmarks indicate a 3x to 5x speedup for I/O-bound tasks using ThreadPools and a 1.5x speedup for CPU-bound tasks utilizing ProcessPools. 
+
+\begin{table}[H]
+    \centering
+    \caption{Performance Benchmark: Sequential vs Parallel}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Task Type} & \textbf{Sequential Time (s)} & \textbf{Parallel Time (s)} \\
+        \midrule
+        API Fetch (3 endpoints) & 3.0 & 1.0 \\
+        Data Processing (3 sets) & 6.0 & 4.0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Resource Utilization}
+By bypassing the Global Interpreter Lock (GIL) for CPU-bound tasks and leveraging Kubernetes for node-level scaling, WPipe ensures that GPU and CPU utilization remain near 100\% during intense workloads. The integrated \texttt{ResourceMonitor} continuously tracks RAM and CPU usage, alerting administrators to potential memory leaks.
+
+\chapter{Best Practices and Troubleshooting}
+\cleardoublepage
+
+\section{Best Practices}
+\begin{itemize}
+    \item \textbf{Mode Selection:} Always use \texttt{ExecutionMode.IO\_BOUND} for network and file operations, and \texttt{ExecutionMode.CPU\_BOUND} for intensive calculations.
+    \item \textbf{Granularity:} Keep pipeline steps small and modular to maximize reusability and checkpoint effectiveness.
+    \item \textbf{Type Safety:} Extensively use \texttt{PipelineContext} to enforce strict data contracts, preventing runtime errors deep within the pipeline.
+\end{itemize}
+
+\section{Troubleshooting Guide}
+\begin{itemize}
+    \item \textbf{Parallelism yielding no speedup:} Ensure tasks are independent and correctly mapped to the appropriate \texttt{ExecutionMode}. High overhead in process creation for trivial tasks can negate parallel benefits.
+    \item \textbf{High Memory Usage in Kubernetes:} Reduce \texttt{max\_workers} in the \texttt{Parallel} step block. Profile memory using the \texttt{ResourceMonitor} module.
+    \item \textbf{Decorators Failing:} Verify that \texttt{AutoRegister.register\_all(pipeline)} is called before executing pipelines built via decorators.
+\end{itemize}
+
+\chapter{Conclusions and Future Work}
+\cleardoublepage
+
+\section{Conclusions}
+The integration of WPipe with Kubernetes and GPU infrastructure represents a state-of-the-art approach to MLOps orchestration. WPipe's advanced feature set—including nested pipelines, resilient checkpointing, and native parallelism—solves critical bottlenecks inherent in complex data processing and machine learning workflows. 
+
+\section{Future Work (Phase 3 Roadmap)}
+The roadmap for WPipe's next phase encompasses distributed execution via remote workers orchestrated by Redis or RabbitMQ, further solidifying its place in enterprise MLOps. Advanced DAG scheduling, event-based triggers, and enhanced real-time WebSocket dashboards will provide unparalleled visibility and control over large-scale, multi-node clusters.
+
+\chapter{Bibliography}
+\cleardoublepage
+\begin{thebibliography}{9}
+\bibitem{wpipe} 
+W. Rodriguez, \textit{WPipe Documentation and Guidelines}, eCaptureDtech, 2024.
+\bibitem{k8s} 
+Kubernetes Community, \textit{Kubernetes Documentation}, The Linux Foundation.
+\bibitem{mlops} 
+D. Sculley et al., \textit{Hidden Technical Debt in Machine Learning Systems}, NIPS, 2015.
+\end{thebibliography}
+
+\appendix
+\chapter{Advanced Configurations}
+\cleardoublepage
+\section{Dashboard Deployment Config}
+WPipe offers an integrated dashboard that can be launched alongside your pipelines.
+
+\begin{lstlisting}[language=Python, caption=Launching WPipe Dashboard]
+from wpipe import start_dashboard
+start_dashboard(db_path="tracking.db", port=5000)
+\end{lstlisting}
+
+\chapter{Acknowledgements}
+\cleardoublepage
+Special thanks to the open-source community, contributors to the WPipe project, and the broader Python and Kubernetes ecosystems that make robust MLOps achievable.
+
+\end{document}

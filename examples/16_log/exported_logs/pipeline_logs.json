@@ -1,5 +1,21 @@
 [
   {
+    "id": "PIPE-01691778",
+    "name": "log_export_demo",
+    "worker_id": null,
+    "worker_name": "worker",
+    "status": "completed",
+    "started_at": "2026-06-01T16:39:05.779321",
+    "completed_at": "2026-06-01T16:39:06.988623",
+    "total_duration_ms": 1209.265,
+    "input_data": "{\"_pipeline_start_time\": \"2026-06-01T16:39:05.779050\"}",
+    "output_data": "\"{'_pipeline_start_time': '2026-06-01T16:39:05.779050', 'progress_rich': <rich.progress.Progress object at 0x7c4be4e7bcb0>, 'collected': 500, 'filtered': 460, 'enriched': True, 'metadata_fields': 5, 'pipeline_start_time': '2026-06-01T16:39:05.779050', 'pipeline_end_time': '2026-06-01T16:39:06.988368', 'pipeline_elapsed_time_ms': 1209.327}\"",
+    "error_message": null,
+    "error_step": null,
+    "parent_pipeline_id": null,
+    "yaml_path": "/home/william.rodriguez/Documents/wpipe/examples/16_log/pipeline_configs/log_export_demo.yaml"
+  },
+  {
     "id": "PIPE-D6285E07",
     "name": "log_export_demo",
     "worker_id": null,
