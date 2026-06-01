@@ -5,6 +5,13 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-06-01
+
+### Added
+- **VERSION BUMP**: Actualización global a la versión 2.4.0.
+- **Improved Metadata**: Sincronización de versiones en READMEs, Sphinx, Dashboard e index.html.
+- **PyPI Publication**: Nueva versión estable publicada en PyPI.
+
 ## [2.3.5] - 2026-05-30
 
 ### Fixed

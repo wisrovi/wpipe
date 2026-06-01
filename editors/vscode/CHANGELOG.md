@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.3] - 2026-06-01
+
+### Added
+- **Personal Branding (wisrovi)**: Updated extension metadata, README badges, and added a "Meet the Author" section to officially recognize the author's identity and link to professional profiles.
+- **Improved UX**: Enhanced visual presence of the author's brand across all interactive tools (Cheat Sheet and DAG Analysis).
+
+### Changed
+- Incremented version for deployment and marketplace synchronization.
+
 ## [0.8.2] - 2026-06-01
 
 ### Added

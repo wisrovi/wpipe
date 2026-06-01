@@ -15,8 +15,8 @@ project = "wpipe"
 copyright = f"2024-{datetime.now().year}, William Steve Rodriguez Villamizar"
 author = "William Steve Rodriguez Villamizar"
 author_url = "https://github.com/wisrovi"
-version = "2.3.0"
-release = "2.3.0"
+version = "2.4.0"
+release = "2.4.0"
 
 extensions = [
     "sphinx.ext.autodoc",

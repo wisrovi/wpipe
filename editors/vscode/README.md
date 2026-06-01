@@ -1,8 +1,11 @@
 # 🚀 WPipe VS Code Tools
 
+[![Version](https://img.shields.io/visual-studio-marketplace/v/wpipe.wpipe-vscode?style=flat-square&color=blue)](https://marketplace.visualstudio.com/items?itemName=wpipe.wpipe-vscode)
+[![Author](https://img.shields.io/badge/Author-wisrovi-orange?style=flat-square)](https://github.com/wisrovi)
+[![License](https://img.shields.io/github/license/wisrovi/wpipe?style=flat-square&color=green)](https://github.com/wisrovi/wpipe/blob/main/LICENSE)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-William_Rodriguez-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/wisrovi/)
 
 <img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
-
 
 **The Swiss Army Knife for Pipeline Orchestration with WPipe.**
 

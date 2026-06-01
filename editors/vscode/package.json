@@ -2,8 +2,18 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.8.2",
+    "version": "0.8.3",
     "publisher": "wpipe",
+    "author": {
+        "name": "William Rodriguez (wisrovi)",
+        "email": "wisrovi.rodriguez@gmail.com",
+        "url": "https://github.com/wisrovi"
+    },
+    "homepage": "https://github.com/wisrovi/wpipe",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wisrovi/wpipe.git"
+    },
     "icon": "icon.png",
     "engines": {
         "vscode": "^1.75.0"

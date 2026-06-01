@@ -25,63 +25,52 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
-const https = __importStar(require("https"));
-const stepsCatalogRaw = __importStar(require("./steps_catalog.json"));
 class CatalogManager {
     static async init(context) {
-        const cachePath = path.join(context.globalStorageUri.fsPath, 'catalog_cache.json');
-        // Ensure storage directory exists
-        if (!fs.existsSync(context.globalStorageUri.fsPath)) {
+        const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
+        // 1. Load from cache
+        try {
+            const cacheData = await vscode.workspace.fs.readFile(cacheUri);
+            const cached = JSON.parse(new TextDecoder().decode(cacheData));
+            if (Array.isArray(cached))
+                this.catalog = cached;
+        }
+        catch (e) {
+            // Cache doesn't exist or is invalid, load embedded data
             try {
-                fs.mkdirSync(context.globalStorageUri.fsPath, { recursive: true });
+                const catalogUri = vscode.Uri.joinPath(context.extensionUri, 'out', 'steps_catalog.json');
+                const catalogData = await vscode.workspace.fs.readFile(catalogUri);
+                const raw = JSON.parse(new TextDecoder().decode(catalogData));
+                this.catalog = Array.isArray(raw) ? raw : (raw.default || []);
             }
-            catch (e) { }
+            catch (e2) { }
         }
-        // 1. Load from cache immediately (Synchronous feel)
-        if (fs.existsSync(cachePath)) {
-            try {
-                const cached = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-                if (Array.isArray(cached))
-                    this.catalog = cached;
-            }
-            catch (e) { }
-        }
-        // 2. If cache empty, use embedded data
-        if (this.catalog.length === 0) {
-            const raw = stepsCatalogRaw;
-            this.catalog = Array.isArray(raw) ? raw : (raw.default || []);
-        }
-        // 3. Trigger background update (DO NOT AWAIT in activate)
+        // 2. Trigger background update
         this.update(context, false);
     }
     static async update(context, manual = false) {
         const download = async () => {
             const oldNames = new Set(this.catalog.map(s => `${s.repo}:${s.name}`));
-            const fetchJson = (url) => new Promise(res => {
-                const req = https.get(url, { timeout: 10000 }, r => {
-                    let b = '';
-                    r.on('data', d => b += d);
-                    r.on('end', () => { try {
-                        const p = JSON.parse(b);
-                        res(Array.isArray(p) ? p : []);
-                    }
-                    catch (e) {
-                        res([]);
-                    } });
-                });
-                req.on('error', () => res([]));
-                req.on('timeout', () => { req.destroy(); res([]); });
-            });
+            const fetchJson = async (url) => {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok)
+                        return [];
+                    const p = await response.json();
+                    return Array.isArray(p) ? p : [];
+                }
+                catch (e) {
+                    return [];
+                }
+            };
             const [off, com] = await Promise.all([fetchJson(this.OFFICIAL_URL), fetchJson(this.COMMUNITY_URL)]);
             const newCatalog = [...off, ...com];
             if (newCatalog.length > 0) {
                 const newItems = newCatalog.filter(s => !oldNames.has(`${s.repo}:${s.name}`));
                 this.catalog = newCatalog;
                 try {
-                    const cachePath = path.join(context.globalStorageUri.fsPath, 'catalog_cache.json');
-                    fs.writeFileSync(cachePath, JSON.stringify(this.catalog));
+                    const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
+                    await vscode.workspace.fs.writeFile(cacheUri, new TextEncoder().encode(JSON.stringify(this.catalog)));
                 }
                 catch (e) { }
                 if (newItems.length > 0) {
@@ -119,12 +108,12 @@ async function activate(context) {
     CatalogManager.init(context);
     const stepProvider = new WPipeStepProvider();
     vscode.window.registerTreeDataProvider('wpipeSteps', stepProvider);
-    context.subscriptions.push(vscode.commands.registerCommand('wpipeSteps.refreshEntry', () => stepProvider.refresh()), vscode.commands.registerCommand('wpipe-vscode.refreshCatalog', () => CatalogManager.update(context, true)), vscode.commands.registerCommand('wpipeSteps.openFile', (f, l) => {
-        vscode.workspace.openTextDocument(f).then(d => vscode.window.showTextDocument(d).then(e => {
-            const p = new vscode.Position(l, 0);
-            e.selection = new vscode.Selection(p, p);
-            e.revealRange(new vscode.Range(p, p), vscode.TextEditorRevealType.InCenter);
-        }));
+    context.subscriptions.push(vscode.commands.registerCommand('wpipeSteps.refreshEntry', () => stepProvider.refresh()), vscode.commands.registerCommand('wpipe-vscode.refreshCatalog', () => CatalogManager.update(context, true)), vscode.commands.registerCommand('wpipeSteps.openFile', async (f, l) => {
+        const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(f));
+        const editor = await vscode.window.showTextDocument(doc);
+        const p = new vscode.Position(l, 0);
+        editor.selection = new vscode.Selection(p, p);
+        editor.revealRange(new vscode.Range(p, p), vscode.TextEditorRevealType.InCenter);
     }), vscode.commands.registerCommand('wpipeSteps.insertStep', (step) => {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -151,6 +140,185 @@ async function activate(context) {
         const editor = vscode.window.activeTextEditor;
         if (editor)
             DAGPanel.createOrShow(context.extensionUri, editor.document);
+    }), vscode.commands.registerCommand('wpipe-vscode.openDashboard', async () => {
+        if (vscode.env.uiKind === vscode.UIKind.Web) {
+            vscode.window.showErrorMessage('WPipe Dashboard requires a local Python environment and is not available in VS Code for Web.');
+            return;
+        }
+        const dbUri = await vscode.window.showOpenDialog({
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            filters: { 'Database': ['db', 'sqlite', 'sqlite3'] },
+            title: 'Select WPipe Tracking Database'
+        });
+        if (!dbUri)
+            return;
+        const configUri = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            title: 'Select WPipe Config Directory (Optional)'
+        });
+        const port = await vscode.window.showInputBox({
+            placeHolder: '5000',
+            prompt: 'Enter port for the dashboard',
+            value: '5000'
+        });
+        if (!port)
+            return;
+        const terminal = vscode.window.createTerminal('WPipe Dashboard');
+        const dbPath = dbUri[0].fsPath;
+        const configPath = configUri ? configUri[0].fsPath : '';
+        let cmd = `python -m wpipe.dashboard --db "${dbPath}" --port ${port}`;
+        if (configPath)
+            cmd += ` --config "${configPath}"`;
+        terminal.show();
+        terminal.sendText(cmd);
+        vscode.window.showInformationMessage(`🚀 Dashboard starting at http://localhost:${port}`);
+        setTimeout(() => {
+            vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}`));
+        }, 2000);
+    }), vscode.commands.registerCommand('wpipe-vscode.showCheatSheet', () => {
+        const panel = vscode.window.createWebviewPanel('wpipeCheatSheet', '🚀 WPipe Professional Cheat Sheet', vscode.ViewColumn.Beside, { enableScripts: true });
+        panel.webview.html = `
+                <html>
+                <head>
+                    <style>
+                        :root {
+                            --bg: #0d1117;
+                            --card-bg: #161b22;
+                            --border: #30363d;
+                            --text: #c9d1d9;
+                            --accent: #58a6ff;
+                            --secondary: #7ee787;
+                            --orange: #ffa657;
+                            --code-bg: #000;
+                        }
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 0; margin: 0; background: var(--bg); color: var(--text); }
+                        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+                        header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 40px; display: flex; align-items: center; justify-content: space-between; }
+                        h1 { font-size: 28px; margin: 0; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+                        h2 { font-size: 20px; color: var(--secondary); margin-top: 30px; border-left: 4px solid var(--secondary); padding-left: 10px; }
+                        h3 { font-size: 16px; color: var(--orange); margin-top: 20px; }
+                        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+                        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; transition: transform 0.2s; }
+                        .card:hover { border-color: var(--accent); }
+                        code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 13px; color: var(--orange); }
+                        .snippet-list { list-style: none; padding: 0; }
+                        .snippet-list li { margin-bottom: 15px; border-bottom: 1px solid #21262d; padding-bottom: 10px; }
+                        .snippet-name { font-weight: bold; color: var(--accent); font-size: 14px; }
+                        .snippet-desc { font-size: 12px; color: #8b949e; margin-top: 4px; }
+                        .command-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        .command-table td { padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+                        .command-table .cmd { color: var(--secondary); font-weight: bold; }
+                        .footer { margin-top: 60px; text-align: center; font-size: 12px; color: #8b949e; border-top: 1px solid var(--border); padding-top: 20px; }
+                        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; background: #238636; color: white; margin-left: 5px; }
+                        .warning-box { background: rgba(255, 166, 87, 0.1); border-left: 4px solid var(--orange); padding: 15px; margin: 20px 0; border-radius: 4px; font-size: 13px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <header>
+                            <h1>🚀 WPipe Tools <span style="font-size:14px; color:#8b949e; font-weight:normal;">v0.8.2 Professional Edition</span></h1>
+                            <div style="font-size: 12px; color: var(--accent);">By William Rodriguez (wisrovi)</div>
+                        </header>
+
+                        <div class="warning-box">
+                            <b>💡 Pro Tip:</b> Always initialize your <code>Pipeline</code> with a <code>tracking_db</code> to enable forensic error capture, event logging, and real-time dashboard monitoring.
+                        </div>
+
+                        <h2>🛠️ Commands & Automation</h2>
+                        <div class="grid">
+                            <div class="card">
+                                <h3>Visual Analysis</h3>
+                                <table class="command-table">
+                                    <tr><td class="cmd">Preview DAG</td><td>Watch your architecture come to life. Refreshes on save.</td></tr>
+                                    <tr><td class="cmd">Dashboard</td><td>Launch the real-time web monitoring interface.</td></tr>
+                                </table>
+                            </div>
+                            <div class="card">
+                                <h3>Step Management</h3>
+                                <table class="command-table">
+                                    <tr><td class="cmd">Cloud Catalog</td><td>Search & import 130+ community steps instantly.</td></tr>
+                                    <tr><td class="cmd">Run Step</td><td>Test individual <code>@step</code> functions without running the whole pipe.</td></tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <h2>🐍 Python Snippets (Speed Up Development)</h2>
+                        <div class="grid">
+                            <div class="card">
+                                <h3>✨ Core Components</h3>
+                                <ul class="snippet-list">
+                                    <li><span class="snippet-name">wpstep</span> <span class="badge">Common</span><div class="snippet-desc">Function-based step. Best for simple logic.</div></li>
+                                    <li><span class="snippet-name">wpstate</span><div class="snippet-desc">Class-based step with typed <code>PipelineContext</code>.</div></li>
+                                    <li><span class="snippet-name">wpstepadv</span> <span class="badge">Enterprise</span><div class="snippet-desc">Professional class with retries, timeouts, and rich metadata.</div></li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <h3>🌀 Flow Control</h3>
+                                <ul class="snippet-list">
+                                    <li><span class="snippet-name">wpparallel</span><div class="snippet-desc">Execute multiple steps simultaneously with thread management.</div></li>
+                                    <li><span class="snippet-name">wpcondition</span><div class="snippet-desc">Boolean branching (True/False) based on data content.</div></li>
+                                    <li><span class="snippet-name">wpfor</span><div class="snippet-desc">Iterative loops with early exit validation.</div></li>
+                                    <li><span class="snippet-name">wpbackground</span><div class="snippet-desc">Fire-and-forget asynchronous execution.</div></li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <h3>🏗️ Orchestration</h3>
+                                <ul class="snippet-list">
+                                    <li><span class="snippet-name">wppipe</span><div class="snippet-desc">Basic pipeline skeleton with error handling.</div></li>
+                                    <li><span class="snippet-name">wppipeadv</span> <span class="badge">LTS</span><div class="snippet-desc">Full production setup: Metrics, Resource Monitor, Task Timer.</div></li>
+                                    <li><span class="snippet-name">wperrorcapture</span><div class="snippet-desc">Custom global error handler for forensic analysis.</div></li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <h3>🛡️ Resilience & Tracking</h3>
+                                <ul class="snippet-list">
+                                    <li><span class="snippet-name">wpevent</span><div class="snippet-desc">Log custom markers in the execution timeline.</div></li>
+                                    <li><span class="snippet-name">wpalert</span><div class="snippet-desc">Set thresholds (CPU, RAM, Time) to trigger alerts.</div></li>
+                                    <li><span class="snippet-name">wpcheckpoint</span><div class="snippet-desc">Save points for resumable long-running pipelines.</div></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h2>📜 YAML Configuration</h2>
+                        <div class="grid">
+                            <div class="card">
+                                <h3>Structure</h3>
+                                <ul class="snippet-list">
+                                    <li><span class="snippet-name">wpyaml</span><div class="snippet-desc">Main pipeline YAML header.</div></li>
+                                    <li><span class="snippet-name">ypstep</span><div class="snippet-desc">Standard task definition in config files.</div></li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <h3>Blocks</h3>
+                                <ul class="snippet-list">
+                                    <li><span class="snippet-name">ypparallel / ypcondition</span><div class="snippet-desc">Logic blocks for data-driven configuration.</div></li>
+                                    <li><span class="snippet-name">ypfor / ypbackground</span><div class="snippet-desc">Advanced flow control in YAML.</div></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="footer">
+                            Engineered for excellence in data orchestration.<br/>
+                            Copyright &copy; 2026 WPipe Tools | <a href="https://github.com/wisrovi/wpipe" style="color:var(--accent);">Official Docs</a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+    }), vscode.commands.registerCommand('wpipeSteps.runStep', async (item) => {
+        if (vscode.env.uiKind === vscode.UIKind.Web) {
+            vscode.window.showErrorMessage('Running steps requires a local Python environment.');
+            return;
+        }
+        if (!item || !item.filePath)
+            return;
+        const terminal = vscode.window.createTerminal(`Run Step: ${item.label}`);
+        terminal.show();
+        terminal.sendText(`python "${item.filePath}"`);
     }));
 }
 exports.activate = activate;
@@ -193,9 +361,10 @@ class WPipeStepProvider {
         const files = await vscode.workspace.findFiles('**/*.py', exclude, 50); // Limit to 50 files for performance
         for (const f of files) {
             try {
-                const content = fs.readFileSync(f.fsPath, 'utf8');
-                if (content.length > 500000)
+                const contentData = await vscode.workspace.fs.readFile(f);
+                if (contentData.length > 500000)
                     continue; // Skip huge files
+                const content = new TextDecoder().decode(contentData);
                 const lines = content.split('\n');
                 lines.forEach((l, i) => {
                     const trimmed = l.trim();
@@ -240,7 +409,7 @@ class StepItem extends vscode.TreeItem {
         this.line = line;
         this.funcName = '';
         this.iconPath = new vscode.ThemeIcon('rocket');
-        this.description = path.basename(filePath);
+        this.description = label; // Simplified for web compatibility
         this.contextValue = 'workspaceStep';
         this.command = { command: 'wpipeSteps.openFile', title: 'Open', arguments: [filePath, line] };
     }
@@ -277,7 +446,7 @@ class DAGPanel {
             this._update(e.document); }, null, this._disposables);
     }
     _update(doc) {
-        const fileName = path.basename(doc.fileName);
+        const fileName = doc.fileName.split(/[\\/]/).pop() || 'Untitled';
         const res = this.parse(doc.getText(), fileName);
         this._panel.webview.html = this._getHtml(fileName, res.graph, res.stats, res.bigO);
     }
@@ -352,7 +521,7 @@ class DAGPanel {
                     <div class="toolbar"><button id="zoom-in">+</button><button id="zoom-out">-</button><button id="zoom-reset">⟲</button></div>
                 </div>
             </div>
-            <div class="footer"><div>Copyright &copy; 2026 William Rodriguez (wisrovi)</div><div>Engine: <b>WPipe v2.3.6 LTS</b> | UI v0.7.8-HD</div></div>
+            <div class="footer"><div>Copyright &copy; 2026 William Rodriguez (wisrovi)</div><div>Engine: <b>WPipe v2.4.0 LTS</b> | UI v0.7.8-HD</div></div>
         </body>
         </html>`;
     }

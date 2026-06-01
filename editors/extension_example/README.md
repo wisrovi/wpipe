@@ -5,12 +5,12 @@ Este proyecto es un ejemplo de extensión para un sistema de tuberías de estado
 ## Requisitos
 
 - [Conda](https://docs.conda.io/en/latest/) instalado.
-- Entorno `cv` configurado con `wpipe` v2.3.8 y sus dependencias.
+- Entorno `cv` configurado con `wpipe` v2.4.0 y sus dependencias.
 
 ### Dependencias Necesarias
 
 ```bash
-pip install wpipe==2.3.8 wpipe-steps==0.105.0 wredis==0.9.6 psutil pytest pytest-cov
+pip install wpipe==2.4.0 wpipe-steps==0.105.0 wredis==0.9.6 psutil pytest pytest-cov
 ```
 
 ## Instalación

@@ -5,6 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "wpipe"
 version = "2.4.0"
+
 authors = [
     { name = "William Steve Rodriguez Villamizar", email = "wisrovi.rodriguez@gmail.com" }
 ]
