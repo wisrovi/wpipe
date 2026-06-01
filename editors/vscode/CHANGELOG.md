@@ -1,6 +1,32 @@
 # Changelog
 
-## [0.9.4] - 2026-06-01
+## [0.9.9] - 2026-06-01
+
+### Changed
+- **Convención de Nomenclatura**: Se ha actualizado el sufijo de exportación automática del DAG a `_dag.wpipe.md` para identificar claramente los archivos de documentación generados por la extensión.
+
+## [0.9.8] - 2026-06-01
+
+### Added
+- **Motor DAG de Precisión**: Rediseño completo del motor de generación de Mermaid. Ahora las etiquetas de decisión ("True", "False", "exit") aparecen correctamente en las flechas de salida de los bloques lógicos, eliminando la confusión visual en ramas anidadas.
+- **Visualización de Background**: Las tareas `Background` ahora se representan con líneas punteadas (`-. async .->`), permitiendo ver claramente qué pasos se ejecutan en paralelo sin detener el flujo principal.
+- **Eliminación de Duplicados**: Corregido un error que causaba que pipelines complejos aparecieran varias veces en el mismo diagrama.
+
+## [0.9.7] - 2026-06-01
+
+### Fixed
+- **Estabilidad del DAG**: Refactorización total de la inicialización de Mermaid. Ahora utiliza el API `render` explícito, eliminando parpadeos, paneles negros y fallos de carga.
+- **Zoom Ultra-Preciso**: Re-implementado el sistema de Zoom con un rango de 0.001x a 100x, permitiendo navegar por pipelines de cualquier tamaño sin perder el control.
+- **Exportación SVG Corregida**: El botón de descarga ahora utiliza un puente de mensajería seguro entre el editor y el sistema operativo, garantizando que la ventana de guardado aparezca siempre.
+
+## [0.9.6] - 2026-06-01
+
+### Added
+- **Mapeo de add_state**: El motor AST ahora detecta y mapea correctamente los estados añadidos mediante `pipeline.add_state()`, integrándolos perfectamente en el flujo visual del DAG.
+- **Exportación Automática a Markdown**: Cada vez que previsualizas el DAG, se genera automáticamente un archivo `<nombre>_dag.md` en la misma carpeta con el código Mermaid. Ideal para documentación y control de versiones.
+- **Interactividad del DAG**: Añadido botón de **💾 Download SVG** para guardar el diagrama y botones mejorados de **Zoom In/Out** para navegar por pipelines complejos.
+
+## [0.9.5] - 2026-06-01
 
 ### Added
 - **Acceso Directo al Dashboard**: Ahora aparece un botón `📊 Open Dashboard` directamente sobre tu código si el Pipeline tiene configurada una `tracking_db`. La extensión detecta automáticamente la ruta de la base de datos y la pre-carga, permitiéndote abrir el dashboard con un solo clic sin tener que buscar el archivo manualmente.

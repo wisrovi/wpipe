@@ -43,10 +43,8 @@ pipeline.set_steps(
             ],
         ),
         For(
-            iterations=10,
             validation_expression="status != 'error'",
             steps=[
-                function_name5,
                 Parallel(
                     steps=[
                         function_name5,
@@ -55,31 +53,30 @@ pipeline.set_steps(
                     max_workers=1,
                 ),
                 AdvancedStep9(),
-                For(
-                    iterations=10,
-                    validation_expression="status != 'error'",
-                    steps=[AdvancedStep8(), function_name5],
-                ),
+            ],
+        ),
+        For(
+            iterations=10,
+            steps=[
+                AdvancedStep8(),
+                State13(config="custom_config"),
             ],
         ),
         Parallel(
             steps=[
-                function_name5,
+                State12(config="custom_value"),
                 pipe_2,
             ],
             max_workers=2,
         ),
         Background(slow_step),
-        State12(config="custom_value"),
-        State13(config="custom_config"),
+        RedisHashReadSync(host="localhost", port=6379),
+        function_name11,
     ]
 )
 
 pipeline.add_state(StepClass10())
-pipeline.add_state(function_name11)
 
-
-pipeline.add_state(RedisHashReadSync(host="localhost", port=6379))
 
 pipeline.add_error_capture([error_capture])
 
