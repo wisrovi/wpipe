@@ -68,17 +68,28 @@ Diferénciate de los scripts lineales. WPipe te ofrece superpoderes:
 pip install wpipe
 ```
 
+## ⌨️ WPipe CLI
+
+WPipe incluye una interfaz de línea de comandos para facilitar la gestión de tus flujos de trabajo:
+
+```bash
+# Iniciar el dashboard de visualización
+wpipe dashboard --port 8035 --open
+
+# Ejecutar un script de pipeline directamente
+wpipe run mi_pipeline.py
+```
+
 ---
 
 ## 📖 Guía Completa
 
 ### 1. Conceptos Fundamentales
 
-WPipe se basa en **4 pilares** que puedes combinar libremente:
+WPipe se basa en **5 pilares** que puedes combinar libremente:
 
 ```python
 from wpipe import Pipeline, step, Condition, For, Parallel
-from wpipe.pipe.components.logic_blocks import Background
 ```
 
 | Pilar | Uso |
@@ -88,16 +99,27 @@ from wpipe.pipe.components.logic_blocks import Background
 | **`Condition`** | Ramificación condicional basada en expresiones |
 | **`For`** | Bucles con validación de parada |
 | **`Parallel`** | Ejecución paralela de múltiples pasos |
-| **`Background`** | Tareas en background sin bloquear el pipeline |
+| **`Hooks`** | Middlewares globales (Pre/Post) para lógica transversal |
 
-### 2. Tu Primer Pipeline
+---
+
+### 2. Tu Primer Pipeline con Hooks
 
 ```python
 from wpipe import Pipeline, step
 
 @step(name="saludar")
-def saludar(name):
-    return {"mensaje": f"Hola, {name}!"}
+def saludar(context):
+    return {"mensaje": f"Hola, WPipe!"}
+
+p = Pipeline()
+# Añade hooks globales para auditoría o logging
+p.add_pre_hook(lambda ctx, info: print(f"🚀 Iniciando: {info['name']}"))
+p.add_post_hook(lambda ctx, info, res: print(f"✅ Finalizado: {info['name']}"))
+
+p.add_state(saludar)
+p.run({})
+```
 
 pipeline = Pipeline(pipeline_name="miPrimero")
 pipeline.set_steps([saludar])

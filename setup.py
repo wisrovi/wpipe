@@ -54,6 +54,11 @@ def run_setup() -> None:
         python_requires=">=3.6",
         long_description_content_type="text/markdown",
         long_description=get_long_description(),
+        entry_points={
+            "console_scripts": [
+                "wpipe=wpipe.cli:main",
+            ],
+        },
         license="MIT",
         url="https://github.com/wisrovi/wpipe",
     )

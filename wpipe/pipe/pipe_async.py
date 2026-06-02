@@ -197,6 +197,28 @@ class PipelineAsync(APIClient):
         self.continue_on_error = True
         self._error_capture_tasks.extend(steps)
 
+    def add_pre_hook(self, hook: Callable) -> "PipelineAsync":
+        """
+        Add a global pre-execution hook.
+        
+        Args:
+            hook: Callable (sync or async) to execute before each step.
+                  Signature: hook(context, step_info)
+        """
+        self._pre_hooks.append(hook)
+        return self
+
+    def add_post_hook(self, hook: Callable) -> "PipelineAsync":
+        """
+        Add a global post-execution hook.
+        
+        Args:
+            hook: Callable (sync or async) to execute after each step.
+                  Signature: hook(context, step_info, result_or_error)
+        """
+        self._post_hooks.append(hook)
+        return self
+
     async def _evaluate_checkpoints(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Evaluate and fire checkpoints based on current data.
@@ -549,11 +571,31 @@ class PipelineAsync(APIClient):
             version = getattr(item, "VERSION", "v1.0")
 
         if func:
+            step_info = {
+                "name": name,
+                "version": version,
+                "step_type": "task",
+                "metadata": getattr(func, "_wpipe_metadata", {})
+            }
+
+            # Global Pre-Hooks
+            for hook in self._pre_hooks:
+                try:
+                    if _is_async_callable(hook):
+                        await hook(data, step_info)
+                    else:
+                        hook(data, step_info)
+                except Exception as e:
+                    if self.verbose:
+                        print(f"[PRE-HOOK ASYNC ERROR] {e}")
+
             tracked_step_id = self._start_step_tracking(
                 name, version, "task", data,
                 parent_step_id=parent_step_id,
                 parallel_group=parallel_group
             )
+            
+            result_status = "success"
             error_msg = None
             try:
                 result = await self._task_invoke(func, name, data, **kwargs)
@@ -562,13 +604,36 @@ class PipelineAsync(APIClient):
                 data.update(result)
                 data.pop("error", None)
             except Exception as e:  # pylint: disable=broad-exception-caught
+                result_status = "error"
                 error_msg = str(e)
                 data["error"] = error_msg
                 if not self.continue_on_error:
+                    # Execute post-hooks even on error before re-raising
+                    for hook in self._post_hooks:
+                        try:
+                            if _is_async_callable(hook):
+                                await hook(data, step_info, e)
+                            else:
+                                hook(data, step_info, e)
+                        except Exception as hook_err:
+                            if self.verbose:
+                                print(f"[POST-HOOK ASYNC ERROR] {hook_err}")
                     self._end_step_tracking(tracked_step_id, None, error_msg)
                     raise
             finally:
                 self._end_step_tracking(tracked_step_id, data if not error_msg else None, error_msg)
+                
+                # Global Post-Hooks (only if not already raised)
+                if result_status == "success" or self.continue_on_error:
+                    for hook in self._post_hooks:
+                        try:
+                            if _is_async_callable(hook):
+                                await hook(data, step_info, data.get("error") if "error" in data else "success")
+                            else:
+                                hook(data, step_info, data.get("error") if "error" in data else "success")
+                        except Exception as e:
+                            if self.verbose:
+                                print(f"[POST-HOOK ASYNC ERROR] {e}")
         return data
 
     async def _pipeline_run(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:

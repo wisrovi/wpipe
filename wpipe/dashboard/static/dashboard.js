@@ -470,271 +470,107 @@ async function selectPipeline(id) {
 }
 
 // ==================== GRAPH RENDERING ====================
-function renderGraph(graph) {
-    const svg = document.getElementById('graph-svg');
-    const edgesG = document.getElementById('graph-edges');
-    const nodesG = document.getElementById('graph-nodes');
+let panZoomInstance = null;
+
+// ==================== GRAPH RENDERING ====================
+async function renderGraph(graph) {
+    const container = document.getElementById('mermaid-graph');
     const empty = document.getElementById('graph-empty');
-    const container = document.getElementById('graph-container');
     
-    if (!graph.nodes || graph.nodes.length === 0) {
-        svg.style.display = 'none';
+    if (!graph.nodes || graph.nodes.length === 0 || !graph.mermaid_script) {
+        container.style.display = 'none';
         empty.style.display = 'block';
         return;
     }
     
-    svg.style.display = 'block';
+    container.style.display = 'flex';
     empty.style.display = 'none';
-    edgesG.innerHTML = '';
-    nodesG.innerHTML = '';
     
-    // --- NUEVO ALGORITMO DE LAYOUT ---
-    // Agrupamos nodos por nivel jerárquico y parent_step_id
-    const nodesMap = {};
-    graph.nodes.forEach(n => nodesMap[n.id] = n);
-    
-    const levels = {}; // Nivel horizontal -> Lista de nodos
-    const nodePositions = {}; // node.id -> {level, offset}
-    
-    // Asignar niveles basándose en el flujo secuencial y jerarquía
-    let currentLevel = 0;
-    
-    graph.nodes.forEach(node => {
-        if (!node.parent_step_id) {
-            // Nodos principales (sin padre) se ponen secuencialmente
-            nodePositions[node.id] = { level: currentLevel, offset: 0 };
-            if (!levels[currentLevel]) levels[currentLevel] = [];
-            levels[currentLevel].push(node.id);
-            currentLevel++;
-        } else {
-            // Sub-nodos (paralelos) se ponen en el mismo nivel que su padre pero con offset
-            const parentId = `step_${node.parent_step_id}`;
-            const parentPos = nodePositions[parentId];
-            
-            if (parentPos) {
-                const subLevel = parentPos.level + 1;
-                if (!levels[subLevel]) levels[subLevel] = [];
-                
-                // Determinamos offset vertical (cuántos sub-nodos hay ya en este nivel para este padre)
-                const siblings = levels[subLevel].filter(id => nodesMap[id] && nodesMap[id].parent_step_id === node.parent_step_id);
-                nodePositions[node.id] = { level: subLevel, offset: siblings.length };
-                levels[subLevel].push(node.id);
-            } else {
-                // Fallback si no encontramos al padre o el padre no ha sido posicionado aún
-                nodePositions[node.id] = { level: currentLevel, offset: 0 };
-                if (!levels[currentLevel]) levels[currentLevel] = [];
-                levels[currentLevel].push(node.id);
-                currentLevel++;
+    try {
+        // Initialize mermaid
+        mermaid.initialize({ 
+            startOnLoad: false, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#2563eb',
+                lineColor: '#64748b',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#0f172a'
+            },
+            flowchart: {
+                curve: 'basis',
+                padding: 20
             }
-        }
-    });
+        });
 
-    const spacingX = 180;
-    const spacingY = 120;
-    const startX = 100;
-    const centerY = 250;
-    
-    // Calculamos coordenadas X, Y para cada nodo
-    graph.nodes.forEach(nd => {
-        const pos = nodePositions[nd.id];
-        nd.x = startX + (pos.level * spacingX);
+        const { svg } = await mermaid.render('mermaid-svg', graph.mermaid_script);
+        container.innerHTML = svg;
         
-        // El offset vertical centra los nodos paralelos alrededor del centro
-        const siblingsInLevel = levels[pos.level].length;
-        if (siblingsInLevel > 1) {
-            const totalH = (siblingsInLevel - 1) * spacingY;
-            nd.y = (centerY - totalH/2) + (levels[pos.level].indexOf(nd.id) * spacingY);
-        } else {
-            nd.y = centerY;
-        }
-    });
-    
-    const svgW = Math.max(1200, startX + (Object.keys(levels).length * spacingX) + 100);
-    const svgH = 600;
-    
-    svg.setAttribute('width', svgW);
-    svg.setAttribute('height', svgH);
-    
-    // Reset transform state
-    graphState.scale = 1;
-    graphState.translateX = 0;
-    graphState.translateY = 0;
-    
-    // Add zoom/pan handlers to container
-    setupGraphPanZoom(container, svg);
-    
-    // Draw edges
-    const statusColors = {
-        completed: '#10b981',
-        error: '#ef4444',
-        running: '#3b82f6',
-        pending: '#f59e0b'
-    };
-    
-    graph.edges.forEach(e => {
-        const f = graph.nodes.find(n => n.id === e.from);
-        const t = graph.nodes.find(n => n.id === e.to);
-        if (!f || !t) return;
+        const svgElement = container.querySelector('svg');
+        svgElement.setAttribute('id', 'graph-svg-element');
+        svgElement.style.width = '100%';
+        svgElement.style.height = '100%';
         
-        const color = e.color || statusColors[f.status] || '#64748b';
-        const isParallel = e.label === 'parallel';
-        const isSkipped = e.label === 'skipped';
-        
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', f.x);
-        line.setAttribute('y1', f.y);
-        line.setAttribute('x2', t.x);
-        line.setAttribute('y2', t.y);
-        line.setAttribute('stroke', color);
-        line.setAttribute('stroke-width', isParallel ? '1.5' : '2.5');
-        if (isParallel || isSkipped) line.setAttribute('stroke-dasharray', '5,5');
-        line.setAttribute('stroke-linecap', 'round');
-        edgesG.appendChild(line);
-    });
-    
-    // Draw nodes
-    graph.nodes.forEach(nd => {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.setAttribute('transform', `translate(${nd.x},${nd.y})`);
-        g.style.cursor = 'pointer';
-        g.setAttribute('data-node-id', nd.id);
-        
-        g.addEventListener('mouseenter', (e) => showNodeTooltip(e, nd));
-        g.addEventListener('mouseleave', hideNodeTooltip);
-        g.addEventListener('click', () => selectNode(nd));
-        
-        const color = statusColors[nd.status] || '#64748b';
-        const isParallel = nd.step_type === 'parallel';
-        
-        if (isParallel) {
-            // Nodo especial para el bloque Parallel (Caja)
-            g.innerHTML = `
-                <rect x="-40" y="-30" width="80" height="60" rx="8" fill="#1e293b" stroke="${color}" stroke-width="3"/>
-                <path d="M-15,-10 L15,-10 M-15,0 L15,0 M-15,10 L15,10" stroke="${color}" stroke-width="3" stroke-linecap="round"/>
-                <rect x="-55" y="35" width="110" height="22" rx="5" fill="rgba(15,23,42,0.95)"/>
-                <text y="51" text-anchor="middle" fill="#00f2fe" font-size="11" font-weight="bold">${nd.name.toUpperCase()}</text>
-            `;
-        } else if (nd.type === 'condition') {
-            g.innerHTML = `
-                <polygon points="0,-30 30,0 0,30 -30,0" fill="#8b5cf6" stroke="${color}" stroke-width="3"/>
-                <text text-anchor="middle" dominant-baseline="central" fill="white" font-size="18" font-weight="bold">${nd.branch_taken === 'true' ? '✓' : '✗'}</text>
-                <rect x="-50" y="35" width="100" height="20" rx="4" fill="rgba(15,23,42,0.9)"/>
-                <text y="50" text-anchor="middle" fill="#fff" font-size="11">${nd.name.substring(0,12)}</text>
-            `;
-        } else {
-            const icon = { completed: '✓', error: '✗', running: '▶', pending: '○' }[nd.status] || '○';
-            g.innerHTML = `
-                <circle r="28" fill="${color}" stroke="${color}" stroke-width="2"/>
-                <text text-anchor="middle" dominant-baseline="central" fill="white" font-size="18" font-weight="bold">${icon}</text>
-                <rect x="-55" y="35" width="110" height="22" rx="5" fill="rgba(15,23,42,0.95)"/>
-                <text y="51" text-anchor="middle" fill="#e2e8f0" font-size="11">${nd.name.substring(0,14)}</text>
-            `;
+        if (panZoomInstance) {
+            panZoomInstance.destroy();
         }
         
-        nodesG.appendChild(g);
-    });
+        panZoomInstance = svgPanZoom(svgElement, {
+            zoomEnabled: true,
+            controlIconsEnabled: false,
+            fit: true,
+            center: true,
+            minZoom: 0.1,
+            maxZoom: 10,
+            mouseWheelZoomEnabled: true,
+            dblClickZoomEnabled: true,
+            preventMouseEventsDefault: true
+        });
+
+        // Add event listeners to nodes for tooltip and selection
+        graph.nodes.forEach(nd => {
+            const nodeEl = document.getElementById(nd.id);
+            if (nodeEl) {
+                nodeEl.style.cursor = 'pointer';
+                nodeEl.addEventListener('mouseenter', (e) => showNodeTooltip(e, nd));
+                nodeEl.addEventListener('mouseleave', hideNodeTooltip);
+                nodeEl.addEventListener('click', () => selectNode(nd));
+            }
+        });
+        
+    } catch (e) {
+        console.error('Mermaid render error:', e);
+        container.innerHTML = `<div style="padding:20px; color:#ef4444; background:rgba(239, 68, 68, 0.1); border-radius:8px;">
+            <i class="fas fa-exclamation-triangle"></i> Graph Render Error: ${e.message}
+        </div>`;
+    }
     
     document.getElementById('steps-section').style.display = 'block';
 }
 
 // ==================== GRAPH ZOOM/PAN ====================
-function setupGraphPanZoom(container, svg) {
-    if (!container) return;
-    
-    const contentGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    contentGroup.id = 'graph-content';
-    
-    // Move existing elements into content group
-    const edgesG = document.getElementById('graph-edges');
-    const nodesG = document.getElementById('graph-nodes');
-    if (edgesG) contentGroup.appendChild(edgesG);
-    if (nodesG) contentGroup.appendChild(nodesG);
-    
-    const svgEl = document.getElementById('graph-svg');
-    if (svg) {
-        // Re-append content group after defs
-        const defs = svg.querySelector('defs');
-        if (defs && contentGroup.parentNode !== svg) {
-            svg.insertBefore(contentGroup, defs.nextSibling);
-        }
-    }
-    
-    // Mouse wheel zoom
-    container.onwheel = function(e) {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? 0.9 : 1.1;
-        graphState.scale = Math.max(0.3, Math.min(3, graphState.scale * delta));
-        updateGraphTransform();
-    };
-    
-    // Mouse drag pan
-    container.onmousedown = function(e) {
-        if (e.target.tagName === 'button') return;
-        graphState.isDragging = true;
-        graphState.startX = e.clientX - graphState.translateX;
-        graphState.startY = e.clientY - graphState.translateY;
-        container.style.cursor = 'grabbing';
-    };
-    
-    container.onmousemove = function(e) {
-        if (!graphState.isDragging) return;
-        graphState.translateX = e.clientX - graphState.startX;
-        graphState.translateY = e.clientY - graphState.startY;
-        updateGraphTransform();
-    };
-    
-    container.onmouseup = function() {
-        graphState.isDragging = false;
-        container.style.cursor = 'grab';
-    };
-    
-    container.onmouseleave = function() {
-        graphState.isDragging = false;
-        container.style.cursor = 'grab';
-    };
-    
-    container.style.cursor = 'grab';
-}
-
-function updateGraphTransform() {
-    const content = document.getElementById('graph-content');
-    if (content) {
-        content.setAttribute('transform', `translate(${graphState.translateX}, ${graphState.translateY}) scale(${graphState.scale})`);
-    }
-}
-
 window.graphZoomIn = function() {
-    graphState.scale = Math.min(3, graphState.scale * 1.2);
-    updateGraphTransform();
+    if (panZoomInstance) panZoomInstance.zoomIn();
 };
 
 window.graphZoomOut = function() {
-    graphState.scale = Math.max(0.3, graphState.scale / 1.2);
-    updateGraphTransform();
+    if (panZoomInstance) panZoomInstance.zoomOut();
 };
 
 window.graphReset = function() {
-    graphState.scale = 1;
-    graphState.translateX = 0;
-    graphState.translateY = 0;
-    updateGraphTransform();
+    if (panZoomInstance) {
+        panZoomInstance.reset();
+        panZoomInstance.center();
+    }
 };
 
 window.graphFit = function() {
-    const container = document.getElementById('graph-container');
-    const svg = document.getElementById('graph-svg');
-    if (!container || !svg) return;
-    
-    const containerRect = container.getBoundingClientRect();
-    const svgW = parseFloat(svg.getAttribute('width')) || 1200;
-    const svgH = parseFloat(svg.getAttribute('height')) || 500;
-    
-    const scaleX = (containerRect.width - 40) / svgW;
-    const scaleY = (containerRect.height - 40) / svgH;
-    graphState.scale = Math.min(scaleX, scaleY, 1);
-    graphState.translateX = 0;
-    graphState.translateY = 0;
-    updateGraphTransform();
+    if (panZoomInstance) {
+        panZoomInstance.fit();
+        panZoomInstance.center();
+    }
 };
 
 // ==================== NODE HOVER TOOLTIP ====================

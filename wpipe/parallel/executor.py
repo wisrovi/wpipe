@@ -228,15 +228,44 @@ class ParallelExecutor:
         Raises:
             Exception: Re-raises any exception caught during step execution.
         """
+        step_info = {
+            "name": step.name,
+            "version": "v1.0",
+            "step_type": "parallel_task",
+            "metadata": {"mode": step.mode.value, "timeout": step.timeout}
+        }
+
+        # Global Pre-Hooks
+        for hook in self._pre_hooks:
+            try:
+                hook(context, step_info)
+            except Exception as e:
+                print(f"[PRE-HOOK PARALLEL ERROR] {e}")
+
+        result_status = "success"
         try:
             result = step.func(context)
-            return result or {}
-        except (ValueError, TypeError, RuntimeError, AttributeError) as e:
-            print(f"Error in step {step.name}: {e}")
-            raise
+            res_dict = result or {}
+            
+            # Global Post-Hooks
+            for hook in self._post_hooks:
+                try:
+                    hook(context, step_info, "success")
+                except Exception as e:
+                    print(f"[POST-HOOK PARALLEL ERROR] {e}")
+            
+            return res_dict
         except Exception as e:
-            print(f"Unexpected error in step {step.name}: {e}")
-            raise
+            result_status = "error"
+            # Global Post-Hooks on error
+            for hook in self._post_hooks:
+                try:
+                    hook(context, step_info, e)
+                except Exception as hook_err:
+                    print(f"[POST-HOOK PARALLEL ERROR] {hook_err}")
+            
+            print(f"Error in step {step.name}: {e}")
+            raise e
 
     def _execute_step_safe(
         self,

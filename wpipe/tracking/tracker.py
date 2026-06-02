@@ -588,19 +588,56 @@ class PipelineTracker:
                     prev_id = found_prev.get("id") or found_prev.get("step_order")
                     prev_order = found_prev.get("step_order")
                     is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
+                    
+                    label = "next"
+                    if found_prev["step_type"] == "condition":
+                        cond_output = found_prev.get("output_data") or {}
+                        # Because output_data might be a string in DB if it failed to parse, or dict
+                        if isinstance(cond_output, dict) and "branch_taken" in cond_output:
+                            label = f"{str(cond_output['branch_taken']).upper()}"
+                        else:
+                            label = "taken" if not is_skipped else "skipped"
+                    
                     edges.append({
                         "from": f"step_{prev_id}" if prev_id else f"step_{prev_order}",
                         "to": f"step_{step_id}",
-                        "label": (
-                            "next" if found_prev["step_type"] != "condition"
-                            else ("taken" if not is_skipped else "skipped")
-                        ),
+                        "label": label,
                         "style": "solid" if not is_skipped else "dashed",
                         "color": (
                             "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped)
                             else None
                         )
                     })
+
+        # Generate Mermaid script
+        mermaid_lines = ["graph TD"]
+        for n in nodes:
+            name = n["name"].replace('"', "'")
+            shape = f'[" {name} "]'
+            if n["type"] == "condition":
+                shape = f'{{{" " + name + " "}}}'
+            mermaid_lines.append(f'    {n["id"]}{shape}')
+            mermaid_lines.append(f'    class {n["id"]} {n["status"]}')
+            
+        for e in edges:
+            label = e.get("label", "next")
+            arrow = "-->"
+            if e.get("style") == "dashed":
+                arrow = "-.->"
+            
+            if label and label != "next":
+                mermaid_lines.append(f'    {e["from"]} -- {label} {arrow} {e["to"]}')
+            else:
+                mermaid_lines.append(f'    {e["from"]} {arrow} {e["to"]}')
+                
+        mermaid_lines.extend([
+            "",
+            "    classDef completed fill:#10b981,stroke:#059669,color:#fff",
+            "    classDef error fill:#ef4444,stroke:#dc2626,color:#fff",
+            "    classDef running fill:#3b82f6,stroke:#2563eb,color:#fff",
+            "    classDef pending fill:#f59e0b,stroke:#d97706,color:#fff",
+            "    classDef skipped fill:#94a3b8,stroke:#64748b,color:#fff,stroke-dasharray: 5 5"
+        ])
 
         return {
             "pipeline_id": pipeline_id,
@@ -609,6 +646,7 @@ class PipelineTracker:
             "total_duration_ms": pipeline.get("total_duration_ms"),
             "nodes": nodes,
             "edges": edges,
+            "mermaid_script": "\n".join(mermaid_lines)
         }
 
     def delete_pipeline(self, pipeline_id: str) -> None:

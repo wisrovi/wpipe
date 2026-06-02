@@ -7,39 +7,39 @@ flowchart TD
   classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5
   classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2
   classDef startN fill:#007acc,stroke:#007acc,color:#fff
-  subgraph sg_paejo ["📦 pipeline (in test_extension.py)"]
+  subgraph sg_pldnh ["📦 pipeline (in test_extension.py)"]
     direction TD
-    start_paejo(( )):::startN
-      start_paejo --> nLpaejo0[" 🚀 StepClass "]:::step
-      nLpaejo0 --> nLpaejo1[" 🚀 function_name "]:::step
-      nLpaejo1 --> nLpaejo2{"valor > 100"}:::logic
-      nLpaejo2 -- True --> nnLpaejo2T0[" 🚀 function_name "]:::step
-      nnLpaejo2T0 --> nnLpaejo2T1[" 🚀 StepClass4 "]:::step
-      nnLpaejo2T1 --> nLpaejo2_m(( ))
-      nLpaejo2 -- False --> nnLpaejo2F0[" 🚀 StepClass3 "]:::step
-      nnLpaejo2F0 --> nLpaejo2_m(( ))
-      nLpaejo2_m --> nLpaejo3[[" 🔄 For Loop "]]:::logic
-      nLpaejo3 -- body --> nnLpaejo3F0[[" ⚡ Parallel "]]:::logic
-      nnLpaejo3F0 -- flow --> nnnLpaejo3F0P00[" 🚀 function_name5 "]:::step
-      nnnLpaejo3F0P00 --> nnLpaejo3F0_m(( ))
-      nnLpaejo3F0 -- flow --> nnnLpaejo3F0P10[" 🚀 function_name6 "]:::step
-      nnnLpaejo3F0P10 --> nnLpaejo3F0_m(( ))
-      nnLpaejo3F0_m --> nnLpaejo3F1[" 🚀 AdvancedStep9 "]:::step
-      nnLpaejo3F1 --> nLpaejo3
-      nLpaejo3 -- exit --> nLpaejo4[[" 🔄 For Loop "]]:::logic
-      nLpaejo4 -- body --> nnLpaejo4F0[" 🚀 AdvancedStep8 "]:::step
-      nnLpaejo4F0 --> nnLpaejo4F1[" 🚀 State13 "]:::step
-      nnLpaejo4F1 --> nLpaejo4
-      nLpaejo4 -- exit --> nLpaejo5[[" ⚡ Parallel "]]:::logic
-      nLpaejo5 -- flow --> nnLpaejo5P00[" 🚀 State12 "]:::step
-      nnLpaejo5P00 --> nLpaejo5_m(( ))
-      nLpaejo5 -- flow --> nnLpaejo5P10[" 🚀 pipe_2 "]:::step
-      nnLpaejo5P10 --> nLpaejo5_m(( ))
-      nLpaejo5_m -. async .-> nLpaejo6((" ⚡ slow_step ")):::step
-      nLpaejo5_m --> nLpaejo7[" 🚀 RedisHashReadSync "]:::step
-      nLpaejo7 --> nLpaejo8[" 🚀 function_name11 "]:::step
+    start_pldnh(( )):::startN
+      start_pldnh --> nLpldnh0[" 🚀 StepClass "]:::step
+      nLpldnh0 --> nLpldnh1[" 🚀 function_name "]:::step
+      nLpldnh1 --> nLpldnh2{"valor > 100"}:::logic
+      nLpldnh2 -- True --> nnLpldnh2T0[" 🚀 function_name "]:::step
+      nnLpldnh2T0 --> nnLpldnh2T1[" 🚀 StepClass4 "]:::step
+      nnLpldnh2T1 --> nLpldnh2_m(( ))
+      nLpldnh2 -- False --> nnLpldnh2F0[" 🚀 StepClass3 "]:::step
+      nnLpldnh2F0 --> nLpldnh2_m(( ))
+      nLpldnh2_m --> nLpldnh3[[" 🔄 For Loop "]]:::logic
+      nLpldnh3 -- body --> nnLpldnh3F0[[" ⚡ Parallel "]]:::logic
+      nnLpldnh3F0 -- flow --> nnnLpldnh3F0P00[" 🚀 function_name5 "]:::step
+      nnnLpldnh3F0P00 --> nnLpldnh3F0_m(( ))
+      nnLpldnh3F0 -- flow --> nnnLpldnh3F0P10[" 🚀 function_name6 "]:::step
+      nnnLpldnh3F0P10 --> nnLpldnh3F0_m(( ))
+      nnLpldnh3F0_m --> nnLpldnh3F1[" 🚀 AdvancedStep9 "]:::step
+      nnLpldnh3F1 --> nLpldnh3
+      nLpldnh3 -- exit --> nLpldnh4[[" 🔄 For Loop "]]:::logic
+      nLpldnh4 -- body --> nnLpldnh4F0[" 🚀 AdvancedStep8 "]:::step
+      nnLpldnh4F0 --> nnLpldnh4F1[" 🚀 State13 "]:::step
+      nnLpldnh4F1 --> nLpldnh4
+      nLpldnh4 -- exit --> nLpldnh5[[" ⚡ Parallel "]]:::logic
+      nLpldnh5 -- flow --> nnLpldnh5P00[" 🚀 State12 "]:::step
+      nnLpldnh5P00 --> nLpldnh5_m(( ))
+      nLpldnh5 -- flow --> nnLpldnh5P10[" 🚀 pipe_2 "]:::step
+      nnLpldnh5P10 --> nLpldnh5_m(( ))
+      nLpldnh5_m -. async .-> nLpldnh6((" ⚡ slow_step ")):::step
+      nLpldnh5_m --> nLpldnh7[" 🚀 # RedisHashReadSync "]:::step
+      nLpldnh7 --> nLpldnh8[" 🚀 function_name11 "]:::step
 
-      nLpaejo8 --> nAkv50[" 🚀 StepClass10 "]:::step
+      nLpldnh8 --> nAfxq0[" 🚀 StepClass10 "]:::step
 
   end
 

@@ -5065,17 +5065,21 @@ async function openDashboard(dbPath) {
     return;
   }
   let finalDbPath;
+  let potentialDbPath = "";
   if (typeof dbPath === "string" && dbPath.length > 0) {
-    finalDbPath = dbPath;
+    potentialDbPath = dbPath;
   } else if (dbPath && typeof dbPath === "object" && "fsPath" in dbPath) {
-    finalDbPath = dbPath.fsPath;
+    potentialDbPath = dbPath.fsPath;
+  }
+  if (potentialDbPath && (potentialDbPath.endsWith(".db") || potentialDbPath.endsWith(".sqlite") || potentialDbPath.endsWith(".sqlite3"))) {
+    finalDbPath = potentialDbPath;
   }
   if (!finalDbPath) {
     const dbUri = await vscode6.window.showOpenDialog({
       canSelectFiles: true,
       canSelectFolders: false,
       canSelectMany: false,
-      filters: { "Database": ["db", "sqlite", "sqlite3"] },
+      filters: { "Database": ["db", "sqlite", "sqlite3"], "All Files": ["*"] },
       title: "Select WPipe Tracking Database"
     });
     if (!dbUri) return;
@@ -5098,8 +5102,8 @@ async function openDashboard(dbPath) {
     value: "5000"
   }) || "5000";
   const terminal = vscode6.window.createTerminal("WPipe Dashboard");
-  let cmd = `python -m wpipe.dashboard --db "${finalDbPath}" --port ${port}`;
-  if (configPath) cmd += ` --config "${configPath}"`;
+  let cmd = `wpipe dashboard --db "${finalDbPath}" --port ${port}`;
+  if (configPath) cmd += ` --config-dir "${configPath}"`;
   terminal.show();
   terminal.sendText(cmd);
   vscode6.window.showInformationMessage(`\u{1F680} Dashboard starting at http://localhost:${port}`);

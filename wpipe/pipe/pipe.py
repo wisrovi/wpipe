@@ -143,6 +143,10 @@ class Pipeline(APIClient):
         self.pipeline_name = pipeline_name or "Pipeline"
         self.pipeline_version = pipeline_version or "1.0.0"
 
+        # Global Hooks / Middlewares
+        self._pre_hooks: List[Callable] = []
+        self._post_hooks: List[Callable] = []
+
         # Internal queues for events and post-run tasks
         self._pending_events: List[Dict[str, Any]] = []
         self._post_run_tasks: List[Any] = []
@@ -154,6 +158,28 @@ class Pipeline(APIClient):
             from wpipe.tracking import PipelineTracker
             self.tracker = PipelineTracker(tracking_db, config_dir)
 
+
+    def add_pre_hook(self, hook: Callable) -> "Pipeline":
+        """
+        Add a global pre-execution hook.
+        
+        Args:
+            hook: Callable to execute before each step. 
+                  Signature: hook(context, step_info)
+        """
+        self._pre_hooks.append(hook)
+        return self
+
+    def add_post_hook(self, hook: Callable) -> "Pipeline":
+        """
+        Add a global post-execution hook.
+        
+        Args:
+            hook: Callable to execute after each step.
+                  Signature: hook(context, step_info, result_or_error)
+        """
+        self._post_hooks.append(hook)
+        return self
 
     def add_event(
         self,
@@ -1018,21 +1044,56 @@ class Pipeline(APIClient):
         if func:
             self.task_name = name
             self.task_id = step_id
+            
+            step_info = {
+                "name": name,
+                "version": version,
+                "step_type": "task",
+                "metadata": step_meta
+            }
+
+            # Global Pre-Hooks
+            for hook in self._pre_hooks:
+                try:
+                    hook(data, step_info)
+                except Exception as e:
+                    if self.verbose:
+                        print(f"[PRE-HOOK ERROR] {e}")
+
             tracked_id = self._start_step_tracking(name, version, "task", data,
                                                    parent_step_id=parent_step_id,
                                                    parallel_group=parallel_group)
             data["progress_rich"] = data.get("progress_rich") or self.progress_rich
+            
+            result_status = "success"
             try:
                 result_data = self._task_invoke(func, name, data, __step_meta__=step_meta, **kwargs)
                 data.update(result_data or {})
                 data.pop("error", None)
             except Exception as e:  # pylint: disable=broad-exception-caught
+                result_status = "error"
                 if not self.continue_on_error:
+                    # Execute post-hooks even on error before re-raising
+                    for hook in self._post_hooks:
+                        try:
+                            hook(data, step_info, e)
+                        except Exception as hook_err:
+                            if self.verbose:
+                                print(f"[POST-HOOK ERROR] {hook_err}")
                     raise
                 data["error"] = str(e)
             finally:
                 hooks = self._end_step_tracking(tracked_id, data if "error" not in data else None, data.get("error"))
                 data = self._handle_alert_hooks(hooks, data)
+                
+                # Global Post-Hooks (only if not already raised)
+                if result_status == "success" or self.continue_on_error:
+                    for hook in self._post_hooks:
+                        try:
+                            hook(data, step_info, data.get("error") if "error" in data else "success")
+                        except Exception as e:
+                            if self.verbose:
+                                print(f"[POST-HOOK ERROR] {e}")
         return data
 
     def _run_branch(self, steps: List[Any], data: Dict[str, Any], **kwargs: Any) -> Tuple[Dict[str, Any], List[int]]:
