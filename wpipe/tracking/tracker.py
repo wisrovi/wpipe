@@ -568,11 +568,29 @@ class PipelineTracker:
             step_order = step.get("step_order")
 
             if parent_id:
+                parent_model = next((s for s in steps_list if s.get("id") == parent_id or s.get("step_order") == parent_id), None)
+                is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
+                
+                label = "parallel"
+                if parent_model and parent_model.get("step_type") == "condition":
+                    cond_output = parent_model.get("output_data") or {}
+                    branch_taken_val = None
+                    if isinstance(cond_output, dict) and "branch_taken" in cond_output:
+                        branch_val = str(cond_output['branch_taken']).lower()
+                        branch_taken_val = True if (branch_val == 'true' or branch_val == '1') else False
+                    
+                    # If this step is NOT skipped, it's the taken branch
+                    if not is_skipped:
+                        label = "TRUE" if branch_taken_val is True else "FALSE"
+                    else:
+                        label = "FALSE" if branch_taken_val is True else "TRUE"
+
                 edges.append({
-                    "from": f"step_{parent_id}" if parent_id else f"step_{step_order}",
+                    "from": f"step_{parent_id}",
                     "to": f"step_{step_id}",
-                    "label": "parallel",
-                    "style": "dashed" if step["status"] == "skipped" else "solid"
+                    "label": label,
+                    "style": "dashed" if is_skipped else "solid",
+                    "color": "#10b981" if (parent_model and parent_model.get("step_type") == "condition" and not is_skipped) else None
                 })
             elif i > 0:
                 j = i - 1
@@ -592,9 +610,12 @@ class PipelineTracker:
                     label = "next"
                     if found_prev["step_type"] == "condition":
                         cond_output = found_prev.get("output_data") or {}
-                        # Because output_data might be a string in DB if it failed to parse, or dict
                         if isinstance(cond_output, dict) and "branch_taken" in cond_output:
-                            label = f"{str(cond_output['branch_taken']).upper()}"
+                            branch_val = str(cond_output['branch_taken']).lower()
+                            if branch_val == 'true' or branch_val == '1':
+                                label = "TRUE"
+                            else:
+                                label = "FALSE"
                         else:
                             label = "taken" if not is_skipped else "skipped"
                     

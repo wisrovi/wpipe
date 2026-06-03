@@ -1099,27 +1099,58 @@ class Pipeline(APIClient):
     def _run_branch(self, steps: List[Any], data: Dict[str, Any], **kwargs: Any) -> Tuple[Dict[str, Any], List[int]]:
         """Execute a branch of steps."""
         executed_ids: List[int] = []
-        for item in steps:
+        cond_parent_id = kwargs.pop("_condition_parent_id", None)
+        
+        for idx, item in enumerate(steps):
+            # Apply cond_parent_id only to the first step
+            current_kwargs = kwargs.copy()
+            if idx == 0 and cond_parent_id is not None:
+                current_kwargs["parent_step_id"] = cond_parent_id
+                
             if isinstance(item, Condition):
                 cond_name = getattr(item, "name", "condition")
                 cond_expr = item.expression
                 try:
                     res = item.evaluate(data)
                     branch = item.branch_true if res else item.branch_false
+                    skipped_branch = item.branch_false if res else item.branch_true
                     taken = "true" if res else "false"
                     err = None
                 except Exception as e:  # pylint: disable=broad-exception-caught
-                    branch, taken, err = item.branch_false, "false", str(e)
+                    branch, skipped_branch, taken, err = item.branch_false, item.branch_true, "false", str(e)
 
-                cond_id = self._start_step_tracking(cond_name, "1.0.0", "condition", {"expression": cond_expr})
-                data, b_ids = self._run_branch(branch, data, **kwargs)
+                cond_id = self._start_step_tracking(cond_name, "1.0.0", "condition", {"expression": cond_expr}, parent_step_id=current_kwargs.get("parent_step_id"))
                 if cond_id:
                     executed_ids.append(cond_id)
-                    executed_ids.extend(b_ids)
+                
+                # Execute taken branch (pass cond_id as parent for the first step)
+                data, b_ids = self._run_branch(branch, data, _condition_parent_id=cond_id, **kwargs)
+                executed_ids.extend(b_ids)
+                
+                # Log skipped branch for visualization
+                if skipped_branch and self.tracker:
+                    for skip_idx, skip_item in enumerate(skipped_branch):
+                        skip_name = getattr(skip_item, "NAME", getattr(skip_item, "name", getattr(skip_item, "__name__", "skipped_step")))
+                        skip_type = "condition" if isinstance(skip_item, Condition) else "task"
+                        
+                        # Only the first skipped item points to the condition block
+                        p_id = cond_id if skip_idx == 0 else None
+                        
+                        skip_id = self._start_step_tracking(skip_name, "1.0.0", skip_type, {}, parent_step_id=p_id)
+                        if skip_id:
+                            self.tracker.complete_step(skip_id, {"branch_taken": "skipped"})
+                            if self.tracker and self.tracker.db_steps:
+                                step_records = self.tracker.db_steps.get_by_field(id=skip_id)
+                                if step_records:
+                                    skip_model = step_records[0]
+                                    skip_model.status = "skipped"
+                                    self.tracker.db_steps.update(skip_id, skip_model)
+                
+                if cond_id:
                     hooks = self._end_step_tracking(cond_id, {"branch_taken": taken, "expression": cond_expr}, err)
                     data = self._handle_alert_hooks(hooks, data)
             else:
-                data = self._execute_step(item, data, **kwargs)
+                data = self._execute_step(item, data, **current_kwargs)
                 if "error" in data:
                     break
         return data, executed_ids
