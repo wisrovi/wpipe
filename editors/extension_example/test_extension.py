@@ -89,8 +89,8 @@ pipeline.add_state(StepClass10())
 
 # for every step, run the audit_pre_hook before and audit_post_hook after
 ## El motor del Pipeline lo llama -Funciones globales (middlewares).
-pipeline.add_pre_hook(audit_pre_hook)
-pipeline.add_post_hook(audit_post_hook)
+# pipeline.add_pre_hook(audit_pre_hook)
+# pipeline.add_post_hook(audit_post_hook)
 
 # for the entire pipeline
 

@@ -1,60 +1,54 @@
 name: my_pipeline
-registered_at: '2026-06-01T13:22:57.422757'
+registered_at: '2026-06-07T06:13:36.889846'
 step_count: 9
 steps:
-- func: <state1.StepClass object at 0x71651479ef80>
+- func: <state1.StepClass object at 0x71d72b9af3b0>
   name: step_name
   type: task
   version: v1.0
-- func: <function function_name at 0x716512363130>
+- func: <function function_name at 0x71d72ba245e0>
   name: function_name_2
   type: task
   version: v1.0
 - branch_false:
-  - <state3.StepClass3 object at 0x7165122309a0>
+  - <state3.StepClass3 object at 0x71d72b8c0f20>
   branch_true:
-  - <function function_name at 0x716512363130>
-  - <state4.StepClass4 object at 0x716512230940>
+  - <function function_name at 0x71d72ba245e0>
+  - <state4.StepClass4 object at 0x71d72c344530>
   expression: valor > 100
   type: condition
 - expression: status != 'error'
-  iterations: 10
+  iterations: null
   steps:
-  - <function function_name5 at 0x716512388280>
   - max_workers: 1
     steps:
-    - <function function_name5 at 0x716512388280>
-    - <function function_name6 at 0x716512388430>
+    - <function function_name5 at 0x71d72ba25120>
+    - <function function_name6 at 0x71d72ba25300>
     type: parallel
     use_processes: false
-  - <state9.AdvancedStep9 object at 0x716512230b80>
-  - expression: status != 'error'
-    iterations: 10
-    steps:
-    - <state8.AdvancedStep8 object at 0x716512230be0>
-    - <function function_name5 at 0x716512388280>
-    type: for
+  - <state9.AdvancedStep9 object at 0x71d72bfbe8a0>
+  type: for
+- expression: null
+  iterations: 10
+  steps:
+  - <state8.AdvancedStep8 object at 0x71d72b8c32c0>
+  - <states.state13.State13 object at 0x71d72b8c3a40>
   type: for
 - max_workers: 2
   steps:
-  - <function function_name5 at 0x716512388280>
-  - <wpipe.pipe.pipe.Pipeline object at 0x71651238ca90>
+  - <states.state12.State12 object at 0x71d72b8c3a70>
+  - <wpipe.pipe.pipe.Pipeline object at 0x71d72ba06fc0>
   type: parallel
   use_processes: false
-- func: <function slow_step at 0x716512388550>
+- func: <function slow_step at 0x71d72ba25440>
   name: slow_step
   type: task
   version: v1.0
-- func: <state10.StepClass10 object at 0x716512230dc0>
-  name: StepClass10
-  type: task
-  version: v1.0
-- func: <function function_name11 at 0x716512389750>
+- func: <function function_name11 at 0x71d72ba26f20>
   name: function_name11
   type: task
   version: v1.0
-- func: <wpipe_steps.database.redis.hash.read_hash_sync.RedisHashReadSync object at
-    0x716512230d00>
-  name: redis_hash_read_sync
+- func: <state10.StepClass10 object at 0x71d72b8c39b0>
+  name: StepClass10
   type: task
   version: v1.0

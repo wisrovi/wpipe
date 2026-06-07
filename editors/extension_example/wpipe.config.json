@@ -1,0 +1,5 @@
+{
+    "enableBackupFile": true,
+    "maxSearchFiles": 500,
+    "excludePaths": []
+}

@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.9.9",
+    "version": "0.9.10",
     "publisher": "wpipe",
     "author": {
         "name": "William Rodriguez (wisrovi)",
@@ -50,6 +50,11 @@
                     "type": "number",
                     "default": 500,
                     "description": "Maximum number of files to scan when looking for workspace steps."
+                },
+                "wpipe.enableBackupFile": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically create a .wpipe.mermaid backup file when previewing a DAG."
                 }
             }
         },

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.9.10] - 2026-06-07
+
+### Added
+- **Configuración Personalizada**: Soporte para el archivo `wpipe.config.json` en la raíz del workspace para configurar el comportamiento de la extensión de forma persistente y compartible.
+- **Control de Respaldos**: Nueva opción `wpipe.enableBackupFile` para activar/desactivar la generación automática de archivos de respaldo.
+
+### Fixed
+- **Optimización de Archivos**: Se ha corregido el error que creaba archivos de respaldo para todos los archivos Python abiertos. Ahora, los archivos `.wpipe.mermaid` solo se generan de forma manual (al abrir el DAG) o al guardar archivos específicos, evitando el desorden en el proyecto.
+- **Nueva Extensión de Respaldo**: Los respaldos ahora utilizan la extensión `.wpipe.mermaid` para una mejor identificación y soporte nativo de sintaxis Mermaid.
+
 ## [0.9.9] - 2026-06-01
 
 ### Changed
