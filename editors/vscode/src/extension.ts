@@ -170,14 +170,18 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (!response.ok) throw new Error(`No se pudo descargar el archivo: ${response.statusText}`);
                 const content = await response.text();
                 
-                // Save to workspace root or temp
+                // Determine save location: Workspace root OR extension's global storage
+                let tempReqUri: vscode.Uri;
                 const workspaceFolders = vscode.workspace.workspaceFolders;
-                if (!workspaceFolders) {
-                    vscode.window.showErrorMessage('Se requiere un espacio de trabajo abierto para descargar los requerimientos.');
-                    return;
+                
+                if (workspaceFolders && workspaceFolders.length > 0) {
+                    tempReqUri = vscode.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
+                } else {
+                    // Fallback to global storage if no workspace is open
+                    await vscode.workspace.fs.createDirectory(context.globalStorageUri);
+                    tempReqUri = vscode.Uri.joinPath(context.globalStorageUri, `requirements_${item.step.name}.txt`);
                 }
                 
-                const tempReqUri = vscode.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
                 await vscode.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content));
                 
                 terminal.sendText(`pip install -r "${tempReqUri.fsPath}"`);
@@ -192,9 +196,26 @@ export async function activate(context: vscode.ExtensionContext) {
                 vscode.window.showWarningMessage('Este paso no tiene ejemplos configurados.');
                 return;
             }
-            // If it's a raw URL, we might want to point back to GitHub UI for "viewing", 
-            // but for now let's just open what we have.
-            vscode.env.openExternal(vscode.Uri.parse(item.step.examples));
+
+            // Convert RAW URL to Browsable GitHub URL
+            // Raw: https://raw.githubusercontent.com/owner/repo/branch/path/to/
+            // UI:  https://github.com/owner/repo/tree/branch/path/to/
+            let uiUrl = item.step.examples
+                .replace('raw.githubusercontent.com', 'github.com');
+            
+            const parts = uiUrl.split('/');
+            if (parts.length >= 6) {
+                const owner = parts[3];
+                const repo = parts[4];
+                const branch = parts[5];
+                const rest = parts.slice(6).join('/');
+                
+                // GitHub uses /tree/ for directories and /blob/ for files
+                const type = item.step.examples.endsWith('/') ? 'tree' : 'blob';
+                uiUrl = `https://github.com/${owner}/${repo}/${type}/${branch}/${rest}`;
+            }
+
+            vscode.env.openExternal(vscode.Uri.parse(uiUrl));
         }),
 
         vscode.commands.registerCommand('wpipeSteps.downloadExample', async (item: LibraryItem) => {
