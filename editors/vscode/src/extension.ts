@@ -3,10 +3,15 @@ import { CatalogManager, StepEntry } from './core/catalog';
 import { WPipeStepProvider, StepItem } from './providers/stepProvider';
 import { DAGPanel } from './webviews/dagPanel';
 import { showCheatSheet } from './webviews/cheatSheet';
+import { showAiAssistant } from './webviews/aiAssistant';
 import { openDashboard } from './commands/dashboard';
+import { replayLogErrors } from './commands/replayLogs';
+import { findStepUsage } from './commands/impactAnalysis';
 import { WPipeCodeLensProvider } from './providers/codeLensProvider';
 import { WPipeHoverProvider } from './providers/hoverProvider';
+import { WPipeCodeActionProvider } from './providers/codeActionProvider';
 import { WorkspaceIndex } from './core/workspaceIndex';
+import { registerDiagnostics } from './core/diagnostics';
 import { createNewStepWizard } from './wizards/stepWizard';
 import * as path from 'path';
 
@@ -16,6 +21,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // Start Services
     CatalogManager.init(context);
     WorkspaceIndex.indexWorkspace();
+    registerDiagnostics(context);
 
     const stepProvider = new WPipeStepProvider();
     vscode.window.registerTreeDataProvider('wpipeSteps', stepProvider);
@@ -23,7 +29,10 @@ export async function activate(context: vscode.ExtensionContext) {
     // Providers
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider({ language: 'python' }, new WPipeCodeLensProvider()),
-        vscode.languages.registerHoverProvider({ language: 'python' }, new WPipeHoverProvider())
+        vscode.languages.registerHoverProvider({ language: 'python' }, new WPipeHoverProvider()),
+        vscode.languages.registerCodeActionsProvider({ language: 'python' }, new WPipeCodeActionProvider(), {
+            providedCodeActionKinds: WPipeCodeActionProvider.providedCodeActionKinds
+        })
     );
 
     context.subscriptions.push(
@@ -71,9 +80,15 @@ export async function activate(context: vscode.ExtensionContext) {
             if (editor) DAGPanel.createOrShow(context.extensionUri, editor.document);
         }),
 
-        vscode.commands.registerCommand('wpipe-vscode.openDashboard', openDashboard),
+        vscode.commands.registerCommand('wpipe-vscode.openDashboard', (dbPath?: any) => openDashboard(context, dbPath)),
+
+        vscode.commands.registerCommand('wpipe-vscode.replayLogs', replayLogErrors),
+
+        vscode.commands.registerCommand('wpipe-vscode.findStepUsage', (stepName?: string) => findStepUsage(stepName)),
 
         vscode.commands.registerCommand('wpipe-vscode.showCheatSheet', showCheatSheet),
+
+        vscode.commands.registerCommand('wpipe-vscode.openAiAssistant', () => showAiAssistant(context.extensionUri)),
 
         vscode.commands.registerCommand('wpipe-vscode.runPipeline', async (filePath: string) => {
             if (vscode.env.uiKind === vscode.UIKind.Web) {

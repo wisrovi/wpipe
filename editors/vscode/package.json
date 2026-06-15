@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "0.10.0",
+    "version": "1.0.0",
     "publisher": "wpipe",
     "author": {
         "name": "William Rodriguez (wisrovi)",
@@ -112,9 +112,24 @@
                 "icon": "$(dashboard)"
             },
             {
+                "command": "wpipe-vscode.replayLogs",
+                "title": "WPipe: Replay Log Errors",
+                "icon": "$(history)"
+            },
+            {
+                "command": "wpipe-vscode.findStepUsage",
+                "title": "WPipe: Find Step Usage (Impact Analysis)",
+                "icon": "$(search-stop)"
+            },
+            {
                 "command": "wpipe-vscode.showCheatSheet",
                 "title": "WPipe: Show Cheat Sheet / Help",
                 "icon": "$(question)"
+            },
+            {
+                "command": "wpipe-vscode.openAiAssistant",
+                "title": "WPipe: AI Pipeline Assistant",
+                "icon": "$(robot)"
             },
             {
                 "command": "wpipeSteps.runStep",
@@ -168,6 +183,11 @@
             "view/item/context": [
                 {
                     "command": "wpipeSteps.runStep",
+                    "when": "view == wpipeSteps && viewItem == workspaceStep",
+                    "group": "inline"
+                },
+                {
+                    "command": "wpipe-vscode.findStepUsage",
                     "when": "view == wpipeSteps && viewItem == workspaceStep",
                     "group": "inline"
                 },

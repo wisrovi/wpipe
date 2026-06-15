@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
-export async function openDashboard(dbPath?: any) {
+import { DashboardPanel } from '../webviews/dashboardPanel';
+
+export async function openDashboard(context: vscode.ExtensionContext, dbPath?: any) {
     console.log('🚀 WPipe: openDashboard called with:', dbPath);
 
     if (vscode.env.uiKind === vscode.UIKind.Web) {
@@ -60,8 +62,11 @@ export async function openDashboard(dbPath?: any) {
     terminal.show();
     terminal.sendText(cmd);
 
-    vscode.window.showInformationMessage(`🚀 Dashboard starting at http://localhost:${port}`);
+    vscode.window.showInformationMessage(`🚀 Starting WPipe Dashboard inside VS Code...`);
+    
+    // Open the native Webview panel
+    // We wait a bit for the server to start (similar to the previous timeout)
     setTimeout(() => {
-        vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}`));
-    }, 2000);
+        DashboardPanel.createOrShow(context.extensionUri, port);
+    }, 2500);
 }

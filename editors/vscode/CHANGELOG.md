@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0] - 2026-06-15
+
+### Added
+- **Native Webview Dashboard**: WPipe monitoring dashboard now opens directly inside a VS Code tab.
+- **Bi-directional DAG Interaction**: Click on any node in the DAG to jump to the corresponding line of code.
+- **Log Replay & Error Highlighting**: New command `WPipe: Replay Log Errors` to visualize failures from log files directly in the editor and DAG.
+- **Impact Analysis**: Right-click on workspace steps in the sidebar to find all their usages and analyze the impact of changes.
+- **AI Pipeline Assistant**: Generate complex pipeline structures from natural language descriptions.
+- **Optimization Suggestions**: The DAG panel now provides automatic tips for performance (e.g., parallelism suggestions).
+- **Quick Fixes**: Added a "Convert to WPipe Step" lightbulb action for standard Python functions.
+- **YAML & Catalog Validation**: Real-time warnings if steps in a pipeline are missing from the workspace or catalog.
+- **Enhanced Exports**: Added support for exporting the DAG as **PNG** in addition to SVG.
+
+### Changed
+- **Unified Branding**: Updated all icons and visual elements for a consistent v1.0 experience.
+- **AST Parser Improvements**: Faster and more precise detection of pipelines and steps.
+
 ## [0.9.10] - 2026-06-07
 
 ### Added
