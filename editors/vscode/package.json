@@ -130,6 +130,21 @@
                 "command": "wpipeSteps.refreshEntry",
                 "title": "Refresh Steps",
                 "icon": "$(refresh)"
+            },
+            {
+                "command": "wpipeSteps.installRequirements",
+                "title": "WPipe: Install Dependencies (pip)",
+                "icon": "$(cloud-download)"
+            },
+            {
+                "command": "wpipeSteps.viewExamples",
+                "title": "WPipe: View Online Examples",
+                "icon": "$(link-external)"
+            },
+            {
+                "command": "wpipeSteps.downloadExample",
+                "title": "WPipe: Use Example as Template",
+                "icon": "$(cloud-download)"
             }
         ],
         "menus": {
@@ -155,6 +170,21 @@
                     "command": "wpipeSteps.runStep",
                     "when": "view == wpipeSteps && viewItem == workspaceStep",
                     "group": "inline"
+                },
+                {
+                    "command": "wpipeSteps.installRequirements",
+                    "when": "view == wpipeSteps && viewItem == libraryStep",
+                    "group": "1_setup"
+                },
+                {
+                    "command": "wpipeSteps.downloadExample",
+                    "when": "view == wpipeSteps && viewItem == libraryStep",
+                    "group": "2_content"
+                },
+                {
+                    "command": "wpipeSteps.viewExamples",
+                    "when": "view == wpipeSteps && viewItem == libraryStep",
+                    "group": "2_content"
                 }
             ],
             "editor/title": [
