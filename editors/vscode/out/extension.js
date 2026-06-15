@@ -5533,12 +5533,14 @@ async function activate(context) {
         const response = await fetch(reqUrl);
         if (!response.ok) throw new Error(`No se pudo descargar el archivo: ${response.statusText}`);
         const content2 = await response.text();
+        let tempReqUri;
         const workspaceFolders = vscode11.workspace.workspaceFolders;
-        if (!workspaceFolders) {
-          vscode11.window.showErrorMessage("Se requiere un espacio de trabajo abierto para descargar los requerimientos.");
-          return;
+        if (workspaceFolders && workspaceFolders.length > 0) {
+          tempReqUri = vscode11.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
+        } else {
+          await vscode11.workspace.fs.createDirectory(context.globalStorageUri);
+          tempReqUri = vscode11.Uri.joinPath(context.globalStorageUri, `requirements_${item.step.name}.txt`);
         }
-        const tempReqUri = vscode11.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
         await vscode11.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content2));
         terminal.sendText(`pip install -r "${tempReqUri.fsPath}"`);
         vscode11.window.showInformationMessage(`\u23F3 Descargado e instalando dependencias para '${item.step.name}'...`);
@@ -5551,7 +5553,17 @@ async function activate(context) {
         vscode11.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
         return;
       }
-      vscode11.env.openExternal(vscode11.Uri.parse(item.step.examples));
+      let uiUrl = item.step.examples.replace("raw.githubusercontent.com", "github.com");
+      const parts = uiUrl.split("/");
+      if (parts.length >= 6) {
+        const owner = parts[3];
+        const repo = parts[4];
+        const branch = parts[5];
+        const rest = parts.slice(6).join("/");
+        const type = item.step.examples.endsWith("/") ? "tree" : "blob";
+        uiUrl = `https://github.com/${owner}/${repo}/${type}/${branch}/${rest}`;
+      }
+      vscode11.env.openExternal(vscode11.Uri.parse(uiUrl));
     }),
     vscode11.commands.registerCommand("wpipeSteps.downloadExample", async (item) => {
       if (!item || !item.step || !item.step.examples) {
