@@ -68,17 +68,32 @@ var CatalogManager = class {
   static async update(context, manual = false) {
     const download = async () => {
       const oldNames = new Set(this.catalog.map((s) => `${s.repo}:${s.name}`));
-      const fetchJson = async (url) => {
+      const fetchJson = async (url, defaultRepo) => {
         try {
           const response = await fetch(url);
           if (!response.ok) return [];
           const p = await response.json();
-          return Array.isArray(p) ? p : [];
+          const items = Array.isArray(p) ? p : [];
+          const baseUrl = url.substring(0, url.lastIndexOf("/") + 1);
+          const resolveUrl = (path5) => {
+            if (!path5) return void 0;
+            if (path5.startsWith("http")) return path5;
+            return `${baseUrl}${path5.startsWith("/") ? path5.substring(1) : path5}`;
+          };
+          return items.map((item) => ({
+            ...item,
+            repo: item.repo || defaultRepo,
+            requirements: resolveUrl(item.requirements),
+            examples: resolveUrl(item.examples)
+          }));
         } catch (e) {
           return [];
         }
       };
-      const [off, com] = await Promise.all([fetchJson(this.OFFICIAL_URL), fetchJson(this.COMMUNITY_URL)]);
+      const [off, com] = await Promise.all([
+        fetchJson(this.OFFICIAL_URL, "Official"),
+        fetchJson(this.COMMUNITY_URL, "Community")
+      ]);
       const newCatalog = [...off, ...com];
       if (newCatalog.length > 0) {
         const newItems = newCatalog.filter((s) => !oldNames.has(`${s.repo}:${s.name}`));
@@ -4517,14 +4532,51 @@ var LibraryItem = class extends vscode3.TreeItem {
     super(step.name);
     this.step = step;
     this.iconPath = new vscode3.ThemeIcon("cloud");
-    this.description = step.namespace;
-    this.tooltip = new vscode3.MarkdownString(`**Step:** ${step.name}
-**Author:** ${step.author || "Official"}
-**Repo:** ${step.repo}
-**Module:** ${step.namespace}
+    this.description = step.version ? `v${step.version}` : step.namespace;
+    const tooltip = new vscode3.MarkdownString();
+    tooltip.isTrusted = true;
+    tooltip.appendMarkdown(`### \u{1F4E6} ${step.name} 
+`);
+    if (step.version) tooltip.appendMarkdown(`*Version: ${step.version}*
 
----
-Click to insert import and usage.`);
+`);
+    if (step.description) {
+      tooltip.appendMarkdown(`> ${step.description}
+
+`);
+    }
+    tooltip.appendMarkdown(`---
+`);
+    tooltip.appendMarkdown(`**Author:** ${step.author || "Official"}
+
+`);
+    tooltip.appendMarkdown(`**Repo:** ${step.repo}
+
+`);
+    tooltip.appendMarkdown(`**Module:** \`${step.namespace}\`
+
+`);
+    if (step.requirements) {
+      tooltip.appendMarkdown(`**Requirements:** \`${step.requirements}\`
+
+`);
+    }
+    if (step.how_to_use) {
+      tooltip.appendMarkdown(`**Usage:**
+\`\`\`python
+${step.how_to_use}
+\`\`\`
+
+`);
+    }
+    if (step.examples) {
+      tooltip.appendMarkdown(`[Explore Examples](${step.examples})
+
+`);
+    }
+    tooltip.appendMarkdown(`---
+*Click to insert import and usage.*`);
+    this.tooltip = tooltip;
     this.contextValue = "libraryStep";
     this.command = { command: "wpipeSteps.insertStep", title: "Insert", arguments: [step] };
   }
@@ -5464,6 +5516,97 @@ async function activate(context) {
       const terminal = vscode11.window.createTerminal(`Run Step: ${fileName}`);
       terminal.show();
       terminal.sendText(`python "${filePath}"`);
+    }),
+    vscode11.commands.registerCommand("wpipeSteps.installRequirements", async (item) => {
+      if (vscode11.env.uiKind === vscode11.UIKind.Web) {
+        vscode11.window.showErrorMessage("Installing requirements requires a local environment.");
+        return;
+      }
+      if (!item || !item.step || !item.step.requirements) {
+        vscode11.window.showWarningMessage("Este paso no tiene requerimientos externos definidos.");
+        return;
+      }
+      const reqUrl = item.step.requirements;
+      const terminal = vscode11.window.createTerminal(`Install: ${item.step.name}`);
+      terminal.show();
+      try {
+        const response = await fetch(reqUrl);
+        if (!response.ok) throw new Error(`No se pudo descargar el archivo: ${response.statusText}`);
+        const content2 = await response.text();
+        const workspaceFolders = vscode11.workspace.workspaceFolders;
+        if (!workspaceFolders) {
+          vscode11.window.showErrorMessage("Se requiere un espacio de trabajo abierto para descargar los requerimientos.");
+          return;
+        }
+        const tempReqUri = vscode11.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
+        await vscode11.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content2));
+        terminal.sendText(`pip install -r "${tempReqUri.fsPath}"`);
+        vscode11.window.showInformationMessage(`\u23F3 Descargado e instalando dependencias para '${item.step.name}'...`);
+      } catch (error) {
+        vscode11.window.showErrorMessage(`\u274C Error al preparar requerimientos: ${error}`);
+      }
+    }),
+    vscode11.commands.registerCommand("wpipeSteps.viewExamples", async (item) => {
+      if (!item || !item.step || !item.step.examples) {
+        vscode11.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
+        return;
+      }
+      vscode11.env.openExternal(vscode11.Uri.parse(item.step.examples));
+    }),
+    vscode11.commands.registerCommand("wpipeSteps.downloadExample", async (item) => {
+      if (!item || !item.step || !item.step.examples) {
+        vscode11.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
+        return;
+      }
+      let rawUrl = item.step.examples;
+      try {
+        if (rawUrl.endsWith("/")) {
+          const parts = rawUrl.split("/");
+          const owner = parts[3];
+          const repo = parts[4];
+          const branch = parts[5];
+          const pathInRepo = parts.slice(6).join("/");
+          const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${pathInRepo}?ref=${branch}`;
+          const apiResponse = await fetch(apiUrl);
+          if (!apiResponse.ok) throw new Error(`No se pudo listar el contenido de la carpeta: ${apiResponse.statusText}`);
+          const files = await apiResponse.json();
+          if (!Array.isArray(files)) throw new Error("Respuesta inesperada de la API de GitHub.");
+          const pyFiles = files.filter((f) => f.name.endsWith(".py")).map((f) => ({
+            label: `$(file-code) ${f.name}`,
+            url: f.download_url,
+            name: f.name
+          }));
+          if (pyFiles.length === 0) {
+            vscode11.window.showInformationMessage("No se encontraron archivos de ejemplo (.py) en la carpeta.");
+            return;
+          }
+          const selected = await vscode11.window.showQuickPick(pyFiles, {
+            placeHolder: "Selecciona un ejemplo para usar como plantilla:"
+          });
+          if (!selected) return;
+          rawUrl = selected.url;
+        }
+        await vscode11.window.withProgress({
+          location: vscode11.ProgressLocation.Notification,
+          title: `Descargando plantilla...`,
+          cancellable: false
+        }, async () => {
+          const response = await fetch(rawUrl);
+          if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+          const content2 = await response.text();
+          if (content2.trim().startsWith("<!DOCTYPE html>")) {
+            throw new Error("La URL no apunta a un archivo RAW v\xE1lido.");
+          }
+          const doc = await vscode11.workspace.openTextDocument({
+            content: content2,
+            language: "python"
+          });
+          await vscode11.window.showTextDocument(doc);
+          vscode11.window.showInformationMessage(`\u2705 Plantilla cargada con \xE9xito.`);
+        });
+      } catch (error) {
+        vscode11.window.showErrorMessage(`\u274C Fallo al procesar plantilla: ${error}`);
+      }
     })
   );
 }
