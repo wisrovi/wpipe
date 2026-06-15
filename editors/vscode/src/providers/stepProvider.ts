@@ -59,8 +59,37 @@ export class LibraryItem extends vscode.TreeItem {
     constructor(public step: StepEntry) {
         super(step.name);
         this.iconPath = new vscode.ThemeIcon('cloud');
-        this.description = step.namespace;
-        this.tooltip = new vscode.MarkdownString(`**Step:** ${step.name}\n**Author:** ${step.author || "Official"}\n**Repo:** ${step.repo}\n**Module:** ${step.namespace}\n\n---\nClick to insert import and usage.`);
+        this.description = step.version ? `v${step.version}` : step.namespace;
+        
+        const tooltip = new vscode.MarkdownString();
+        tooltip.isTrusted = true;
+        tooltip.appendMarkdown(`### 📦 ${step.name} \n`);
+        if (step.version) tooltip.appendMarkdown(`*Version: ${step.version}*\n\n`);
+        
+        if (step.description) {
+            tooltip.appendMarkdown(`> ${step.description}\n\n`);
+        }
+
+        tooltip.appendMarkdown(`---\n`);
+        tooltip.appendMarkdown(`**Author:** ${step.author || "Official"}\n\n`);
+        tooltip.appendMarkdown(`**Repo:** ${step.repo}\n\n`);
+        tooltip.appendMarkdown(`**Module:** \`${step.namespace}\`\n\n`);
+
+        if (step.requirements) {
+            tooltip.appendMarkdown(`**Requirements:** \`${step.requirements}\`\n\n`);
+        }
+
+        if (step.how_to_use) {
+            tooltip.appendMarkdown(`**Usage:**\n\`\`\`python\n${step.how_to_use}\n\`\`\`\n\n`);
+        }
+
+        if (step.examples) {
+            tooltip.appendMarkdown(`[Explore Examples](${step.examples})\n\n`);
+        }
+
+        tooltip.appendMarkdown(`---\n*Click to insert import and usage.*`);
+        
+        this.tooltip = tooltip;
         this.contextValue = 'libraryStep';
         this.command = { command: 'wpipeSteps.insertStep', title: 'Insert', arguments: [step] };
     }
