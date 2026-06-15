@@ -148,6 +148,126 @@ export async function activate(context: vscode.ExtensionContext) {
             const terminal = vscode.window.createTerminal(`Run Step: ${fileName}`);
             terminal.show();
             terminal.sendText(`python "${filePath}"`);
+        }),
+
+        vscode.commands.registerCommand('wpipeSteps.installRequirements', async (item: LibraryItem) => {
+            if (vscode.env.uiKind === vscode.UIKind.Web) {
+                vscode.window.showErrorMessage('Installing requirements requires a local environment.');
+                return;
+            }
+            if (!item || !item.step || !item.step.requirements) {
+                vscode.window.showWarningMessage('Este paso no tiene requerimientos externos definidos.');
+                return;
+            }
+            
+            const reqUrl = item.step.requirements;
+            const terminal = vscode.window.createTerminal(`Install: ${item.step.name}`);
+            terminal.show();
+            
+            try {
+                // Download requirements.txt to a local temporary file first
+                const response = await fetch(reqUrl);
+                if (!response.ok) throw new Error(`No se pudo descargar el archivo: ${response.statusText}`);
+                const content = await response.text();
+                
+                // Save to workspace root or temp
+                const workspaceFolders = vscode.workspace.workspaceFolders;
+                if (!workspaceFolders) {
+                    vscode.window.showErrorMessage('Se requiere un espacio de trabajo abierto para descargar los requerimientos.');
+                    return;
+                }
+                
+                const tempReqUri = vscode.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
+                await vscode.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content));
+                
+                terminal.sendText(`pip install -r "${tempReqUri.fsPath}"`);
+                vscode.window.showInformationMessage(`⏳ Descargado e instalando dependencias para '${item.step.name}'...`);
+            } catch (error) {
+                vscode.window.showErrorMessage(`❌ Error al preparar requerimientos: ${error}`);
+            }
+        }),
+
+        vscode.commands.registerCommand('wpipeSteps.viewExamples', async (item: LibraryItem) => {
+            if (!item || !item.step || !item.step.examples) {
+                vscode.window.showWarningMessage('Este paso no tiene ejemplos configurados.');
+                return;
+            }
+            // If it's a raw URL, we might want to point back to GitHub UI for "viewing", 
+            // but for now let's just open what we have.
+            vscode.env.openExternal(vscode.Uri.parse(item.step.examples));
+        }),
+
+        vscode.commands.registerCommand('wpipeSteps.downloadExample', async (item: LibraryItem) => {
+            if (!item || !item.step || !item.step.examples) {
+                vscode.window.showWarningMessage('Este paso no tiene ejemplos configurados.');
+                return;
+            }
+
+            let rawUrl = item.step.examples;
+            
+            try {
+                // Check if it's a directory (ends with /)
+                if (rawUrl.endsWith('/')) {
+                    // It's a directory, we need to list files. 
+                    // We'll use the GitHub API to list the directory content
+                    // Extract owner, repo, and path from the raw URL
+                    // Example: https://raw.githubusercontent.com/wisrovi/wpipe-plugins/001-DEVELOPMENT/src/.../examples/
+                    const parts = rawUrl.split('/');
+                    const owner = parts[3];
+                    const repo = parts[4];
+                    const branch = parts[5];
+                    const pathInRepo = parts.slice(6).join('/');
+                    
+                    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${pathInRepo}?ref=${branch}`;
+                    
+                    const apiResponse = await fetch(apiUrl);
+                    if (!apiResponse.ok) throw new Error(`No se pudo listar el contenido de la carpeta: ${apiResponse.statusText}`);
+                    
+                    const files = await apiResponse.json();
+                    if (!Array.isArray(files)) throw new Error('Respuesta inesperada de la API de GitHub.');
+                    
+                    const pyFiles = files.filter((f: any) => f.name.endsWith('.py')).map((f: any) => ({
+                        label: `$(file-code) ${f.name}`,
+                        url: f.download_url,
+                        name: f.name
+                    }));
+                    
+                    if (pyFiles.length === 0) {
+                        vscode.window.showInformationMessage('No se encontraron archivos de ejemplo (.py) en la carpeta.');
+                        return;
+                    }
+                    
+                    const selected = await vscode.window.showQuickPick(pyFiles, { 
+                        placeHolder: 'Selecciona un ejemplo para usar como plantilla:' 
+                    });
+                    
+                    if (!selected) return;
+                    rawUrl = selected.url;
+                }
+
+                await vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: `Descargando plantilla...`,
+                    cancellable: false
+                }, async () => {
+                    const response = await fetch(rawUrl);
+                    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    
+                    const content = await response.text();
+                    if (content.trim().startsWith('<!DOCTYPE html>')) {
+                        throw new Error('La URL no apunta a un archivo RAW válido.');
+                    }
+
+                    const doc = await vscode.workspace.openTextDocument({
+                        content: content,
+                        language: 'python'
+                    });
+                    await vscode.window.showTextDocument(doc);
+                    vscode.window.showInformationMessage(`✅ Plantilla cargada con éxito.`);
+                });
+            } catch (error) {
+                vscode.window.showErrorMessage(`❌ Fallo al procesar plantilla: ${error}`);
+            }
         })
     );
 }
