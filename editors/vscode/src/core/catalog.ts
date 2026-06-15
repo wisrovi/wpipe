@@ -7,6 +7,12 @@ export interface StepEntry {
     repo: string;
     file: string;
     author?: string;
+    version?: string;
+    description?: string;
+    how_to_use?: string;
+    examples?: string;
+    requirements?: string;
+    environment?: string;
 }
 
 export class CatalogManager {
@@ -40,18 +46,39 @@ export class CatalogManager {
         const download = async () => {
             const oldNames = new Set(this.catalog.map(s => `${s.repo}:${s.name}`));
             
-            const fetchJson = async (url: string): Promise<any[]> => {
+            const fetchJson = async (url: string, defaultRepo: string): Promise<any[]> => {
                 try {
                     const response = await fetch(url);
                     if (!response.ok) return [];
                     const p = await response.json();
-                    return Array.isArray(p) ? p : [];
+                    const items = Array.isArray(p) ? p : [];
+                    
+                    // Base URL for relative paths (everything before steps_catalog.json)
+                    const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
+
+                    const resolveUrl = (path: string | undefined) => {
+                        if (!path) return undefined;
+                        if (path.startsWith('http')) return path;
+                        // Join base URL with relative path, ensuring no double slashes in the middle
+                        return `${baseUrl}${path.startsWith('/') ? path.substring(1) : path}`;
+                    };
+
+                    // Force correct repo field and resolve relative URLs
+                    return items.map(item => ({ 
+                        ...item, 
+                        repo: item.repo || defaultRepo,
+                        requirements: resolveUrl(item.requirements),
+                        examples: resolveUrl(item.examples)
+                    }));
                 } catch (e) {
                     return [];
                 }
             };
             
-            const [off, com] = await Promise.all([fetchJson(this.OFFICIAL_URL), fetchJson(this.COMMUNITY_URL)]);
+            const [off, com] = await Promise.all([
+                fetchJson(this.OFFICIAL_URL, 'Official'), 
+                fetchJson(this.COMMUNITY_URL, 'Community')
+            ]);
             const newCatalog = [...off, ...com];
 
             if (newCatalog.length > 0) {
