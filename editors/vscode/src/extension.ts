@@ -66,19 +66,46 @@ export async function activate(context: vscode.ExtensionContext) {
             // Index workspace steps to ensure local definitions are included
             await WorkspaceIndex.indexWorkspace();
             
-            const localItems = WorkspaceIndex.getAllSteps().map(s => ({
-                label: `$(home) ${s.name}`,
-                description: `Workspace | Local Step`,
-                detail: `Location: ${vscode.workspace.asRelativePath(s.filePath)}:${s.line + 1}`,
-                step: {
-                    name: s.name,
-                    func_name: s.name,
-                    namespace: 'states', // default namespace for local step modules
-                    repo: 'Workspace',
-                    file: s.filePath,
-                    description: s.description || 'Local workspace step'
-                } as StepEntry
-            }));
+            const localItems = WorkspaceIndex.getAllSteps().map(s => {
+                const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3]
+                    .map(c => c?.trim())
+                    .filter(Boolean) as string[];
+                const categoryPath = catSeq.length > 0 ? catSeq.join(' ➔ ') : 'Workspace';
+
+                const keywords: string[] = [];
+                if (catSeq.length > 0) {
+                    keywords.push(catSeq.join('_').toLowerCase());
+                    keywords.push(catSeq.join(' ').toLowerCase());
+                    for (let i = 0; i < catSeq.length; i++) {
+                        for (let j = i + 1; j <= catSeq.length; j++) {
+                            const sub = catSeq.slice(i, j);
+                            keywords.push(sub.join('_').toLowerCase());
+                            keywords.push(sub.join(' ').toLowerCase());
+                            keywords.push(sub.join('').toLowerCase());
+                        }
+                    }
+                }
+                const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(', ');
+                const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : '';
+
+                return {
+                    label: `$(home) ${s.name}`,
+                    description: `Workspace | ${categoryPath}`,
+                    detail: `Location: ${vscode.workspace.asRelativePath(s.filePath)}:${s.line + 1}${keywordsSuffix}`,
+                    step: {
+                        name: s.name,
+                        func_name: s.name,
+                        namespace: 'states', // default namespace for local step modules
+                        repo: 'Workspace',
+                        file: s.filePath,
+                        description: s.description || 'Local workspace step',
+                        category: s.category,
+                        subcategory1: s.subcategory1,
+                        subcategory2: s.subcategory2,
+                        subcategory3: s.subcategory3
+                    } as StepEntry
+                };
+            });
 
             const catalogItems = CatalogManager.getSteps().map(s => {
                 const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3]
