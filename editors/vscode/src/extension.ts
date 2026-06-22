@@ -83,12 +83,30 @@ export async function activate(context: vscode.ExtensionContext) {
             const catalogItems = CatalogManager.getSteps().map(s => {
                 const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3]
                     .map(c => c?.trim())
-                    .filter(Boolean);
+                    .filter(Boolean) as string[];
                 const categoryPath = catSeq.length > 0 ? catSeq.join(' ➔ ') : 'General';
+
+                // Generate search keywords (e.g. "database_redis_hash", "redis_hash") to match user typing patterns
+                const keywords: string[] = [];
+                if (catSeq.length > 0) {
+                    keywords.push(catSeq.join('_').toLowerCase());
+                    keywords.push(catSeq.join(' ').toLowerCase());
+                    for (let i = 0; i < catSeq.length; i++) {
+                        for (let j = i + 1; j <= catSeq.length; j++) {
+                            const sub = catSeq.slice(i, j);
+                            keywords.push(sub.join('_').toLowerCase());
+                            keywords.push(sub.join(' ').toLowerCase());
+                            keywords.push(sub.join('').toLowerCase());
+                        }
+                    }
+                }
+                const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(', ');
+                const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : '';
+
                 return {
                     label: `$(rocket) ${s.name}`,
                     description: `${s.repo} | ${categoryPath}`,
-                    detail: `Module: ${s.namespace} | Author: ${s.author || 'Official'}`,
+                    detail: `Module: ${s.namespace}${keywordsSuffix} | Author: ${s.author || 'Official'}`,
                     step: s
                 };
             });
