@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { CatalogManager, StepEntry } from './core/catalog';
-import { WPipeStepProvider, StepItem } from './providers/stepProvider';
+import { WPipeStepProvider, StepItem, LibraryItem, CategoryItem } from './providers/stepProvider';
 import { DAGPanel } from './webviews/dagPanel';
 import { showCheatSheet } from './webviews/cheatSheet';
 import { openDashboard } from './commands/dashboard';
