@@ -8,6 +8,10 @@ export interface WorkspaceStep {
     line: number;
     description?: string;
     tags?: string[];
+    category?: string;
+    subcategory1?: string;
+    subcategory2?: string;
+    subcategory3?: string;
 }
 
 export class WorkspaceIndex {
@@ -45,31 +49,57 @@ export class WorkspaceIndex {
                         if (node.name === 'Decorator') {
                             const decText = content.substring(node.from, node.to);
                             if (decText.startsWith('@step')) {
-                                let name = '';
-                                let version = 'v1.0';
-                                let description = '';
-                                
-                                const nameMatch = decText.match(/name\s*=\s*['"](.*?)['"]/);
-                                if (nameMatch) name = nameMatch[1];
+                                 let name = '';
+                                 let version = 'v1.0';
+                                 let description = '';
+                                 let category = '';
+                                 let subcategory1 = '';
+                                 let subcategory2 = '';
+                                 let subcategory3 = '';
+                                 
+                                 const nameMatch = decText.match(/name\s*=\s*['"](.*?)['"]/);
+                                 if (nameMatch) name = nameMatch[1];
 
-                                const verMatch = decText.match(/version\s*=\s*['"](.*?)['"]/);
-                                if (verMatch) version = verMatch[1];
+                                 const verMatch = decText.match(/version\s*=\s*['"](.*?)['"]/);
+                                 if (verMatch) version = verMatch[1];
 
-                                const descMatch = decText.match(/description\s*=\s*['"](.*?)['"]/);
-                                if (descMatch) description = descMatch[1];
-                                
-                                if (!name && node.node.parent) {
-                                    let funcDef = node.node.parent.getChild('FunctionDefinition') || node.node.parent.getChild('ClassDefinition');
-                                    if (funcDef) {
-                                        let varName = funcDef.getChild('VariableName');
-                                        if (varName) name = content.substring(varName.from, varName.to);
-                                    }
-                                }
-                                
-                                if (name) {
-                                    const line = content.substring(0, node.from).split('\n').length - 1;
-                                    newSteps.set(name, { name, version, filePath: f.fsPath, line, description });
-                                }
+                                 const descMatch = decText.match(/description\s*=\s*['"](.*?)['"]/);
+                                 if (descMatch) description = descMatch[1];
+
+                                 const catMatch = decText.match(/category\s*=\s*['"](.*?)['"]/);
+                                 if (catMatch) category = catMatch[1];
+
+                                 const sub1Match = decText.match(/subcategory1\s*=\s*['"](.*?)['"]/);
+                                 if (sub1Match) subcategory1 = sub1Match[1];
+
+                                 const sub2Match = decText.match(/subcategory2\s*=\s*['"](.*?)['"]/);
+                                 if (sub2Match) subcategory2 = sub2Match[1];
+
+                                 const sub3Match = decText.match(/subcategory3\s*=\s*['"](.*?)['"]/);
+                                 if (sub3Match) subcategory3 = sub3Match[1];
+                                 
+                                 if (!name && node.node.parent) {
+                                     let funcDef = node.node.parent.getChild('FunctionDefinition') || node.node.parent.getChild('ClassDefinition');
+                                     if (funcDef) {
+                                         let varName = funcDef.getChild('VariableName');
+                                         if (varName) name = content.substring(varName.from, varName.to);
+                                     }
+                                 }
+                                 
+                                 if (name) {
+                                     const line = content.substring(0, node.from).split('\n').length - 1;
+                                     newSteps.set(name, { 
+                                         name, 
+                                         version, 
+                                         filePath: f.fsPath, 
+                                         line, 
+                                         description,
+                                         category,
+                                         subcategory1,
+                                         subcategory2,
+                                         subcategory3
+                                     });
+                                 }
                             }
                         }
                     }
