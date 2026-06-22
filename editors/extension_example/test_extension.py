@@ -1,6 +1,6 @@
 # from wpipe_steps.database.redis.hash.read_hash_sync import RedisHashReadSync
 from state1 import StepClass
-from state2 import function_name
+from .state2 import function_name
 from state4 import StepClass4
 from state3 import StepClass3
 from state5 import function_name5

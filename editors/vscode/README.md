@@ -17,34 +17,42 @@ Elevate your Python data engineering with intelligent tools designed to maximize
 
 Traditional pipeline development can be opaque and error-prone. **WPipe Tools** changes the game by giving you visual superpowers and intelligent automation.
 
-### 📊 Real-Time DAG Visualization
+### 📊 Real-Time DAG Visualization & Interaction
 Stop guessing how your data flows. Watch your architecture come to life as you write code.
 - **Instant Insights:** Generate high-fidelity Directed Acyclic Graphs (DAG) from your `.py` and `.yaml` configurations.
+- **Bi-directional Navigation:** Click any node in the DAG to jump directly to its definition in the code.
 - **Live Feedback:** The visualization panel refreshes instantly on save, helping you catch logic errors before they hit production.
 - **Interactive Exploration:** Zoom, pan, and navigate through complex architectures with professional-grade controls.
+- **Pro Exports:** Download your architecture as high-quality **SVG** or **PNG** for documentation.
 
-### 🔍 Step Registry Explorer
+### 🔍 Step Registry & Impact Analysis
 Master your ecosystem of reusable components.
 - **Centralized Hub:** A dedicated sidebar view maps every `@step` across your entire workspace.
 - **Hierarchical Categorization:** Official library and community plugins are organized dynamically using folders based on `category` and subcategories (`subcategory1`, `subcategory2`, `subcategory3`). Steps without defined categories are neatly grouped under a virtual "General" folder to keep your root view clean.
 - **Precision Navigation:** Click any step to teleport directly to its implementation.
+- **Impact Analysis:** Right-click a step to see exactly which pipelines and files across your workspace will be affected if you change its logic.
 - **One-Click Testing:** Run and validate individual steps in isolation without launching the full pipeline.
 
-### 🌐 Cloud Catalog Integration
-Join a global community of data engineers.
-- **Always Updated:** The extension automatically fetches the latest official and community-contributed steps from the cloud.
-- **Plug & Play:** Find the perfect component, click to import, and stay focused on your core logic.
+### 🐞 Debugging & Observability
+Understand failures faster than ever.
+- **Integrated Dashboard:** Access the WPipe real-time monitoring dashboard natively within a VS Code tab—no external browser needed.
+- **Log Replay:** Load any WPipe log file to automatically highlight failed steps in the editor and the DAG view. See exactly where the data stopped flowing.
+
+### 🤖 AI Pipeline Assistant
+Accelerate your development with artificial intelligence.
+- **AI Scaffolding:** Describe your pipeline in natural language (e.g., "A pipeline with parallel tasks that saves to SQLite") and get a production-ready structure instantly.
+- **Optimization Tips:** The DAG panel automatically suggests performance improvements, like where you can use `Parallel` blocks to speed up execution.
 
 ### 🧠 Intelligent snippets (The "Pro" Way)
 Don't just write code—write *excellent* code.
 - **`wpstep` / `wpstepadv`**: Create everything from simple functions to robust classes with built-in retries and timeouts.
 - **`wppipe` / `wppipeadv`**: Scaffold production-ready pipelines with metric tracking and persistence in seconds.
-- **Flow Control**: Rapidly insert `Parallel`, `Condition`, `For`, and `Background` blocks with automatic imports.
+- **Quick Fixes:** Hover over any standard Python function and click the lightbulb to instantly convert it into a WPipe Step.
 
 ### 🛡️ World-Class YAML Validation
 Safety first. Eliminate configuration errors before they happen.
 - **Smart Autocomplete:** Intelligent schema-aware suggestions for your `*.wpipe.yaml` files.
-- **Zero-Error Syntax:** Real-time validation ensures your YAML is always clean and compatible.
+- **Validation Engine:** Real-time warnings if you use a step that doesn't exist in your workspace or the official catalog.
 
 ---
 
@@ -60,8 +68,10 @@ Safety first. Eliminate configuration errors before they happen.
 
 | Command | Action |
 |---------|--------|
-| `WPipe: Preview Pipeline DAG` | Open the interactive graph visualizer. |
-| `WPipe: Open Web Dashboard` | Launch the real-time monitoring dashboard. |
+| `WPipe: Preview Pipeline DAG` | Open the interactive graph visualizer with bi-directional navigation. |
+| `WPipe: Open Web Dashboard` | Launch the native real-time monitoring dashboard inside VS Code. |
+| `WPipe: Replay Log Errors` | Load a log file to highlight errors in code and DAG. |
+| `WPipe: AI Pipeline Assistant` | Generate pipeline structures using natural language. |
 | `WPipe: Search & Import Steps` | Browse the global component library. |
 | `WPipe: Show Cheat Sheet / Help` | Instant access to the pro-tips guide. |
 

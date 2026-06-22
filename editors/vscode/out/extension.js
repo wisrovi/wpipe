@@ -34,7 +34,7 @@ __export(extension_exports, {
   deactivate: () => deactivate
 });
 module.exports = __toCommonJS(extension_exports);
-var vscode11 = __toESM(require("vscode"));
+var vscode17 = __toESM(require("vscode"));
 
 // src/core/catalog.ts
 var vscode = __toESM(require("vscode"));
@@ -75,10 +75,10 @@ var CatalogManager = class {
           const p = await response.json();
           const items = Array.isArray(p) ? p : [];
           const baseUrl = url.substring(0, url.lastIndexOf("/") + 1);
-          const resolveUrl = (path5) => {
-            if (!path5) return void 0;
-            if (path5.startsWith("http")) return path5;
-            return `${baseUrl}${path5.startsWith("/") ? path5.substring(1) : path5}`;
+          const resolveUrl = (path6) => {
+            if (!path6) return void 0;
+            if (path6.startsWith("http")) return path6;
+            return `${baseUrl}${path6.startsWith("/") ? path6.substring(1) : path6}`;
           };
           return items.map((item) => ({
             ...item,
@@ -4670,14 +4670,37 @@ var DAGPanel = class _DAGPanel {
     }, null, this._disposables);
     this._update(doc, true);
     this._panel.webview.onDidReceiveMessage(async (message) => {
-      if (message.command === "downloadSVG") {
+      if (message.command === "downloadImage") {
         const saveUri = await vscode5.window.showSaveDialog({
           defaultUri: vscode5.Uri.file(message.fileName),
-          filters: { "SVG Image": ["svg"] }
+          filters: message.format === "png" ? { "PNG Image": ["png"] } : { "SVG Image": ["svg"] }
         });
         if (saveUri) {
-          await vscode5.workspace.fs.writeFile(saveUri, new TextEncoder().encode(message.content));
-          vscode5.window.showInformationMessage("\u2705 DAG exported successfully.");
+          let data;
+          if (message.format === "png") {
+            const base64Data = message.content.replace(/^data:image\/png;base64,/, "");
+            data = Buffer.from(base64Data, "base64");
+          } else {
+            data = new TextEncoder().encode(message.content);
+          }
+          await vscode5.workspace.fs.writeFile(saveUri, data);
+          vscode5.window.showInformationMessage(`\u2705 DAG exported as ${message.format.toUpperCase()} successfully.`);
+        }
+      } else if (message.command === "gotoLine") {
+        const line = parseInt(message.line);
+        if (!isNaN(line)) {
+          const editor = vscode5.window.activeTextEditor;
+          if (editor && editor.document === doc) {
+            const pos = new vscode5.Position(line, 0);
+            editor.selection = new vscode5.Selection(pos, pos);
+            editor.revealRange(new vscode5.Range(pos, pos), vscode5.TextEditorRevealType.InCenter);
+          } else {
+            const newDoc = await vscode5.workspace.openTextDocument(doc.uri);
+            const newEditor = await vscode5.window.showTextDocument(newDoc);
+            const pos = new vscode5.Position(line, 0);
+            newEditor.selection = new vscode5.Selection(pos, pos);
+            newEditor.revealRange(new vscode5.Range(pos, pos), vscode5.TextEditorRevealType.InCenter);
+          }
         }
       }
     }, null, this._disposables);
@@ -4700,9 +4723,16 @@ var DAGPanel = class _DAGPanel {
     });
     _DAGPanel.currentPanel = new _DAGPanel(p, doc);
   }
+  highlightNodes(nodeNames, status) {
+    this._panel.webview.postMessage({
+      command: "highlightNodes",
+      nodes: nodeNames,
+      status
+    });
+  }
   async _update(doc, forceBackup = false) {
     const fileName = path.basename(doc.uri.fsPath);
-    const res = this.parse(doc.getText(), fileName);
+    const res = this.parse(doc, fileName);
     if (forceBackup && await ConfigManager.isBackupEnabled()) {
       try {
         const dir = path.dirname(doc.uri.fsPath);
@@ -4714,11 +4744,12 @@ ${res.graph}`;
       } catch (e) {
       }
     }
-    this._panel.webview.html = this._getHtml(fileName, res.graph, res.stats, res.bigO);
+    this._panel.webview.html = this._getHtml(fileName, res.graph, res.stats, res.bigO, res.suggestions);
   }
-  _getHtml(fileName, graph, stats, bigO) {
+  _getHtml(fileName, graph, stats, bigO, suggestions = []) {
     const now = (/* @__PURE__ */ new Date()).toLocaleTimeString();
     const cspSource = this._panel.webview.cspSource;
+    const suggestionsHtml = suggestions.map((s) => `<div class="card" style="margin-top:10px; border-left:3px solid #007acc; font-size:10px;">${s}</div>`).join("");
     return `<html>
         <head>
             <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${cspSource} https://cdn.jsdelivr.net 'unsafe-inline'; style-src ${cspSource} 'unsafe-inline'; img-src ${cspSource} data:;">
@@ -4727,6 +4758,37 @@ ${res.graph}`;
             <script>
                 const vscode = acquireVsCodeApi();
                 let pz = null;
+
+                window.handleNodeClick = function(line) {
+                    vscode.postMessage({ command: 'gotoLine', line: line });
+                };
+
+                window.addEventListener('message', event => {
+                    const message = event.data;
+                    if (message.command === 'highlightNodes') {
+                        const { nodes, status } = message;
+                        const svgElement = document.querySelector('svg');
+                        if (!svgElement) return;
+
+                        // Reset previous highlights or apply new ones
+                        // In Mermaid, nodes have IDs like 'nLuid_LX' (from our parser)
+                        // This logic might need refinement to match step names
+                        const allNodes = svgElement.querySelectorAll('.node');
+                        allNodes.forEach(node => {
+                            const label = node.querySelector('.nodeLabel');
+                            if (label) {
+                                const text = label.textContent || '';
+                                if (nodes.some(n => text.includes(n))) {
+                                    if (status === 'error') {
+                                        node.style.stroke = '#ff4d4d';
+                                        node.style.strokeWidth = '4px';
+                                        node.classList.add('node-error');
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
 
                 async function initMermaid() {
                     const container = document.getElementById('mermaid-container');
@@ -4776,12 +4838,44 @@ ${res.graph}`;
                                     let source = serializer.serializeToString(svgElement);
                                     source = '<?xml version="1.0" standalone="no"?>\\r\\n' + source;
                                     vscode.postMessage({
-                                        command: 'downloadSVG',
+                                        command: 'downloadImage',
                                         content: source,
+                                        format: 'svg',
                                         fileName: '${fileName.replace(/\.[^/.]+$/, "")}_dag.svg'
                                     });
                                 } catch (err) {
                                     console.error('Download error:', err);
+                                }
+                            };
+
+                            document.getElementById('download-png').onclick = () => {
+                                try {
+                                    const serializer = new XMLSerializer();
+                                    const svgData = serializer.serializeToString(svgElement);
+                                    const canvas = document.createElement('canvas');
+                                    const ctx = canvas.getContext('2d');
+                                    const img = new Image();
+                                    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                                    const url = URL.createObjectURL(svgBlob);
+
+                                    img.onload = () => {
+                                        canvas.width = img.width * 2; // High DPI
+                                        canvas.height = img.height * 2;
+                                        ctx.fillStyle = 'white'; // Background
+                                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                        URL.revokeObjectURL(url);
+                                        const pngData = canvas.toDataURL('image/png');
+                                        vscode.postMessage({
+                                            command: 'downloadImage',
+                                            content: pngData,
+                                            format: 'png',
+                                            fileName: '${fileName.replace(/\.[^/.]+$/, "")}_dag.png'
+                                        });
+                                    };
+                                    img.src = url;
+                                } catch (err) {
+                                    console.error('PNG Download error:', err);
                                 }
                             };
                         }
@@ -4808,6 +4902,11 @@ ${res.graph}`;
                 .toolbar button:hover { background: #007acc; }
                 .btn-primary { width: 100%; padding: 10px; background: #007acc; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
                 .btn-primary:hover { background: #0098ff; }
+                .node-error rect, .node-error circle, .node-error polygon, .node-error path {
+                    fill: rgba(255, 77, 77, 0.3) !important;
+                    stroke: #ff4d4d !important;
+                    stroke-width: 3px !important;
+                }
             </style>
         </head>
         <body>
@@ -4827,7 +4926,11 @@ ${res.graph}`;
                         <span style="font-size:8px;color:#666;">COMPUTATIONAL COST</span>
                         <div style="font-size:20px;font-weight:bold;color:#ce9178;margin:2px 0;">${bigO}</div>
                     </div>
-                    <div style="margin-top:auto;"><button id="download-svg" class="btn-primary">\u{1F4BE} Download SVG</button></div>
+                    ${suggestionsHtml}
+                    <div style="margin-top:auto; display:flex; flex-direction:column; gap:8px;">
+                        <button id="download-svg" class="btn-primary">\u{1F4BE} Download SVG</button>
+                        <button id="download-png" class="btn-primary" style="background:#444;">\u{1F5BC}\uFE0F Download PNG</button>
+                    </div>
                 </aside>
                 <main class="canvas">
                     <div id="mermaid-container"></div>
@@ -4845,8 +4948,9 @@ ${res.graph}`;
         </body>
         </html>`;
   }
-  parse(content2, fileName) {
-    let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n";
+  parse(doc, fileName) {
+    const content2 = doc.getText();
+    let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5,cursor:pointer\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2,cursor:pointer\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n";
     let totalSteps = 0;
     let totalLogic = 0;
     let maxDepth = 0;
@@ -4876,11 +4980,17 @@ ${res.graph}`;
     start_${uid}(( )):::startN
 `;
       let stepsContent = "";
+      let stepsOffset = inst.from;
       const m1 = inst.text.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/);
       const m2 = inst.text.match(/steps\s*=\s*\[([\s\S]*?)\]/);
-      if (m1) stepsContent = m1[1];
-      else if (m2) stepsContent = m2[1];
-      const res = this.parseRec(stepsContent, `start_${uid}`, "L" + uid, 0);
+      if (m1) {
+        stepsContent = m1[1];
+        stepsOffset += inst.text.indexOf(m1[1]);
+      } else if (m2) {
+        stepsContent = m2[1];
+        stepsOffset += inst.text.indexOf(m2[1]);
+      }
+      const res = this.parseRec(doc, stepsContent, stepsOffset, `start_${uid}`, "L" + uid, 0);
       g += res.graph.split("\n").map((l) => l.trim() ? "    " + l : "").join("\n") + "\n";
       totalSteps += res.steps;
       totalLogic += res.logic;
@@ -4891,7 +5001,8 @@ ${res.graph}`;
         if (addCall.text.startsWith(pipeVar + ".add_state(")) {
           const am = addCall.text.match(/\.add_state\s*\(([\s\S]*?)\)/);
           if (am) {
-            const res2 = this.parseRec(am[1], lastId, "A" + Math.random().toString(36).substr(2, 3), 0, lastLabel);
+            const amOffset = addCall.from + addCall.text.indexOf(am[1]);
+            const res2 = this.parseRec(doc, am[1], amOffset, lastId, "A" + Math.random().toString(36).substr(2, 3), 0, lastLabel);
             g += res2.graph.split("\n").map((l) => l.trim() ? "    " + l : "").join("\n") + "\n";
             totalSteps += res2.steps;
             totalLogic += res2.logic;
@@ -4906,34 +5017,46 @@ ${res.graph}`;
     let bigO = "O(n)";
     if (maxDepth === 1) bigO = "O(n\xB2)";
     else if (maxDepth > 1) bigO = `O(n^${maxDepth + 1})`;
-    return { graph: seenPipelines.size > 0 ? g : "flowchart TD\n  NoPipe[No pipeline detected]", stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size }, bigO };
+    const suggestions = [];
+    if (totalSteps > 5 && totalLogic === 0) {
+      suggestions.push("\u{1F4A1} Tip: Your pipeline is linear. Consider using 'Parallel' if steps are independent.");
+    }
+    return {
+      graph: seenPipelines.size > 0 ? g : "flowchart TD\n  NoPipe[No pipeline detected]",
+      stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size },
+      bigO,
+      suggestions
+    };
   }
-  parseRec(content2, prev, prefix, depth, incomingLabel = "") {
+  parseRec(doc, content2, offset, prev, prefix, depth, incomingLabel = "") {
     let graph = "";
     let curr = prev;
     let sCount = 0;
     let lCount = 0;
     let maxSubDepth = depth;
     let currentLabel = incomingLabel;
-    const split = (c) => {
+    const splitWithOffsets2 = (c, baseOffset) => {
       const r = [];
       let cur = "";
       let d = 0;
+      let start = 0;
       for (let i = 0; i < c.length; i++) {
         if (c[i] === "[" || c[i] === "(") d++;
         else if (c[i] === "]" || c[i] === ")") d--;
         if (c[i] === "," && d === 0) {
-          r.push(cur.trim());
+          r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
           cur = "";
+          start = i + 1;
         } else cur += c[i];
       }
-      if (cur.trim()) r.push(cur.trim());
+      if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
       return r;
     };
-    split(content2).forEach((t2, i) => {
-      const tr = t2.trim();
+    splitWithOffsets2(content2, offset).forEach((item, i) => {
+      const tr = item.text;
       if (!tr) return;
-      const id2 = "n" + prefix + i;
+      const line = doc.positionAt(item.offset).line;
+      const id2 = "n" + prefix + i + "_L" + line;
       const edge = currentLabel ? `-- ${currentLabel} -->` : "-->";
       currentLabel = "";
       if (tr.startsWith("Condition(")) {
@@ -4942,11 +5065,14 @@ ${res.graph}`;
         const expr = exprMatch ? exprMatch[2] : "Condition";
         graph += `  ${curr} ${edge} ${id2}{"${expr}"}:::logic
 `;
+        graph += `  click ${id2} call handleNodeClick("${line}")
+`;
         const tCont = this.ext(tr, "branch_true");
         const fCont = this.ext(tr, "branch_false");
         const mid = id2 + "_m";
         if (tCont) {
-          const r = this.parseRec(tCont, id2, id2 + "T", depth, "True");
+          const tOffset = item.offset + tr.indexOf(tCont);
+          const r = this.parseRec(doc, tCont, tOffset, id2, id2 + "T", depth, "True");
           graph += r.graph + `  ${r.lastId} --> ${mid}(( ))
 `;
           sCount += r.steps;
@@ -4955,7 +5081,8 @@ ${res.graph}`;
         } else graph += `  ${id2} -- True --> ${mid}(( ))
 `;
         if (fCont) {
-          const r = this.parseRec(fCont, id2, id2 + "F", depth, "False");
+          const fOffset = item.offset + tr.indexOf(fCont);
+          const r = this.parseRec(doc, fCont, fOffset, id2, id2 + "F", depth, "False");
           graph += r.graph + `  ${r.lastId} --> ${mid}(( ))
 `;
           sCount += r.steps;
@@ -4968,11 +5095,14 @@ ${res.graph}`;
         lCount++;
         graph += `  ${curr} ${edge} ${id2}[[" \u26A1 Parallel "]]:::logic
 `;
+        graph += `  click ${id2} call handleNodeClick("${line}")
+`;
         const pCont = this.ext(tr, "steps");
         const mid = id2 + "_m";
         if (pCont) {
-          this.smartSplit(pCont).forEach((ps, pi) => {
-            const r = this.parseRec(ps, id2, id2 + "P" + pi, depth, "flow");
+          const pOffset = item.offset + tr.indexOf(pCont);
+          this.smartSplitWithOffsets(pCont, pOffset).forEach((ps, pi) => {
+            const r = this.parseRec(doc, ps.text, ps.offset, id2, id2 + "P" + pi, depth, "flow");
             graph += r.graph + `  ${r.lastId} --> ${mid}(( ))
 `;
             sCount += r.steps;
@@ -4988,9 +5118,12 @@ ${res.graph}`;
         lCount++;
         graph += `  ${curr} ${edge} ${id2}[[" \u{1F504} For Loop "]]:::logic
 `;
+        graph += `  click ${id2} call handleNodeClick("${line}")
+`;
         const fCont = this.ext(tr, "steps");
         if (fCont) {
-          const r = this.parseRec(fCont, id2, id2 + "F", depth + 1, "body");
+          const fOffset = item.offset + tr.indexOf(fCont);
+          const r = this.parseRec(doc, fCont, fOffset, id2, id2 + "F", depth + 1, "body");
           graph += r.graph + `  ${r.lastId} --> ${id2}
 `;
           sCount += r.steps;
@@ -5005,17 +5138,38 @@ ${res.graph}`;
         const lbl = lblMatch ? lblMatch[1].split(",")[0].trim() : "BG Task";
         graph += `  ${curr} -. async .-> ${id2}((" \u26A1 ${lbl} ")):::step
 `;
+        graph += `  click ${id2} call handleNodeClick("${line}")
+`;
       } else {
         let lbl = tr.split("(")[0].replace(/[\[\]]/g, "").trim();
         if (lbl) {
           sCount++;
           graph += `  ${curr} ${edge} ${id2}[" \u{1F680} ${lbl} "]:::step
 `;
+          graph += `  click ${id2} call handleNodeClick("${line}")
+`;
           curr = id2;
         }
       }
     });
     return { graph, lastId: curr, steps: sCount, logic: lCount, depth: maxSubDepth, lastIncomingLabel: currentLabel };
+  }
+  smartSplitWithOffsets(c, baseOffset) {
+    const r = [];
+    let cur = "";
+    let d = 0;
+    let start = 0;
+    for (let i = 0; i < c.length; i++) {
+      if (c[i] === "[" || c[i] === "(") d++;
+      else if (c[i] === "]" || c[i] === ")") d--;
+      if (c[i] === "," && d === 0) {
+        r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+        cur = "";
+        start = i + 1;
+      } else cur += c[i];
+    }
+    if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+    return r;
   }
   ext(c, a) {
     const m = c.match(new RegExp(`${a}\\s*=\\s*\\[`));
@@ -5181,12 +5335,219 @@ function showCheatSheet() {
     `;
 }
 
-// src/commands/dashboard.ts
+// src/webviews/aiAssistant.ts
 var vscode7 = __toESM(require("vscode"));
-async function openDashboard(dbPath) {
+function showAiAssistant(extensionUri) {
+  const panel = vscode7.window.createWebviewPanel(
+    "wpipeAI",
+    "WPipe AI Assistant",
+    vscode7.ViewColumn.Beside,
+    {
+      enableScripts: true,
+      retainContextWhenHidden: true
+    }
+  );
+  panel.webview.html = getHtml(panel.webview);
+  panel.webview.onDidReceiveMessage((message) => {
+    if (message.command === "generate") {
+      const prompt = message.text.toLowerCase();
+      let code = "";
+      if (prompt.includes("download") && prompt.includes("sqlite")) {
+        code = `from wpipe import Pipeline, step, SQLiteTracking
+
+@step(name="fetch_data")
+def fetch_data():
+    return {"data": "..."}
+
+@step(name="save_to_db")
+def save_to_db(context):
+    # logic to save
+    pass
+
+pipe = Pipeline(name="AI Generated Pipeline", tracking_db=SQLiteTracking("data.db"))
+pipe.set_steps([fetch_data, save_to_db])
+pipe.run()`;
+      } else if (prompt.includes("parallel")) {
+        code = `from wpipe import Pipeline, step, Parallel
+
+@step(name="task_1")
+def task_1(): pass
+
+@step(name="task_2")
+def task_2(): pass
+
+pipe = Pipeline(name="Parallel Pipeline")
+pipe.set_steps([
+    Parallel(steps=[task_1, task_2])
+])
+pipe.run()`;
+      } else {
+        code = `# AI suggest: Try asking for "download and sqlite" or "parallel pipeline"
+@step(name="my_step")
+def my_step():
+    pass`;
+      }
+      panel.webview.postMessage({ command: "result", code });
+    } else if (message.command === "insert") {
+      const editor = vscode7.window.activeTextEditor;
+      if (editor) {
+        editor.edit((eb) => {
+          eb.insert(editor.selection.active, message.code);
+        });
+      }
+    }
+  });
+}
+function getHtml(webview) {
+  return `<!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { font-family: sans-serif; padding: 20px; background: #1e1e1e; color: #ccc; }
+            input { width: 100%; padding: 10px; background: #333; color: white; border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; }
+            button { background: #007acc; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+            pre { background: #000; padding: 15px; border-radius: 4px; overflow-x: auto; color: #9cdcfe; border: 1px solid #333; }
+            .chat-msg { margin-bottom: 20px; }
+        </style>
+    </head>
+    <body>
+        <h2>\u{1F916} WPipe AI Assistant</h2>
+        <div class="chat-msg">
+            <p>Describe what you want to build:</p>
+            <input type="text" id="prompt" placeholder="e.g. A pipeline with parallel tasks...">
+            <button onclick="generate()">Generate Structure</button>
+        </div>
+        <div id="output" style="display:none;">
+            <h3>Generated Code:</h3>
+            <pre id="code-block"></pre>
+            <button onclick="insert()">Insert into Editor</button>
+        </div>
+        <script>
+            const vscode = acquireVsCodeApi();
+            function generate() {
+                const text = document.getElementById('prompt').value;
+                vscode.postMessage({ command: 'generate', text: text });
+            }
+            function insert() {
+                const code = document.getElementById('code-block').innerText;
+                vscode.postMessage({ command: 'insert', code: code });
+            }
+            window.addEventListener('message', event => {
+                const message = event.data;
+                if (message.command === 'result') {
+                    document.getElementById('output').style.display = 'block';
+                    document.getElementById('code-block').innerText = message.code;
+                }
+            });
+        </script>
+    </body>
+    </html>`;
+}
+
+// src/commands/dashboard.ts
+var vscode9 = __toESM(require("vscode"));
+
+// src/webviews/dashboardPanel.ts
+var vscode8 = __toESM(require("vscode"));
+var DashboardPanel = class _DashboardPanel {
+  constructor(panel, port) {
+    this._disposables = [];
+    this._panel = panel;
+    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+    this._update(port);
+  }
+  static createOrShow(extensionUri, port) {
+    const column = vscode8.window.activeTextEditor ? vscode8.window.activeTextEditor.viewColumn : void 0;
+    if (_DashboardPanel.currentPanel) {
+      _DashboardPanel.currentPanel._panel.reveal(column);
+      _DashboardPanel.currentPanel._update(port);
+      return;
+    }
+    const panel = vscode8.window.createWebviewPanel(
+      "wpipeDashboard",
+      "WPipe Dashboard",
+      column || vscode8.ViewColumn.One,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true
+      }
+    );
+    _DashboardPanel.currentPanel = new _DashboardPanel(panel, port);
+  }
+  dispose() {
+    _DashboardPanel.currentPanel = void 0;
+    this._panel.dispose();
+    while (this._disposables.length) {
+      const x = this._disposables.pop();
+      if (x) {
+        x.dispose();
+      }
+    }
+  }
+  _update(port) {
+    this._panel.title = `WPipe Dashboard (Port ${port})`;
+    this._panel.webview.html = this._getHtmlForWebview(port);
+  }
+  _getHtmlForWebview(port) {
+    const url = `http://localhost:${port}`;
+    return `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>WPipe Dashboard</title>
+            <style>
+                body, html {
+                    margin: 0;
+                    padding: 0;
+                    height: 100%;
+                    width: 100%;
+                    overflow: hidden;
+                    background-color: #1e1e1e;
+                }
+                iframe {
+                    border: none;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #fff;
+                }
+                .loading-container {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: #ccc;
+                    font-family: sans-serif;
+                    z-index: -1;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="loading-container">
+                Connecting to WPipe Dashboard on port ${port}...
+            </div>
+            <iframe src="${url}" allow="autoplay; clipboard-read; clipboard-write;"></iframe>
+            <script>
+                // Handle potential connection issues or iframe loading
+                const iframe = document.querySelector('iframe');
+                iframe.onload = () => {
+                    console.log('Dashboard iframe loaded');
+                };
+            </script>
+        </body>
+        </html>`;
+  }
+};
+
+// src/commands/dashboard.ts
+async function openDashboard(context, dbPath) {
   console.log("\u{1F680} WPipe: openDashboard called with:", dbPath);
-  if (vscode7.env.uiKind === vscode7.UIKind.Web) {
-    vscode7.window.showErrorMessage("WPipe Dashboard requires a local Python environment.");
+  if (vscode9.env.uiKind === vscode9.UIKind.Web) {
+    vscode9.window.showErrorMessage("WPipe Dashboard requires a local Python environment.");
     return;
   }
   let finalDbPath;
@@ -5200,7 +5561,7 @@ async function openDashboard(dbPath) {
     finalDbPath = potentialDbPath;
   }
   if (!finalDbPath) {
-    const dbUri = await vscode7.window.showOpenDialog({
+    const dbUri = await vscode9.window.showOpenDialog({
       canSelectFiles: true,
       canSelectFolders: false,
       canSelectMany: false,
@@ -5210,10 +5571,10 @@ async function openDashboard(dbPath) {
     if (!dbUri) return;
     finalDbPath = dbUri[0].fsPath;
   }
-  const useConfig = await vscode7.window.showQuickPick(["No", "Yes"], { placeHolder: "Select WPipe Config Directory? (Optional)" });
+  const useConfig = await vscode9.window.showQuickPick(["No", "Yes"], { placeHolder: "Select WPipe Config Directory? (Optional)" });
   let configPath = "";
   if (useConfig === "Yes") {
-    const configUri = await vscode7.window.showOpenDialog({
+    const configUri = await vscode9.window.showOpenDialog({
       canSelectFiles: false,
       canSelectFolders: true,
       canSelectMany: false,
@@ -5221,25 +5582,152 @@ async function openDashboard(dbPath) {
     });
     if (configUri) configPath = configUri[0].fsPath;
   }
-  const port = await vscode7.window.showInputBox({
+  const port = await vscode9.window.showInputBox({
     placeHolder: "5000",
     prompt: "Enter port for the dashboard",
     value: "5000"
   }) || "5000";
-  const terminal = vscode7.window.createTerminal("WPipe Dashboard");
+  const terminal = vscode9.window.createTerminal("WPipe Dashboard");
   let cmd = `wpipe dashboard --db "${finalDbPath}" --port ${port}`;
   if (configPath) cmd += ` --config-dir "${configPath}"`;
   terminal.show();
   terminal.sendText(cmd);
-  vscode7.window.showInformationMessage(`\u{1F680} Dashboard starting at http://localhost:${port}`);
+  vscode9.window.showInformationMessage(`\u{1F680} Starting WPipe Dashboard inside VS Code...`);
   setTimeout(() => {
-    vscode7.env.openExternal(vscode7.Uri.parse(`http://localhost:${port}`));
-  }, 2e3);
+    DashboardPanel.createOrShow(context.extensionUri, port);
+  }, 2500);
+}
+
+// src/commands/replayLogs.ts
+var vscode10 = __toESM(require("vscode"));
+var fs = __toESM(require("fs"));
+var errorDecorationType = vscode10.window.createTextEditorDecorationType({
+  backgroundColor: "rgba(255, 0, 0, 0.2)",
+  isWholeLine: true,
+  overviewRulerColor: "red",
+  overviewRulerLane: vscode10.OverviewRulerLane.Full,
+  after: {
+    contentText: " \u26A0\uFE0F WPipe Error",
+    color: "red",
+    margin: "0 0 0 1em"
+  }
+});
+async function replayLogErrors() {
+  const logUri = await vscode10.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    filters: { "Log Files": ["log"] },
+    title: "Select WPipe Log File"
+  });
+  if (!logUri || logUri.length === 0) return;
+  const logPath = logUri[0].fsPath;
+  const content2 = fs.readFileSync(logPath, "utf8");
+  const lines = content2.split("\n");
+  const errors = [];
+  const logPattern = /^.*? \| (ERROR|CRITICAL) \| (.*?):(.*?):(\d+) \| (.*)$/;
+  for (const line of lines) {
+    const match = line.match(logPattern);
+    if (match) {
+      errors.push({
+        level: match[1],
+        module: match[2],
+        function: match[3],
+        line: parseInt(match[4]) - 1,
+        // 0-indexed for VS Code
+        message: match[5]
+      });
+    }
+  }
+  if (errors.length === 0) {
+    vscode10.window.showInformationMessage("\u2705 No errors found in the selected log.");
+    return;
+  }
+  vscode10.window.showWarningMessage(`\u{1F50D} Found ${errors.length} errors in log. Highlighting in editor...`);
+  for (const error of errors) {
+    const files = await vscode10.workspace.findFiles(`**/${error.module}.py`);
+    if (files.length > 0) {
+      const doc = await vscode10.workspace.openTextDocument(files[0]);
+      const editor = await vscode10.window.showTextDocument(doc, { preview: false });
+      const decoration = {
+        range: new vscode10.Range(error.line, 0, error.line, 0),
+        hoverMessage: `**[WPipe ${error.level}]** ${error.message}`
+      };
+      editor.setDecorations(errorDecorationType, [decoration]);
+      if (error === errors[0]) {
+        editor.revealRange(decoration.range, vscode10.TextEditorRevealType.InCenter);
+      }
+    }
+  }
+  if (DAGPanel.currentPanel) {
+    const stepNames = errors.map((e) => e.function);
+    DAGPanel.currentPanel.highlightNodes(stepNames, "error");
+  }
+}
+
+// src/commands/impactAnalysis.ts
+var vscode11 = __toESM(require("vscode"));
+var path2 = __toESM(require("path"));
+async function findStepUsage(arg) {
+  let stepName;
+  if (typeof arg === "string") {
+    stepName = arg;
+  } else if (arg instanceof vscode11.TreeItem) {
+    stepName = arg.label;
+  }
+  if (!stepName) {
+    stepName = await vscode11.window.showInputBox({
+      prompt: "Enter the name of the step to analyze impact",
+      placeHolder: "e.g. download_data"
+    });
+  }
+  if (!stepName) return;
+  await vscode11.window.withProgress({
+    location: vscode11.ProgressLocation.Notification,
+    title: `Analyzing impact for step: ${stepName}`,
+    cancellable: false
+  }, async (progress) => {
+    const files = await vscode11.workspace.findFiles("**/*.py", "**/node_modules/**");
+    const usages = [];
+    for (const file of files) {
+      const doc = await vscode11.workspace.openTextDocument(file);
+      const content2 = doc.getText();
+      const lines = content2.split("\n");
+      lines.forEach((line, index) => {
+        const regex = new RegExp(`\\b${stepName}\\b`);
+        if (regex.test(line)) {
+          if (!line.includes(`def ${stepName}`) && !line.includes(`@step`)) {
+            usages.push({ file, line: index, text: line.trim() });
+          }
+        }
+      });
+    }
+    if (usages.length === 0) {
+      vscode11.window.showInformationMessage(`\u2705 Step '${stepName}' is not used in any other pipeline.`);
+      return;
+    }
+    const items = usages.map((u) => ({
+      label: `${path2.basename(u.file.fsPath)}:L${u.line + 1}`,
+      description: u.text,
+      uri: u.file,
+      line: u.line
+    }));
+    const selected = await vscode11.window.showQuickPick(items, {
+      placeHolder: `Found ${usages.length} usages of '${stepName}'. Select to open.`
+    });
+    if (selected) {
+      const doc = await vscode11.workspace.openTextDocument(selected.uri);
+      const editor = await vscode11.window.showTextDocument(doc);
+      const pos = new vscode11.Position(selected.line, 0);
+      editor.selection = new vscode11.Selection(pos, pos);
+      editor.revealRange(new vscode11.Range(pos, pos), vscode11.TextEditorRevealType.InCenter);
+    }
+  });
 }
 
 // src/providers/codeLensProvider.ts
-var vscode8 = __toESM(require("vscode"));
-var path2 = __toESM(require("path"));
+var vscode12 = __toESM(require("vscode"));
+var path3 = __toESM(require("path"));
 var WPipeCodeLensProvider = class {
   async provideCodeLenses(document, token) {
     const lenses = [];
@@ -5251,11 +5739,11 @@ var WPipeCodeLensProvider = class {
           if (node.name === "Decorator") {
             const decText = content2.substring(node.from, node.to);
             if (decText.startsWith("@step")) {
-              const range = new vscode8.Range(
+              const range = new vscode12.Range(
                 document.positionAt(node.from),
                 document.positionAt(node.to)
               );
-              lenses.push(new vscode8.CodeLens(range, {
+              lenses.push(new vscode12.CodeLens(range, {
                 title: "$(play) Run Step",
                 command: "wpipeSteps.runStepFromCode",
                 arguments: [document.fileName, range.start.line]
@@ -5264,16 +5752,16 @@ var WPipeCodeLensProvider = class {
           } else if (node.name === "CallExpression") {
             const callText = content2.substring(node.from, node.to);
             if (callText.includes("Pipeline(") || callText.includes(".run(")) {
-              const range = new vscode8.Range(
+              const range = new vscode12.Range(
                 document.positionAt(node.from),
                 document.positionAt(node.to)
               );
-              lenses.push(new vscode8.CodeLens(range, {
+              lenses.push(new vscode12.CodeLens(range, {
                 title: "$(play) Run Pipeline",
                 command: "wpipe-vscode.runPipeline",
                 arguments: [document.fileName]
               }));
-              lenses.push(new vscode8.CodeLens(range, {
+              lenses.push(new vscode12.CodeLens(range, {
                 title: "$(graph) Preview DAG",
                 command: "wpipe-vscode.previewDAG"
               }));
@@ -5281,13 +5769,13 @@ var WPipeCodeLensProvider = class {
               if (dbMatch) {
                 const relativeDbPath = dbMatch[1];
                 let absoluteDbPath = relativeDbPath;
-                if (!path2.isAbsolute(relativeDbPath)) {
-                  const workspaceFolder = vscode8.workspace.getWorkspaceFolder(document.uri);
+                if (!path3.isAbsolute(relativeDbPath)) {
+                  const workspaceFolder = vscode12.workspace.getWorkspaceFolder(document.uri);
                   if (workspaceFolder) {
-                    absoluteDbPath = path2.join(workspaceFolder.uri.fsPath, relativeDbPath);
+                    absoluteDbPath = path3.join(workspaceFolder.uri.fsPath, relativeDbPath);
                   }
                 }
-                lenses.push(new vscode8.CodeLens(range, {
+                lenses.push(new vscode12.CodeLens(range, {
                   title: "$(dashboard) Open Dashboard",
                   command: "wpipe-vscode.openDashboard",
                   arguments: [absoluteDbPath]
@@ -5295,11 +5783,11 @@ var WPipeCodeLensProvider = class {
               }
             }
             if (callText.includes(".set_steps(")) {
-              const range = new vscode8.Range(
+              const range = new vscode12.Range(
                 document.positionAt(node.from),
                 document.positionAt(node.to)
               );
-              lenses.push(new vscode8.CodeLens(range, {
+              lenses.push(new vscode12.CodeLens(range, {
                 title: "$(plus) Add Logic Block",
                 command: "wpipe-vscode.addLogicBlock",
                 arguments: [range]
@@ -5315,7 +5803,7 @@ var WPipeCodeLensProvider = class {
 };
 
 // src/providers/hoverProvider.ts
-var vscode9 = __toESM(require("vscode"));
+var vscode13 = __toESM(require("vscode"));
 var WPipeHoverProvider = class {
   provideHover(document, position) {
     const range = document.getWordRangeAtPosition(position);
@@ -5323,7 +5811,7 @@ var WPipeHoverProvider = class {
     const word = document.getText(range);
     const wsStep = WorkspaceIndex.getStep(word);
     if (wsStep) {
-      const md = new vscode9.MarkdownString();
+      const md = new vscode13.MarkdownString();
       md.appendMarkdown(`### \u{1F680} WPipe Step: ${wsStep.name}
 `);
       md.appendMarkdown(`**Version:** ${wsStep.version}
@@ -5333,12 +5821,12 @@ var WPipeHoverProvider = class {
 
 `);
       md.appendMarkdown(`---
-*Location:* ${vscode9.workspace.asRelativePath(wsStep.filePath)}:${wsStep.line + 1}`);
-      return new vscode9.Hover(md);
+*Location:* ${vscode13.workspace.asRelativePath(wsStep.filePath)}:${wsStep.line + 1}`);
+      return new vscode13.Hover(md);
     }
     const catStep = CatalogManager.getSteps().find((s) => s.name === word || s.func_name === word);
     if (catStep) {
-      const md = new vscode9.MarkdownString();
+      const md = new vscode13.MarkdownString();
       md.appendMarkdown(`### \u{1F4E6} WPipe Library: ${catStep.name}
 `);
       md.appendMarkdown(`**Module:** \`${catStep.namespace}\`
@@ -5351,24 +5839,151 @@ var WPipeHoverProvider = class {
 `);
       md.appendMarkdown(`---
 Click to insert import and usage.`);
-      return new vscode9.Hover(md);
+      return new vscode13.Hover(md);
     }
     return null;
   }
 };
 
+// src/providers/codeActionProvider.ts
+var vscode14 = __toESM(require("vscode"));
+var WPipeCodeActionProvider = class {
+  static {
+    this.providedCodeActionKinds = [
+      vscode14.CodeActionKind.QuickFix
+    ];
+  }
+  provideCodeActions(document, range, context, token) {
+    const actions = [];
+    const content2 = document.getText();
+    try {
+      const tree = parser.parse(content2);
+      tree.iterate({
+        enter: (node) => {
+          if (node.name === "FunctionDefinition") {
+            const funcRange = new vscode14.Range(
+              document.positionAt(node.from),
+              document.positionAt(node.to)
+            );
+            if (range.intersection(funcRange)) {
+              let hasStepDecorator = false;
+              let parent = node.node.parent;
+              if (parent) {
+                parent.getChildren("Decorator").forEach((dec) => {
+                  const decText = content2.substring(dec.from, dec.to);
+                  if (decText.startsWith("@step")) {
+                    hasStepDecorator = true;
+                  }
+                });
+              }
+              if (!hasStepDecorator) {
+                const action = new vscode14.CodeAction("Convert to WPipe Step", vscode14.CodeActionKind.QuickFix);
+                action.edit = new vscode14.WorkspaceEdit();
+                const nameNode = node.node.getChild("VariableName");
+                const funcName = nameNode ? content2.substring(nameNode.from, nameNode.to) : "my_step";
+                const decorator = `@step(name="${funcName}", version="1.0.0")
+`;
+                action.edit.insert(document.uri, document.positionAt(node.from), decorator);
+                if (!content2.includes("from wpipe import step")) {
+                  action.edit.insert(document.uri, new vscode14.Position(0, 0), "from wpipe import step\n");
+                }
+                actions.push(action);
+              }
+            }
+          }
+        }
+      });
+    } catch (e) {
+    }
+    return actions;
+  }
+};
+
+// src/core/diagnostics.ts
+var vscode15 = __toESM(require("vscode"));
+function registerDiagnostics(context) {
+  const diagnosticCollection = vscode15.languages.createDiagnosticCollection("wpipe");
+  context.subscriptions.push(diagnosticCollection);
+  if (vscode15.window.activeTextEditor) {
+    updateDiagnostics(vscode15.window.activeTextEditor.document, diagnosticCollection);
+  }
+  context.subscriptions.push(
+    vscode15.workspace.onDidChangeTextDocument((e) => updateDiagnostics(e.document, diagnosticCollection)),
+    vscode15.window.onDidChangeActiveTextEditor((editor) => {
+      if (editor) updateDiagnostics(editor.document, diagnosticCollection);
+    })
+  );
+}
+function updateDiagnostics(document, collection) {
+  if (document.languageId !== "python") return;
+  const diagnostics = [];
+  const content2 = document.getText();
+  const tree = parser.parse(content2);
+  const workspaceSteps = new Set(WorkspaceIndex.getAllSteps().map((s) => s.name));
+  const catalogSteps = new Set(CatalogManager.getSteps().map((s) => s.name));
+  const knownSteps = /* @__PURE__ */ new Set([...workspaceSteps, ...catalogSteps]);
+  tree.iterate({
+    enter: (node) => {
+      if (node.name === "CallExpression") {
+        const callText = content2.substring(node.from, node.to);
+        if (callText.includes(".set_steps(") || callText.includes("Pipeline(") && callText.includes("steps=")) {
+          const match = callText.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/) || callText.match(/steps\s*=\s*\[([\s\S]*?)\]/);
+          if (match) {
+            const stepsContent = match[1];
+            const baseOffset = node.from + callText.indexOf(match[1]);
+            const parts = splitWithOffsets(stepsContent, baseOffset);
+            parts.forEach((part) => {
+              const name2 = part.text.split("(")[0].trim();
+              const logicBlocks = ["Condition", "Parallel", "For", "Background"];
+              if (name2 && !logicBlocks.includes(name2) && !knownSteps.has(name2)) {
+                const range = new vscode15.Range(
+                  document.positionAt(part.offset),
+                  document.positionAt(part.offset + name2.length)
+                );
+                diagnostics.push(new vscode15.Diagnostic(
+                  range,
+                  `Step '${name2}' not found in workspace or catalog.`,
+                  vscode15.DiagnosticSeverity.Warning
+                ));
+              }
+            });
+          }
+        }
+      }
+    }
+  });
+  collection.set(document.uri, diagnostics);
+}
+function splitWithOffsets(c, baseOffset) {
+  const r = [];
+  let cur = "";
+  let d = 0;
+  let start = 0;
+  for (let i = 0; i < c.length; i++) {
+    if (c[i] === "[" || c[i] === "(") d++;
+    else if (c[i] === "]" || c[i] === ")") d--;
+    if (c[i] === "," && d === 0) {
+      r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+      cur = "";
+      start = i + 1;
+    } else cur += c[i];
+  }
+  if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+  return r;
+}
+
 // src/wizards/stepWizard.ts
-var vscode10 = __toESM(require("vscode"));
-var path3 = __toESM(require("path"));
+var vscode16 = __toESM(require("vscode"));
+var path4 = __toESM(require("path"));
 async function createNewStepWizard() {
-  const workspaceFolders = vscode10.workspace.workspaceFolders;
+  const workspaceFolders = vscode16.workspace.workspaceFolders;
   if (!workspaceFolders) {
-    vscode10.window.showErrorMessage("Please open a workspace before creating a new step.");
+    vscode16.window.showErrorMessage("Please open a workspace before creating a new step.");
     return;
   }
   const rootPath = workspaceFolders[0].uri.fsPath;
-  const statesPath = path3.join(rootPath, "states");
-  const stepName = await vscode10.window.showInputBox({
+  const statesPath = path4.join(rootPath, "states");
+  const stepName = await vscode16.window.showInputBox({
     prompt: "Enter the name of the new step (e.g. DataProcessor)",
     placeHolder: "MyNewStep",
     validateInput: (value) => {
@@ -5380,7 +5995,7 @@ async function createNewStepWizard() {
   if (!stepName) return;
   const formattedStepName = stepName.split(/[_-]/).map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("");
   const fileName = stepName.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase() + ".py";
-  const filePath = path3.join(statesPath, fileName);
+  const filePath = path4.join(statesPath, fileName);
   const template = `from wpipe import step, to_obj
 from wpipe.timeout import timeout_sync
 from typing import Any
@@ -5415,12 +6030,12 @@ class ${formattedStepName}:
         return context
 `;
   try {
-    const statesUri = vscode10.Uri.file(statesPath);
-    await vscode10.workspace.fs.createDirectory(statesUri);
-    const initUri = vscode10.Uri.joinPath(statesUri, "__init__.py");
+    const statesUri = vscode16.Uri.file(statesPath);
+    await vscode16.workspace.fs.createDirectory(statesUri);
+    const initUri = vscode16.Uri.joinPath(statesUri, "__init__.py");
     let initContent = "";
     try {
-      const existingInit = await vscode10.workspace.fs.readFile(initUri);
+      const existingInit = await vscode16.workspace.fs.readFile(initUri);
       initContent = new TextDecoder().decode(existingInit);
     } catch {
     }
@@ -5428,90 +6043,97 @@ class ${formattedStepName}:
 `;
     if (!initContent.includes(importLine)) {
       initContent += importLine;
-      await vscode10.workspace.fs.writeFile(initUri, new TextEncoder().encode(initContent));
+      await vscode16.workspace.fs.writeFile(initUri, new TextEncoder().encode(initContent));
     }
-    const fileUri = vscode10.Uri.file(filePath);
-    await vscode10.workspace.fs.writeFile(fileUri, new TextEncoder().encode(template));
-    const doc = await vscode10.workspace.openTextDocument(fileUri);
-    await vscode10.window.showTextDocument(doc);
-    vscode10.window.showInformationMessage(`\u2705 Step '${formattedStepName}' created successfully in states/${fileName}`);
+    const fileUri = vscode16.Uri.file(filePath);
+    await vscode16.workspace.fs.writeFile(fileUri, new TextEncoder().encode(template));
+    const doc = await vscode16.workspace.openTextDocument(fileUri);
+    await vscode16.window.showTextDocument(doc);
+    vscode16.window.showInformationMessage(`\u2705 Step '${formattedStepName}' created successfully in states/${fileName}`);
   } catch (err) {
-    vscode10.window.showErrorMessage(`\u274C Failed to create step: ${err.message}`);
+    vscode16.window.showErrorMessage(`\u274C Failed to create step: ${err.message}`);
   }
 }
 
 // src/extension.ts
-var path4 = __toESM(require("path"));
+var path5 = __toESM(require("path"));
 async function activate(context) {
   console.log("\u{1F680} WPipe Tools: Activation started...");
   CatalogManager.init(context);
   WorkspaceIndex.indexWorkspace();
+  registerDiagnostics(context);
   const stepProvider = new WPipeStepProvider();
-  vscode11.window.registerTreeDataProvider("wpipeSteps", stepProvider);
+  vscode17.window.registerTreeDataProvider("wpipeSteps", stepProvider);
   context.subscriptions.push(
-    vscode11.languages.registerCodeLensProvider({ language: "python" }, new WPipeCodeLensProvider()),
-    vscode11.languages.registerHoverProvider({ language: "python" }, new WPipeHoverProvider())
+    vscode17.languages.registerCodeLensProvider({ language: "python" }, new WPipeCodeLensProvider()),
+    vscode17.languages.registerHoverProvider({ language: "python" }, new WPipeHoverProvider()),
+    vscode17.languages.registerCodeActionsProvider({ language: "python" }, new WPipeCodeActionProvider(), {
+      providedCodeActionKinds: WPipeCodeActionProvider.providedCodeActionKinds
+    })
   );
   context.subscriptions.push(
-    vscode11.commands.registerCommand("wpipeSteps.refreshEntry", () => stepProvider.refresh()),
-    vscode11.commands.registerCommand("wpipe-vscode.refreshCatalog", () => CatalogManager.update(context, true)),
-    vscode11.commands.registerCommand("wpipe-vscode.createNewStep", createNewStepWizard),
-    vscode11.commands.registerCommand("wpipeSteps.openFile", async (f, l) => {
-      const doc = await vscode11.workspace.openTextDocument(vscode11.Uri.file(f));
-      const editor = await vscode11.window.showTextDocument(doc);
-      const p = new vscode11.Position(l, 0);
-      editor.selection = new vscode11.Selection(p, p);
-      editor.revealRange(new vscode11.Range(p, p), vscode11.TextEditorRevealType.InCenter);
+    vscode17.commands.registerCommand("wpipeSteps.refreshEntry", () => stepProvider.refresh()),
+    vscode17.commands.registerCommand("wpipe-vscode.refreshCatalog", () => CatalogManager.update(context, true)),
+    vscode17.commands.registerCommand("wpipe-vscode.createNewStep", createNewStepWizard),
+    vscode17.commands.registerCommand("wpipeSteps.openFile", async (f, l) => {
+      const doc = await vscode17.workspace.openTextDocument(vscode17.Uri.file(f));
+      const editor = await vscode17.window.showTextDocument(doc);
+      const p = new vscode17.Position(l, 0);
+      editor.selection = new vscode17.Selection(p, p);
+      editor.revealRange(new vscode17.Range(p, p), vscode17.TextEditorRevealType.InCenter);
     }),
-    vscode11.commands.registerCommand("wpipeSteps.insertStep", (step) => {
-      const editor = vscode11.window.activeTextEditor;
+    vscode17.commands.registerCommand("wpipeSteps.insertStep", (step) => {
+      const editor = vscode17.window.activeTextEditor;
       if (editor) {
         editor.edit((eb) => {
           const importCode = `from ${step.namespace} import ${step.func_name}
 `;
-          eb.insert(new vscode11.Position(0, 0), importCode);
+          eb.insert(new vscode17.Position(0, 0), importCode);
           const isClass = /^[A-Z]/.test(step.func_name);
           eb.insert(editor.selection.active, isClass ? `${step.func_name}(),` : `${step.func_name},`);
         });
-        vscode11.window.showInformationMessage(`\u2705 Estado '${step.name}' insertado con \xE9xito.`);
+        vscode17.window.showInformationMessage(`\u2705 Estado '${step.name}' insertado con \xE9xito.`);
       }
     }),
-    vscode11.commands.registerCommand("wpipe-vscode.searchSteps", async () => {
+    vscode17.commands.registerCommand("wpipe-vscode.searchSteps", async () => {
       const items = CatalogManager.getSteps().map((s) => ({
         label: `$(rocket) ${s.name}`,
         description: `${s.repo} | Author: ${s.author || "Official"}`,
         detail: `Module: ${s.namespace}`,
         step: s
       }));
-      const sel = await vscode11.window.showQuickPick(items, { placeHolder: "Buscar estado en el cat\xE1logo oficial o comunidad..." });
+      const sel = await vscode17.window.showQuickPick(items, { placeHolder: "Buscar estado en el cat\xE1logo oficial o comunidad..." });
       if (sel) {
-        vscode11.commands.executeCommand("wpipeSteps.insertStep", sel.step);
+        vscode17.commands.executeCommand("wpipeSteps.insertStep", sel.step);
       }
     }),
-    vscode11.commands.registerCommand("wpipe-vscode.previewDAG", () => {
-      const editor = vscode11.window.activeTextEditor;
+    vscode17.commands.registerCommand("wpipe-vscode.previewDAG", () => {
+      const editor = vscode17.window.activeTextEditor;
       if (editor) DAGPanel.createOrShow(context.extensionUri, editor.document);
     }),
-    vscode11.commands.registerCommand("wpipe-vscode.openDashboard", openDashboard),
-    vscode11.commands.registerCommand("wpipe-vscode.showCheatSheet", showCheatSheet),
-    vscode11.commands.registerCommand("wpipe-vscode.runPipeline", async (filePath) => {
-      if (vscode11.env.uiKind === vscode11.UIKind.Web) {
-        vscode11.window.showErrorMessage("Running pipelines requires a local Python environment.");
+    vscode17.commands.registerCommand("wpipe-vscode.openDashboard", (dbPath) => openDashboard(context, dbPath)),
+    vscode17.commands.registerCommand("wpipe-vscode.replayLogs", replayLogErrors),
+    vscode17.commands.registerCommand("wpipe-vscode.findStepUsage", (stepName) => findStepUsage(stepName)),
+    vscode17.commands.registerCommand("wpipe-vscode.showCheatSheet", showCheatSheet),
+    vscode17.commands.registerCommand("wpipe-vscode.openAiAssistant", () => showAiAssistant(context.extensionUri)),
+    vscode17.commands.registerCommand("wpipe-vscode.runPipeline", async (filePath) => {
+      if (vscode17.env.uiKind === vscode17.UIKind.Web) {
+        vscode17.window.showErrorMessage("Running pipelines requires a local Python environment.");
         return;
       }
-      const terminal = vscode11.window.createTerminal(`Pipeline: ${path4.basename(filePath)}`);
+      const terminal = vscode17.window.createTerminal(`Pipeline: ${path5.basename(filePath)}`);
       terminal.show();
       terminal.sendText(`python "${filePath}"`);
     }),
-    vscode11.commands.registerCommand("wpipe-vscode.addLogicBlock", async (range) => {
-      const editor = vscode11.window.activeTextEditor;
+    vscode17.commands.registerCommand("wpipe-vscode.addLogicBlock", async (range) => {
+      const editor = vscode17.window.activeTextEditor;
       if (!editor) return;
       const text = editor.document.getText(range);
       const openBracketIndex = text.indexOf("[");
       if (openBracketIndex !== -1) {
         const offset = editor.document.offsetAt(range.start) + openBracketIndex + 1;
         const pos = editor.document.positionAt(offset);
-        editor.selection = new vscode11.Selection(pos, pos);
+        editor.selection = new vscode17.Selection(pos, pos);
       }
       const items = [
         {
@@ -5535,65 +6157,65 @@ async function activate(context) {
           snippet: "Background(${1:slow_step})"
         }
       ];
-      const sel = await vscode11.window.showQuickPick(items, { placeHolder: "Select a logic block to insert inside set_steps..." });
+      const sel = await vscode17.window.showQuickPick(items, { placeHolder: "Select a logic block to insert inside set_steps..." });
       if (sel) {
-        editor.insertSnippet(new vscode11.SnippetString(sel.snippet));
+        editor.insertSnippet(new vscode17.SnippetString(sel.snippet));
       }
     }),
-    vscode11.commands.registerCommand("wpipeSteps.runStep", async (item) => {
-      if (vscode11.env.uiKind === vscode11.UIKind.Web) {
-        vscode11.window.showErrorMessage("Running steps requires a local Python environment.");
+    vscode17.commands.registerCommand("wpipeSteps.runStep", async (item) => {
+      if (vscode17.env.uiKind === vscode17.UIKind.Web) {
+        vscode17.window.showErrorMessage("Running steps requires a local Python environment.");
         return;
       }
       if (!item || !item.filePath) return;
-      const terminal = vscode11.window.createTerminal(`Run Step: ${item.label}`);
+      const terminal = vscode17.window.createTerminal(`Run Step: ${item.label}`);
       terminal.show();
       terminal.sendText(`python "${item.filePath}"`);
     }),
-    vscode11.commands.registerCommand("wpipeSteps.runStepFromCode", async (filePath, line) => {
-      if (vscode11.env.uiKind === vscode11.UIKind.Web) {
-        vscode11.window.showErrorMessage("Running steps requires a local Python environment.");
+    vscode17.commands.registerCommand("wpipeSteps.runStepFromCode", async (filePath, line) => {
+      if (vscode17.env.uiKind === vscode17.UIKind.Web) {
+        vscode17.window.showErrorMessage("Running steps requires a local Python environment.");
         return;
       }
-      const fileName = path4.basename(filePath);
-      const terminal = vscode11.window.createTerminal(`Run Step: ${fileName}`);
+      const fileName = path5.basename(filePath);
+      const terminal = vscode17.window.createTerminal(`Run Step: ${fileName}`);
       terminal.show();
       terminal.sendText(`python "${filePath}"`);
     }),
-    vscode11.commands.registerCommand("wpipeSteps.installRequirements", async (item) => {
-      if (vscode11.env.uiKind === vscode11.UIKind.Web) {
-        vscode11.window.showErrorMessage("Installing requirements requires a local environment.");
+    vscode17.commands.registerCommand("wpipeSteps.installRequirements", async (item) => {
+      if (vscode17.env.uiKind === vscode17.UIKind.Web) {
+        vscode17.window.showErrorMessage("Installing requirements requires a local environment.");
         return;
       }
       if (!item || !item.step || !item.step.requirements) {
-        vscode11.window.showWarningMessage("Este paso no tiene requerimientos externos definidos.");
+        vscode17.window.showWarningMessage("Este paso no tiene requerimientos externos definidos.");
         return;
       }
       const reqUrl = item.step.requirements;
-      const terminal = vscode11.window.createTerminal(`Install: ${item.step.name}`);
+      const terminal = vscode17.window.createTerminal(`Install: ${item.step.name}`);
       terminal.show();
       try {
         const response = await fetch(reqUrl);
         if (!response.ok) throw new Error(`No se pudo descargar el archivo: ${response.statusText}`);
         const content2 = await response.text();
         let tempReqUri;
-        const workspaceFolders = vscode11.workspace.workspaceFolders;
+        const workspaceFolders = vscode17.workspace.workspaceFolders;
         if (workspaceFolders && workspaceFolders.length > 0) {
-          tempReqUri = vscode11.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
+          tempReqUri = vscode17.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
         } else {
-          await vscode11.workspace.fs.createDirectory(context.globalStorageUri);
-          tempReqUri = vscode11.Uri.joinPath(context.globalStorageUri, `requirements_${item.step.name}.txt`);
+          await vscode17.workspace.fs.createDirectory(context.globalStorageUri);
+          tempReqUri = vscode17.Uri.joinPath(context.globalStorageUri, `requirements_${item.step.name}.txt`);
         }
-        await vscode11.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content2));
+        await vscode17.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content2));
         terminal.sendText(`pip install -r "${tempReqUri.fsPath}"`);
-        vscode11.window.showInformationMessage(`\u23F3 Descargado e instalando dependencias para '${item.step.name}'...`);
+        vscode17.window.showInformationMessage(`\u23F3 Descargado e instalando dependencias para '${item.step.name}'...`);
       } catch (error) {
-        vscode11.window.showErrorMessage(`\u274C Error al preparar requerimientos: ${error}`);
+        vscode17.window.showErrorMessage(`\u274C Error al preparar requerimientos: ${error}`);
       }
     }),
-    vscode11.commands.registerCommand("wpipeSteps.viewExamples", async (item) => {
+    vscode17.commands.registerCommand("wpipeSteps.viewExamples", async (item) => {
       if (!item || !item.step || !item.step.examples) {
-        vscode11.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
+        vscode17.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
         return;
       }
       let uiUrl = item.step.examples.replace("raw.githubusercontent.com", "github.com");
@@ -5606,11 +6228,11 @@ async function activate(context) {
         const type = item.step.examples.endsWith("/") ? "tree" : "blob";
         uiUrl = `https://github.com/${owner}/${repo}/${type}/${branch}/${rest}`;
       }
-      vscode11.env.openExternal(vscode11.Uri.parse(uiUrl));
+      vscode17.env.openExternal(vscode17.Uri.parse(uiUrl));
     }),
-    vscode11.commands.registerCommand("wpipeSteps.downloadExample", async (item) => {
+    vscode17.commands.registerCommand("wpipeSteps.downloadExample", async (item) => {
       if (!item || !item.step || !item.step.examples) {
-        vscode11.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
+        vscode17.window.showWarningMessage("Este paso no tiene ejemplos configurados.");
         return;
       }
       let rawUrl = item.step.examples;
@@ -5632,17 +6254,17 @@ async function activate(context) {
             name: f.name
           }));
           if (pyFiles.length === 0) {
-            vscode11.window.showInformationMessage("No se encontraron archivos de ejemplo (.py) en la carpeta.");
+            vscode17.window.showInformationMessage("No se encontraron archivos de ejemplo (.py) en la carpeta.");
             return;
           }
-          const selected = await vscode11.window.showQuickPick(pyFiles, {
+          const selected = await vscode17.window.showQuickPick(pyFiles, {
             placeHolder: "Selecciona un ejemplo para usar como plantilla:"
           });
           if (!selected) return;
           rawUrl = selected.url;
         }
-        await vscode11.window.withProgress({
-          location: vscode11.ProgressLocation.Notification,
+        await vscode17.window.withProgress({
+          location: vscode17.ProgressLocation.Notification,
           title: `Descargando plantilla...`,
           cancellable: false
         }, async () => {
@@ -5652,15 +6274,15 @@ async function activate(context) {
           if (content2.trim().startsWith("<!DOCTYPE html>")) {
             throw new Error("La URL no apunta a un archivo RAW v\xE1lido.");
           }
-          const doc = await vscode11.workspace.openTextDocument({
+          const doc = await vscode17.workspace.openTextDocument({
             content: content2,
             language: "python"
           });
-          await vscode11.window.showTextDocument(doc);
-          vscode11.window.showInformationMessage(`\u2705 Plantilla cargada con \xE9xito.`);
+          await vscode17.window.showTextDocument(doc);
+          vscode17.window.showInformationMessage(`\u2705 Plantilla cargada con \xE9xito.`);
         });
       } catch (error) {
-        vscode11.window.showErrorMessage(`\u274C Fallo al procesar plantilla: ${error}`);
+        vscode17.window.showErrorMessage(`\u274C Fallo al procesar plantilla: ${error}`);
       }
     })
   );
