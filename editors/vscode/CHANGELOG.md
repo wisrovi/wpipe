@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1 LTS] - 2026-06-22
+
+### Added
+- **Buscador de Estados Unificado**: El buscador de estados ahora integra dinámicamente los estados definidos localmente en el workspace y los estados remotos en una sola lista de búsqueda.
+- **Búsqueda por Categoría**: La descripción de los ítems en el QuickPick incluye la jerarquía de categorías, lo que permite buscar por subcategoría (ej. escribir "redis" filtrará todos los estados de esa tecnología).
+- **Atajo de Teclado**: Se ha agregado el atajo de teclado global `Ctrl+Alt+S` (o `Cmd+Alt+S` en macOS) para abrir el buscador de estados de manera instantánea.
+- **Filtro de Plantillas**: Se excluyen los archivos `__init__.py` al listar plantillas de ejemplos para descargar.
+
 ## [1.0.0 LTS] - 2026-06-22
 
 ### Added
