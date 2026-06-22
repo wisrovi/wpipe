@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.2 LTS] - 2026-06-22
+
+### Fixed
+- **Búsqueda Difusa por Categorías**: Se han generado palabras clave de búsqueda automatizadas (con y sin guiones bajos, ej. `redis_hash`) en el campo de detalle de los estados para permitir filtrar instantáneamente los pasos en el QuickPick usando cualquier combinación de subcategorías.
+
 ## [1.0.1 LTS] - 2026-06-22
 
 ### Added
