@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.3 LTS] - 2026-06-22
+
+### Fixed
+- **Prioridad de Categorías Locales**: La extensión ahora fusiona los datos locales con la caché remota para garantizar que las propiedades de categoría y subcategoría personalizadas se muestren de forma prioritaria en lugar de ser pisadas por la caché.
+- **Atajo de Teclado Global**: Se eliminó la restricción de foco de texto para el atajo `Ctrl+Alt+S`, permitiendo abrir el panel de búsqueda desde cualquier sección del editor.
+
 ## [1.0.2 LTS] - 2026-06-22
 
 ### Fixed
