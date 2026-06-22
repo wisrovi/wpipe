@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.4 LTS] - 2026-06-22
+
+### Fixed
+- **Indexación de Categorías en Pasos Locales**: Se actualizó el motor de análisis AST para extraer los atributos de categorías (`category`, `subcategory1`, etc.) de los decoradores `@step` en Python local, unificando la búsqueda.
+- **Evento de Activación**: Se añadió la activación explícita en VS Code para el comando de búsqueda de estados, garantizando que el atajo `Ctrl+Alt+S` responda de inmediato en cualquier momento.
+
 ## [1.0.3 LTS] - 2026-06-22
 
 ### Fixed
