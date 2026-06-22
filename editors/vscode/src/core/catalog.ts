@@ -26,20 +26,42 @@ export class CatalogManager {
     public static async init(context: vscode.ExtensionContext): Promise<void> {
         const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
         
-        // 1. Load from cache
+        // 1. Load local embedded catalog (always trust local file changes/additions)
+        let localCatalog: StepEntry[] = [];
+        try {
+            const catalogUri = vscode.Uri.joinPath(context.extensionUri, 'out', 'steps_catalog.json');
+            const catalogData = await vscode.workspace.fs.readFile(catalogUri);
+            const raw = JSON.parse(new TextDecoder().decode(catalogData));
+            localCatalog = Array.isArray(raw) ? raw : (raw.default || []);
+        } catch (e2) {}
+
+        // 2. Load from remote cache
+        let cachedCatalog: StepEntry[] = [];
         try {
             const cacheData = await vscode.workspace.fs.readFile(cacheUri);
             const cached = JSON.parse(new TextDecoder().decode(cacheData));
-            if (Array.isArray(cached)) this.catalog = cached;
-        } catch (e) {
-            // Cache doesn't exist or is invalid, load embedded data
-            try {
-                const catalogUri = vscode.Uri.joinPath(context.extensionUri, 'out', 'steps_catalog.json');
-                const catalogData = await vscode.workspace.fs.readFile(catalogUri);
-                const raw = JSON.parse(new TextDecoder().decode(catalogData));
-                this.catalog = Array.isArray(raw) ? raw : (raw.default || []);
-            } catch (e2) {}
-        }
+            if (Array.isArray(cached)) cachedCatalog = cached;
+        } catch (e) {}
+
+        // 3. Merge: Local properties (such as categories/subcategories) overlay cached metadata
+        const mergedMap = new Map<string, StepEntry>();
+        
+        cachedCatalog.forEach(s => {
+            mergedMap.set(`${s.repo}:${s.name}`, s);
+        });
+
+        localCatalog.forEach(s => {
+            const key = `${s.repo}:${s.name}`;
+            const existing = mergedMap.get(key);
+            if (existing) {
+                // Overlay local metadata to preserve categories
+                mergedMap.set(key, { ...existing, ...s });
+            } else {
+                mergedMap.set(key, s);
+            }
+        });
+
+        this.catalog = Array.from(mergedMap.values());
 
         // 2. Trigger background update
         this.update(context, false);
