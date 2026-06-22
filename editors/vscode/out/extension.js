@@ -4616,10 +4616,10 @@ ${step.how_to_use}
   }
 };
 var CategoryItem = class extends vscode3.TreeItem {
-  constructor(label, repo, path5) {
+  constructor(label, repo, path6) {
     super(label, vscode3.TreeItemCollapsibleState.Collapsed);
     this.repo = repo;
-    this.path = path5;
+    this.path = path6;
     this.iconPath = new vscode3.ThemeIcon("folder");
     this.contextValue = "categoryItem";
   }
@@ -6248,7 +6248,7 @@ async function activate(context) {
           if (!apiResponse.ok) throw new Error(`No se pudo listar el contenido de la carpeta: ${apiResponse.statusText}`);
           const files = await apiResponse.json();
           if (!Array.isArray(files)) throw new Error("Respuesta inesperada de la API de GitHub.");
-          const pyFiles = files.filter((f) => f.name.endsWith(".py")).map((f) => ({
+          const pyFiles = files.filter((f) => f.name.endsWith(".py") && f.name !== "__init__.py").map((f) => ({
             label: `$(file-code) ${f.name}`,
             url: f.download_url,
             name: f.name
