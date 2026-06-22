@@ -12,7 +12,10 @@ export interface StepEntry {
     how_to_use?: string;
     examples?: string;
     requirements?: string;
-    environment?: string;
+    category?: string;
+    subcategory1?: string;
+    subcategory2?: string;
+    subcategory3?: string;
 }
 
 export class CatalogManager {
