@@ -50,19 +50,35 @@ var CatalogManager = class {
   }
   static async init(context) {
     const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, "catalog_cache.json");
+    let localCatalog = [];
+    try {
+      const catalogUri = vscode.Uri.joinPath(context.extensionUri, "out", "steps_catalog.json");
+      const catalogData = await vscode.workspace.fs.readFile(catalogUri);
+      const raw = JSON.parse(new TextDecoder().decode(catalogData));
+      localCatalog = Array.isArray(raw) ? raw : raw.default || [];
+    } catch (e2) {
+    }
+    let cachedCatalog = [];
     try {
       const cacheData = await vscode.workspace.fs.readFile(cacheUri);
       const cached = JSON.parse(new TextDecoder().decode(cacheData));
-      if (Array.isArray(cached)) this.catalog = cached;
+      if (Array.isArray(cached)) cachedCatalog = cached;
     } catch (e) {
-      try {
-        const catalogUri = vscode.Uri.joinPath(context.extensionUri, "out", "steps_catalog.json");
-        const catalogData = await vscode.workspace.fs.readFile(catalogUri);
-        const raw = JSON.parse(new TextDecoder().decode(catalogData));
-        this.catalog = Array.isArray(raw) ? raw : raw.default || [];
-      } catch (e2) {
-      }
     }
+    const mergedMap = /* @__PURE__ */ new Map();
+    cachedCatalog.forEach((s) => {
+      mergedMap.set(`${s.repo}:${s.name}`, s);
+    });
+    localCatalog.forEach((s) => {
+      const key = `${s.repo}:${s.name}`;
+      const existing = mergedMap.get(key);
+      if (existing) {
+        mergedMap.set(key, { ...existing, ...s });
+      } else {
+        mergedMap.set(key, s);
+      }
+    });
+    this.catalog = Array.from(mergedMap.values());
     this.update(context, false);
   }
   static async update(context, manual = false) {
