@@ -4463,12 +4463,24 @@ var WorkspaceIndex = class {
                 let name2 = "";
                 let version = "v1.0";
                 let description = "";
+                let category = "";
+                let subcategory1 = "";
+                let subcategory2 = "";
+                let subcategory3 = "";
                 const nameMatch = decText.match(/name\s*=\s*['"](.*?)['"]/);
                 if (nameMatch) name2 = nameMatch[1];
                 const verMatch = decText.match(/version\s*=\s*['"](.*?)['"]/);
                 if (verMatch) version = verMatch[1];
                 const descMatch = decText.match(/description\s*=\s*['"](.*?)['"]/);
                 if (descMatch) description = descMatch[1];
+                const catMatch = decText.match(/category\s*=\s*['"](.*?)['"]/);
+                if (catMatch) category = catMatch[1];
+                const sub1Match = decText.match(/subcategory1\s*=\s*['"](.*?)['"]/);
+                if (sub1Match) subcategory1 = sub1Match[1];
+                const sub2Match = decText.match(/subcategory2\s*=\s*['"](.*?)['"]/);
+                if (sub2Match) subcategory2 = sub2Match[1];
+                const sub3Match = decText.match(/subcategory3\s*=\s*['"](.*?)['"]/);
+                if (sub3Match) subcategory3 = sub3Match[1];
                 if (!name2 && node.node.parent) {
                   let funcDef = node.node.parent.getChild("FunctionDefinition") || node.node.parent.getChild("ClassDefinition");
                   if (funcDef) {
@@ -4478,7 +4490,17 @@ var WorkspaceIndex = class {
                 }
                 if (name2) {
                   const line = content2.substring(0, node.from).split("\n").length - 1;
-                  newSteps.set(name2, { name: name2, version, filePath: f.fsPath, line, description });
+                  newSteps.set(name2, {
+                    name: name2,
+                    version,
+                    filePath: f.fsPath,
+                    line,
+                    description,
+                    category,
+                    subcategory1,
+                    subcategory2,
+                    subcategory3
+                  });
                 }
               }
             }
@@ -6113,20 +6135,43 @@ async function activate(context) {
     }),
     vscode17.commands.registerCommand("wpipe-vscode.searchSteps", async () => {
       await WorkspaceIndex.indexWorkspace();
-      const localItems = WorkspaceIndex.getAllSteps().map((s) => ({
-        label: `$(home) ${s.name}`,
-        description: `Workspace | Local Step`,
-        detail: `Location: ${vscode17.workspace.asRelativePath(s.filePath)}:${s.line + 1}`,
-        step: {
-          name: s.name,
-          func_name: s.name,
-          namespace: "states",
-          // default namespace for local step modules
-          repo: "Workspace",
-          file: s.filePath,
-          description: s.description || "Local workspace step"
+      const localItems = WorkspaceIndex.getAllSteps().map((s) => {
+        const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3].map((c) => c?.trim()).filter(Boolean);
+        const categoryPath = catSeq.length > 0 ? catSeq.join(" \u2794 ") : "Workspace";
+        const keywords = [];
+        if (catSeq.length > 0) {
+          keywords.push(catSeq.join("_").toLowerCase());
+          keywords.push(catSeq.join(" ").toLowerCase());
+          for (let i = 0; i < catSeq.length; i++) {
+            for (let j = i + 1; j <= catSeq.length; j++) {
+              const sub = catSeq.slice(i, j);
+              keywords.push(sub.join("_").toLowerCase());
+              keywords.push(sub.join(" ").toLowerCase());
+              keywords.push(sub.join("").toLowerCase());
+            }
+          }
         }
-      }));
+        const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(", ");
+        const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : "";
+        return {
+          label: `$(home) ${s.name}`,
+          description: `Workspace | ${categoryPath}`,
+          detail: `Location: ${vscode17.workspace.asRelativePath(s.filePath)}:${s.line + 1}${keywordsSuffix}`,
+          step: {
+            name: s.name,
+            func_name: s.name,
+            namespace: "states",
+            // default namespace for local step modules
+            repo: "Workspace",
+            file: s.filePath,
+            description: s.description || "Local workspace step",
+            category: s.category,
+            subcategory1: s.subcategory1,
+            subcategory2: s.subcategory2,
+            subcategory3: s.subcategory3
+          }
+        };
+      });
       const catalogItems = CatalogManager.getSteps().map((s) => {
         const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3].map((c) => c?.trim()).filter(Boolean);
         const categoryPath = catSeq.length > 0 ? catSeq.join(" \u2794 ") : "General";
