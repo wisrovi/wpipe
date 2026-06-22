@@ -215,6 +215,14 @@
                 }
             ]
         },
+        "keybindings": [
+            {
+                "command": "wpipe-vscode.searchSteps",
+                "key": "ctrl+alt+s",
+                "mac": "cmd+alt+s",
+                "when": "editorTextFocus"
+            }
+        ],
         "snippets": [
             {
                 "language": "python",
