@@ -26,6 +26,7 @@ Stop guessing how your data flows. Watch your architecture come to life as you w
 ### 🔍 Step Registry Explorer
 Master your ecosystem of reusable components.
 - **Centralized Hub:** A dedicated sidebar view maps every `@step` across your entire workspace.
+- **Hierarchical Categorization:** Official library and community plugins are organized dynamically using folders based on `category` and subcategories (`subcategory1`, `subcategory2`, `subcategory3`). Steps without defined categories are neatly grouped under a virtual "General" folder to keep your root view clean.
 - **Precision Navigation:** Click any step to teleport directly to its implementation.
 - **One-Click Testing:** Run and validate individual steps in isolation without launching the full pipeline.
 
