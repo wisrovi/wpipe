@@ -4493,22 +4493,56 @@ var WPipeStepProvider = class {
   getTreeItem(e) {
     return e;
   }
-  async getChildren(e) {
-    if (!e) {
+  async getChildren(element) {
+    if (!element) {
       return [
         new vscode3.TreeItem("\u{1F6E0}\uFE0F Workspace Steps", vscode3.TreeItemCollapsibleState.Expanded),
         new vscode3.TreeItem("\u{1F4E6} Official Library", vscode3.TreeItemCollapsibleState.Collapsed),
         new vscode3.TreeItem("\u{1F91D} Community Plugins", vscode3.TreeItemCollapsibleState.Collapsed)
       ];
     }
-    const label = e.label;
-    if (label.includes("Workspace")) return this.searchWorkspace();
-    if (label.includes("Official")) return this.getLibItems("Official");
-    if (label.includes("Community")) return this.getLibItems("Community");
+    if (element instanceof CategoryItem) {
+      return this.getCategoryChildren(element.repo, element.path);
+    }
+    const label = element.label;
+    if (label.includes("Workspace")) {
+      return this.searchWorkspace();
+    }
+    if (label.includes("Official")) {
+      return this.getCategoryChildren("Official", []);
+    }
+    if (label.includes("Community")) {
+      return this.getCategoryChildren("Community", []);
+    }
     return [];
   }
-  getLibItems(repo) {
-    return CatalogManager.getSteps().filter((s) => s.repo === repo).map((s) => new LibraryItem(s));
+  /**
+   * Resolves the child categories and library items for a given path and repository.
+   */
+  getCategoryChildren(repo, categoryPath) {
+    const steps = CatalogManager.getSteps().filter((s) => s.repo === repo);
+    const subcategoriesSet = /* @__PURE__ */ new Set();
+    const directLibraryItems = [];
+    for (const step of steps) {
+      let catSeq = [step.category, step.subcategory1, step.subcategory2, step.subcategory3].map((s) => s?.trim()).filter(Boolean);
+      if (catSeq.length === 0) {
+        catSeq = ["General"];
+      }
+      if (categoryPath.length <= catSeq.length && categoryPath.every((val, idx) => catSeq[idx] === val)) {
+        if (catSeq.length === categoryPath.length) {
+          directLibraryItems.push(new LibraryItem(step));
+        } else {
+          const nextSubcat = catSeq[categoryPath.length];
+          subcategoriesSet.add(nextSubcat);
+        }
+      }
+    }
+    const categoryItems = Array.from(subcategoriesSet).map(
+      (subcat) => new CategoryItem(subcat, repo, [...categoryPath, subcat])
+    );
+    categoryItems.sort((a, b) => a.label.localeCompare(b.label));
+    directLibraryItems.sort((a, b) => a.label.localeCompare(b.label));
+    return [...categoryItems, ...directLibraryItems];
   }
   async searchWorkspace() {
     await WorkspaceIndex.indexWorkspace();
@@ -4579,6 +4613,15 @@ ${step.how_to_use}
     this.tooltip = tooltip;
     this.contextValue = "libraryStep";
     this.command = { command: "wpipeSteps.insertStep", title: "Insert", arguments: [step] };
+  }
+};
+var CategoryItem = class extends vscode3.TreeItem {
+  constructor(label, repo, path5) {
+    super(label, vscode3.TreeItemCollapsibleState.Collapsed);
+    this.repo = repo;
+    this.path = path5;
+    this.iconPath = new vscode3.ThemeIcon("folder");
+    this.contextValue = "categoryItem";
   }
 };
 
