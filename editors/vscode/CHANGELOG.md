@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0 LTS] - 2026-06-22
+
+### Added
+- **Categorización Jerárquica**: Los estados oficiales y comunitarios en el panel lateral (Step Registry) ahora se organizan jerárquicamente en subcarpetas basadas en `category`, `subcategory1`, `subcategory2` y `subcategory3`.
+- **Organización Limpia**: Los estados sin categoría definida se agrupan automáticamente bajo una carpeta virtual "General", manteniendo la raíz del menú lateral limpia y organizada.
+
+## [0.10.0] - 2026-06-15
+
+### Added
+- **Mejoras Generales**: Refactorización interna de archivos y optimizaciones para el soporte de pipelines avanzados.
+
 ## [0.9.10] - 2026-06-07
 
 ### Added
