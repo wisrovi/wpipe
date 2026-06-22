@@ -262,7 +262,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     const files = await apiResponse.json();
                     if (!Array.isArray(files)) throw new Error('Respuesta inesperada de la API de GitHub.');
                     
-                    const pyFiles = files.filter((f: any) => f.name.endsWith('.py')).map((f: any) => ({
+                    const pyFiles = files.filter((f: any) => f.name.endsWith('.py') && f.name !== '__init__.py').map((f: any) => ({
                         label: `$(file-code) ${f.name}`,
                         url: f.download_url,
                         name: f.name
