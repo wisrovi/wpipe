@@ -6096,15 +6096,54 @@ async function activate(context) {
       }
     }),
     vscode17.commands.registerCommand("wpipe-vscode.searchSteps", async () => {
-      const items = CatalogManager.getSteps().map((s) => ({
-        label: `$(rocket) ${s.name}`,
-        description: `${s.repo} | Author: ${s.author || "Official"}`,
-        detail: `Module: ${s.namespace}`,
-        step: s
+      await WorkspaceIndex.indexWorkspace();
+      const localItems = WorkspaceIndex.getAllSteps().map((s) => ({
+        label: `$(home) ${s.name}`,
+        description: `Workspace | Local Step`,
+        detail: `Location: ${vscode17.workspace.asRelativePath(s.filePath)}:${s.line + 1}`,
+        step: {
+          name: s.name,
+          func_name: s.name,
+          namespace: "states",
+          // default namespace for local step modules
+          repo: "Workspace",
+          file: s.filePath,
+          description: s.description || "Local workspace step"
+        }
       }));
-      const sel = await vscode17.window.showQuickPick(items, { placeHolder: "Buscar estado en el cat\xE1logo oficial o comunidad..." });
+      const catalogItems = CatalogManager.getSteps().map((s) => {
+        const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3].map((c) => c?.trim()).filter(Boolean);
+        const categoryPath = catSeq.length > 0 ? catSeq.join(" \u2794 ") : "General";
+        return {
+          label: `$(rocket) ${s.name}`,
+          description: `${s.repo} | ${categoryPath}`,
+          detail: `Module: ${s.namespace} | Author: ${s.author || "Official"}`,
+          step: s
+        };
+      });
+      const items = [...localItems, ...catalogItems];
+      const sel = await vscode17.window.showQuickPick(items, {
+        placeHolder: "Buscar estado (Workspace local, Cat\xE1logo oficial o Comunidad)..."
+      });
       if (sel) {
-        vscode17.commands.executeCommand("wpipeSteps.insertStep", sel.step);
+        if (sel.step.repo === "Workspace") {
+          const editor = vscode17.window.activeTextEditor;
+          if (editor) {
+            editor.edit((eb) => {
+              const importCode = `from states import ${sel.step.func_name}
+`;
+              const documentText = editor.document.getText();
+              if (!documentText.includes(importCode)) {
+                eb.insert(new vscode17.Position(0, 0), importCode);
+              }
+              const isClass = /^[A-Z]/.test(sel.step.func_name);
+              eb.insert(editor.selection.active, isClass ? `${sel.step.func_name}(),` : `${sel.step.func_name},`);
+            });
+            vscode17.window.showInformationMessage(`\u2705 Estado local '${sel.step.name}' insertado con \xE9xito.`);
+          }
+        } else {
+          vscode17.commands.executeCommand("wpipeSteps.insertStep", sel.step);
+        }
       }
     }),
     vscode17.commands.registerCommand("wpipe-vscode.previewDAG", () => {
