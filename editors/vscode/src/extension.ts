@@ -15,6 +15,31 @@ import { registerDiagnostics } from './core/diagnostics';
 import { createNewStepWizard } from './wizards/stepWizard';
 import * as path from 'path';
 
+function getPythonModulePath(filePath: string): string {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) return 'states';
+    
+    const rootPath = workspaceFolders[0].uri.fsPath;
+    const relativePath = path.relative(rootPath, filePath);
+    
+    // Check if the step is inside the states/ folder
+    const parts = relativePath.split(/[\\/]/);
+    if (parts[0] === 'states') {
+        return 'states';
+    }
+    
+    // Otherwise, generate the specific relative module path
+    let cleanPath = relativePath;
+    if (cleanPath.endsWith('.py')) {
+        cleanPath = cleanPath.slice(0, -3);
+    }
+    let modulePath = cleanPath.replace(/[\\/]/g, '.');
+    if (modulePath.endsWith('.__init__')) {
+        modulePath = modulePath.slice(0, -9);
+    }
+    return modulePath || 'states';
+}
+
 export async function activate(context: vscode.ExtensionContext) {
     console.log('🚀 WPipe Tools: Activation started...');
     
@@ -54,7 +79,10 @@ export async function activate(context: vscode.ExtensionContext) {
             if (editor) {
                 editor.edit(eb => {
                     const importCode = `from ${step.namespace} import ${step.func_name}\n`;
-                    eb.insert(new vscode.Position(0, 0), importCode);
+                    const documentText = editor.document.getText();
+                    if (!documentText.includes(importCode)) {
+                        eb.insert(new vscode.Position(0, 0), importCode);
+                    }
                     const isClass = /^[A-Z]/.test(step.func_name);
                     eb.insert(editor.selection.active, isClass ? `${step.func_name}(),` : `${step.func_name},`);
                 });
@@ -66,36 +94,25 @@ export async function activate(context: vscode.ExtensionContext) {
             // Index workspace steps to ensure local definitions are included
             await WorkspaceIndex.indexWorkspace();
             
-            const localItems = WorkspaceIndex.getAllSteps().map(s => {
+            interface StepQuickPickItem extends vscode.QuickPickItem {
+                step: StepEntry;
+            }
+
+            const localItems: StepQuickPickItem[] = WorkspaceIndex.getAllSteps().map(s => {
                 const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3]
                     .map(c => c?.trim())
                     .filter(Boolean) as string[];
                 const categoryPath = catSeq.length > 0 ? catSeq.join(' ➔ ') : 'Workspace';
-
-                const keywords: string[] = [];
-                if (catSeq.length > 0) {
-                    keywords.push(catSeq.join('_').toLowerCase());
-                    keywords.push(catSeq.join(' ').toLowerCase());
-                    for (let i = 0; i < catSeq.length; i++) {
-                        for (let j = i + 1; j <= catSeq.length; j++) {
-                            const sub = catSeq.slice(i, j);
-                            keywords.push(sub.join('_').toLowerCase());
-                            keywords.push(sub.join(' ').toLowerCase());
-                            keywords.push(sub.join('').toLowerCase());
-                        }
-                    }
-                }
-                const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(', ');
-                const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : '';
+                const moduleName = getPythonModulePath(s.filePath);
 
                 return {
                     label: `$(home) ${s.name}`,
                     description: `Workspace | ${categoryPath}`,
-                    detail: `Location: ${vscode.workspace.asRelativePath(s.filePath)}:${s.line + 1}${keywordsSuffix}`,
+                    detail: `Location: ${vscode.workspace.asRelativePath(s.filePath)}:${s.line + 1}`,
                     step: {
                         name: s.name,
                         func_name: s.name,
-                        namespace: 'states', // default namespace for local step modules
+                        namespace: moduleName,
                         repo: 'Workspace',
                         file: s.filePath,
                         description: s.description || 'Local workspace step',
@@ -107,61 +124,96 @@ export async function activate(context: vscode.ExtensionContext) {
                 };
             });
 
-            const catalogItems = CatalogManager.getSteps().map(s => {
+            const catalogItems: StepQuickPickItem[] = CatalogManager.getSteps().map(s => {
                 const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3]
                     .map(c => c?.trim())
                     .filter(Boolean) as string[];
                 const categoryPath = catSeq.length > 0 ? catSeq.join(' ➔ ') : 'General';
 
-                // Generate search keywords (e.g. "database_redis_hash", "redis_hash") to match user typing patterns
-                const keywords: string[] = [];
-                if (catSeq.length > 0) {
-                    keywords.push(catSeq.join('_').toLowerCase());
-                    keywords.push(catSeq.join(' ').toLowerCase());
-                    for (let i = 0; i < catSeq.length; i++) {
-                        for (let j = i + 1; j <= catSeq.length; j++) {
-                            const sub = catSeq.slice(i, j);
-                            keywords.push(sub.join('_').toLowerCase());
-                            keywords.push(sub.join(' ').toLowerCase());
-                            keywords.push(sub.join('').toLowerCase());
-                        }
-                    }
-                }
-                const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(', ');
-                const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : '';
-
                 return {
                     label: `$(rocket) ${s.name}`,
                     description: `${s.repo} | ${categoryPath}`,
-                    detail: `Module: ${s.namespace}${keywordsSuffix} | Author: ${s.author || 'Official'}`,
+                    detail: `Module: ${s.namespace} | Author: ${s.author || 'Official'}`,
                     step: s
                 };
             });
 
             const items = [...localItems, ...catalogItems];
-            const sel = await vscode.window.showQuickPick(items, { 
-                placeHolder: 'Buscar estado (Workspace local, Catálogo oficial o Comunidad)...' 
+
+            const quickPick = vscode.window.createQuickPick<StepQuickPickItem>();
+            quickPick.items = items;
+            quickPick.placeholder = 'Buscar estado (Workspace local, Catálogo oficial o Comunidad)...';
+            quickPick.matchOnDescription = false;
+            quickPick.matchOnDetail = false;
+
+            // Custom multi-term search filtering
+            quickPick.onDidChangeValue(value => {
+                const searchVal = value.trim().toLowerCase();
+                if (!searchVal) {
+                    quickPick.items = items;
+                    return;
+                }
+
+                // Split search query by space, underscore, dash, etc.
+                const terms = searchVal.split(/[\s_+.-]+/).filter(Boolean);
+
+                quickPick.items = items.filter(item => {
+                    const label = item.label.toLowerCase();
+                    const desc = item.description ? item.description.toLowerCase() : '';
+                    const detail = item.detail ? item.detail.toLowerCase() : '';
+                    const step = item.step;
+
+                    // All terms must match at least one of the fields/metadata of this item
+                    return terms.every(term => {
+                        // Check main UI fields
+                        if (label.includes(term) || desc.includes(term) || detail.includes(term)) {
+                            return true;
+                        }
+                        // Check step specific fields
+                        if (step.name.toLowerCase().includes(term) || 
+                            (step.func_name && step.func_name.toLowerCase().includes(term)) || 
+                            (step.namespace && step.namespace.toLowerCase().includes(term))) {
+                            return true;
+                        }
+                        // Check categories list
+                        const categories = [step.category, step.subcategory1, step.subcategory2, step.subcategory3]
+                            .map(c => c?.trim().toLowerCase())
+                            .filter(Boolean);
+                        if (categories.some(cat => cat.includes(term))) {
+                            return true;
+                        }
+                        return false;
+                    });
+                });
             });
 
-            if (sel) {
-                if (sel.step.repo === 'Workspace') {
-                    const editor = vscode.window.activeTextEditor;
-                    if (editor) {
-                        editor.edit(eb => {
-                            const importCode = `from states import ${sel.step.func_name}\n`;
-                            const documentText = editor.document.getText();
-                            if (!documentText.includes(importCode)) {
-                                eb.insert(new vscode.Position(0, 0), importCode);
-                            }
-                            const isClass = /^[A-Z]/.test(sel.step.func_name);
-                            eb.insert(editor.selection.active, isClass ? `${sel.step.func_name}(),` : `${sel.step.func_name},`);
-                        });
-                        vscode.window.showInformationMessage(`✅ Estado local '${sel.step.name}' insertado con éxito.`);
+            quickPick.onDidAccept(() => {
+                const sel = quickPick.selectedItems[0];
+                if (sel) {
+                    if (sel.step.repo === 'Workspace') {
+                        const editor = vscode.window.activeTextEditor;
+                        if (editor) {
+                            editor.edit(eb => {
+                                const moduleName = getPythonModulePath(sel.step.file);
+                                const importCode = `from ${moduleName} import ${sel.step.func_name}\n`;
+                                const documentText = editor.document.getText();
+                                if (!documentText.includes(importCode)) {
+                                    eb.insert(new vscode.Position(0, 0), importCode);
+                                }
+                                const isClass = /^[A-Z]/.test(sel.step.func_name);
+                                eb.insert(editor.selection.active, isClass ? `${sel.step.func_name}(),` : `${sel.step.func_name},`);
+                            });
+                            vscode.window.showInformationMessage(`✅ Estado local '${sel.step.name}' insertado con éxito.`);
+                        }
+                    } else {
+                        vscode.commands.executeCommand('wpipeSteps.insertStep', sel.step);
                     }
-                } else {
-                    vscode.commands.executeCommand('wpipeSteps.insertStep', sel.step);
                 }
-            }
+                quickPick.hide();
+            });
+
+            quickPick.onDidHide(() => quickPick.dispose());
+            quickPick.show();
         }),
 
         vscode.commands.registerCommand('wpipe-vscode.previewDAG', () => {

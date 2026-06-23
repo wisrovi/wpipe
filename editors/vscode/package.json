@@ -2,7 +2,7 @@
     "name": "wpipe-vscode",
     "displayName": "WPipe Tools",
     "description": "Intelligent tools for WPipe pipeline orchestration",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "publisher": "wpipe",
     "author": {
         "name": "William Rodriguez (wisrovi)",
@@ -99,7 +99,7 @@
             },
             {
                 "command": "wpipe-vscode.searchSteps",
-                "title": "WPipe: Search & Import Steps (Catalog)",
+                "title": "WPipe: Search Steps",
                 "icon": "$(search)"
             },
             {
@@ -134,7 +134,7 @@
             },
             {
                 "command": "wpipeSteps.runStep",
-                "title": "Run this Step (One-Click Test)",
+                "title": "WPipe: Run this Step (One-Click Test)",
                 "icon": "$(play)"
             },
             {
@@ -144,7 +144,7 @@
             },
             {
                 "command": "wpipeSteps.refreshEntry",
-                "title": "Refresh Steps",
+                "title": "WPipe: Refresh Steps",
                 "icon": "$(refresh)"
             },
             {
@@ -219,8 +219,15 @@
         "keybindings": [
             {
                 "command": "wpipe-vscode.searchSteps",
-                "key": "ctrl+alt+s",
-                "mac": "cmd+alt+s"
+                "key": "ctrl+alt+w",
+                "mac": "cmd+alt+w",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "wpipe-vscode.searchSteps",
+                "key": "ctrl+shift+alt+w",
+                "mac": "cmd+shift+alt+w",
+                "when": "editorTextFocus"
             }
         ],
         "snippets": [
@@ -236,7 +243,7 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && cp src/steps_catalog.json out/",
+        "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
         "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",

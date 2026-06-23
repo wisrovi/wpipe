@@ -23,19 +23,83 @@ export class CatalogManager {
     private static readonly OFFICIAL_URL = 'https://raw.githubusercontent.com/wisrovi/wpipe-steps/001-DEVELOPMENT/steps_catalog.json';
     private static readonly COMMUNITY_URL = 'https://raw.githubusercontent.com/wisrovi/wpipe-plugins/001-DEVELOPMENT/steps_catalog.json';
 
+    private static normalizeStep(s: StepEntry): StepEntry {
+        const step = { ...s };
+        step.repo = step.repo || 'Official';
+        
+        const capitalize = (str: string) => {
+            if (!str) return '';
+            return str.split(/[_-]/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+        };
+
+        const isSameTerm = (a: string | undefined, b: string | undefined) => {
+            if (!a || !b) return false;
+            const clean = (str: string) => str.toLowerCase().replace(/[_\s-]/g, '').trim();
+            return clean(a) === clean(b);
+        };
+
+        // Extract from namespace if missing
+        if (!step.category && step.namespace) {
+            const parts = step.namespace.split('.');
+            if (parts[0] === 'wpipe_steps' || parts[0] === 'wpipe_plugins') {
+                parts.shift();
+            }
+            
+            if (parts.length > 0) step.category = parts[0];
+            if (parts.length > 1) step.subcategory1 = parts[1];
+            if (parts.length > 2) step.subcategory2 = parts[2];
+            if (parts.length > 3) step.subcategory3 = parts[3];
+        }
+
+        // Format and capitalize categories for premium aesthetics
+        if (step.category) step.category = capitalize(step.category);
+        if (step.subcategory1) step.subcategory1 = capitalize(step.subcategory1);
+        if (step.subcategory2) step.subcategory2 = capitalize(step.subcategory2);
+        if (step.subcategory3) step.subcategory3 = capitalize(step.subcategory3);
+
+        // Remove redundant folder layers that match the step name
+        if (step.subcategory3 && (isSameTerm(step.subcategory3, step.name) || isSameTerm(step.subcategory3, step.func_name))) {
+            step.subcategory3 = '';
+        }
+        if (step.subcategory2 && (isSameTerm(step.subcategory2, step.name) || isSameTerm(step.subcategory2, step.func_name))) {
+            step.subcategory2 = '';
+        }
+        if (step.subcategory1 && (isSameTerm(step.subcategory1, step.name) || isSameTerm(step.subcategory1, step.func_name))) {
+            step.subcategory1 = '';
+        }
+
+        return step;
+    }
+
+    private static mergeCatalogs(base: StepEntry[], incoming: StepEntry[]): StepEntry[] {
+        const mergedMap = new Map<string, StepEntry>();
+        
+        base.forEach(s => {
+            const normalized = this.normalizeStep(s);
+            mergedMap.set(`${normalized.repo}:${normalized.name}`, normalized);
+        });
+
+        incoming.forEach(s => {
+            const normalized = this.normalizeStep(s);
+            const key = `${normalized.repo}:${normalized.name}`;
+            const existing = mergedMap.get(key);
+            if (existing) {
+                // Merge properties, prioritizing incoming properties
+                mergedMap.set(key, { ...existing, ...normalized });
+            } else {
+                mergedMap.set(key, normalized);
+            }
+        });
+
+        return Array.from(mergedMap.values());
+    }
+
     public static async init(context: vscode.ExtensionContext): Promise<void> {
         const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
         
-        // 1. Load local embedded catalog (always trust local file changes/additions)
-        let localCatalog: StepEntry[] = [];
-        try {
-            const catalogUri = vscode.Uri.joinPath(context.extensionUri, 'out', 'steps_catalog.json');
-            const catalogData = await vscode.workspace.fs.readFile(catalogUri);
-            const raw = JSON.parse(new TextDecoder().decode(catalogData));
-            localCatalog = Array.isArray(raw) ? raw : (raw.default || []);
-        } catch (e2) {}
-
-        // 2. Load from remote cache
+        // 1. Load from remote cache
         let cachedCatalog: StepEntry[] = [];
         try {
             const cacheData = await vscode.workspace.fs.readFile(cacheUri);
@@ -43,27 +107,10 @@ export class CatalogManager {
             if (Array.isArray(cached)) cachedCatalog = cached;
         } catch (e) {}
 
-        // 3. Merge: Local properties (such as categories/subcategories) overlay cached metadata
-        const mergedMap = new Map<string, StepEntry>();
-        
-        cachedCatalog.forEach(s => {
-            mergedMap.set(`${s.repo}:${s.name}`, s);
-        });
+        // 2. Normalize and populate categories of cached steps
+        this.catalog = this.mergeCatalogs([], cachedCatalog);
 
-        localCatalog.forEach(s => {
-            const key = `${s.repo}:${s.name}`;
-            const existing = mergedMap.get(key);
-            if (existing) {
-                // Overlay local metadata to preserve categories
-                mergedMap.set(key, { ...existing, ...s });
-            } else {
-                mergedMap.set(key, s);
-            }
-        });
-
-        this.catalog = Array.from(mergedMap.values());
-
-        // 2. Trigger background update
+        // 3. Trigger background update
         this.update(context, false);
     }
 
@@ -78,17 +125,14 @@ export class CatalogManager {
                     const p = await response.json();
                     const items = Array.isArray(p) ? p : [];
                     
-                    // Base URL for relative paths (everything before steps_catalog.json)
                     const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
 
                     const resolveUrl = (path: string | undefined) => {
                         if (!path) return undefined;
                         if (path.startsWith('http')) return path;
-                        // Join base URL with relative path, ensuring no double slashes in the middle
                         return `${baseUrl}${path.startsWith('/') ? path.substring(1) : path}`;
                     };
 
-                    // Force correct repo field and resolve relative URLs
                     return items.map(item => ({ 
                         ...item, 
                         repo: item.repo || defaultRepo,
@@ -107,8 +151,10 @@ export class CatalogManager {
             const newCatalog = [...off, ...com];
 
             if (newCatalog.length > 0) {
-                const newItems = newCatalog.filter(s => !oldNames.has(`${s.repo}:${s.name}`));
-                this.catalog = newCatalog;
+                const merged = this.mergeCatalogs(this.catalog, newCatalog);
+                const newItems = merged.filter(s => !oldNames.has(`${s.repo}:${s.name}`));
+                this.catalog = merged;
+                
                 try {
                     const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
                     await vscode.workspace.fs.writeFile(cacheUri, new TextEncoder().encode(JSON.stringify(this.catalog)));

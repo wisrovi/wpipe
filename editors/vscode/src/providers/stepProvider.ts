@@ -31,7 +31,8 @@ export class WPipeStepProvider implements vscode.TreeDataProvider<vscode.TreeIte
 
         const label = element.label as string;
         if (label.includes('Workspace')) {
-            return this.searchWorkspace();
+            await WorkspaceIndex.indexWorkspace();
+            return this.getCategoryChildren('Workspace', []);
         }
         if (label.includes('Official')) {
             return this.getCategoryChildren('Official', []);
@@ -46,49 +47,79 @@ export class WPipeStepProvider implements vscode.TreeDataProvider<vscode.TreeIte
      * Resolves the child categories and library items for a given path and repository.
      */
     private getCategoryChildren(repo: string, categoryPath: string[]): vscode.TreeItem[] {
-        const steps = CatalogManager.getSteps().filter(s => s.repo === repo);
-        const subcategoriesSet = new Set<string>();
-        const directLibraryItems: LibraryItem[] = [];
+        let rawSteps: any[] = [];
+        if (repo === 'Workspace') {
+            rawSteps = WorkspaceIndex.getAllSteps();
+        } else {
+            rawSteps = CatalogManager.getSteps().filter(s => s.repo === repo);
+        }
 
-        for (const step of steps) {
-            // Build the classification sequence for the step
-            let catSeq = [step.category, step.subcategory1, step.subcategory2, step.subcategory3]
-                .map(s => s?.trim())
-                .filter(Boolean) as string[];
-            
-            // If the step lacks any category, group it in a virtual "General" folder
+        const subcategoriesMap = new Map<string, string>(); // lowercase key -> original case value
+        const directItems: vscode.TreeItem[] = [];
+
+        const capitalize = (str: string) => {
+            if (!str) return '';
+            return str.split(/[_-]/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+        };
+
+        const isSameTerm = (a: string | undefined, b: string | undefined) => {
+            if (!a || !b) return false;
+            const clean = (str: string) => str.toLowerCase().replace(/[_\s-]/g, '').trim();
+            return clean(a) === clean(b);
+        };
+
+        for (const step of rawSteps) {
+            // Normalize and capitalize categories on the fly to guarantee case-insensitive merge and formatting
+            let cat = step.category ? capitalize(step.category) : '';
+            let sub1 = step.subcategory1 ? capitalize(step.subcategory1) : '';
+            let sub2 = step.subcategory2 ? capitalize(step.subcategory2) : '';
+            let sub3 = step.subcategory3 ? capitalize(step.subcategory3) : '';
+
+            // Prune redundant same-term folders (matching name or func_name)
+            if (sub3 && (isSameTerm(sub3, step.name) || (step.func_name && isSameTerm(sub3, step.func_name)))) sub3 = '';
+            if (sub2 && (isSameTerm(sub2, step.name) || (step.func_name && isSameTerm(sub2, step.func_name)))) sub2 = '';
+            if (sub1 && (isSameTerm(sub1, step.name) || (step.func_name && isSameTerm(sub1, step.func_name)))) sub1 = '';
+
+            let catSeq = [cat, sub1, sub2, sub3].filter(Boolean) as string[];
             if (catSeq.length === 0) {
                 catSeq = ['General'];
             }
 
-            // Check if step's category path starts with the requested categoryPath
-            if (categoryPath.length <= catSeq.length && categoryPath.every((val, idx) => catSeq[idx] === val)) {
+            // Compare category paths case-insensitively
+            const pathMatches = categoryPath.length <= catSeq.length &&
+                categoryPath.every((val, idx) => catSeq[idx].toLowerCase() === val.toLowerCase());
+
+            if (pathMatches) {
                 if (catSeq.length === categoryPath.length) {
-                    // Exact match: this step is a leaf node in the current folder level
-                    directLibraryItems.push(new LibraryItem(step));
+                    // Leaf node in this folder level
+                    if (repo === 'Workspace') {
+                        directItems.push(new StepItem(step.name, step.filePath, step.line));
+                    } else {
+                        directItems.push(new LibraryItem(step));
+                    }
                 } else {
                     // Subcategory branch: identify the next nesting folder
                     const nextSubcat = catSeq[categoryPath.length];
-                    subcategoriesSet.add(nextSubcat);
+                    const lower = nextSubcat.toLowerCase();
+                    if (!subcategoriesMap.has(lower)) {
+                        subcategoriesMap.set(lower, nextSubcat);
+                    }
                 }
             }
         }
 
         // Map subcategories to CategoryItems
-        const categoryItems = Array.from(subcategoriesSet).map(subcat => 
+        const categoryItems = Array.from(subcategoriesMap.values()).map(subcat => 
             new CategoryItem(subcat, repo, [...categoryPath, subcat])
         );
 
         // Sort both collections alphabetically for premium UX
         categoryItems.sort((a, b) => (a.label as string).localeCompare(b.label as string));
-        directLibraryItems.sort((a, b) => (a.label as string).localeCompare(b.label as string));
+        directItems.sort((a, b) => (a.label as string).localeCompare(b.label as string));
 
-        return [...categoryItems, ...directLibraryItems];
-    }
-
-    private async searchWorkspace(): Promise<StepItem[]> {
-        await WorkspaceIndex.indexWorkspace();
-        return WorkspaceIndex.getAllSteps().map(s => new StepItem(s.name, s.filePath, s.line));
+        return [...categoryItems, ...directItems];
     }
 }
 

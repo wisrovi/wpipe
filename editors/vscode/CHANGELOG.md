@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.5] - 2026-06-23
+
+### Fixed
+- **Buscador Inteligente Multitérmino**: Implementación de un QuickPick personalizado con filtro inteligente multitérmino. Ahora soporta búsquedas como `redis_hash`, `redis hash` o `redis-hash` de forma precisa y sin depender del orden, buscando sobre etiquetas, categorías, funciones y namespaces de forma simultánea.
+- **Jerarquía y Agrupación de la Barra Lateral**:
+  - Unificación insensible a mayúsculas/minúsculas para evitar carpetas duplicadas (ej. `database` y `Database` se fusionan correctamente).
+  - Organización jerárquica por carpetas para los estados locales del `Workspace` en lugar de una lista plana.
+  - Eliminación automática de subcarpetas redundantes con el mismo nombre del estado/archivo (ej. agrupamiento directo bajo `Hash` sin niveles extra redundantes).
+
 ## [1.0.4 LTS] - 2026-06-22
 
 ### Fixed

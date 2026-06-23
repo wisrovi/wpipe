@@ -48,16 +48,63 @@ var CatalogManager = class {
   static {
     this.COMMUNITY_URL = "https://raw.githubusercontent.com/wisrovi/wpipe-plugins/001-DEVELOPMENT/steps_catalog.json";
   }
+  static normalizeStep(s) {
+    const step = { ...s };
+    step.repo = step.repo || "Official";
+    const capitalize = (str) => {
+      if (!str) return "";
+      return str.split(/[_-]/).map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
+    };
+    const isSameTerm = (a, b) => {
+      if (!a || !b) return false;
+      const clean = (str) => str.toLowerCase().replace(/[_\s-]/g, "").trim();
+      return clean(a) === clean(b);
+    };
+    if (!step.category && step.namespace) {
+      const parts = step.namespace.split(".");
+      if (parts[0] === "wpipe_steps" || parts[0] === "wpipe_plugins") {
+        parts.shift();
+      }
+      if (parts.length > 0) step.category = parts[0];
+      if (parts.length > 1) step.subcategory1 = parts[1];
+      if (parts.length > 2) step.subcategory2 = parts[2];
+      if (parts.length > 3) step.subcategory3 = parts[3];
+    }
+    if (step.category) step.category = capitalize(step.category);
+    if (step.subcategory1) step.subcategory1 = capitalize(step.subcategory1);
+    if (step.subcategory2) step.subcategory2 = capitalize(step.subcategory2);
+    if (step.subcategory3) step.subcategory3 = capitalize(step.subcategory3);
+    if (step.subcategory3 && (isSameTerm(step.subcategory3, step.name) || isSameTerm(step.subcategory3, step.func_name))) {
+      step.subcategory3 = "";
+    }
+    if (step.subcategory2 && (isSameTerm(step.subcategory2, step.name) || isSameTerm(step.subcategory2, step.func_name))) {
+      step.subcategory2 = "";
+    }
+    if (step.subcategory1 && (isSameTerm(step.subcategory1, step.name) || isSameTerm(step.subcategory1, step.func_name))) {
+      step.subcategory1 = "";
+    }
+    return step;
+  }
+  static mergeCatalogs(base, incoming) {
+    const mergedMap = /* @__PURE__ */ new Map();
+    base.forEach((s) => {
+      const normalized = this.normalizeStep(s);
+      mergedMap.set(`${normalized.repo}:${normalized.name}`, normalized);
+    });
+    incoming.forEach((s) => {
+      const normalized = this.normalizeStep(s);
+      const key = `${normalized.repo}:${normalized.name}`;
+      const existing = mergedMap.get(key);
+      if (existing) {
+        mergedMap.set(key, { ...existing, ...normalized });
+      } else {
+        mergedMap.set(key, normalized);
+      }
+    });
+    return Array.from(mergedMap.values());
+  }
   static async init(context) {
     const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, "catalog_cache.json");
-    let localCatalog = [];
-    try {
-      const catalogUri = vscode.Uri.joinPath(context.extensionUri, "out", "steps_catalog.json");
-      const catalogData = await vscode.workspace.fs.readFile(catalogUri);
-      const raw = JSON.parse(new TextDecoder().decode(catalogData));
-      localCatalog = Array.isArray(raw) ? raw : raw.default || [];
-    } catch (e2) {
-    }
     let cachedCatalog = [];
     try {
       const cacheData = await vscode.workspace.fs.readFile(cacheUri);
@@ -65,20 +112,7 @@ var CatalogManager = class {
       if (Array.isArray(cached)) cachedCatalog = cached;
     } catch (e) {
     }
-    const mergedMap = /* @__PURE__ */ new Map();
-    cachedCatalog.forEach((s) => {
-      mergedMap.set(`${s.repo}:${s.name}`, s);
-    });
-    localCatalog.forEach((s) => {
-      const key = `${s.repo}:${s.name}`;
-      const existing = mergedMap.get(key);
-      if (existing) {
-        mergedMap.set(key, { ...existing, ...s });
-      } else {
-        mergedMap.set(key, s);
-      }
-    });
-    this.catalog = Array.from(mergedMap.values());
+    this.catalog = this.mergeCatalogs([], cachedCatalog);
     this.update(context, false);
   }
   static async update(context, manual = false) {
@@ -112,8 +146,9 @@ var CatalogManager = class {
       ]);
       const newCatalog = [...off, ...com];
       if (newCatalog.length > 0) {
-        const newItems = newCatalog.filter((s) => !oldNames.has(`${s.repo}:${s.name}`));
-        this.catalog = newCatalog;
+        const merged = this.mergeCatalogs(this.catalog, newCatalog);
+        const newItems = merged.filter((s) => !oldNames.has(`${s.repo}:${s.name}`));
+        this.catalog = merged;
         try {
           const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, "catalog_cache.json");
           await vscode.workspace.fs.writeFile(cacheUri, new TextEncoder().encode(JSON.stringify(this.catalog)));
@@ -4544,7 +4579,8 @@ var WPipeStepProvider = class {
     }
     const label = element.label;
     if (label.includes("Workspace")) {
-      return this.searchWorkspace();
+      await WorkspaceIndex.indexWorkspace();
+      return this.getCategoryChildren("Workspace", []);
     }
     if (label.includes("Official")) {
       return this.getCategoryChildren("Official", []);
@@ -4558,33 +4594,58 @@ var WPipeStepProvider = class {
    * Resolves the child categories and library items for a given path and repository.
    */
   getCategoryChildren(repo, categoryPath) {
-    const steps = CatalogManager.getSteps().filter((s) => s.repo === repo);
-    const subcategoriesSet = /* @__PURE__ */ new Set();
-    const directLibraryItems = [];
-    for (const step of steps) {
-      let catSeq = [step.category, step.subcategory1, step.subcategory2, step.subcategory3].map((s) => s?.trim()).filter(Boolean);
+    let rawSteps = [];
+    if (repo === "Workspace") {
+      rawSteps = WorkspaceIndex.getAllSteps();
+    } else {
+      rawSteps = CatalogManager.getSteps().filter((s) => s.repo === repo);
+    }
+    const subcategoriesMap = /* @__PURE__ */ new Map();
+    const directItems = [];
+    const capitalize = (str) => {
+      if (!str) return "";
+      return str.split(/[_-]/).map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
+    };
+    const isSameTerm = (a, b) => {
+      if (!a || !b) return false;
+      const clean = (str) => str.toLowerCase().replace(/[_\s-]/g, "").trim();
+      return clean(a) === clean(b);
+    };
+    for (const step of rawSteps) {
+      let cat = step.category ? capitalize(step.category) : "";
+      let sub1 = step.subcategory1 ? capitalize(step.subcategory1) : "";
+      let sub2 = step.subcategory2 ? capitalize(step.subcategory2) : "";
+      let sub3 = step.subcategory3 ? capitalize(step.subcategory3) : "";
+      if (sub3 && (isSameTerm(sub3, step.name) || step.func_name && isSameTerm(sub3, step.func_name))) sub3 = "";
+      if (sub2 && (isSameTerm(sub2, step.name) || step.func_name && isSameTerm(sub2, step.func_name))) sub2 = "";
+      if (sub1 && (isSameTerm(sub1, step.name) || step.func_name && isSameTerm(sub1, step.func_name))) sub1 = "";
+      let catSeq = [cat, sub1, sub2, sub3].filter(Boolean);
       if (catSeq.length === 0) {
         catSeq = ["General"];
       }
-      if (categoryPath.length <= catSeq.length && categoryPath.every((val, idx) => catSeq[idx] === val)) {
+      const pathMatches = categoryPath.length <= catSeq.length && categoryPath.every((val, idx) => catSeq[idx].toLowerCase() === val.toLowerCase());
+      if (pathMatches) {
         if (catSeq.length === categoryPath.length) {
-          directLibraryItems.push(new LibraryItem(step));
+          if (repo === "Workspace") {
+            directItems.push(new StepItem(step.name, step.filePath, step.line));
+          } else {
+            directItems.push(new LibraryItem(step));
+          }
         } else {
           const nextSubcat = catSeq[categoryPath.length];
-          subcategoriesSet.add(nextSubcat);
+          const lower = nextSubcat.toLowerCase();
+          if (!subcategoriesMap.has(lower)) {
+            subcategoriesMap.set(lower, nextSubcat);
+          }
         }
       }
     }
-    const categoryItems = Array.from(subcategoriesSet).map(
+    const categoryItems = Array.from(subcategoriesMap.values()).map(
       (subcat) => new CategoryItem(subcat, repo, [...categoryPath, subcat])
     );
     categoryItems.sort((a, b) => a.label.localeCompare(b.label));
-    directLibraryItems.sort((a, b) => a.label.localeCompare(b.label));
-    return [...categoryItems, ...directLibraryItems];
-  }
-  async searchWorkspace() {
-    await WorkspaceIndex.indexWorkspace();
-    return WorkspaceIndex.getAllSteps().map((s) => new StepItem(s.name, s.filePath, s.line));
+    directItems.sort((a, b) => a.label.localeCompare(b.label));
+    return [...categoryItems, ...directItems];
   }
 };
 var StepItem = class extends vscode3.TreeItem {
@@ -6095,6 +6156,25 @@ class ${formattedStepName}:
 
 // src/extension.ts
 var path5 = __toESM(require("path"));
+function getPythonModulePath(filePath) {
+  const workspaceFolders = vscode17.workspace.workspaceFolders;
+  if (!workspaceFolders) return "states";
+  const rootPath = workspaceFolders[0].uri.fsPath;
+  const relativePath = path5.relative(rootPath, filePath);
+  const parts = relativePath.split(/[\\/]/);
+  if (parts[0] === "states") {
+    return "states";
+  }
+  let cleanPath = relativePath;
+  if (cleanPath.endsWith(".py")) {
+    cleanPath = cleanPath.slice(0, -3);
+  }
+  let modulePath = cleanPath.replace(/[\\/]/g, ".");
+  if (modulePath.endsWith(".__init__")) {
+    modulePath = modulePath.slice(0, -9);
+  }
+  return modulePath || "states";
+}
 async function activate(context) {
   console.log("\u{1F680} WPipe Tools: Activation started...");
   CatalogManager.init(context);
@@ -6126,7 +6206,10 @@ async function activate(context) {
         editor.edit((eb) => {
           const importCode = `from ${step.namespace} import ${step.func_name}
 `;
-          eb.insert(new vscode17.Position(0, 0), importCode);
+          const documentText = editor.document.getText();
+          if (!documentText.includes(importCode)) {
+            eb.insert(new vscode17.Position(0, 0), importCode);
+          }
           const isClass = /^[A-Z]/.test(step.func_name);
           eb.insert(editor.selection.active, isClass ? `${step.func_name}(),` : `${step.func_name},`);
         });
@@ -6138,30 +6221,15 @@ async function activate(context) {
       const localItems = WorkspaceIndex.getAllSteps().map((s) => {
         const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3].map((c) => c?.trim()).filter(Boolean);
         const categoryPath = catSeq.length > 0 ? catSeq.join(" \u2794 ") : "Workspace";
-        const keywords = [];
-        if (catSeq.length > 0) {
-          keywords.push(catSeq.join("_").toLowerCase());
-          keywords.push(catSeq.join(" ").toLowerCase());
-          for (let i = 0; i < catSeq.length; i++) {
-            for (let j = i + 1; j <= catSeq.length; j++) {
-              const sub = catSeq.slice(i, j);
-              keywords.push(sub.join("_").toLowerCase());
-              keywords.push(sub.join(" ").toLowerCase());
-              keywords.push(sub.join("").toLowerCase());
-            }
-          }
-        }
-        const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(", ");
-        const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : "";
+        const moduleName = getPythonModulePath(s.filePath);
         return {
           label: `$(home) ${s.name}`,
           description: `Workspace | ${categoryPath}`,
-          detail: `Location: ${vscode17.workspace.asRelativePath(s.filePath)}:${s.line + 1}${keywordsSuffix}`,
+          detail: `Location: ${vscode17.workspace.asRelativePath(s.filePath)}:${s.line + 1}`,
           step: {
             name: s.name,
             func_name: s.name,
-            namespace: "states",
-            // default namespace for local step modules
+            namespace: moduleName,
             repo: "Workspace",
             file: s.filePath,
             description: s.description || "Local workspace step",
@@ -6175,52 +6243,73 @@ async function activate(context) {
       const catalogItems = CatalogManager.getSteps().map((s) => {
         const catSeq = [s.category, s.subcategory1, s.subcategory2, s.subcategory3].map((c) => c?.trim()).filter(Boolean);
         const categoryPath = catSeq.length > 0 ? catSeq.join(" \u2794 ") : "General";
-        const keywords = [];
-        if (catSeq.length > 0) {
-          keywords.push(catSeq.join("_").toLowerCase());
-          keywords.push(catSeq.join(" ").toLowerCase());
-          for (let i = 0; i < catSeq.length; i++) {
-            for (let j = i + 1; j <= catSeq.length; j++) {
-              const sub = catSeq.slice(i, j);
-              keywords.push(sub.join("_").toLowerCase());
-              keywords.push(sub.join(" ").toLowerCase());
-              keywords.push(sub.join("").toLowerCase());
-            }
-          }
-        }
-        const uniqueKeywords = Array.from(new Set(keywords)).filter(Boolean).join(", ");
-        const keywordsSuffix = uniqueKeywords ? ` | Tags: ${uniqueKeywords}` : "";
         return {
           label: `$(rocket) ${s.name}`,
           description: `${s.repo} | ${categoryPath}`,
-          detail: `Module: ${s.namespace}${keywordsSuffix} | Author: ${s.author || "Official"}`,
+          detail: `Module: ${s.namespace} | Author: ${s.author || "Official"}`,
           step: s
         };
       });
       const items = [...localItems, ...catalogItems];
-      const sel = await vscode17.window.showQuickPick(items, {
-        placeHolder: "Buscar estado (Workspace local, Cat\xE1logo oficial o Comunidad)..."
-      });
-      if (sel) {
-        if (sel.step.repo === "Workspace") {
-          const editor = vscode17.window.activeTextEditor;
-          if (editor) {
-            editor.edit((eb) => {
-              const importCode = `from states import ${sel.step.func_name}
-`;
-              const documentText = editor.document.getText();
-              if (!documentText.includes(importCode)) {
-                eb.insert(new vscode17.Position(0, 0), importCode);
-              }
-              const isClass = /^[A-Z]/.test(sel.step.func_name);
-              eb.insert(editor.selection.active, isClass ? `${sel.step.func_name}(),` : `${sel.step.func_name},`);
-            });
-            vscode17.window.showInformationMessage(`\u2705 Estado local '${sel.step.name}' insertado con \xE9xito.`);
-          }
-        } else {
-          vscode17.commands.executeCommand("wpipeSteps.insertStep", sel.step);
+      const quickPick = vscode17.window.createQuickPick();
+      quickPick.items = items;
+      quickPick.placeholder = "Buscar estado (Workspace local, Cat\xE1logo oficial o Comunidad)...";
+      quickPick.matchOnDescription = false;
+      quickPick.matchOnDetail = false;
+      quickPick.onDidChangeValue((value) => {
+        const searchVal = value.trim().toLowerCase();
+        if (!searchVal) {
+          quickPick.items = items;
+          return;
         }
-      }
+        const terms = searchVal.split(/[\s_+.-]+/).filter(Boolean);
+        quickPick.items = items.filter((item) => {
+          const label = item.label.toLowerCase();
+          const desc = item.description ? item.description.toLowerCase() : "";
+          const detail = item.detail ? item.detail.toLowerCase() : "";
+          const step = item.step;
+          return terms.every((term) => {
+            if (label.includes(term) || desc.includes(term) || detail.includes(term)) {
+              return true;
+            }
+            if (step.name.toLowerCase().includes(term) || step.func_name && step.func_name.toLowerCase().includes(term) || step.namespace && step.namespace.toLowerCase().includes(term)) {
+              return true;
+            }
+            const categories = [step.category, step.subcategory1, step.subcategory2, step.subcategory3].map((c) => c?.trim().toLowerCase()).filter(Boolean);
+            if (categories.some((cat) => cat.includes(term))) {
+              return true;
+            }
+            return false;
+          });
+        });
+      });
+      quickPick.onDidAccept(() => {
+        const sel = quickPick.selectedItems[0];
+        if (sel) {
+          if (sel.step.repo === "Workspace") {
+            const editor = vscode17.window.activeTextEditor;
+            if (editor) {
+              editor.edit((eb) => {
+                const moduleName = getPythonModulePath(sel.step.file);
+                const importCode = `from ${moduleName} import ${sel.step.func_name}
+`;
+                const documentText = editor.document.getText();
+                if (!documentText.includes(importCode)) {
+                  eb.insert(new vscode17.Position(0, 0), importCode);
+                }
+                const isClass = /^[A-Z]/.test(sel.step.func_name);
+                eb.insert(editor.selection.active, isClass ? `${sel.step.func_name}(),` : `${sel.step.func_name},`);
+              });
+              vscode17.window.showInformationMessage(`\u2705 Estado local '${sel.step.name}' insertado con \xE9xito.`);
+            }
+          } else {
+            vscode17.commands.executeCommand("wpipeSteps.insertStep", sel.step);
+          }
+        }
+        quickPick.hide();
+      });
+      quickPick.onDidHide(() => quickPick.dispose());
+      quickPick.show();
     }),
     vscode17.commands.registerCommand("wpipe-vscode.previewDAG", () => {
       const editor = vscode17.window.activeTextEditor;
