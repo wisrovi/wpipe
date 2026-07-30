@@ -77,6 +77,12 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
         dtype = getattr(obj, "dtype", None)
         return f"<NDArray shape={shape} dtype={dtype}>" if shape else f"<{obj_type_name}>"
 
+    # Filter bytes and bytearray to avoid slow JSON fallback
+    if isinstance(obj, bytes):
+        return f"<bytes len={len(obj)}>"
+    if isinstance(obj, bytearray):
+        return f"<bytearray len={len(obj)}>"
+
     # Prevent infinite recursion by tracking object identity
     obj_id = id(obj)
     if obj_id in _seen:
@@ -105,9 +111,14 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
 
         # Handle objects with __dict__
         if hasattr(obj, "__dict__"):
+            module_name = obj.__class__.__module__ or ""
             # Avoid recursing into known system or external complex objects
-            if obj.__class__.__module__.startswith(("rich.", "threading.", "multiprocessing.")):
-                return obj
+            if module_name.startswith((
+                "rich.", "threading.", "multiprocessing.", "logging.", "asyncio.",
+                "cv2", "numpy", "torch", "tensorflow", "ultralytics", "PIL",
+                "pandas", "matplotlib", "scipy", "decord", "av"
+            )):
+                return f"<{obj.__class__.__name__}>"
                 
             return {
                 k: (v if k in SYSTEM_KEYS else object_to_dict(v, _seen))
