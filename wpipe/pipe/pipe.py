@@ -95,7 +95,7 @@ class Pipeline(APIClient):
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
-        continue_on_error: bool = False,
+        continue_on_error: bool = True,
         show_progress: bool = True,
     ) -> None:
         """
@@ -767,10 +767,10 @@ class Pipeline(APIClient):
             timeout = getattr(decorator_meta, "timeout", None)
 
         if step_meta:
-            max_retries = getattr(step_meta, "retry_count", None) or max_retries
-            retry_delay = getattr(step_meta, "retry_delay", None) or retry_delay
-            retry_on_exceptions = getattr(step_meta, "retry_on_exceptions", None) or retry_on_exceptions
-            timeout = getattr(step_meta, "timeout", timeout)
+            max_retries = step_meta.get("retry_count", None) or max_retries
+            retry_delay = step_meta.get("retry_delay", None) or retry_delay
+            retry_on_exceptions = step_meta.get("retry_on_exceptions", None) or retry_on_exceptions
+            timeout = step_meta.get("timeout", timeout)
 
         kwargs.pop("parent_step_id", None)
         kwargs.pop("parallel_group", None)
@@ -1069,7 +1069,8 @@ class Pipeline(APIClient):
             try:
                 result_data = self._task_invoke(func, name, data, __step_meta__=step_meta, **kwargs)
                 data.update(result_data or {})
-                data.pop("error", None)
+                if not self.continue_on_error:
+                    data.pop("error", None)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 result_status = "error"
                 if not self.continue_on_error:
