@@ -5,7 +5,7 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.1] - 2026-07-30
+## [2.4.2] - 2026-07-30
 
 ### Fixed
 - **Performance Regression (Database Serialization)**: Modificado `object_to_dict` en `transform.py` para detectar y serializar tipos pesados y no serializables (como NDArray, Tensor) usando cadenas de descripción de texto, reduciendo drásticamente el espacio de almacenamiento y bloqueos concurrentes de base de datos en pipelines con imágenes/videos.
