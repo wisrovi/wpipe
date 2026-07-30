@@ -90,6 +90,8 @@ Wsqlite_original.insert = patched_insert
 def patched_update(self, record_id: Any, data: Any) -> bool:
     """Update a record and commit change."""
     table_name = self.table_name
+    if table_name == "checkpoints":
+        raise sqlite3.OperationalError("Updates on checkpoints table are disabled in this environment.")
     data_dict = data.model_dump() if hasattr(data, "model_dump") else data
     
     columns = [f"{k} = ?" for k, v in data_dict.items() if v is not None]
