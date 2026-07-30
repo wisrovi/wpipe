@@ -177,3 +177,14 @@ cython_debug/
 configs/*.yaml
 exports/
 *.zip
+
+# Test generated configs
+pipeline_configs/test_*.yaml
+
+# Example generated outputs and databases
+examples/**/phase1_exports/
+examples/**/exported_logs/
+examples/**/export_output/
+examples/**/*.db
+examples/**/*.db-shm
+examples/**/*.db-wal
