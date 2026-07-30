@@ -236,6 +236,19 @@ class ResourceMonitor:
             ),
         }
 
+    def format_summary(self, summary: Dict[str, Any]) -> str:
+        """Format monitoring summary as a string."""
+        return (
+            f"Resource Summary for {summary.get('task_name', 'unknown')}:\n"
+            f"  Elapsed Time: {summary.get('elapsed_seconds', 0.0)}s\n"
+            f"  Start RAM: {summary.get('start_ram_mb', 0.0)} MB\n"
+            f"  Peak RAM: {summary.get('peak_ram_mb', 0.0)} MB\n"
+            f"  End RAM: {summary.get('end_ram_mb', 0.0)} MB\n"
+            f"  RAM Increase: {summary.get('ram_increase_mb', 0.0)} MB\n"
+            f"  Average CPU: {summary.get('avg_cpu_percent', 0.0)}%\n"
+            f"  Readings Count: {summary.get('readings_count', 0)}\n"
+        )
+
     def _save_to_db(self) -> None:
         """Save metrics to SQLite database using WSQLite."""
         if not self.db_path:
