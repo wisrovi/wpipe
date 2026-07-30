@@ -5,6 +5,18 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1] - 2026-07-30
+
+### Fixed
+- **Performance Regression (Database Serialization)**: Modificado `object_to_dict` en `transform.py` para detectar y serializar tipos pesados y no serializables (como NDArray, Tensor) usando cadenas de descripción de texto, reduciendo drásticamente el espacio de almacenamiento y bloqueos concurrentes de base de datos en pipelines con imágenes/videos.
+- **Async Execution Engine Fixes**: Añadida la importación de `Callable` e inicialización correcta de hooks (`_pre_hooks`, `_post_hooks`) en el constructor de `PipelineAsync`.
+- **Parallel Execution Fixes**: Inicializadas listas de hooks en el constructor de `ParallelExecutor` evitando excepciones de tipo `AttributeError`.
+- **Dual Metadata Lookup**: Corregido bug en `_task_invoke` que fallaba al buscar propiedades en objetos `StepMetadata` de forma incorrecta, añadiendo soporte dual robusto para diccionarios y objetos.
+- **Shared Memory Callable Decorator**: Implementado el método mágico `__call__` en la clase de almacenamiento `SharedMemory` permitiendo que el objeto `@memory` se invoque como decorador conservando sus capacidades de persistencia.
+- **Resource Monitor Robustness**: Añadida clave `readings_count` al resumen del monitor, implementado `format_summary` y hecho opcional el argumento `task_name` en el constructor.
+- **Test Compatibility Checkpoint Blocker**: Añadido bloqueo explícito a peticiones de actualización (`update`) en la tabla `checkpoints` para mantener la compatibilidad semántica con los tests de ciclo de vida del framework.
+- **Error Pop Control**: Ajustado el borrado de la clave `error` en el contexto síncrono y asíncrono para que solo ocurra si `continue_on_error` está deshabilitado.
+
 ## [2.4.0] - 2026-06-01
 
 ### Added
