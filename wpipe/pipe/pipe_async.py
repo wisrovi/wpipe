@@ -65,7 +65,7 @@ class PipelineAsync(APIClient):
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
-        continue_on_error: bool = False,
+        continue_on_error: bool = True,
         show_progress: bool = True,
     ) -> None:
         """
@@ -606,7 +606,8 @@ class PipelineAsync(APIClient):
                 if result is None:
                     result = {}
                 data.update(result)
-                data.pop("error", None)
+                if not self.continue_on_error:
+                    data.pop("error", None)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 result_status = "error"
                 error_msg = str(e)
