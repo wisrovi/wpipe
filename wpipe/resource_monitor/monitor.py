@@ -19,7 +19,7 @@ class ResourceMonitor:
     """Monitor system resources during task execution."""
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, task_name: str, db_path: Optional[str] = None):
+    def __init__(self, task_name: str = "unknown", db_path: Optional[str] = None):
         """
         Initialize the resource monitor.
 
