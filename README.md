@@ -1,4 +1,4 @@
-# 🚀 WPipe v2.4.0
+# 🚀 WPipe v2.4.1
 
 <img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
 
