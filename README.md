@@ -1,4 +1,4 @@
-# 🚀 WPipe v2.4.1
+# 🚀 WPipe v2.4.2
 
 <img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
 
@@ -554,4 +554,4 @@ Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
- Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, e incremento de versión a 2.4.1).
+ Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, e incremento de versión a 2.4.2).
