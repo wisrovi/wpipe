@@ -128,6 +128,10 @@ class PipelineAsync(APIClient):
         self._checkpoints: List[Dict[str, Any]] = []
         self._error_capture_tasks: List[Any] = []
 
+        # Global Hooks / Middlewares
+        self._pre_hooks: List[Callable] = []
+        self._post_hooks: List[Callable] = []
+
         self._metrics_collector: Optional[SystemMetricsCollector] = None
         self.progress_rich: Optional[Progress] = None
 
