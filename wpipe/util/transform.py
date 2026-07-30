@@ -70,6 +70,13 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
     if obj is None:
         return {}
 
+    # Detect and filter heavy/non-serializable objects (NumPy arrays, PyTorch/TF tensors, etc.)
+    obj_type_name = type(obj).__name__
+    if obj_type_name in ("ndarray", "Tensor", "EagerTensor", "Image") or "ndarray" in str(type(obj)):
+        shape = getattr(obj, "shape", None)
+        dtype = getattr(obj, "dtype", None)
+        return f"<NDArray shape={shape} dtype={dtype}>" if shape else f"<{obj_type_name}>"
+
     # Prevent infinite recursion by tracking object identity
     obj_id = id(obj)
     if obj_id in _seen:
