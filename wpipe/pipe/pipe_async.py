@@ -8,7 +8,7 @@ retry logic, API tracking, and execution history tracking.
 
 import asyncio
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from rich.progress import Progress
 
