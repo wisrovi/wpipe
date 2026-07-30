@@ -767,10 +767,16 @@ class Pipeline(APIClient):
             timeout = getattr(decorator_meta, "timeout", None)
 
         if step_meta:
-            max_retries = step_meta.get("retry_count", None) or max_retries
-            retry_delay = step_meta.get("retry_delay", None) or retry_delay
-            retry_on_exceptions = step_meta.get("retry_on_exceptions", None) or retry_on_exceptions
-            timeout = step_meta.get("timeout", timeout)
+            if isinstance(step_meta, dict):
+                max_retries = step_meta.get("retry_count", None) or max_retries
+                retry_delay = step_meta.get("retry_delay", None) or retry_delay
+                retry_on_exceptions = step_meta.get("retry_on_exceptions", None) or retry_on_exceptions
+                timeout = step_meta.get("timeout", timeout)
+            else:
+                max_retries = getattr(step_meta, "retry_count", None) or max_retries
+                retry_delay = getattr(step_meta, "retry_delay", None) or retry_delay
+                retry_on_exceptions = getattr(step_meta, "retry_on_exceptions", None) or retry_on_exceptions
+                timeout = getattr(step_meta, "timeout", timeout)
 
         kwargs.pop("parent_step_id", None)
         kwargs.pop("parallel_group", None)
