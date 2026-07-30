@@ -119,6 +119,8 @@ class ParallelExecutor:
         self.scheduler = DAGScheduler()
         self.results: Dict[str, Any] = {}
         self.lock = threading.Lock()
+        self._pre_hooks: List[Callable] = []
+        self._post_hooks: List[Callable] = []
 
     def add_step(
         self,
