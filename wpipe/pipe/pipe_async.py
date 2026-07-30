@@ -327,7 +327,7 @@ class PipelineAsync(APIClient):
                     result = func(*args, **kwargs)
 
                 # Success cleanup
-                if args and isinstance(args[0], dict):
+                if args and isinstance(args[0], dict) and not self.continue_on_error:
                     args[0].pop("error", None)
                 return result
 
