@@ -223,6 +223,7 @@ class ResourceMonitor:
             "end_ram_mb": round(self.end_ram_mb, 2),
             "ram_increase_mb": round(self.ram_increase_mb, 2),
             "avg_cpu_percent": round(self.avg_cpu_percent, 2),
+            "readings_count": len(self.metrics),
             "start_time": (
                 datetime.fromtimestamp(self.start_time).isoformat()
                 if self.start_time
