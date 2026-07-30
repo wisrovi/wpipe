@@ -5,6 +5,12 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.3] - 2026-07-30
+
+### Fixed
+- **Critical Serialization Speedup (Database Operations)**: Optimización del serializador recursivo `object_to_dict` en `transform.py` para evitar recorrer el diccionario interno (`__dict__`) de objetos pesados y complejos de librerías de terceros (como OpenCV, PyTorch, TensorFlow, NumPy, PIL, Ultralytics, etc.), previniendo fugas de memoria y bloqueos de CPU al serializar modelos o pipelines complejos.
+- **Binary Data Optimization**: Añadido filtrado para objetos de tipo `bytes` y `bytearray` en el serializador de la base de datos de tracking, convirtiéndolos en descripciones ligeras (`"<bytes len=...>"`), eliminando los fallos de serialización JSON que forzaban la conversión total del contexto usando `str(data)`.
+
 ## [2.4.2] - 2026-07-30
 
 ### Fixed
