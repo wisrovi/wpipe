@@ -46,6 +46,13 @@ class SharedMemory:
         """Return string representation of SharedMemory."""
         return f"SharedMemory({self._data})"
 
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """Acts as memory_limit_decorator when called as a decorator."""
+        if args and callable(args[0]):
+            func = args[0]
+            return memory_limit_decorator()(func)
+        return memory_limit_decorator(*args, **kwargs)
+
 
 # Global instance for shared memory access
 memory_storage = SharedMemory()
