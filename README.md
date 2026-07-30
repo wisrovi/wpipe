@@ -554,4 +554,4 @@ Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
- Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, y bloqueo genérico de actualizaciones de checkpoints).
+ Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, y parametrización opcional del monitor).
