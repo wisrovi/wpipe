@@ -145,15 +145,23 @@ class PipelineTracker:
     """
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, db_path: str, config_dir: Optional[str] = None):
+    def __init__(
+        self,
+        db_path: str,
+        config_dir: Optional[str] = None,
+        save_json_input_output: bool = True,
+    ):
         """
         Initialize the PipelineTracker.
 
         Args:
             db_path: Path to the SQLite database.
             config_dir: Directory to store pipeline configurations.
+            save_json_input_output: Whether to persist the (potentially heavy)
+                input/output JSON blobs for pipelines and executed steps.
         """
         self.db_path = db_path
+        self.save_json_input_output = save_json_input_output
         
         # Ensure the directory for the database exists
         if db_path:
@@ -307,7 +315,7 @@ class PipelineTracker:
             worker_name=kwargs.get("worker_name"),
             input_data=(
                 _safe_json_dumps(kwargs.get("input_data"))
-                if kwargs.get("input_data")
+                if kwargs.get("input_data") and self.save_json_input_output
                 else None
             ),
             parent_pipeline_id=kwargs.get("parent_pipeline_id"),
@@ -354,7 +362,9 @@ class PipelineTracker:
         model.status = "error" if error_message else "completed"
         model.completed_at = datetime.now().isoformat()
         model.total_duration_ms = duration_ms
-        model.output_data = _safe_json_dumps(output_data) if output_data else None
+        model.output_data = (
+            _safe_json_dumps(output_data) if output_data and self.save_json_input_output else None
+        )
         model.error_message = error_message
         model.error_step = error_step
         self.db_pipelines.update(pipeline_id, model)
@@ -388,7 +398,7 @@ class PipelineTracker:
             status="running",
             input_data=(
                 _safe_json_dumps(kwargs.get("input_data"))
-                if kwargs.get("input_data")
+                if kwargs.get("input_data") and self.save_json_input_output
                 else None
             ),
         )
@@ -424,7 +434,9 @@ class PipelineTracker:
         model.status = "error" if error_message else "completed"
         model.completed_at = datetime.now().isoformat()
         model.duration_ms = duration_ms
-        model.output_data = _safe_json_dumps(output_data) if output_data else None
+        model.output_data = (
+            _safe_json_dumps(output_data) if output_data and self.save_json_input_output else None
+        )
         model.error_message = error_message
         model.error_traceback = error_traceback
         self.db_steps.update(step_id, model)

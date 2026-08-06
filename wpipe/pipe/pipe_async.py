@@ -67,6 +67,7 @@ class PipelineAsync(APIClient):
         collect_system_metrics: bool = False,
         continue_on_error: bool = True,
         show_progress: bool = True,
+        save_json_input_output: bool = True,
     ) -> None:
         """
         Initialize the Async Pipeline.
@@ -86,6 +87,8 @@ class PipelineAsync(APIClient):
             collect_system_metrics: Whether to collect resource usage.
             continue_on_error: Whether to proceed if a step fails.
             show_progress: Whether to show a progress bar.
+            save_json_input_output: Whether to store the input/output JSON blobs
+                of the pipeline and its executed steps in the tracking database.
         """
         # pylint: disable=too-many-arguments
         if api_config:
@@ -110,12 +113,17 @@ class PipelineAsync(APIClient):
         self._collect_system_metrics: bool = collect_system_metrics
         self.continue_on_error: bool = continue_on_error
         self.show_progress: bool = show_progress
+        self.save_json_input_output: bool = save_json_input_output
         self.tracking_db: Optional[str] = tracking_db
 
         # Initialize tracking if database path provided
         self.tracker: Optional[PipelineTracker] = None
         if tracking_db:
-            self.tracker = PipelineTracker(tracking_db, config_dir)
+            self.tracker = PipelineTracker(
+                tracking_db,
+                config_dir,
+                save_json_input_output=self.save_json_input_output,
+            )
 
         self.pipeline_name: str = pipeline_name or "Pipeline"
         self.pipeline_id: Optional[str] = None

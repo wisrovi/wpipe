@@ -38,7 +38,7 @@ def run_setup() -> None:
 
     setup(
         name="wpipe",
-        version="2.4.3",
+        version="2.5.0",
         description="Library for creating pipelines connected to an API",
         author="William Steve Rodriguez Villamizar",
         author_email="wisrovi.rodriguez@gmail.com",

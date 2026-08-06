@@ -5,6 +5,16 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-08-06
+
+### Added
+- **save_json_input_output Flag**: Nuevo parámetro booleano `save_json_input_output: bool = True` en el constructor de `Pipeline` y `PipelineAsync`. Al establecerlo en `False`, se omite el guardado de los datos de entrada/salida (JSON) de cada estado y del pipeline en la base de datos de tracking, reduciendo drásticamente el tamaño de la DB en ejecuciones con datos pesados (imágenes, video, tensores).
+- **Dashboard N/A Fallback**: El dashboard web (`renderStepDetails`) ahora muestra siempre las secciones Input/Output, mostrando `N/A` cuando el flag está deshabilitado o el dato no existe, evitando campos vacíos y manteniendo la interfaz intacta.
+- **Validación con Ejemplo Dedicado**: Nuevo ejemplo `00_honey_pot/04_save_json_input_output` que verifica los tres escenarios (flag `False`, flag `True` y default) inspeccionando directamente la base de datos SQLite.
+
+### Changed
+- **Documentación**: Actualizados README, `docs/source/api_reference.rst` y diagramas UML en `extra_readmes` con el nuevo parámetro.
+
 ## [2.4.3] - 2026-07-30
 
 ### Fixed

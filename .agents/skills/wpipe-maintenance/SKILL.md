@@ -14,9 +14,11 @@ ALWAYS run the automated example tests after any change to the core library (`wp
 
 - **Command**: `pytest test/test_examples.py`
 - **Goal**: 100% Success (or legitimate skips).
+- **Minimum Viable Test**: the Honey Pot suite under `examples/00_honey_pot/` MUST all run — special attention to `03_yield/` (142 demo levels covering sync/async pipelines, `tracking_db`, alerts, export, dashboard data). Targeted run: `pytest test/test_examples.py -k "honey_pot or demo_level"`. See the **Minimum Viable Test** section in `.agents/AGENTS.md` for details.
 - **Handling Failures**:
   - If a test fails, analyze `STDOUT` and `STDERR`.
   - Prioritize library fixes (e.g., handling concurrency, fixing imports) over modifying examples.
+  - Do NOT modify existing examples under `examples/00_honey_pot/` (regression suite); add NEW examples instead.
   - If an example is broken due to old API usage, add a compatibility alias in `wpipe/__init__.py`.
 
 ### 2. Cleanup

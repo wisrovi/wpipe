@@ -66,7 +66,10 @@ class Pipeline(APIClient):
     def tracker(self) -> Any:
         if self._tracker is None and getattr(self, "tracking_db", None):
             from wpipe.tracking import PipelineTracker
-            self._tracker = PipelineTracker(self.tracking_db)
+            self._tracker = PipelineTracker(
+                self.tracking_db,
+                save_json_input_output=self.save_json_input_output,
+            )
         return self._tracker
         
     @tracker.setter
@@ -97,6 +100,7 @@ class Pipeline(APIClient):
         collect_system_metrics: bool = False,
         continue_on_error: bool = True,
         show_progress: bool = True,
+        save_json_input_output: bool = True,
     ) -> None:
         """
         Initialize the Pipeline.
@@ -116,6 +120,8 @@ class Pipeline(APIClient):
             collect_system_metrics: Whether to collect resource usage.
             continue_on_error: Whether to proceed if a step fails.
             show_progress: Whether to show a progress bar.
+            save_json_input_output: Whether to store the input/output JSON blobs
+                of the pipeline and its executed steps in the tracking database.
         """
         # pylint: disable=too-many-arguments
         if api_config:
@@ -139,6 +145,7 @@ class Pipeline(APIClient):
         self._collect_system_metrics = collect_system_metrics
         self.continue_on_error = continue_on_error
         self.show_progress = show_progress
+        self.save_json_input_output = save_json_input_output
         self.tracking_db = tracking_db
         self.pipeline_name = pipeline_name or "Pipeline"
         self.pipeline_version = pipeline_version or "1.0.0"
@@ -156,7 +163,11 @@ class Pipeline(APIClient):
         # Initialize tracking if database path provided
         if tracking_db:
             from wpipe.tracking import PipelineTracker
-            self.tracker = PipelineTracker(tracking_db, config_dir)
+            self.tracker = PipelineTracker(
+                tracking_db,
+                config_dir,
+                save_json_input_output=self.save_json_input_output,
+            )
 
 
     def add_pre_hook(self, hook: Callable) -> "Pipeline":

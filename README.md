@@ -1,4 +1,4 @@
-# 🚀 WPipe v2.4.3
+# 🚀 WPipe v2.5.0
 
 <img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
 
@@ -360,6 +360,18 @@ from wpipe import start_dashboard
 start_dashboard(db_path="tracking.db", port=5000)
 ```
 
+#### Control de almacenamiento de datos (Input/Output)
+
+Por defecto, WPipe guarda los datos de entrada/salida de cada estado y del
+pipeline en la base de datos de tracking. Si tus datos son pesados (imágenes,
+video, tensores) y quieres reducir el tamaño de la DB, deshabilita su
+persistencia con `save_json_input_output=False`. El dashboard seguirá
+funcionando y mostrará `N/A` en las secciones Input/Output.
+
+```python
+pipeline = Pipeline(pipeline_name="Trip_L1", verbose=True, save_json_input_output=False)
+```
+
 ---
 
 ## 🎯 Uso Avanzado: El Viaje Resiliente
@@ -460,8 +472,8 @@ exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 
 | Clase/Función | Descripción |
 |--------------|------------|
-| `Pipeline` | Pipeline síncrono principal |
-| `PipelineAsync` | Pipeline asíncrono |
+| `Pipeline` | Pipeline síncrono principal (`save_json_input_output=True` por defecto) |
+| `PipelineAsync` | Pipeline asíncrono (`save_json_input_output=True` por defecto) |
 | `@step(name, version, retry_count, ...)` | Decorador para definir pasos |
 | `Condition(expression, branch_true, branch_false)` | Ramificación condicional |
 | `For(iterations, validation_expression, steps)` | Bucle con validación |
@@ -554,4 +566,4 @@ Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
- Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, incremento de versión a 2.4.3, optimización de patrones de exclusión de git en .gitignore, y filtrado optimizado de objetos complejos y binarios).
+ Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, incremento de versión a 2.4.3, optimización de patrones de exclusión de git en .gitignore, y filtrado optimizado de objetos complejos y binarios. Nuevo flag `save_json_input_output` para deshabilitar el almacenamiento de datos de entrada/salida en la DB de tracking e incremento de versión a 2.5.0).

@@ -701,16 +701,16 @@ function renderStepDetails(step) {
     }
     
     // Input
-    if (step.input_data) {
-        html += `<div style="margin-bottom:0.5rem"><strong>Input:</strong></div>`;
-        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.input_data)}</pre>`;
-    }
-    
+    html += `<div style="margin-bottom:0.5rem"><strong>Input:</strong></div>`;
+    html += step.input_data
+        ? `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.input_data)}</pre>`
+        : `<div style="color:var(--text-muted);font-size:0.85rem">N/A</div>`;
+
     // Output
-    if (step.output_data) {
-        html += `<div style="margin-bottom:0.5rem;margin-top:0.5rem"><strong>Output:</strong></div>`;
-        html += `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.output_data)}</pre>`;
-    }
+    html += `<div style="margin-bottom:0.5rem;margin-top:0.5rem"><strong>Output:</strong></div>`;
+    html += step.output_data
+        ? `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.output_data)}</pre>`
+        : `<div style="color:var(--text-muted);font-size:0.85rem">N/A</div>`;
     
     // Error
     if (step.error_message) {

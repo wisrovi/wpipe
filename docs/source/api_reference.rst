@@ -26,7 +26,7 @@ This is the exhaustive technical specification for the **WPipe v2.4.0-LTS** engi
     The primary synchronization engine. It coordinates step execution and context management.
 
     **Constructor:**
-    ``Pipeline(pipeline_name: str, verbose: bool = False, tracking_db: str = None, ...)``
+    ``Pipeline(pipeline_name: str, verbose: bool = False, tracking_db: str = None, save_json_input_output: bool = True, ...)``
 
     **Key Methods:**
     *   ``.set_steps(steps: List)``: Registers the execution chain.

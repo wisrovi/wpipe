@@ -74,6 +74,7 @@ classDiagram
     class Pipeline {
         +str pipeline_name
         +bool verbose
+        +bool save_json_input_output
         +list tasks_list
         +set_steps(steps: list) None
         +run(context: dict) dict
