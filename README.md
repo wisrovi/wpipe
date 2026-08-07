@@ -427,17 +427,119 @@ viaje.set_steps([
     verificar_motor,
     Parallel(
         steps=[cargar_combustible, revisar_neumaticos],
-        max_workers=2
+        max_workers=2,
+        merge_policy="accumulate"   # suma números, extiende listas, fusiona dicts
     ),
     For(
         iterations=10,
         validation_expression="nivel_gasolina != 'vacío'",
-        steps=[conducir]
+        steps=[conducir],
+        merge_policy="last_wins"    # solo última iteración gana
     )
 ])
 
 # 5. Ejecutamos
 results = viaje.run({"motor": "V8", "temperatura": 20})
+```
+
+---
+
+## 🔀 Merge Policy: Fusión de Resultados en Paralelo y Bucles
+
+Cuando se ejecutan pasos en paralelo (`Parallel`) o en bucle (`For`), cada worker recibe una **copia del contexto** (`base`). Al finalizar, solo las claves que el worker **realmente modificó** se fusionan de vuelta al contexto global usando `merge_policy`.
+
+### `Parallel(merge_policy=...)` — Default: `"accumulate"`
+
+| Policy | Comportamiento |
+|--------|----------------|
+| `"accumulate"` (default) | Suma números, extiende listas, fusiona dicts; resto: último write gana |
+| `"last_wins"` | Último step en orden de declaración gana |
+| `callable(current, new) -> merged` | Resolución personalizada |
+
+```python
+# Ejemplo: suma contadores en paralelo
+p = Pipeline()
+p.set_steps([
+    Parallel(
+        steps=[
+            lambda ctx: {**ctx, "counter": ctx.get("counter", 0) + 1},
+            lambda ctx: {**ctx, "counter": ctx.get("counter", 0) + 10}
+        ],
+        merge_policy="accumulate"   # 1 + 10 = 11 se suma al base
+    )
+])
+result = p.run({"counter": 100})
+print(result["counter"])  # 111 (100 + 1 + 10)
+```
+
+```python
+# Ejemplo: último write gana
+p = Pipeline()
+p.set_steps([
+    Parallel(
+        steps=[
+            lambda ctx: {**ctx, "value": "A"},
+            lambda ctx: {**ctx, "value": "B"}
+        ],
+        merge_policy="last_wins"
+    )
+])
+result = p.run({})
+print(result["value"])  # "B" (segundo step en orden de declaración)
+```
+
+```python
+# Ejemplo: merge personalizado
+p = Pipeline()
+p.set_steps([
+    Parallel(
+        steps=[
+            lambda ctx: {**ctx, "items": ["a"]},
+            lambda ctx: {**ctx, "items": ["b"]}
+        ],
+        merge_policy=lambda cur, new: cur + new  # concatena listas
+    )
+])
+result = p.run({"items": ["start"]})
+print(result["items"])  # ["start", "a", "b"]
+```
+
+### `For(merge_policy=...)` — Default: `"last_wins"`
+
+En bucles, `base` es el contexto **antes de la primera iteración**. Solo claves modificadas en la última iteración (o acumuladas) se fusionan.
+
+| Policy | Uso típico |
+|--------|------------|
+| `"last_wins"` (default) | Solo resultado de la última iteración persiste |
+| `"accumulate"` | Acumula contadores/listas a lo largo de iteraciones |
+| `callable` | Lógica custom por iteración |
+
+```python
+# Acumular en cada iteración del bucle
+p = Pipeline()
+p.set_steps([
+    For(
+        iterations=5,
+        steps=[lambda ctx: {**ctx, "sum": ctx.get("sum", 0) + 1}],
+        merge_policy="accumulate"
+    )
+])
+result = p.run({"sum": 10})
+print(result["sum"])  # 15 (10 + 5 iteraciones)
+```
+
+```python
+# Solo última iteración (default)
+p = Pipeline()
+p.set_steps([
+    For(
+        iterations=3,
+        steps=[lambda ctx: {**ctx, "value": ctx.get("value", 0) + 100}],
+        merge_policy="last_wins"
+    )
+])
+result = p.run({"value": 0})
+print(result["value"])  # 100 (solo última iteración: 0+100)
 ```
 
 ---
@@ -476,8 +578,8 @@ exporter.export_pipeline_logs(format="json", output_path="reporte.json")
 | `PipelineAsync` | Pipeline asíncrono (`save_json_input_output=True` por defecto) |
 | `@step(name, version, retry_count, ...)` | Decorador para definir pasos |
 | `Condition(expression, branch_true, branch_false)` | Ramificación condicional |
-| `For(iterations, validation_expression, steps)` | Bucle con validación |
-| `Parallel(steps, max_workers, use_processes)` | Ejecución paralela |
+| `For(iterations, validation_expression, steps, merge_policy="last_wins")` | Bucle con validación y merge policy |
+| `Parallel(steps, max_workers, use_processes, merge_policy="accumulate")` | Ejecución paralela con merge policy |
 | `CheckpointManager` | Gestor de checkpoints |
 | `PipelineExporter` | Exportador de logs/métricas |
 | `start_dashboard(port)` | Dashboard web |
@@ -566,4 +668,16 @@ Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
- Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, incremento de versión a 2.4.3, optimización de patrones de exclusión de git en .gitignore, y filtrado optimizado de objetos complejos y binarios. Nuevo flag `save_json_input_output` para deshabilitar el almacenamiento de datos de entrada/salida en la DB de tracking e incremento de versión a 2.5.0. Parche 2.5.1: merge determinista de resultados en bloques `Parallel` (`merge_policy`), fix de ejecución de steps `Parallel` en el motor asíncrono, desbloqueo de updates de `checkpoints`, implementación real de `PipelineTracker.get_table_data` (dashboard Data tab), corrección de `ReportingMixin._api_process_update`, y limpieza estática completa: `mypy` y `ruff` a 0 errores).
+## 📜 Historial de Versiones (Resumen)
+
+| Versión | Fecha | Cambios Principales |
+|---------|-------|---------------------|
+| **2.5.2** | 2026-08-07 | `For.merge_policy` fix (accumulate/last_wins/callable), async For handler |
+| **2.5.1** | 2026-08-07 | Parallel merge_policy fix, checkpoints unblocked, dashboard get_table_data, mypy/ruff 0 |
+| **2.5.0** | 2026-08-06 | Flag `save_json_input_output`, Parallel.merge_policy, optimizaciones |
+| **2.4.3** | — | Optimización serializador, memoria compartida, checkpoints |
+| **2.4.0** | — | Bump estable LTS |
+
+---
+
+Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia.
