@@ -5,6 +5,15 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.2] - 2026-08-07
+
+### Fixed
+- **For Loop Merge Policy**: corregido bug en el bloque `For` donde `data.update(loop_data)` sobrescribía el contexto global sin política de merge, descartando actualizaciones a variables pre-existentes. Ahora usa `merge_parallel_results` con `merge_policy` configurable (`"last_wins"` por defecto, `"accumulate"` o callable).
+- **Async For Loop**: implementado handler para `For` en `PipelineAsync._execute_step` con misma lógica de merge.
+
+### Added
+- **For.merge_policy**: nuevo parámetro en `For(iterations, validation_expression, steps, merge_policy="last_wins")` con opciones `"accumulate"`, `"last_wins"` o callable personalizado.
+
 ## [2.5.1] - 2026-08-07
 
 ### Fixed

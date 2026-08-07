@@ -457,6 +457,24 @@ class PipelineAsync(APIClient):
             self._end_step_tracking(tracked_id, data)
             return data
 
+        if isinstance(item, For):
+            loop_data = data.copy()
+            loop_data.pop("progress_rich", None)
+            base = loop_data.copy()
+            iteration = 0
+            while item.should_continue(loop_data, iteration):
+                loop_data["_loop_iteration"] = iteration
+                for step_in_loop in item.steps:
+                    loop_data = await self._execute_step(step_in_loop, loop_data, **kwargs)
+                    if "error" in loop_data:
+                        print(f"  [ERROR] Loop broken at iteration {iteration} due to: {loop_data['error']}")
+                        break
+                if "error" in loop_data:
+                    break
+                iteration += 1
+            merge_parallel_results(data, loop_data, base, item.merge_policy)
+            return data
+
         if isinstance(item, Parallel):
             return await self._execute_parallel(item, data, parent_step_id, parallel_group, **kwargs)
 

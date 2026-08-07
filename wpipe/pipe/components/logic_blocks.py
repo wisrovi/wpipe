@@ -181,6 +181,8 @@ class For:
         steps (List[Any]): The steps to be executed in each iteration.
         iterations (Optional[int]): Fixed number of iterations.
         validation_expression (Optional[str]): Condition to check before each iteration.
+        merge_policy (Union[str, Callable]): How to resolve concurrent writes to the
+            same context key when merging the last iteration's result back (see ``merge_parallel_results``).
     """
 
     def __init__(
@@ -188,6 +190,7 @@ class For:
         steps: list[Any],
         iterations: Optional[int] = None,
         validation_expression: Optional[str] = None,
+        merge_policy: Union[str, Callable[[Any, Any], Any]] = "last_wins",
     ) -> None:
         """
         Initialize the For loop block.
@@ -196,15 +199,14 @@ class For:
             steps: Steps to execute in each loop.
             iterations: Optional fixed number of iterations.
             validation_expression: Optional expression to evaluate for continuation.
-
-        Raises:
-            ValueError: If neither iterations nor validation_expression is provided.
+            merge_policy: "last_wins" (default), "accumulate" or a custom callable.
         """
         if not validation_expression and iterations is None:
             raise ValueError("Either iterations or validation_expression must be provided")
         self.steps: list[Any] = steps or []
         self.iterations: Optional[int] = iterations
         self.validation_expression: Optional[str] = validation_expression
+        self.merge_policy: Union[str, Callable[[Any, Any], Any]] = merge_policy
 
     def to_dict(self) -> dict[str, Any]:
         """
@@ -217,6 +219,7 @@ class For:
             "type": "for",
             "iterations": self.iterations,
             "expression": self.validation_expression,
+            "merge_policy": getattr(self.merge_policy, "__name__", self.merge_policy),
             "steps": [_serialize_step(s) for s in self.steps],
         }
 

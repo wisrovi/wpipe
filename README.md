@@ -97,7 +97,7 @@ from wpipe import Pipeline, step, Condition, For, Parallel
 | **`step`** | Decorador para definir funciones como pasos del pipeline |
 | **`Pipeline`** | Contenedor principal que orquesta la ejecución |
 | **`Condition`** | Ramificación condicional basada en expresiones |
-| **`For`** | Bucles con validación de parada |
+| **`For`** | Bucles con validación de parada y `merge_policy` (accumulate/last_wins/callable) |
 | **`Parallel`** | Ejecución paralela de múltiples pasos |
 | **`Hooks`** | Middlewares globales (Pre/Post) para lógica transversal |
 

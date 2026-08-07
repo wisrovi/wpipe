@@ -892,6 +892,7 @@ class Pipeline(APIClient):
             loop_data = data.copy()
             loop_data.pop("progress_rich", None)
             iteration = 0
+            base = loop_data.copy()
             while item.should_continue(loop_data, iteration):
                 loop_data["_loop_iteration"] = iteration
                 for step_in_loop in item.steps:
@@ -902,7 +903,7 @@ class Pipeline(APIClient):
                 if "error" in loop_data:
                     break
                 iteration += 1
-            data.update(loop_data)
+            merge_parallel_results(data, loop_data, base, item.merge_policy)
             return data
 
         if isinstance(item, Parallel):
