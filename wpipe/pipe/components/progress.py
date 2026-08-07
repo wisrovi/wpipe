@@ -20,6 +20,7 @@ class ProgressManager:
 
     _instance: Optional["ProgressManager"] = None
     _lock = threading.Lock()
+    progress: Progress
 
     def __new__(cls) -> "ProgressManager":
         """

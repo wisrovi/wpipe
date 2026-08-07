@@ -3,7 +3,7 @@ Unified API reporting and metrics logic for synchronous and asynchronous pipelin
 """
 
 import traceback
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from wpipe.api_client import APIClient
 
@@ -14,7 +14,7 @@ class ReportingMixin:
     def _api_task_update(
         self,
         api_client: Optional[APIClient],
-        task_info: Dict[str, Any],
+        task_info: dict[str, Any],
         verbose: bool = False
     ) -> None:
         """Report task status to API."""
@@ -29,14 +29,14 @@ class ReportingMixin:
     def _api_process_update(
         self,
         api_client: Optional[APIClient],
-        process_info: Dict[str, Any],
+        process_info: dict[str, Any],
         verbose: bool = False
     ) -> None:
         """Report process status to API."""
         if not api_client:
             return
         try:
-            api_client.update_process(process_info)
+            api_client.end_process(process_info)
         except Exception as e:
             if verbose:
                 print(f"[API ERROR] Process update failed: {e}")

@@ -6,7 +6,7 @@ storing state in the tracking database.
 """
 
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from wsqlite import WSQLite
 
@@ -25,14 +25,14 @@ class CheckpointManager:
             db_path: Path to the tracking database
         """
         self.db_path = db_path
-        
+
         # Ensure the directory for the database exists
         if db_path:
             import os
             db_dir = os.path.dirname(os.path.abspath(db_path))
             if not os.path.exists(db_dir):
                 os.makedirs(db_dir, exist_ok=True)
-                
+
         self.db = WSQLite(CheckpointModel, self.db_path)
 
     def save_checkpoint(
@@ -41,7 +41,7 @@ class CheckpointManager:
         step_order: int,
         step_name: str,
         status: str,
-        data: Optional[Dict[str, Any]] = None,
+        data: Optional[dict[str, Any]] = None,
     ) -> None:
         """
         Save a checkpoint at a specific step.
@@ -72,7 +72,7 @@ class CheckpointManager:
         else:
             self.db.insert(checkpoint)
 
-    def get_last_checkpoint(self, pipeline_id: str) -> Optional[Dict[str, Any]]:
+    def get_last_checkpoint(self, pipeline_id: str) -> Optional[dict[str, Any]]:
         """
         Get the last successful checkpoint for a pipeline.
 
@@ -122,7 +122,7 @@ class CheckpointManager:
         for cp in checkpoints:
             self.db.delete(cp.id)
 
-    def get_checkpoint_stats(self, pipeline_id: str) -> Dict[str, Any]:
+    def get_checkpoint_stats(self, pipeline_id: str) -> dict[str, Any]:
         """
         Get statistics about checkpoints for a pipeline.
 

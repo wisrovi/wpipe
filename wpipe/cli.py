@@ -6,7 +6,6 @@ This module provides the main entry point for the 'wpipe' command.
 
 import argparse
 import importlib.util
-import os
 import sys
 from pathlib import Path
 
@@ -70,10 +69,10 @@ def main():
             sys.exit(1)
 
         print(f"⚙️ Running pipeline script: {file_path.absolute()}")
-        
+
         # Add current directory to sys.path to allow local imports in the script
         sys.path.insert(0, str(file_path.parent.absolute()))
-        
+
         try:
             # Load and execute the python file
             spec = importlib.util.spec_from_file_location("__main__", str(file_path))

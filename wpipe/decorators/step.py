@@ -7,13 +7,13 @@ Provides @wpipe.step() decorator for inline step definitions.
 import inspect
 from dataclasses import dataclass, field
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Optional, cast
 
 if TYPE_CHECKING:
     from wpipe.pipeline import Pipeline
 
 # Global registry for decorated steps
-_STEP_REGISTRY: Dict[str, "DecoratedStep"] = {}
+_STEP_REGISTRY: dict[str, "DecoratedStep"] = {}
 
 
 @dataclass
@@ -38,13 +38,13 @@ class StepMetadata:
     func: Callable
     version: str = "v1.0"
     timeout: Optional[float] = None
-    depends_on: List[str] = field(default_factory=list)
+    depends_on: list[str] = field(default_factory=list)
     retry_count: Optional[int] = None
     retry_delay: Optional[float] = None
-    retry_on_exceptions: Optional[Tuple[type, ...]] = None
+    retry_on_exceptions: Optional[tuple[type, ...]] = None
     parallel: bool = False
     description: str = ""
-    tags: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
 
 
 class DecoratedStep:
@@ -64,13 +64,13 @@ class DecoratedStep:
         name: Optional[str] = None,
         version: str = "v1.0",
         timeout: Optional[float] = None,
-        depends_on: Optional[List[str]] = None,
+        depends_on: Optional[list[str]] = None,
         retry_count: Optional[int] = None,
         retry_delay: Optional[float] = None,
-        retry_on_exceptions: Optional[Tuple[type, ...]] = None,
+        retry_on_exceptions: Optional[tuple[type, ...]] = None,
         parallel: bool = False,
         description: str = "",
-        tags: Optional[List[str]] = None,
+        tags: Optional[list[str]] = None,
     ):
         """Initialize decorated step.
 
@@ -104,7 +104,7 @@ class DecoratedStep:
         self.NAME = self.metadata.name  # pylint: disable=invalid-name
         self.VERSION = self.metadata.version  # pylint: disable=invalid-name
 
-    def __call__(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def __call__(self, context: dict[str, Any]) -> dict[str, Any]:
         """Execute decorated step.
 
         Args:
@@ -113,7 +113,7 @@ class DecoratedStep:
         Returns:
             The modified context.
         """
-        return self.metadata.func(context)
+        return cast(dict[str, Any], self.metadata.func(context))
 
     def get_name(self) -> str:
         """Get step name.
@@ -123,7 +123,7 @@ class DecoratedStep:
         """
         return self.metadata.name
 
-    def get_dependencies(self) -> List[str]:
+    def get_dependencies(self) -> list[str]:
         """Get step dependencies.
 
         Returns:
@@ -152,13 +152,13 @@ def step(
     name: Optional[Any] = None,
     version: str = "v1.0",
     timeout: Optional[float] = None,
-    depends_on: Optional[List[str]] = None,
+    depends_on: Optional[list[str]] = None,
     retry_count: Optional[int] = None,
     retry_delay: Optional[float] = None,
-    retry_on_exceptions: Optional[Tuple[type, ...]] = None,
+    retry_on_exceptions: Optional[tuple[type, ...]] = None,
     parallel: bool = False,
     description: str = "",
-    tags: Optional[List[str]] = None,
+    tags: Optional[list[str]] = None,
 ) -> Callable:
     """Decorator to mark a function or class as a pipeline step.
 
@@ -191,22 +191,22 @@ def step(
         if inspect.isclass(func):
             # For classes, we return the class itself
             # We add attributes to the original class for metadata detection
-            setattr(func, "_wpipe_step", decorated)
-            setattr(func, "_wpipe_metadata", decorated.get_metadata())
-            setattr(func, "NAME", decorated.NAME)
-            setattr(func, "VERSION", decorated.VERSION)
+            setattr(func, "_wpipe_step", decorated)  # noqa: B010
+            setattr(func, "_wpipe_metadata", decorated.get_metadata())  # noqa: B010
+            setattr(func, "NAME", decorated.NAME)  # noqa: B010
+            setattr(func, "VERSION", decorated.VERSION)  # noqa: B010
             return func
-        
+
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             return func(*args, **kwargs)
 
-        wrapper._wpipe_step = decorated  # pylint: disable=protected-access
-        wrapper._wpipe_metadata = decorated.get_metadata()  # pylint: disable=protected-access
+        setattr(wrapper, "_wpipe_step", decorated)  # noqa: B010
+        setattr(wrapper, "_wpipe_metadata", decorated.get_metadata())  # noqa: B010
 
         # Mirror attributes for @state compatibility
-        wrapper.NAME = decorated.NAME  # pylint: disable=invalid-name
-        wrapper.VERSION = decorated.VERSION  # pylint: disable=invalid-name
+        setattr(wrapper, "NAME", decorated.NAME)  # noqa: B010
+        setattr(wrapper, "VERSION", decorated.VERSION)  # noqa: B010
 
         return wrapper
 
@@ -229,7 +229,7 @@ class StepRegistry:
 
     def __init__(self) -> None:
         """Initialize registry."""
-        self.steps: Dict[str, DecoratedStep] = {}
+        self.steps: dict[str, DecoratedStep] = {}
 
     def register(self, decorated_step: DecoratedStep) -> None:
         """Register a decorated step.
@@ -270,7 +270,7 @@ class StepRegistry:
         """
         return self.steps.get(name)
 
-    def get_all(self) -> Dict[str, DecoratedStep]:
+    def get_all(self) -> dict[str, DecoratedStep]:
         """Get all registered steps.
 
         Returns:
@@ -283,7 +283,7 @@ class StepRegistry:
         self.steps.clear()
 
     @staticmethod
-    def get_global_registry() -> Dict[str, "DecoratedStep"]:
+    def get_global_registry() -> dict[str, "DecoratedStep"]:
         """Get global step registry.
 
         Returns:

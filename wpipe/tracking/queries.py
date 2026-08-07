@@ -3,7 +3,7 @@ Data query module for pipeline and event retrieval.
 """
 
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class QueryManager:
@@ -34,7 +34,7 @@ class QueryManager:
         self.db_events = db_events
 
     @staticmethod
-    def _parse_json_fields(data: Dict[str, Any], fields: List[str]) -> Dict[str, Any]:
+    def _parse_json_fields(data: dict[str, Any], fields: list[str]) -> dict[str, Any]:
         """
         Parse JSON strings in specified fields of a dictionary.
 
@@ -56,7 +56,7 @@ class QueryManager:
 
     def get_pipelines(
         self, limit: int = 50, offset: int = 0, status: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get list of pipelines for the dashboard.
 
@@ -90,7 +90,7 @@ class QueryManager:
                 continue
         return result
 
-    def get_pipeline(self, pipeline_id: str) -> Optional[Dict[str, Any]]:
+    def get_pipeline(self, pipeline_id: str) -> Optional[dict[str, Any]]:
         """
         Get detailed pipeline data including steps.
 
@@ -109,7 +109,7 @@ class QueryManager:
             return None
 
         try:
-            pipeline = pipelines[0].model_dump()
+            pipeline: dict[str, Any] = pipelines[0].model_dump()
         except (AttributeError, IndexError):
             return None
 
@@ -134,7 +134,7 @@ class QueryManager:
 
     def get_pipeline_executions(
         self, name: str, limit: int = 100, offset: int = 0
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get all executions of a pipeline by name.
 
@@ -155,7 +155,7 @@ class QueryManager:
 
     def get_fired_alerts(
         self, limit: int = 50, severity: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get recent fired alerts.
 
@@ -175,7 +175,7 @@ class QueryManager:
         except (AttributeError, RuntimeError, ValueError):
             return []
 
-    def get_alert_thresholds(self) -> List[Dict[str, Any]]:
+    def get_alert_thresholds(self) -> list[dict[str, Any]]:
         """
         Get alert configurations.
 
@@ -189,7 +189,7 @@ class QueryManager:
 
     def get_events(
         self, pipeline_id: Optional[str] = None, limit: int = 50
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get pipeline events.
 

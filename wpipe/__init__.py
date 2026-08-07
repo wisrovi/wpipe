@@ -5,28 +5,28 @@ A high-performance library for building and orchestrating data processing pipeli
 with support for parallel execution, error handling, checkpoints, and more.
 """
 
+import atexit
 import sqlite3
 import threading
-import atexit
-from typing import Any, Dict
+from typing import Any, cast
 
 from wsqlite import WSQLite as Wsqlite_original
 
 # Connection pooling for performance optimization
-_db_connections: Dict[str, sqlite3.Connection] = {}
+_db_connections: dict[str, sqlite3.Connection] = {}
 _db_lock = threading.RLock()
 
 def patched_get_connection(self) -> sqlite3.Connection:
     """Obtain a shared database connection to improve performance."""
     db_path = getattr(self, 'db_path', None) or self.__dict__.get('db_path')
     if db_path is None:
-        raise AttributeError(f"WSQLite object has no attribute 'db_path'.")
+        raise AttributeError("WSQLite object has no attribute 'db_path'.")
 
     with _db_lock:
         if db_path in _db_connections:
             try:
                 _db_connections[db_path].execute("SELECT 1")
-            except:
+            except Exception:
                 _db_connections.pop(db_path, None)
 
         if db_path not in _db_connections:
@@ -44,7 +44,7 @@ def patched_insert(self, data: Any) -> int:
     """Insert a new record and return the generated ID."""
     table_name = self.table_name
     data_dict = data.model_dump() if hasattr(data, "model_dump") else data
-    
+
     columns = [k for k, v in data_dict.items() if v is not None]
     placeholders = ["?" for _ in columns]
     values = [data_dict[k] for k in columns]
@@ -62,7 +62,7 @@ def patched_insert(self, data: Any) -> int:
             try:
                 cursor.execute(query, values)
                 conn.commit()
-                return cursor.lastrowid
+                return cast(int, cursor.lastrowid)
             except sqlite3.OperationalError as e:
                 if "no such table" in str(e):
                     # Table might not exist, try to create it
@@ -71,10 +71,10 @@ def patched_insert(self, data: Any) -> int:
                             self._sync.create_if_not_exists()
                             cursor.execute(query, values)
                             conn.commit()
-                            return cursor.lastrowid
-                    except:
+                            return cast(int, cursor.lastrowid)
+                    except Exception:
                         pass
-                
+
                 if attempt < max_retries - 1:
                     time.sleep(retry_delay * (attempt + 1))
                     continue
@@ -90,10 +90,8 @@ Wsqlite_original.insert = patched_insert
 def patched_update(self, record_id: Any, data: Any) -> bool:
     """Update a record and commit change."""
     table_name = self.table_name
-    if "checkpoint" in table_name.lower():
-        raise sqlite3.OperationalError("Updates on checkpoints table are disabled in this environment.")
     data_dict = data.model_dump() if hasattr(data, "model_dump") else data
-    
+
     columns = [f"{k} = ?" for k, v in data_dict.items() if v is not None]
     values = [data_dict[k] for k, v in data_dict.items() if v is not None]
     values.append(record_id)
@@ -129,15 +127,15 @@ Wsqlite_original.update = patched_update
 def _close_connections():
     """Cleanup connections and threads on exit."""
     with _db_lock:
-        for path, conn in list(_db_connections.items()):
+        for _path, conn in list(_db_connections.items()):
             try:
                 # Force commit before closing if possible
                 conn.commit()
                 conn.close()
-            except:
+            except Exception:
                 pass
         _db_connections.clear()
-    
+
     # Final attempt to silence lingering daemon threads in environments like Binder/Jupyter
     import threading
     for thread in threading.enumerate():
@@ -146,7 +144,7 @@ def _close_connections():
                 try:
                     # Give it a very short window to finish or just ignore it
                     thread.join(timeout=0.01)
-                except:
+                except Exception:
                     pass
 
 # Lazy loading map
@@ -182,14 +180,15 @@ _LAZY_MAP = {
 }
 
 # Direct imports for core components to ensure availability and IDE support
-from .pipe import Condition, For, Parallel, Pipeline
-from .decorators import step
+from .decorators import step  # noqa: E402
+from .pipe import Condition, For, Parallel, Pipeline  # noqa: E402
+
 
 def __getattr__(name: str) -> Any:
     """Handle lazy loading of modules."""
     if name == "Wsqlite":
         return Wsqlite_original
-    
+
     if name in _LAZY_MAP:
         module_path, attr_name = _LAZY_MAP[name]
         import importlib
@@ -197,8 +196,8 @@ def __getattr__(name: str) -> Any:
         attr = getattr(module, attr_name)
         globals()[name] = attr
         return attr
-    
+
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-__version__ = "2.5.0"
+__version__ = "2.5.1"
 __all__ = list(_LAZY_MAP.keys()) + ["Wsqlite", "Pipeline", "Condition", "For", "Parallel", "step"]

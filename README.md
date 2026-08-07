@@ -1,4 +1,4 @@
-# 🚀 WPipe v2.5.0
+# 🚀 WPipe v2.5.1
 
 <img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
 
@@ -566,4 +566,4 @@ Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
- Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, incremento de versión a 2.4.3, optimización de patrones de exclusión de git en .gitignore, y filtrado optimizado de objetos complejos y binarios. Nuevo flag `save_json_input_output` para deshabilitar el almacenamiento de datos de entrada/salida en la DB de tracking e incremento de versión a 2.5.0).
+ Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia. (Mantenimiento menor: Corrección de hooks, imports, filtros de serialización, manejo de errores, compatibilidad de metadatos, memoria compartida, reporte y formateo de monitor de recursos, bloqueo genérico de actualizaciones de checkpoints, parametrización opcional del monitor, incremento de versión a 2.4.3, optimización de patrones de exclusión de git en .gitignore, y filtrado optimizado de objetos complejos y binarios. Nuevo flag `save_json_input_output` para deshabilitar el almacenamiento de datos de entrada/salida en la DB de tracking e incremento de versión a 2.5.0. Parche 2.5.1: merge determinista de resultados en bloques `Parallel` (`merge_policy`), fix de ejecución de steps `Parallel` en el motor asíncrono, desbloqueo de updates de `checkpoints`, implementación real de `PipelineTracker.get_table_data` (dashboard Data tab), corrección de `ReportingMixin._api_process_update`, y limpieza estática completa: `mypy` y `ruff` a 0 errores).

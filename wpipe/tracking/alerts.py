@@ -4,7 +4,7 @@ Alert system for pipeline and step monitoring.
 
 import re
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional, cast
 
 from wpipe.sqlite.tables_dto.tracker_models import AlertConfigModel, AlertFiredModel
 
@@ -16,7 +16,7 @@ class AlertManager:
         self,
         db_alerts_config: Any,
         db_alerts_fired: Any,
-        alert_hooks: Dict[str, List[str]],
+        alert_hooks: dict[str, list[str]],
     ):
         """
         Initialize the AlertManager.
@@ -37,7 +37,7 @@ class AlertManager:
         name: Optional[str] = None,
         severity: str = "warning",
         message: Optional[str] = None,
-        steps: Optional[List[str]] = None,
+        steps: Optional[list[str]] = None,
     ) -> int:
         """
         Add an alert threshold configuration.
@@ -77,7 +77,7 @@ class AlertManager:
             severity=severity,
             message=message,
         )
-        return self.db_alerts_config.insert(model)
+        return cast(int, self.db_alerts_config.insert(model))
 
     def evaluate_condition(
         self, condition: str, actual: float, threshold: float
@@ -104,7 +104,7 @@ class AlertManager:
 
     def check_step_alerts(
         self, pipeline_id: str, step_name: str, duration_ms: float
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Check and fire step-level alerts.
 
@@ -116,7 +116,7 @@ class AlertManager:
         Returns:
             List of fired hooks (step names).
         """
-        fired_hooks: List[str] = []
+        fired_hooks: list[str] = []
         # Import local constants to avoid circular imports if needed
         configs = self.db_alerts_config.get_by_field(
             metric="step_duration_ms", enabled=1
@@ -145,7 +145,7 @@ class AlertManager:
         status: str,
         duration_ms: float,
         db_pipelines: Any,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Check and fire pipeline-level alerts.
 
@@ -159,7 +159,7 @@ class AlertManager:
         Returns:
             List of fired hooks (step names).
         """
-        fired_hooks: List[str] = []
+        fired_hooks: list[str] = []
         configs = self.db_alerts_config.get_by_field(enabled=1)
 
         for config in configs:

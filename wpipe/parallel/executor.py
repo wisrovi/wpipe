@@ -11,7 +11,7 @@ import threading
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import Any, Callable, Optional
 
 
 class ExecutionMode(Enum):
@@ -30,7 +30,7 @@ class StepDependency:
     func: Callable
     timeout: Optional[float] = None
     mode: ExecutionMode = ExecutionMode.IO_BOUND
-    dependencies: List[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
 
     def __hash__(self):
         return hash(self.name)
@@ -46,9 +46,9 @@ class DAGScheduler:
 
     def __init__(self):
         """Initialize DAG scheduler."""
-        self.steps: Dict[str, StepDependency] = {}
-        self.graph: Dict[str, Set[str]] = {}
-        self.in_degree: Dict[str, int] = {}
+        self.steps: dict[str, StepDependency] = {}
+        self.graph: dict[str, set[str]] = {}
+        self.in_degree: dict[str, int] = {}
 
     def add_step(self, step: StepDependency) -> None:
         """Add step to DAG."""
@@ -61,7 +61,7 @@ class DAGScheduler:
             if dep not in self.graph:
                 self.graph[dep] = set()
 
-    def topological_sort(self) -> List[List[str]]:
+    def topological_sort(self) -> list[list[str]]:
         """
         Get steps in topological order, grouped by execution level.
 
@@ -90,7 +90,7 @@ class DAGScheduler:
 
         return result
 
-    def get_parallel_groups(self) -> List[List[StepDependency]]:
+    def get_parallel_groups(self) -> list[list[StepDependency]]:
         """Get groups of steps that can run in parallel."""
         groups = self.topological_sort()
         return [[self.steps[name] for name in group] for group in groups]
@@ -117,10 +117,10 @@ class ParallelExecutor:
         """
         self.max_workers = max_workers
         self.scheduler = DAGScheduler()
-        self.results: Dict[str, Any] = {}
+        self.results: dict[str, Any] = {}
         self.lock = threading.Lock()
-        self._pre_hooks: List[Callable] = []
-        self._post_hooks: List[Callable] = []
+        self._pre_hooks: list[Callable] = []
+        self._post_hooks: list[Callable] = []
 
     def add_step(
         self,
@@ -128,7 +128,7 @@ class ParallelExecutor:
         func: Callable,
         mode: ExecutionMode = ExecutionMode.IO_BOUND,
         timeout: Optional[float] = None,
-        depends_on: Optional[List[str]] = None,
+        depends_on: Optional[list[str]] = None,
     ) -> None:
         """
         Add step to executor.
@@ -149,7 +149,7 @@ class ParallelExecutor:
         )
         self.scheduler.add_step(step)
 
-    def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def execute(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Execute all steps respecting dependencies.
 
@@ -215,8 +215,8 @@ class ParallelExecutor:
     def _execute_step(
         self,
         step: StepDependency,
-        context: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        context: dict[str, Any],
+    ) -> dict[str, Any]:
         """
         Execute a single step.
 
@@ -244,41 +244,39 @@ class ParallelExecutor:
             except Exception as e:
                 print(f"[PRE-HOOK PARALLEL ERROR] {e}")
 
-        result_status = "success"
         try:
             result = step.func(context)
             res_dict = result or {}
-            
+
             # Global Post-Hooks
             for hook in self._post_hooks:
                 try:
                     hook(context, step_info, "success")
                 except Exception as e:
                     print(f"[POST-HOOK PARALLEL ERROR] {e}")
-            
+
             return res_dict
         except Exception as e:
-            result_status = "error"
             # Global Post-Hooks on error
             for hook in self._post_hooks:
                 try:
                     hook(context, step_info, e)
                 except Exception as hook_err:
                     print(f"[POST-HOOK PARALLEL ERROR] {hook_err}")
-            
+
             print(f"Error in step {step.name}: {e}")
             raise e
 
     def _execute_step_safe(
         self,
         step: StepDependency,
-        context: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        context: dict[str, Any],
+    ) -> dict[str, Any]:
         """Execute step safely (for ProcessPool)."""
         # Note: For ProcessPool, we need to handle serialization
         return self._execute_step(step, context)
 
-    def get_results(self) -> Dict[str, Any]:
+    def get_results(self) -> dict[str, Any]:
         """Get results from all executed steps."""
         return self.results.copy()
 
@@ -291,7 +289,7 @@ class ContextMerger:
     """Merge results from parallel executions."""
 
     @staticmethod
-    def merge(results: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+    def merge(results: dict[str, dict[str, Any]]) -> dict[str, Any]:
         """
         Merge multiple result contexts.
 

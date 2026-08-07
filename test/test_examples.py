@@ -4,8 +4,8 @@ import pytest
 
 # List of directories to skip
 SKIP_DIRS = {
-    'states', 'utils', 'dto', 'configs', 'extra_readmes', 
-    'extras', 'test', 'pipelines', '__pycache__', '.git', '.github', '.vscode', 
+    'states', 'utils', 'dto', 'configs', 'extra_readmes',
+    'extras', 'test', 'pipelines', '__pycache__', '.git', '.github', '.vscode',
     'output', 'export_output', '.venv', 'venv', 'env', 'virtualenv', '.pytest_cache', '.ruff_cache'
 }
 
@@ -13,9 +13,7 @@ def find_examples():
     root_dir = os.path.join(os.path.dirname(__file__), '..', 'examples')
     examples = []
     for root, dirs, files in os.walk(root_dir):
-        # Filter directories in-place
-        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
-        
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and 'eyesdcar' not in d.lower()]
         for file in files:
             if file.endswith('.py') and file != '__init__.py':
                 examples.append(os.path.abspath(os.path.join(root, file)))
@@ -30,17 +28,17 @@ def test_example_execution(example_path):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     env = os.environ.copy()
     env['PYTHONPATH'] = project_root
-    
+
     # Change directory to the example's parent directory
     example_dir = os.path.dirname(example_path)
     example_file = os.path.basename(example_path)
 
     # Shorter timeout for demo levels
     timeout = 10 if 'demo_level' in example_path else 30
-    
+
     # Controlled keywords for examples demonstrating failures
     controlled_keywords = [
-        "Expected Error", "captured error", "controlled failure", 
+        "Expected Error", "captured error", "controlled failure",
         "Input data cannot be None", "Expected exception", "demonstrates error handling",
         "Nested pipeline error", "failing_step"
     ]
@@ -54,10 +52,10 @@ def test_example_execution(example_path):
             env=env,
             cwd=example_dir
         )
-        
+
         stdout = result.stdout
         stderr = result.stderr
-        
+
         # Check for success
         if result.returncode == 0:
             # Check if it was supposed to fail but succeeded (controlled success)

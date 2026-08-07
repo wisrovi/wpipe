@@ -25,7 +25,7 @@ def __getattr__(name: str) -> Any:
         attr = getattr(module, attr_name)
         globals()[name] = attr
         return attr
-    
+
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 __all__ = list(_LAZY_MAP.keys())

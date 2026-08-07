@@ -8,7 +8,7 @@ retry logic, API tracking, and execution history tracking.
 
 import asyncio
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Optional
 
 from rich.progress import Progress
 
@@ -16,8 +16,8 @@ from wpipe.api_client.api_client import APIClient
 from wpipe.exception import Codes, TaskError
 from wpipe.tracking import PipelineTracker
 
+from .components.logic_blocks import For, merge_parallel_results
 from .pipe import Background, Condition, Parallel, SystemMetricsCollector
-from .components.logic_blocks import For
 
 
 def _is_async_callable(func: Any) -> bool:
@@ -32,7 +32,7 @@ def _is_async_callable(func: Any) -> bool:
     """
     if asyncio.iscoroutinefunction(func):
         return True
-    if hasattr(func, "__call__") and asyncio.iscoroutinefunction(func.__call__):
+    if callable(func) and asyncio.iscoroutinefunction(func.__call__):
         return True
     return False
 
@@ -55,11 +55,11 @@ class PipelineAsync(APIClient):
         self,
         worker_id: Optional[str] = None,
         worker_name: Optional[str] = None,
-        api_config: Optional[Dict[str, Any]] = None,
+        api_config: Optional[dict[str, Any]] = None,
         verbose: bool = False,
         max_retries: int = 0,
         retry_delay: float = 1.0,
-        retry_on_exceptions: Tuple[type, ...] = (Exception,),
+        retry_on_exceptions: tuple[type, ...] = (Exception,),
         tracking_db: Optional[str] = None,
         pipeline_name: Optional[str] = None,
         config_dir: Optional[str] = None,
@@ -96,7 +96,7 @@ class PipelineAsync(APIClient):
                 base_url=api_config.get("base_url"),
                 token=api_config.get("token"),
             )
-            self.api_config: Optional[Dict[str, Any]] = api_config
+            self.api_config: Optional[dict[str, Any]] = api_config
         else:
             self.api_config = None
 
@@ -108,7 +108,7 @@ class PipelineAsync(APIClient):
         self.verbose: bool = verbose
         self.max_retries: int = max_retries
         self.retry_delay: float = retry_delay
-        self.retry_on_exceptions: Tuple[type, ...] = retry_on_exceptions
+        self.retry_on_exceptions: tuple[type, ...] = retry_on_exceptions
         self.parent_pipeline_id: Optional[str] = parent_pipeline_id
         self._collect_system_metrics: bool = collect_system_metrics
         self.continue_on_error: bool = continue_on_error
@@ -127,18 +127,18 @@ class PipelineAsync(APIClient):
 
         self.pipeline_name: str = pipeline_name or "Pipeline"
         self.pipeline_id: Optional[str] = None
-        self.tasks_list: List[Any] = []
+        self.tasks_list: list[Any] = []
         self._step_order: int = 0
 
         # Internal queues
-        self._pending_events: List[Dict[str, Any]] = []
-        self._post_run_tasks: List[Any] = []
-        self._checkpoints: List[Dict[str, Any]] = []
-        self._error_capture_tasks: List[Any] = []
+        self._pending_events: list[dict[str, Any]] = []
+        self._post_run_tasks: list[Any] = []
+        self._checkpoints: list[dict[str, Any]] = []
+        self._error_capture_tasks: list[Any] = []
 
         # Global Hooks / Middlewares
-        self._pre_hooks: List[Callable] = []
-        self._post_hooks: List[Callable] = []
+        self._pre_hooks: list[Callable] = []
+        self._post_hooks: list[Callable] = []
 
         self._metrics_collector: Optional[SystemMetricsCollector] = None
         self.progress_rich: Optional[Progress] = None
@@ -148,9 +148,9 @@ class PipelineAsync(APIClient):
         event_type: str,
         event_name: str,
         message: Optional[str] = None,
-        data: Optional[Dict[str, Any]] = None,
-        tags: Optional[List[str]] = None,
-        steps: Optional[List[Any]] = None,
+        data: Optional[dict[str, Any]] = None,
+        tags: Optional[list[str]] = None,
+        steps: Optional[list[Any]] = None,
     ) -> None:
         """
         Add an event or annotation to the pipeline.
@@ -171,7 +171,14 @@ class PipelineAsync(APIClient):
             "tags": tags,
         }
         if self.tracker and self.pipeline_id:
-            self.tracker.add_event(pipeline_id=self.pipeline_id, **event_info)
+            self.tracker.add_event(
+                pipeline_id=self.pipeline_id,
+                event_type=event_type,
+                event_name=event_name,
+                message=message,
+                data=data,
+                tags=tags,
+            )
         else:
             self._pending_events.append(event_info)
 
@@ -182,7 +189,7 @@ class PipelineAsync(APIClient):
         self,
         checkpoint_name: str,
         expression: str = "True",
-        steps: Optional[List[Any]] = None,
+        steps: Optional[list[Any]] = None,
     ) -> None:
         """
         Add a checkpoint to the pipeline.
@@ -199,7 +206,7 @@ class PipelineAsync(APIClient):
             "fired": False
         })
 
-    def add_error_capture(self, steps: List[Any]) -> None:
+    def add_error_capture(self, steps: list[Any]) -> None:
         """
         Add steps to be executed when an error occurs.
 
@@ -212,7 +219,7 @@ class PipelineAsync(APIClient):
     def add_pre_hook(self, hook: Callable) -> "PipelineAsync":
         """
         Add a global pre-execution hook.
-        
+
         Args:
             hook: Callable (sync or async) to execute before each step.
                   Signature: hook(context, step_info)
@@ -223,7 +230,7 @@ class PipelineAsync(APIClient):
     def add_post_hook(self, hook: Callable) -> "PipelineAsync":
         """
         Add a global post-execution hook.
-        
+
         Args:
             hook: Callable (sync or async) to execute after each step.
                   Signature: hook(context, step_info, result_or_error)
@@ -231,7 +238,7 @@ class PipelineAsync(APIClient):
         self._post_hooks.append(hook)
         return self
 
-    async def _evaluate_checkpoints(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def _evaluate_checkpoints(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Evaluate and fire checkpoints based on current data.
 
@@ -245,7 +252,7 @@ class PipelineAsync(APIClient):
             if not cp["fired"]:
                 # Use a restricted environment for security
                 safe_locals = data
-                safe_globals: Dict[str, Any] = {
+                safe_globals: dict[str, Any] = {
                     "True": True,
                     "False": False,
                     "None": None,
@@ -373,7 +380,7 @@ class PipelineAsync(APIClient):
         name: str,
         version: Optional[str] = None,
         step_type: str = "task",
-        input_data: Optional[Dict[str, Any]] = None,
+        input_data: Optional[dict[str, Any]] = None,
         parent_step_id: Optional[int] = None,
         parallel_group: Optional[str] = None,
     ) -> Optional[int]:
@@ -400,10 +407,10 @@ class PipelineAsync(APIClient):
     def _end_step_tracking(
         self,
         step_id: Optional[int],
-        output_data: Optional[Dict[str, Any]] = None,
+        output_data: Optional[dict[str, Any]] = None,
         error_message: Optional[str] = None,
         error_traceback: Optional[str] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """End tracking a pipeline step."""
         if not self.tracker or not step_id:
             return []
@@ -423,7 +430,7 @@ class PipelineAsync(APIClient):
             pipeline_id=self.pipeline_id,
         )
 
-    async def _execute_step(self, item: Any, data: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    async def _execute_step(self, item: Any, data: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
         """
         Execute a single step in the async pipeline.
 
@@ -435,8 +442,8 @@ class PipelineAsync(APIClient):
         Returns:
             Dict[str, Any]: Updated pipeline context.
         """
-        parent_step_id = kwargs.get("parent_step_id")
-        parallel_group = kwargs.get("parallel_group")
+        parent_step_id = kwargs.pop("parent_step_id", None)
+        parallel_group = kwargs.pop("parallel_group", None)
 
         if isinstance(item, Condition):
             tracked_id = self._start_step_tracking(
@@ -467,11 +474,11 @@ class PipelineAsync(APIClient):
     async def _execute_parallel(
         self,
         item: Parallel,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         parent_step_id: Optional[int],
         parallel_group: Optional[str],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute parallel steps concurrently."""
         tracked_parallel_id = self._start_step_tracking(
             "Parallel Block", "v1.0", "parallel", data,
@@ -496,6 +503,7 @@ class PipelineAsync(APIClient):
                 for step in item.steps
             ]
             results = await asyncio.gather(*tasks, return_exceptions=True)
+            merge_policy = getattr(item, "merge_policy", "accumulate")
             errors = []
             for res in results:
                 if isinstance(res, Exception):
@@ -503,7 +511,8 @@ class PipelineAsync(APIClient):
                 elif isinstance(res, dict):
                     if "error" in res:
                         errors.append(res["error"])
-                    data.update({k: v for k, v in res.items() if k != "progress_rich"})
+                    else:
+                        merge_parallel_results(data, res, loop_data, merge_policy)
             if errors:
                 error_msg = " | ".join(errors)
                 data["error"] = error_msg
@@ -514,7 +523,7 @@ class PipelineAsync(APIClient):
             self._end_step_tracking(tracked_parallel_id, data if not error_msg else None, error_msg)
         return data
 
-    async def _execute_error_capture(self, data: Dict[str, Any], error_info: Dict[str, Any]) -> None:
+    async def _execute_error_capture(self, data: dict[str, Any], error_info: dict[str, Any]) -> None:
         """Execute error capture handlers."""
         if not self._error_capture_tasks:
             return
@@ -534,16 +543,16 @@ class PipelineAsync(APIClient):
     async def _execute_background_step(
         self,
         item: Any,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         capture_error: bool,
         parent_step_id: Optional[int],
         parallel_group: Optional[str],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute a background step without blocking the pipeline."""
-        func, name, version = None, "background", "v1.0"
+        func, name, _version = None, "background", "v1.0"
         if isinstance(item, tuple) and len(item) >= 2:
-            func, name, version = item[0], item[1], item[2] if len(item) > 2 else "v1.0"
+            func, name, _version = item[0], item[1], item[2] if len(item) > 2 else "v1.0"
 
         task_data = data.copy()
         task_data.pop("progress_rich", None)
@@ -565,11 +574,11 @@ class PipelineAsync(APIClient):
     async def _execute_task(
         self,
         item: Any,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         parent_step_id: Optional[int],
         parallel_group: Optional[str],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute a single task step."""
         func = None
         name = "unknown"
@@ -606,7 +615,7 @@ class PipelineAsync(APIClient):
                 parent_step_id=parent_step_id,
                 parallel_group=parallel_group
             )
-            
+
             result_status = "success"
             error_msg = None
             try:
@@ -635,7 +644,7 @@ class PipelineAsync(APIClient):
                     raise
             finally:
                 self._end_step_tracking(tracked_step_id, data if not error_msg else None, error_msg)
-                
+
                 # Global Post-Hooks (only if not already raised)
                 if result_status == "success" or self.continue_on_error:
                     for hook in self._post_hooks:
@@ -649,7 +658,7 @@ class PipelineAsync(APIClient):
                                 print(f"[POST-HOOK ASYNC ERROR] {e}")
         return data
 
-    async def _pipeline_run(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+    async def _pipeline_run(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         """Internal async pipeline run implementation."""
         data = args[0].copy() if args else {}
         error_message = None
@@ -702,7 +711,7 @@ class PipelineAsync(APIClient):
                     print(f"\n[ASYNC STATUS] {self.pipeline_id}: {status}")
         return data
 
-    async def run(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+    async def run(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         """
         Execute the async pipeline.
 
@@ -714,7 +723,7 @@ class PipelineAsync(APIClient):
             Dict[str, Any]: The final pipeline data dictionary.
         """
         result = await self._pipeline_run(*args, **kwargs)
-        
+
         # Release database locks after execution
         if self.tracking_db:
             try:
@@ -726,14 +735,14 @@ class PipelineAsync(APIClient):
                 pass
         return result
 
-    def set_steps(self, steps: List[Any]) -> None:
+    def set_steps(self, steps: list[Any]) -> None:
         """
         Set the async pipeline steps.
 
         Args:
             steps: List of steps to be executed.
         """
-        new_list = []
+        new_list: list[Any] = []
 
         def normalize_step(step: Any) -> Any:
             """Normalize a step tuple to 4 elements (func, name, version, metadata)."""
@@ -770,6 +779,7 @@ class PipelineAsync(APIClient):
                     steps=normalized_steps,
                     max_workers=item.max_workers,
                     use_processes=item.use_processes,
+                    merge_policy=item.merge_policy,
                 ))
             elif isinstance(item, Background):
                 normalized_step = normalize_step(item.step)

@@ -5,6 +5,26 @@ All notable changes to wpipe will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] - 2026-08-07
+
+### Fixed
+- **Parallel Block Result Merging**: Corregido el bug en el que las actualizaciones a variables existentes dentro de un bloque `Parallel` se descartaban al fusionar los resultados en el contexto global, y las variables creadas sobre la marcha se pisaban en orden no determinista (dependía de `as_completed`). Ahora los resultados se fusionan en orden de declaración de los steps, solo se aplican las claves que el worker realmente modificó, y el comportamiento es configurable por bloque con `Parallel(merge_policy=...)` (`"accumulate"` por defecto, `"last_wins"` o callable personalizado).
+- **Async Parallel Step Execution**: Corregido error pre-existente `PipelineAsync._execute_task() got multiple values for argument 'parent_step_id'` que impedía la ejecución real de los steps dentro de un bloque `Parallel` en el motor asíncrono (los workers siempre fallaban antes de ejecutar el step).
+- **Checkpoints**: eliminado el bloqueo deliberado de `update` en la tabla `checkpoints` del monkey-patch de `WSQLite` (`wpipe/__init__.py`). `CheckpointManager` vuelve a persistir estados de checkpoint; `test/test_checkpoint.py` refleja el comportamiento real y los ejemplos `02 yolo inference/example_phase1.py` y `10_checkpointing/basic_checkpoint.py` vuelven a pasar.
+- **Dashboard Data tab**: corregido bug de runtime en `PipelineTracker.get_table_data` (delegaba a `AnalysisManager.get_table_data`, método inexistente → `/api/data/{table}` crasheaba con `AttributeError`). Ahora implementa paginación, búsqueda y filtro por estado sobre las tablas de tracking.
+- **API reporting**: `ReportingMixin._api_process_update` llamaba a `api_client.update_process`, método inexistente en `APIClient` (fallaba siempre). Ahora usa `end_process`.
+- **Tipos / calidad estática**: `mypy wpipe/` pasa de 66 errores a **0** (54 archivos) y `ruff check wpipe/` de 505 a **0**, sin capar reglas ni cambiar comportamiento:
+  - DTOs de tracking: `Field(None, ...)` → `Field(default=None, ...)` para que `id` sea opcional con el plugin de pydantic.
+  - `ProgressManager.progress` declarado e inicializado en `__new__`.
+  - `Step` movido a nivel de módulo en `pipe.py`; imports de `rich.errors.LiveError`/`rich.progress.Progress` a nivel de módulo.
+  - `add_event` ahora pasa `event_type`/`event_name`/`message`/`data`/`tags` explícitamente (no vía `**kwargs`).
+  - `no-any-return` corregidos con `cast` tipográfico (sin casts en runtime) en `api_client`, `__init__`, `logic_blocks`, `Sqlite`, `alerts`, `queries`, `tracker`, `validators`, `pipeline_step`.
+  - `Pipeline` importado bajo `TYPE_CHECKING` en `composition/pipeline_step.py`.
+  - `_Wrapped` de `decorators/step.py` usa `setattr` (mypy) con `# noqa: B010` (ruff) para atributos dinámicos.
+  - `bare except:` → `except Exception:`; `raise ... from None`/`from exc` donde lo pide `B904`.
+  - Barrido automático `UP006`/`UP035` (builtins PEP 585) + isort; `types-PyYAML` y `types-requests` añadidos a dev-deps.
+  - Código muerto eliminado en `_execute_background_step` (variables `version`/`step_id`/`step_meta` sin uso).
+
 ## [2.5.0] - 2026-08-06
 
 ### Added

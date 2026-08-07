@@ -7,12 +7,12 @@ during pipeline execution.
 
 import os
 import threading
-from typing import Dict, Optional
+from typing import Optional
 
 from wpipe.tracking import PipelineTracker
 
 
-def get_system_metrics() -> Dict[str, float]:
+def get_system_metrics() -> dict[str, float]:
     """
     Get current system metrics.
 
@@ -80,7 +80,7 @@ class SystemMetricsCollector:
         if self._thread and self._thread.is_alive():
             try:
                 self._thread.join(timeout=1.0)
-            except:
+            except Exception:
                 pass
 
     def _collect_loop(self) -> None:

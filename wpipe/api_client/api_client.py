@@ -4,7 +4,7 @@ API Client module for pipeline tracking and communication.
 
 import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Optional, cast
 
 import requests
 
@@ -42,7 +42,7 @@ class APIClient:
         }
         self.timeout = timeout
 
-    def send_post(self, endpoint: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def send_post(self, endpoint: str, data: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Sends a POST request to a specified endpoint.
 
@@ -68,12 +68,12 @@ class APIClient:
                 timeout=self.timeout
             )
             response.raise_for_status()
-            return response.json()
+            return cast(Optional[dict[str, Any]], response.json())
         except requests.exceptions.RequestException as e:
             logger.error("Error in POST request to %s: %s", url, e)
             return None
 
-    def send_get(self, endpoint: str) -> Optional[Dict[str, Any]]:
+    def send_get(self, endpoint: str) -> Optional[dict[str, Any]]:
         """
         Sends a GET request to a specified endpoint.
 
@@ -93,12 +93,12 @@ class APIClient:
         try:
             response = requests.get(url, headers=self.headers, timeout=self.timeout)
             response.raise_for_status()
-            return response.json()
+            return cast(Optional[dict[str, Any]], response.json())
         except requests.exceptions.RequestException as e:
             logger.error("Error in GET request to %s: %s", url, e)
             return None
 
-    def register_worker(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def register_worker(self, data: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Registers a worker with the API server.
 
@@ -110,7 +110,7 @@ class APIClient:
         """
         return self.send_post("/matricula", data)
 
-    def healthcheck_worker(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def healthcheck_worker(self, data: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Performs a worker health check.
 
@@ -122,7 +122,7 @@ class APIClient:
         """
         return self.send_post("/healthchecker", data)
 
-    def register_process(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def register_process(self, data: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Registers a new process with the API server.
 
@@ -134,7 +134,7 @@ class APIClient:
         """
         return self.send_post("/newprocess", data)
 
-    def end_process(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def end_process(self, data: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Signals the end of a process to the API server.
 
@@ -146,7 +146,7 @@ class APIClient:
         """
         return self.send_post("/endprocess", data)
 
-    def update_task(self, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def update_task(self, data: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Updates task status on the API server.
 
@@ -158,7 +158,7 @@ class APIClient:
         """
         return self.send_post("/actualizar_task", data)
 
-    def get_dashboard_workers(self) -> Optional[Dict[str, Any]]:
+    def get_dashboard_workers(self) -> Optional[dict[str, Any]]:
         """
         Retrieves workers dashboard information.
 

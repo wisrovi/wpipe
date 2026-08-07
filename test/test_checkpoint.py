@@ -34,16 +34,9 @@ def test_checkpoint_lifecycle(checkpoint_mgr: CheckpointManager) -> None:
     checkpoint_mgr.save_checkpoint(pipe_id, 0, "step_0", "pending", {"a": 1})
     assert not checkpoint_mgr.can_resume(pipe_id)
 
-    # Attempt to update the same step order. This might fail if WSQLite has
-    # issues with updates on certain states or due to concurrency, hence the try-except.
-    # The goal is to ensure the test doesn't break if this specific update fails,
-    # but allows subsequent successful checkpoints to be saved.
-    try:
-        checkpoint_mgr.save_checkpoint(pipe_id, 0, "step_0", "success", {"a": 2})
-    except Exception:
-        # We ignore potential exceptions here as the primary goal is to test the
-        # overall lifecycle, and subsequent successful checkpoints will be saved.
-        pass # Ignoramos si wsqlite falla en update
+    # Update the same step order to "success". Updates on existing checkpoints
+    # are supported, so step_0 becomes a successful checkpoint.
+    checkpoint_mgr.save_checkpoint(pipe_id, 0, "step_0", "success", {"a": 2})
 
     # Save a successful checkpoint to enable resume capability
     checkpoint_mgr.save_checkpoint(pipe_id, 1, "step_1", "success", {"b": 2})
@@ -60,16 +53,12 @@ def test_checkpoint_lifecycle(checkpoint_mgr: CheckpointManager) -> None:
     # Get and assert statistics
     stats = checkpoint_mgr.get_checkpoint_stats(pipe_id)
     assert stats["total_checkpoints"] == 3
-    assert stats["successful"] == 1
+    assert stats["successful"] == 2
     assert stats["failed"] == 1
 
     # Clear all checkpoints for the pipeline ID
-    try:
-        checkpoint_mgr.clear_checkpoints(pipe_id)
-    except Exception:
-        # Similar to the update, ignore potential exceptions during clearing
-        # if the underlying database operations fail for some reason.
-        pass
+    checkpoint_mgr.clear_checkpoints(pipe_id)
+    assert checkpoint_mgr.get_checkpoint_stats(pipe_id)["total_checkpoints"] == 0
 
 def test_checkpoint_with_complex_data(checkpoint_mgr: CheckpointManager) -> None:
     """Tests saving checkpoints with complex data structures.

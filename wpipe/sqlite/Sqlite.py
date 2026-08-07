@@ -8,12 +8,11 @@ import threading
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union, cast
 
 from wsqlite import WSQLite as WSQLiteBase
 
 from .tables_dto.log_gestor_model import WsqliteModel
-from .tables_dto.records import RecordModel
 
 
 class PatchedWSQLite(WSQLiteBase):
@@ -24,7 +23,7 @@ class PatchedWSQLite(WSQLiteBase):
     SQLite performance using WAL mode and normal synchronous settings.
     """
 
-    _db_connections: Dict[str, sqlite3.Connection] = {}
+    _db_connections: dict[str, sqlite3.Connection] = {}
     _db_lock = threading.Lock()
 
     def _get_connection(self) -> sqlite3.Connection:
@@ -61,54 +60,54 @@ class Wsqlite:
             db_name (str): Name of the database file. Defaults to "register.db".
         """
         self.db_name: str = db_name
-        self._output_db: Dict[str, Any] = {}
-        self._details_db: Dict[str, Any] = {}
-        self._input_db: Dict[str, Any] = {}
-        self._error_db: Dict[str, Any] = {}
+        self._output_db: dict[str, Any] = {}
+        self._details_db: dict[str, Any] = {}
+        self._input_db: dict[str, Any] = {}
+        self._error_db: dict[str, Any] = {}
         self._last_id: Optional[int] = None
         self.record_uuid: str = str(uuid.uuid4())
         self.db = PatchedWSQLite(WsqliteModel, db_name)
 
     @property
-    def input(self) -> Dict[str, Any]:
+    def input(self) -> dict[str, Any]:
         """Gets the input data dictionary."""
         return self._input_db
 
     @input.setter
-    def input(self, value: Dict[str, Any]) -> None:
+    def input(self, value: dict[str, Any]) -> None:
         """Sets the input data and saves state."""
         self._input_db = self._serialize_dict(value)
         self._save_state()
 
     @property
-    def output(self) -> Dict[str, Any]:
+    def output(self) -> dict[str, Any]:
         """Gets the output data dictionary."""
         return self._output_db
 
     @output.setter
-    def output(self, value: Dict[str, Any]) -> None:
+    def output(self, value: dict[str, Any]) -> None:
         """Sets the output data and saves state."""
         self._output_db = self._serialize_dict(value)
         self._save_state()
 
     @property
-    def details(self) -> Dict[str, Any]:
+    def details(self) -> dict[str, Any]:
         """Gets the details data dictionary."""
         return self._details_db
 
     @details.setter
-    def details(self, value: Dict[str, Any]) -> None:
+    def details(self, value: dict[str, Any]) -> None:
         """Sets the details data and saves state."""
         self._details_db = self._serialize_dict(value)
         self._save_state()
 
     @property
-    def error(self) -> Dict[str, Any]:
+    def error(self) -> dict[str, Any]:
         """Gets the error data dictionary."""
         return self._error_db
 
     @error.setter
-    def error(self, value: Dict[str, Any]) -> None:
+    def error(self, value: dict[str, Any]) -> None:
         """Sets the error data and saves state."""
         self._error_db = self._serialize_dict(value)
         self._save_state()
@@ -118,7 +117,7 @@ class Wsqlite:
         """Gets the ID of the last inserted or updated record."""
         return self._last_id
 
-    def _serialize_dict(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _serialize_dict(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Converts non-serializable objects to strings within a dictionary.
 
@@ -146,7 +145,7 @@ class Wsqlite:
                 return obj
             return str(obj)
 
-        return convert(data)
+        return cast(dict[str, Any], convert(data))
 
     def _save_state(self) -> None:
         """
@@ -229,9 +228,9 @@ class SQLite:
 
     def write(
         self,
-        input_data: Optional[Union[Dict[str, Any], str]] = None,
-        output: Optional[Union[Dict[str, Any], str]] = None,
-        details: Optional[Union[Dict[str, Any], str]] = None,
+        input_data: Optional[Union[dict[str, Any], str]] = None,
+        output: Optional[Union[dict[str, Any], str]] = None,
+        details: Optional[Union[dict[str, Any], str]] = None,
         error: Optional[str] = None,
         record_id: Optional[int] = None,
     ) -> Optional[int]:
@@ -284,7 +283,7 @@ class SQLite:
         conn.commit()
         return cursor.lastrowid
 
-    def read_by_id(self, record_id: int) -> Optional[Dict[str, Any]]:
+    def read_by_id(self, record_id: int) -> Optional[dict[str, Any]]:
         """
         Reads a record from the database by its ID.
 

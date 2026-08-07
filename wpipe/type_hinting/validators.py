@@ -4,7 +4,7 @@ Type hinting validators for pipeline context and data.
 Provides utilities for validating and enforcing type hints throughout the pipeline.
 """
 
-from typing import Any, Dict, Generic, List, Type, TypeVar, get_args, get_origin
+from typing import Any, Generic, TypeVar, cast, get_args, get_origin
 
 from pydantic import BaseModel, ValidationError
 from typing_extensions import TypedDict
@@ -28,7 +28,7 @@ class PipelineContext(TypedDict, total=False):
     step_name: str
     execution_id: str
     timestamp: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class TypeValidator:
@@ -70,7 +70,7 @@ class TypeValidator:
             return str(err)
 
     @staticmethod
-    def validate(value: Any, expected_type: Type[T]) -> T:
+    def validate(value: Any, expected_type: type[T]) -> T:
         """
         Validate value against expected type.
 
@@ -88,7 +88,7 @@ class TypeValidator:
         """
         # Support for Pydantic Models
         if isinstance(expected_type, type) and issubclass(expected_type, BaseModel):
-            return TypeValidator._validate_pydantic(value, expected_type)
+            return cast(T, TypeValidator._validate_pydantic(value, expected_type))
 
         origin = get_origin(expected_type)
         args = get_args(expected_type)
@@ -101,21 +101,21 @@ class TypeValidator:
                 raise TypeError(
                     f"Expected dict for TypedDict, got {type(value).__name__}"
                 )
-            return TypeValidator.validate_dict(value, expected_type.__annotations__)
+            return cast(T, TypeValidator.validate_dict(value, expected_type.__annotations__))
 
         if origin is None:
             return TypeValidator._validate_base_type(value, expected_type)
 
         if origin is dict:
-            return TypeValidator._validate_dict_type(value, args)
+            return cast(T, TypeValidator._validate_dict_type(value, args))
 
         if origin is list:
-            return TypeValidator._validate_list_type(value, args)
+            return cast(T, TypeValidator._validate_list_type(value, args))
 
-        return value
+        return cast(T, value)
 
     @staticmethod
-    def _validate_pydantic(value: Any, expected_type: Type[BaseModel]) -> Any:
+    def _validate_pydantic(value: Any, expected_type: type[BaseModel]) -> Any:
         """Internal helper for Pydantic validation."""
         if isinstance(value, dict):
             try:
@@ -133,7 +133,7 @@ class TypeValidator:
             )
 
     @staticmethod
-    def _validate_base_type(value: Any, expected_type: Type[T]) -> T:
+    def _validate_base_type(value: Any, expected_type: type[T]) -> T:
         """Internal helper for base type validation."""
         try:
             if not isinstance(value, expected_type):
@@ -143,10 +143,10 @@ class TypeValidator:
         except TypeError:
             # Some special typing types might fail isinstance
             pass
-        return value
+        return cast(T, value)
 
     @staticmethod
-    def _validate_dict_type(value: Any, args: tuple) -> Dict[Any, Any]:
+    def _validate_dict_type(value: Any, args: tuple) -> dict[Any, Any]:
         """Internal helper for dict type validation."""
         if not isinstance(value, dict):
             raise TypeError(f"Expected dict, got {type(value).__name__}")
@@ -165,7 +165,7 @@ class TypeValidator:
         return value
 
     @staticmethod
-    def _validate_list_type(value: Any, args: tuple) -> List[Any]:
+    def _validate_list_type(value: Any, args: tuple) -> list[Any]:
         """Internal helper for list type validation."""
         if not isinstance(value, list):
             raise TypeError(f"Expected list, got {type(value).__name__}")
@@ -180,7 +180,7 @@ class TypeValidator:
         return value
 
     @staticmethod
-    def validate_dict(data: Dict[str, Any], schema: Dict[str, Type]) -> Dict[str, Any]:
+    def validate_dict(data: dict[str, Any], schema: dict[str, type]) -> dict[str, Any]:
         """
         Validate dictionary against schema.
 
@@ -195,7 +195,7 @@ class TypeValidator:
             TypeError: If validation fails.
             KeyError: If required key is missing.
         """
-        validated = {}
+        validated: dict[str, Any] = {}
 
         for key, expected_type in schema.items():
             if key not in data:
@@ -214,7 +214,7 @@ class GenericPipeline(Generic[T]):
         context_type: The type of context used in this pipeline.
     """
 
-    def __init__(self, context_type: Type[T]):
+    def __init__(self, context_type: type[T]):
         """
         Initialize generic pipeline.
 

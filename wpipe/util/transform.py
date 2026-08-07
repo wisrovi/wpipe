@@ -8,16 +8,15 @@ and for creating structured state classes from functions.
 from dataclasses import asdict, is_dataclass
 from functools import wraps
 from types import SimpleNamespace
-from typing import Any, Callable, Set, Optional
+from typing import Any, Callable, Optional, cast
 
 from pydantic import BaseModel
-
 
 # Internal keys that should not be converted/recursed by decorators
 SYSTEM_KEYS = {"progress_rich", "_loop_iteration", "_pipeline_start_time"}
 
 
-def dict_to_sns(data: Any, _seen: Optional[Set[int]] = None) -> Any:
+def dict_to_sns(data: Any, _seen: Optional[set[int]] = None) -> Any:
     """Recursively convert a dictionary to SimpleNamespace.
 
     Args:
@@ -52,7 +51,7 @@ def dict_to_sns(data: Any, _seen: Optional[Set[int]] = None) -> Any:
         _seen.discard(data_id)
 
 
-def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
+def object_to_dict(obj: Any, _seen: Optional[set[int]] = None) -> Any:
     """Recursively convert any object (Pydantic, Dataclass, etc.) to dict.
 
     Args:
@@ -107,7 +106,7 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
 
         # Handle dataclasses
         if is_dataclass(obj):
-            return asdict(obj)
+            return asdict(cast(Any, obj))
 
         # Handle objects with __dict__
         if hasattr(obj, "__dict__"):
@@ -119,7 +118,7 @@ def object_to_dict(obj: Any, _seen: Optional[Set[int]] = None) -> Any:
                 "pandas", "matplotlib", "scipy", "decord", "av"
             )):
                 return f"<{obj.__class__.__name__}>"
-                
+
             return {
                 k: (v if k in SYSTEM_KEYS else object_to_dict(v, _seen))
                 for k, v in obj.__dict__.items()

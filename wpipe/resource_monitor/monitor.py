@@ -7,7 +7,7 @@ Tracks RAM, CPU, and other system metrics during pipeline execution.
 import threading
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import psutil
 from wsqlite import WSQLite
@@ -45,7 +45,7 @@ class ResourceMonitor:
         self.avg_cpu_percent: float = 0.0
         self.start_cpu_total: float = 0.0
 
-        self.metrics: List[Dict[str, Any]] = []
+        self.metrics: list[dict[str, Any]] = []
         self._monitoring = False
         self._monitor_thread: Optional[threading.Thread] = None
 
@@ -59,7 +59,7 @@ class ResourceMonitor:
         """
         return self._monitoring
 
-    def get_current_reading(self) -> Dict[str, float]:
+    def get_current_reading(self) -> dict[str, float]:
         """
         Get current resource usage.
 
@@ -136,7 +136,7 @@ class ResourceMonitor:
         if self._monitor_thread and self._monitor_thread.is_alive():
             try:
                 self._monitor_thread.join(timeout=1.0)
-            except:
+            except Exception:
                 pass
 
         self.end_time = time.time()
@@ -208,7 +208,7 @@ class ResourceMonitor:
         """
         return self.end_ram_mb - self.start_ram_mb
 
-    def get_summary(self) -> Dict[str, Any]:
+    def get_summary(self) -> dict[str, Any]:
         """
         Get monitoring summary.
 
@@ -236,7 +236,7 @@ class ResourceMonitor:
             ),
         }
 
-    def format_summary(self, summary: Dict[str, Any]) -> str:
+    def format_summary(self, summary: dict[str, Any]) -> str:
         """Format monitoring summary as a string."""
         return (
             f"Resource Summary for {summary.get('task_name', 'unknown')}:\n"
@@ -276,7 +276,7 @@ class ResourceMonitorRegistry:
 
     def __init__(self):
         """Initialize the registry."""
-        self.monitors: Dict[str, ResourceMonitor] = {}
+        self.monitors: dict[str, ResourceMonitor] = {}
 
     def add(self, task_name: str, monitor: ResourceMonitor) -> None:
         """
@@ -288,7 +288,7 @@ class ResourceMonitorRegistry:
         """
         self.monitors[task_name] = monitor
 
-    def get_summary(self) -> Dict[str, Any]:
+    def get_summary(self) -> dict[str, Any]:
         """
         Get summary of all monitored tasks.
 

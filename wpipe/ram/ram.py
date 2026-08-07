@@ -5,7 +5,7 @@ Memory limit utilities and shared memory storage for the pipeline.
 import platform
 import resource
 import sys
-from typing import Any, Callable, Dict
+from typing import Any, Callable
 
 
 class SharedMemory:
@@ -13,7 +13,7 @@ class SharedMemory:
 
     def __init__(self) -> None:
         """Initialize shared memory storage."""
-        self._data: Dict[str, Any] = {}
+        self._data: dict[str, Any] = {}
 
     def set(self, key: str, value: Any) -> None:
         """

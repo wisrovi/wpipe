@@ -83,7 +83,7 @@ async def timeout_async(seconds: Optional[float], coro: Any) -> Any:
     try:
         return await asyncio.wait_for(coro, timeout=seconds)
     except asyncio.TimeoutError:
-        raise TimeoutError(f"Async task exceeded timeout of {seconds}s")
+        raise TimeoutError(f"Async task exceeded timeout of {seconds}s") from None
 
 
 class TaskTimer:

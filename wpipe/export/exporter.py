@@ -8,7 +8,7 @@ to various formats (JSON, CSV) for analysis and reporting.
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from wsqlite import WSQLite
 
@@ -150,7 +150,7 @@ class PipelineExporter:
         raise ValueError("Statistics export only supports JSON format")
 
     def _export_json(
-        self, data: List[Dict[str, Any]], output_path: Optional[str] = None
+        self, data: list[dict[str, Any]], output_path: Optional[str] = None
     ) -> str:
         """
         Exports data as a JSON string or file.
@@ -169,7 +169,7 @@ class PipelineExporter:
         return json_str
 
     def _export_csv(
-        self, data: List[Dict[str, Any]], output_path: Optional[str] = None
+        self, data: list[dict[str, Any]], output_path: Optional[str] = None
     ) -> str:
         """
         Exports data as a CSV string or file.
@@ -199,7 +199,7 @@ class PipelineExporter:
             return output_path
         return csv_str
 
-    def _calculate_statistics(self, pipeline_id: Optional[str]) -> Dict[str, Any]:
+    def _calculate_statistics(self, pipeline_id: Optional[str]) -> dict[str, Any]:
         """
         Calculates pipeline execution statistics using WSQLite.
 

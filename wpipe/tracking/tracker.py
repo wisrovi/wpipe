@@ -7,7 +7,7 @@ import os
 import sqlite3
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional, cast
 
 import yaml
 from wsqlite import WSQLite
@@ -162,13 +162,13 @@ class PipelineTracker:
         """
         self.db_path = db_path
         self.save_json_input_output = save_json_input_output
-        
+
         # Ensure the directory for the database exists
         if db_path:
             db_dir = os.path.dirname(os.path.abspath(db_path))
             if not os.path.exists(db_dir):
                 os.makedirs(db_dir, exist_ok=True)
-                
+
         self.config_dir = os.path.abspath(config_dir or "pipeline_configs")
         self.pipeline_id: Optional[str] = None
 
@@ -184,10 +184,24 @@ class PipelineTracker:
         self.db_system_metrics = WSQLite(system_metrics, db_path)
         self.db_comparisons = WSQLite(comparisons, db_path)
 
+        # Table handles exposed to the dashboard (Data tab)
+        self._table_handles: dict[str, WSQLite] = {
+            "pipelines": self.db_pipelines,
+            "steps": self.db_steps,
+            "step_history": self.db_step_history,
+            "performance_stats": self.db_performance_stats,
+            "alerts_config": self.db_alerts_config,
+            "alerts_fired": self.db_alerts_fired,
+            "events": self.db_events,
+            "pipeline_relations": self.db_pipeline_relations,
+            "system_metrics": self.db_system_metrics,
+            "comparisons": self.db_comparisons,
+        }
+
         # Deferred - called on first use instead of at import time
         # self._ensure_schema_up_to_date()
 
-        self._alert_hooks: Dict[str, List[str]] = {}
+        self._alert_hooks: dict[str, list[str]] = {}
 
         # specialized Managers
         self.alerts = AlertManager(
@@ -215,51 +229,101 @@ class PipelineTracker:
         """Delegate to alerts manager."""
         return self.alerts.add_alert_threshold(*args, **kwargs)
 
-    def get_pipelines(self, *args, **kwargs) -> List[Dict[str, Any]]:
+    def get_pipelines(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to queries manager."""
         return self.queries.get_pipelines(*args, **kwargs)
 
-    def get_pipeline(self, *args, **kwargs) -> Optional[Dict[str, Any]]:
+    def get_pipeline(self, *args, **kwargs) -> Optional[dict[str, Any]]:
         """Delegate to queries manager."""
         return self.queries.get_pipeline(*args, **kwargs)
 
-    def get_stats(self, *args, **kwargs) -> Dict[str, Any]:
+    def get_stats(self, *args, **kwargs) -> dict[str, Any]:
         """Delegate to analysis manager."""
         return self.analysis.get_stats(*args, **kwargs)
 
-    def get_trend_data(self, *args, **kwargs) -> List[Dict[str, Any]]:
+    def get_trend_data(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to analysis manager."""
         return self.analysis.get_trend_data(*args, **kwargs)
 
-    def get_top_slow_steps(self, *args, **kwargs) -> List[Dict[str, Any]]:
+    def get_top_slow_steps(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to analysis manager."""
         return self.analysis.get_top_slow_steps(*args, **kwargs)
 
-    def get_events(self, *args, **kwargs) -> List[Dict[str, Any]]:
+    def get_events(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to queries manager."""
         return self.queries.get_events(*args, **kwargs)
 
-    def get_fired_alerts(self, *args, **kwargs) -> List[Dict[str, Any]]:
+    def get_fired_alerts(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to queries manager."""
         return self.queries.get_fired_alerts(*args, **kwargs)
 
-    def get_alert_thresholds(self, *args, **kwargs) -> List[Dict[str, Any]]:
+    def get_alert_thresholds(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to queries manager."""
         return self.queries.get_alert_thresholds(*args, **kwargs)
 
-    def get_states_analysis(self, *args, **kwargs) -> Dict[str, Any]:
+    def get_states_analysis(self, *args, **kwargs) -> dict[str, Any]:
         """Delegate to analysis manager."""
         return self.analysis.get_states_analysis(*args, **kwargs)
 
-    def get_pipelines_analysis(self, *args, **kwargs) -> Dict[str, Any]:
+    def get_pipelines_analysis(self, *args, **kwargs) -> dict[str, Any]:
         """Delegate to analysis manager."""
         return self.analysis.get_pipelines_analysis(*args, **kwargs)
 
-    def get_table_data(self, *args, **kwargs) -> Dict[str, Any]:
-        """Delegate to analysis manager."""
-        return self.analysis.get_table_data(*args, **kwargs)
+    def get_table_data(
+        self,
+        table: str,
+        page: int = 1,
+        page_size: int = 20,
+        search: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Get paginated, searchable data from a tracking table.
 
-    def get_pipeline_executions(self, *args, **kwargs) -> List[Dict[str, Any]]:
+        Args:
+            table: Name of the tracking table (pipelines, steps, events, ...).
+            page: 1-indexed page number.
+            page_size: Number of records per page.
+            search: Optional substring to filter string fields.
+            status: Optional status value to filter by.
+
+        Returns:
+            Dictionary with "items", "total", "page" and "total_pages".
+        """
+        db = self._table_handles.get(table)
+        if db is None:
+            return {"items": [], "total": 0, "page": page, "total_pages": 0}
+
+        try:
+            rows = [r.model_dump() for r in db.get_all()]
+        except (AttributeError, TypeError, ValueError):
+            return {"items": [], "total": 0, "page": page, "total_pages": 0}
+
+        if status:
+            rows = [r for r in rows if r.get("status") == status]
+
+        if search:
+            needle = search.lower()
+            filtered = []
+            for row in rows:
+                if any(
+                    isinstance(value, str) and needle in value.lower()
+                    for value in row.values()
+                ):
+                    filtered.append(row)
+            rows = filtered
+
+        total = len(rows)
+        total_pages = (total + page_size - 1) // page_size if page_size else 0
+        start = (page - 1) * page_size
+        items = rows[start:start + page_size] if page_size else rows
+        return {
+            "items": items,
+            "total": total,
+            "page": page,
+            "total_pages": total_pages,
+        }
+
+    def get_pipeline_executions(self, *args, **kwargs) -> list[dict[str, Any]]:
         """Delegate to queries manager."""
         return self.queries.get_pipeline_executions(*args, **kwargs)
 
@@ -267,7 +331,7 @@ class PipelineTracker:
     # CORE TRACKING LOGIC
     # ========================================
 
-    def register_pipeline(self, name: str, pipeline_steps: List[Any], **kwargs) -> Dict[str, Any]:
+    def register_pipeline(self, name: str, pipeline_steps: list[Any], **kwargs) -> dict[str, Any]:
         """
         Register a pipeline and its steps.
 
@@ -329,10 +393,10 @@ class PipelineTracker:
     def complete_pipeline(
         self,
         pipeline_id: str,
-        output_data: Optional[Dict[str, Any]] = None,
+        output_data: Optional[dict[str, Any]] = None,
         error_message: Optional[str] = None,
         error_step: Optional[str] = None,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Mark a pipeline as completed or failed.
 
@@ -358,7 +422,7 @@ class PipelineTracker:
             duration_ms = (datetime.now() - started).total_seconds() * 1000
         else:
             duration_ms = 0
-            
+
         model.status = "error" if error_message else "completed"
         model.completed_at = datetime.now().isoformat()
         model.total_duration_ms = duration_ms
@@ -402,16 +466,16 @@ class PipelineTracker:
                 else None
             ),
         )
-        return self.db_steps.insert(model)
+        return cast(int, self.db_steps.insert(model))
 
     def complete_step(
         self,
         step_id: int,
-        output_data: Optional[Dict[str, Any]] = None,
+        output_data: Optional[dict[str, Any]] = None,
         error_message: Optional[str] = None,
         error_traceback: Optional[str] = None,
         pipeline_id: Optional[str] = None,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Mark a step as completed or failed.
 
@@ -491,7 +555,7 @@ class PipelineTracker:
         )
         self.db_events.insert(model)
 
-    def record_system_metrics(self, pipeline_id: str, metrics: Dict[str, Any]) -> None:
+    def record_system_metrics(self, pipeline_id: str, metrics: dict[str, Any]) -> None:
         """
         Record system metrics.
 
@@ -510,7 +574,7 @@ class PipelineTracker:
         )
         self.db_system_metrics.insert(model)
 
-    def acknowledge_alert(self, alert_id: int) -> Dict[str, str]:
+    def acknowledge_alert(self, alert_id: int) -> dict[str, str]:
         """
         Acknowledge a fired alert.
 
@@ -525,7 +589,7 @@ class PipelineTracker:
             self.db_alerts_fired.update(alert_id, alert_records[0])
         return {"status": "success"}
 
-    def get_pipeline_graph(self, pipeline_id: str) -> Dict[str, Any]:
+    def get_pipeline_graph(self, pipeline_id: str) -> dict[str, Any]:
         """
         Get pipeline data formatted for graph visualization with full metadata.
 
@@ -577,12 +641,12 @@ class PipelineTracker:
 
             # --- Edge connection logic ---
             parent_id = step.get("parent_step_id")
-            step_order = step.get("step_order")
+            step.get("step_order")
 
             if parent_id:
                 parent_model = next((s for s in steps_list if s.get("id") == parent_id or s.get("step_order") == parent_id), None)
                 is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
-                
+
                 label = "parallel"
                 if parent_model and parent_model.get("step_type") == "condition":
                     cond_output = parent_model.get("output_data") or {}
@@ -590,7 +654,7 @@ class PipelineTracker:
                     if isinstance(cond_output, dict) and "branch_taken" in cond_output:
                         branch_val = str(cond_output['branch_taken']).lower()
                         branch_taken_val = True if (branch_val == 'true' or branch_val == '1') else False
-                    
+
                     # If this step is NOT skipped, it's the taken branch
                     if not is_skipped:
                         label = "TRUE" if branch_taken_val is True else "FALSE"
@@ -618,7 +682,7 @@ class PipelineTracker:
                     prev_id = found_prev.get("id") or found_prev.get("step_order")
                     prev_order = found_prev.get("step_order")
                     is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
-                    
+
                     label = "next"
                     if found_prev["step_type"] == "condition":
                         cond_output = found_prev.get("output_data") or {}
@@ -630,7 +694,7 @@ class PipelineTracker:
                                 label = "FALSE"
                         else:
                             label = "taken" if not is_skipped else "skipped"
-                    
+
                     edges.append({
                         "from": f"step_{prev_id}" if prev_id else f"step_{prev_order}",
                         "to": f"step_{step_id}",
@@ -651,18 +715,18 @@ class PipelineTracker:
                 shape = f'{{{" " + name + " "}}}'
             mermaid_lines.append(f'    {n["id"]}{shape}')
             mermaid_lines.append(f'    class {n["id"]} {n["status"]}')
-            
+
         for e in edges:
-            label = e.get("label", "next")
+            label = e.get("label") or "next"
             arrow = "-->"
             if e.get("style") == "dashed":
                 arrow = "-.->"
-            
+
             if label and label != "next":
                 mermaid_lines.append(f'    {e["from"]} -- {label} {arrow} {e["to"]}')
             else:
                 mermaid_lines.append(f'    {e["from"]} {arrow} {e["to"]}')
-                
+
         mermaid_lines.extend([
             "",
             "    classDef completed fill:#10b981,stroke:#059669,color:#fff",

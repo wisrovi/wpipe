@@ -6,7 +6,10 @@ Allows using a Pipeline as a step within another Pipeline.
 
 import time
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+if TYPE_CHECKING:
+    from wpipe.pipe import Pipeline
 
 
 @dataclass
@@ -21,9 +24,9 @@ class PipelineAsStep:
     name: str
     pipeline: "Pipeline"
     timeout: Optional[float] = None
-    depends_on: Optional[List[str]] = None
+    depends_on: Optional[list[str]] = None
 
-    def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Execute nested pipeline.
 
@@ -39,7 +42,7 @@ class PipelineAsStep:
         # Return only new/modified keys
         return {k: v for k, v in result.items() if k not in context}
 
-    def get_dependencies(self) -> List[str]:
+    def get_dependencies(self) -> list[str]:
         """
         Get step dependencies.
 
@@ -63,10 +66,10 @@ class CompositionHelper:
 
     @staticmethod
     def merge_contexts(
-        parent: Dict[str, Any],
-        child: Dict[str, Any],
+        parent: dict[str, Any],
+        child: dict[str, Any],
         conflict_resolution: str = "child_wins",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Merge child context into parent context.
 
@@ -100,7 +103,7 @@ class CompositionHelper:
         return merged
 
     @staticmethod
-    def extract_context_subset(context: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
+    def extract_context_subset(context: dict[str, Any], keys: list[str]) -> dict[str, Any]:
         """
         Extract subset of context for child pipeline.
 
@@ -115,7 +118,7 @@ class CompositionHelper:
 
     @staticmethod
     def validate_context_compatibility(
-        parent_schema: Dict[str, type], child_schema: Dict[str, type]
+        parent_schema: dict[str, type], child_schema: dict[str, type]
     ) -> bool:
         """
         Validate that child pipeline context is compatible with parent.
@@ -157,8 +160,8 @@ class NestedPipelineStep:
         self,
         name: str,
         pipeline: "Pipeline",
-        context_filter: Optional[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
-        result_filter: Optional[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
+        context_filter: Optional[Callable[[dict[str, Any]], dict[str, Any]]] = None,
+        result_filter: Optional[Callable[[dict[str, Any]], dict[str, Any]]] = None,
         timeout: Optional[float] = None,
     ):
         """
@@ -178,7 +181,7 @@ class NestedPipelineStep:
         self.timeout = timeout
         self.execution_time = 0.0
 
-    def run(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Execute nested pipeline with filtering.
 

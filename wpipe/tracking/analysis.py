@@ -4,7 +4,7 @@ Statistical analysis and trend calculation for the dashboard.
 
 import math
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class AnalysisManager:
@@ -31,7 +31,7 @@ class AnalysisManager:
         self.db_step_history = db_step_history
         self.db_alerts_fired = db_alerts_fired
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get overall statistics for dashboard summary cards.
 
@@ -87,7 +87,7 @@ class AnalysisManager:
 
     def get_trend_data(
         self, days: int = 7, pipeline_name: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get aggregated daily data for trend charts.
 
@@ -108,7 +108,7 @@ class AnalysisManager:
         if pipeline_name:
             filtered = [p for p in filtered if p.name == pipeline_name]
 
-        daily: Dict[str, Dict[str, Any]] = {}
+        daily: dict[str, dict[str, Any]] = {}
         for p in filtered:
             date = p.started_at.split("T")[0]
             if date not in daily:
@@ -137,7 +137,7 @@ class AnalysisManager:
             result.append(day)
         return result
 
-    def get_top_slow_steps(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_top_slow_steps(self, limit: int = 10) -> list[dict[str, Any]]:
         """
         Identify slowest steps across all executions.
 
@@ -152,7 +152,7 @@ class AnalysisManager:
         except (AttributeError, RuntimeError, ValueError):
             return []
 
-        stats: Dict[str, Dict[str, Any]] = {}
+        stats: dict[str, dict[str, Any]] = {}
         for h in all_history:
             if h.status != "completed":
                 continue
@@ -176,7 +176,7 @@ class AnalysisManager:
         slow_steps.sort(key=lambda x: x["avg_duration_ms"], reverse=True)
         return slow_steps[:limit]
 
-    def get_states_analysis(self) -> Dict[str, Any]:
+    def get_states_analysis(self) -> dict[str, Any]:
         """
         Get comprehensive analysis of all states/steps.
 
@@ -198,7 +198,7 @@ class AnalysisManager:
                 "most_errors": [],
             }
 
-        stats: Dict[str, Dict[str, Any]] = {}
+        stats: dict[str, dict[str, Any]] = {}
         for s in all_steps:
             name = s.step_name
             if name not in stats:
@@ -247,7 +247,7 @@ class AnalysisManager:
             "most_errors": most_errors,
         }
 
-    def get_pipelines_analysis(self) -> Dict[str, Any]:
+    def get_pipelines_analysis(self) -> dict[str, Any]:
         """
         Get comprehensive analysis of all pipelines.
 
@@ -270,7 +270,7 @@ class AnalysisManager:
                 "recent": [],
             }
 
-        stats: Dict[str, Dict[str, Any]] = {}
+        stats: dict[str, dict[str, Any]] = {}
         for p in all_p:
             if p.name not in stats:
                 stats[p.name] = {
@@ -319,7 +319,7 @@ class AnalysisManager:
         avg_dur = sum(durations) / len(durations) if durations else 0
 
         return {
-            "total_pipelines": len(set(p.name for p in all_p)),
+            "total_pipelines": len({p.name for p in all_p}),
             "total_runs": len(all_p),
             "avg_duration_ms": avg_dur,
             "total_errors": len([p for p in all_p if p.status == "error"]),
@@ -328,7 +328,7 @@ class AnalysisManager:
             "recent": recent,
         }
 
-    def _percentile(self, data: List[float], percentile: int) -> float:
+    def _percentile(self, data: list[float], percentile: int) -> float:
         """
         Calculate the percentile of a list of values.
 

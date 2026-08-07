@@ -3,7 +3,7 @@ YAML utilities for reading and writing configuration files.
 """
 
 from pathlib import Path
-from typing import Any, Union, Dict
+from typing import Any, Union
 
 import yaml
 
@@ -27,7 +27,7 @@ def clean_for_json(obj: Any) -> Any:
     return str(obj)
 
 
-def read_yaml(file_path: Union[str, Path], verbose: bool = False) -> Dict[str, Any]:
+def read_yaml(file_path: Union[str, Path], verbose: bool = False) -> dict[str, Any]:
     """Read a YAML file.
 
     Args:
@@ -52,7 +52,7 @@ def read_yaml(file_path: Union[str, Path], verbose: bool = False) -> Dict[str, A
 
 def write_yaml(
     file_path: Union[str, Path],
-    data: Dict[str, Any],
+    data: dict[str, Any],
     verbose: bool = False,
 ) -> None:
     """Write data to a YAML file.

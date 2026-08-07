@@ -5,7 +5,7 @@ This module provides asynchronous versions of conditional branching and loops
 for use within async pipeline execution flows.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class ConditionAsync:
@@ -21,8 +21,8 @@ class ConditionAsync:
     def __init__(
         self,
         expression: str,
-        branch_true: Optional[List[Any]] = None,
-        branch_false: Optional[List[Any]] = None,
+        branch_true: Optional[list[Any]] = None,
+        branch_false: Optional[list[Any]] = None,
     ) -> None:
         """
         Initialize the ConditionAsync block.
@@ -33,10 +33,10 @@ class ConditionAsync:
             branch_false: Steps to run if the condition evaluates to False.
         """
         self.expression: str = expression
-        self.branch_true: List[Any] = branch_true or []
-        self.branch_false: List[Any] = branch_false or []
+        self.branch_true: list[Any] = branch_true or []
+        self.branch_false: list[Any] = branch_false or []
 
-    def evaluate(self, data: Dict[str, Any]) -> bool:
+    def evaluate(self, data: dict[str, Any]) -> bool:
         """
         Evaluate the condition expression using the provided data as context.
 
@@ -49,7 +49,7 @@ class ConditionAsync:
         try:
             # We use a restricted environment for eval to improve security.
             safe_locals = data
-            safe_globals: Dict[str, Any] = {"__builtins__": {}}
+            safe_globals: dict[str, Any] = {"__builtins__": {}}
             return bool(eval(self.expression, safe_globals, safe_locals))  # pylint: disable=eval-used
         except (NameError, SyntaxError, TypeError, ValueError, ZeroDivisionError):
             return False
@@ -67,7 +67,7 @@ class ForAsync:
 
     def __init__(
         self,
-        steps: List[Any],
+        steps: list[Any],
         iterations: Optional[int] = None,
         validation_expression: Optional[str] = None,
     ) -> None:
@@ -84,11 +84,11 @@ class ForAsync:
         """
         if not validation_expression and iterations is None:
             raise ValueError("Either iterations or validation_expression must be provided")
-        self.steps: List[Any] = steps
+        self.steps: list[Any] = steps
         self.iterations: Optional[int] = iterations
         self.validation_expression: Optional[str] = validation_expression
 
-    def should_continue(self, data: Dict[str, Any], current_iteration: int) -> bool:
+    def should_continue(self, data: dict[str, Any], current_iteration: int) -> bool:
         """
         Check if the loop should continue its execution.
 
@@ -105,7 +105,7 @@ class ForAsync:
         if self.validation_expression:
             try:
                 safe_locals = data
-                safe_globals: Dict[str, Any] = {"__builtins__": {}}
+                safe_globals: dict[str, Any] = {"__builtins__": {}}
                 return bool(eval(self.validation_expression, safe_globals, safe_locals))  # pylint: disable=eval-used
             except (NameError, SyntaxError, TypeError, ValueError, ZeroDivisionError):
                 return False
