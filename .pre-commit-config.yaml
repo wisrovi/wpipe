@@ -1,40 +1,64 @@
-# Pre-commit configuration for wpipe
-# See https://pre-commit.com for more information
+default_language_version:
+  python: python3
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-        args: ['--unsafe']
       - id: check-added-large-files
-        args: ['--maxkb=1024']
-      - id: check-toml
-      - id: check-merge-conflict
-      - id: debug-statements
-      - id: detect-private-key
+        verbose: true
+        args: ["--maxkb=1024"]
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
+      - id: check-merge-conflict
+        verbose: true
+      - id: detect-private-key
+        verbose: true
+      #   12/2026
+      # - id: end-of-file-fixer
+      #   verbose: true
+      # - id: trailing-whitespace
+      #   verbose: true
+      # - id: debug-statements
+      #   verbose: true
+
+      #   06/2027
+      # - id: check-toml
+      #   verbose: true
+      # - id: check-yaml
+      #   verbose: true
+      #   args: ["--unsafe"]
 
   - repo: https://github.com/psf/black
-    rev: 24.2.0
+    rev: 25.9.0
     hooks:
       - id: black
         language_version: python3.9
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+  # 12/2026
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v2.3.0
+  #   hooks:
+  #     - id: mypy
+  #       exclude: ^(test|examples)/
+  #       verbose: true
+  #       args: [--ignore-missing-imports, --disallow-untyped-defs, --disallow-incomplete-defs]
+  #       # missing import : Does not fail if optional libraries are missing
+  #       # untyped def, (incomplete def) : recquire functions to have (complete) annotation
+  #       additional_dependencies: [pydantic, fastapi, types-requests, types-setuptools]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
     hooks:
-      - id: mypy
-        args: [--ignore-missing-imports, --python-version, '3.9']
-        additional_dependencies:
-          - types-PyYAML
-          - types-requests
-          - types-tqdm
-        exclude: ^(test/|examples/)
+      - id: codespell
+        args:
+          - "--skip=*.lock,*.csv,*.json,node_modules,venv,dist"
+          # - "--write-changes"  # Uncomment this line if you want precommits to automatically fix spelling errors
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      - id: ruff
+        verbose: true
+        args:
+          - --select=D
+          - --config=lint.pydocstyle.convention="google"

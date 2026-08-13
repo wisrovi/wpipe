@@ -1,0 +1,160 @@
+name: PR Validation
+
+on:
+  pull_request:
+
+# Cancel previous runs on the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }} # Creates a unique identifier for this workflow and this specific PR.
+  cancel-in-progress: true
+
+jobs:
+
+  # ──────────────────────────────────────────────
+  # 1. Syntax & basic file checks
+  # ──────────────────────────────────────────────
+  syntax-checks:
+    name: Syntax & file checks (merge-conflict)
+    runs-on: ubuntu-latest # Indicates that the test runs on a Linux (Ubuntu) virtual machine provided by GitHub.
+    steps:
+      - uses: actions/checkout@v4 # Standard action that clones your source code onto the virtual machine.
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9" # Aligned with black formatter
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run basic hooks
+        run: |
+          pre-commit run check-merge-conflict \
+            --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+
+      # 12/2026
+      # - name: Run end-of-file-fixer & trailing-whitespace
+      #   run: |
+      #     pre-commit run end-of-file-fixer --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
+      #     pre-commit run trailing-whitespace --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
+      #     pre-commit run debug-statements --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
+
+      # 06/2027
+      #     pre-commit run check-toml --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
+      #     pre-commit run check-yaml --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
+
+  # ──────────────────────────────────────────────
+  # 2. Security - Big Files (>1MB) & Private keys
+  # ──────────────────────────────────────────────
+  security-checks:
+    name: Security (large files / private keys)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run security hooks
+        run: |
+          pre-commit run check-added-large-files \
+            --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+          pre-commit run detect-private-key \
+            --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+
+
+  # ──────────────────────────────────────────────
+  # 3. Format - Black
+  # ──────────────────────────────────────────────
+  black:
+    name: Formatting (black)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run black
+        run: |
+          pre-commit run black --show-diff-on-failure \
+            --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+
+  # ──────────────────────────────────────────────
+  # 4. Spelling Errors - CodeSpell
+  # ──────────────────────────────────────────────
+  codespell:
+    name: Spell checking (codespell)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run codespell
+        run: |
+          pre-commit run codespell \
+            --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+
+
+  # ──────────────────────────────────────────────
+  # 5. Docstrings — ruff (--select=D)
+  # ──────────────────────────────────────────────
+  docstrings:
+    name: Docstring convention (ruff / pydocstyle rules)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run ruff docstring checks
+        run: |
+          pre-commit run ruff \
+            --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+
+  # ──────────────────────────────────────────────
+  # 12/2026 — Uncomment when time comes
+  # ──────────────────────────────────────────────
+  # mypy:
+  #   name: Type checking (mypy)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.9"
+  #     - name: Install pre-commit
+  #       run: pip install pre-commit
+  #     - name: Run mypy
+  #       run: pre-commit run mypy --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
