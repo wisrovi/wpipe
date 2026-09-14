@@ -1,51 +1,271 @@
 Archivo,Plataforma,Tecnología/Enfoque,Ángulo,Fecha Sugerida,Frecuencia,Prioridad
-01_LI_n8n_v1.md,LinkedIn,n8n,Evolución Natural (Engineering),2026-04-27,Semanal,Alta
-02_LI_n8n_v2_visual.md,LinkedIn,n8n,Arquitectura de Datos,2026-04-27,Semanal,Alta
-03_MED_n8n_v1.md,Medium,n8n,Límites Arquitectónicos,2026-04-27,Semanal,Alta
-04_MED_n8n_v2.md,Medium,n8n,Micro-Orquestación,2026-04-28,Semanal,Media
-05_MED_n8n_v3.md,Medium,n8n,IoT / Edge Computing,2026-04-29,Semanal,Media
-06_MED_n8n_v4.md,Medium,n8n,Bulletproof Web Scraping,2026-04-30,Semanal,Alta
-07_LI_Zapier_v1.md,LinkedIn,Zapier,Soberanía de Datos,2026-05-01,Semanal,Media
-08_LI_Zapier_v2.md,LinkedIn,Zapier,Orquestación con Integridad,2026-05-01,Semanal,Media
-09_MED_Zapier_v1.md,Medium,Zapier,Eficiencia de Capital,2026-05-02,Semanal,Alta
-10_MED_Zapier_v2.md,Medium,Zapier,AI & Token Efficiency,2026-05-03,Semanal,Media
-11_LI_Make_v1.md,LinkedIn,Make,Estandarización de Procesos,2026-05-04,Semanal,Media
-12_LI_Make_v2.md,LinkedIn,Make,Tracking Forense,2026-05-04,Semanal,Media
-13_MED_Make_v1.md,Medium,Make,Arquitectura Industrial,2026-05-05,Semanal,Alta
-14_MED_Make_v2.md,Medium,Make,Seguridad Local-First,2026-05-06,Semanal,Media
-15_LI_Airflow_v1.md,LinkedIn,Airflow,Orquestación Embebida,2026-05-07,Semanal,Alta
-16_LI_Airflow_v2.md,LinkedIn,Airflow,Zero-Friction DX,2026-05-07,Semanal,Alta
-17_MED_Airflow_v1.md,Medium,Airflow,Overhead Reduction,2026-05-08,Semanal,Alta
-18_MED_Airflow_v2.md,Medium,Airflow,Edge Orchestration,2026-05-09,Semanal,Media
-19_LI_Prefect_v1.md,LinkedIn,Prefect,Resiliencia Soberana,2026-05-10,Semanal,Media
-20_LI_Prefect_v2.md,LinkedIn,Prefect,Long-Running Continuity,2026-05-10,Semanal,Media
-21_MED_Prefect_v1.md,Medium,Prefect,State Machine vs Checkpoints,2026-05-11,Semanal,Alta
-22_MED_Prefect_v2.md,Medium,Prefect,Sustainable / Green IT,2026-05-12,Semanal,Alta
-23_LI_Luigi_v1.md,LinkedIn,Luigi,Sustainable Orchestration,2026-05-13,Semanal,Media
-24_LI_Luigi_v2.md,LinkedIn,Luigi,Modernizing Pipelines,2026-05-13,Semanal,Baja
-25_MED_Luigi_v1.md,Medium,Luigi,Stateful Recovery,2026-05-14,Semanal,Media
-27_LI_Dagster_v1.md,LinkedIn,Dagster,Step-based Resilience,2026-05-16,Semanal,Alta
-29_MED_Dagster_v1.md,Medium,Dagster,Lean Infrastructure,2026-05-17,Semanal,Alta
-31_LI_Celery_v1.md,LinkedIn,Celery,Broker-less Efficiency,2026-05-19,Semanal,Alta
-33_MED_Celery_v1.md,Medium,Celery,Async Resilience,2026-05-20,Semanal,Alta
-35_LI_Cron_v1.md,LinkedIn,Cron,Profesionalización de Tareas,2026-05-22,Semanal,Alta
-37_MED_Cron_v1.md,Medium,Cron,Upgrading to wpipe,2026-05-23,Semanal,Media
-39_LI_MEGA_Comparison.md,LinkedIn,TODAS,Megapost Cuadrante,2026-05-25,Especial,Crítica
-40_MED_MEGA_Comparison.md,Medium,TODAS,The Battle Card,2026-05-26,Especial,Crítica
-41_LI_Arquitecto.md,LinkedIn,Autoridad,Despertar del Arquitecto,2026-05-27,Semanal,Alta
-44_DEV_RAM_Savings.md,Dev.to,Green-IT,Ahorro RAM 50%,2026-05-28,Semanal,Alta
-45_DEV_CleanCode.md,Dev.to,Zen,Clean Logic,2026-05-29,Semanal,Media
-48_RED_Python_ShowTell.md,Reddit,Comunidad,Show & Tell,2026-05-30,Especial,Media
-49_RED_SelfHosted.md,Reddit,Self-Hosted,Ligereza,2026-05-31,Especial,Alta
-52_IH_Scaling_Cheap.md,Indie Hackers,Startup,Escalar Barato,2026-06-01,Semanal,Media
-56_DZ_Resilience_Architecture.md,DZone,Arquitectura,Estabilidad Industrial,2026-06-03,Semanal,Alta
-60_DEV_MEGA_Cybersecurity.md,Dev.to,Ciberseguridad,Peer Recommendation,2026-06-05,Especial,Crítica
-79_DEV_n8n_RAM.md,Dev.to,n8n,RAM Battle & Cold Start,2026-06-07,Semanal,Alta
-80_RED_n8n_Opinion.md,Reddit,n8n,Comunidad,2026-06-08,Especial,Media
-81_IH_n8n_Bootstrapping.md,Indie Hackers,n8n,Negocio,2026-06-09,Semanal,Media
-82_DZ_n8n_Microservices.md,DZone,n8n,Sovereign Micro-Orchestration,2026-06-10,Semanal,Alta
-83_DEV_Zapier_Cost.md,Dev.to,Zapier,Financial Analysis (OPEX),2026-06-12,Semanal,Alta
-88_DZ_Zapier_Architecture.md,DZone,Zapier,Enterprise Integrity,2026-06-15,Semanal,Alta
-91_DEV_Airflow_Lite.md,Dev.to,Airflow,Zero-Infra Resilience,2026-06-17,Semanal,Alta
-240_Victory_Post.md,LinkedIn,TODAS,Victory Revolution (+117k),2026-11-04,Especial,Crítica
-241_LI_Summary_Series.md,LinkedIn,TODAS,Comparativa Final,2026-11-05,Especial,Media
+LinkedIn/dia01/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia02/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia03/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia04/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia05/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia06/post.md,LinkedIn,Make,Post,2027-01-01,Semanal,Media
+LinkedIn/dia07/post.md,LinkedIn,Python,Post,2027-01-01,Semanal,Media
+LinkedIn/dia08/post.md,LinkedIn,Python,Post,2027-01-01,Semanal,Media
+LinkedIn/dia09/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia10/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia11/post.md,LinkedIn,Luigi,Post,2027-01-01,Semanal,Media
+LinkedIn/dia12/post.md,LinkedIn,Luigi,Post,2027-01-01,Semanal,Media
+LinkedIn/dia13/post.md,LinkedIn,Dagster,Post,2027-01-01,Semanal,Media
+LinkedIn/dia14/post.md,LinkedIn,Dagster,Post,2027-01-01,Semanal,Media
+LinkedIn/dia15/post.md,LinkedIn,Celery,Post,2027-01-01,Semanal,Media
+LinkedIn/dia16/post.md,LinkedIn,Celery,Post,2027-01-01,Semanal,Media
+LinkedIn/dia17/post.md,LinkedIn,Cron,Post,2027-01-01,Semanal,Media
+LinkedIn/dia18/post.md,LinkedIn,Cron,Post,2027-01-01,Semanal,Media
+LinkedIn/dia19/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia20/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia21/post.md,LinkedIn,Airflow,Post,2027-01-01,Semanal,Media
+LinkedIn/dia22/post.md,LinkedIn,n8n,Post,2027-01-01,Semanal,Media
+LinkedIn/dia23/post.md,LinkedIn,Cron,Post,2027-01-01,Semanal,Media
+LinkedIn/dia24/post.md,LinkedIn,Celery,Post,2027-01-01,Semanal,Media
+LinkedIn/dia25/post.md,LinkedIn,Prefect,Post,2027-01-01,Semanal,Media
+LinkedIn/dia26/post.md,LinkedIn,Zapier,Post,2027-01-01,Semanal,Media
+LinkedIn/dia27/post.md,LinkedIn,Make,Post,2027-01-01,Semanal,Media
+LinkedIn/dia28/post.md,LinkedIn,Raspberry,Post,2027-01-01,Semanal,Media
+LinkedIn/dia29/post.md,LinkedIn,Docs,Post,2027-01-01,Semanal,Media
+LinkedIn/dia30/post.md,LinkedIn,Luigi,Post,2027-01-01,Semanal,Media
+LinkedIn/dia31/post.md,LinkedIn,Dagster,Post,2027-01-01,Semanal,Media
+LinkedIn/dia32/post.md,LinkedIn,Prefect,Post,2027-01-01,Semanal,Media
+LinkedIn/dia33/post.md,LinkedIn,Luigi,Post,2027-01-01,Semanal,Media
+LinkedIn/dia34/post.md,LinkedIn,Dagster,Post,2027-01-01,Semanal,Media
+LinkedIn/dia35/post.md,LinkedIn,Prefect,Post,2027-01-01,Semanal,Media
+LinkedIn/dia36/post.md,LinkedIn,Green,Post,2027-01-01,Semanal,Media
+LinkedIn/dia37/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia38/post.md,LinkedIn,Celery,Post,2027-01-01,Semanal,Media
+LinkedIn/dia39/post.md,LinkedIn,Green,Post,2027-01-01,Semanal,Media
+LinkedIn/dia40/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia41/post.md,LinkedIn,Scraping,Post,2027-01-01,Semanal,Media
+LinkedIn/dia42/post.md,LinkedIn,IoT,Post,2027-01-01,Semanal,Media
+LinkedIn/dia43/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia44/post.md,LinkedIn,Cron,Post,2027-01-01,Semanal,Media
+LinkedIn/dia45/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia46/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia47/post.md,LinkedIn,Async,Post,2027-01-01,Semanal,Media
+LinkedIn/dia48/post.md,LinkedIn,Parallel,Post,2027-01-01,Semanal,Media
+LinkedIn/dia49/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia50/post.md,LinkedIn,Composition,Post,2027-01-01,Semanal,Media
+LinkedIn/dia51/post.md,LinkedIn,Python,Post,2027-01-01,Semanal,Media
+LinkedIn/dia52/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia53/post.md,LinkedIn,Export,Post,2027-01-01,Semanal,Media
+LinkedIn/dia54/post.md,LinkedIn,Alerts,Post,2027-01-01,Semanal,Media
+LinkedIn/dia55/post.md,LinkedIn,Contract,Post,2027-01-01,Semanal,Media
+LinkedIn/dia56/post.md,LinkedIn,Learning,Post,2027-01-01,Semanal,Media
+LinkedIn/dia57/post.md,LinkedIn,General,Post,2027-01-01,Semanal,Media
+LinkedIn/dia58/post.md,LinkedIn,Zen,Post,2027-01-01,Semanal,Media
+LinkedIn/dia59/post.md,LinkedIn,Green,Post,2027-01-01,Semanal,Media
+LinkedIn/dia60/post.md,LinkedIn,Docs,Post,2027-01-01,Semanal,Media
+LinkedIn/dia61/post.md,LinkedIn,Fear,Post,2027-01-01,Semanal,Media
+Medium/03_MED_n8n_v1.md,Medium,n8n,N8N,2026-04-27,Semanal,Alta
+Medium/04_MED_n8n_v2.md,Medium,n8n,N8N,2026-04-28,Semanal,Media
+Medium/05_MED_n8n_v3.md,Medium,n8n,N8N,2026-04-29,Semanal,Media
+Medium/06_MED_n8n_v4.md,Medium,n8n,N8N,2026-04-30,Semanal,Alta
+Medium/09_MED_Zapier_v1.md,Medium,Zapier,Zapier,2026-05-02,Semanal,Alta
+Medium/10_MED_Zapier_v2.md,Medium,Zapier,Zapier,2026-05-03,Semanal,Media
+Medium/123_MED_Luigi_Resilience.md,Medium,Luigi,Resilience,2027-01-01,Semanal,Media
+Medium/129_MED_Dagster_Resilience.md,Medium,Dagster,Resilience,2027-01-01,Semanal,Media
+Medium/135_MED_Prefect_Resilience.md,Medium,Prefect,Resilience,2027-01-01,Semanal,Media
+Medium/13_MED_Make_v1.md,Medium,Make,Make,2026-05-05,Semanal,Alta
+Medium/141_MED_Luigi_Zen.md,Medium,Luigi,Zen,2027-01-01,Semanal,Media
+Medium/147_MED_Dagster_Zen.md,Medium,Dagster,Zen,2027-01-01,Semanal,Media
+Medium/14_MED_Make_v2.md,Medium,Make,Make,2026-05-06,Semanal,Media
+Medium/153_MED_Prefect_Zen.md,Medium,Prefect,Zen,2027-01-01,Semanal,Media
+Medium/159_MED_Green_Microservices.md,Medium,Green,Microservices,2027-01-01,Semanal,Media
+Medium/163_MED_Celery_Architecture.md,Medium,Celery,Architecture,2027-01-01,Semanal,Media
+Medium/169_MED_Documentation_Debt.md,Medium,Docs,Debt,2027-01-01,Semanal,Media
+Medium/175_MED_Security_SOAR.md,Medium,General,Soar,2027-01-01,Semanal,Media
+Medium/179_MED_Scraping_Bulletproof.md,Medium,Scraping,Bulletproof,2027-01-01,Semanal,Media
+Medium/17_MED_Airflow_v1.md,Medium,Airflow,Airflow,2026-05-08,Semanal,Alta
+Medium/183_MED_IoT_Sustainability.md,Medium,IoT,Sustainability,2027-01-01,Semanal,Media
+Medium/187_MED_Dev_Manifesto.md,Medium,General,Manifesto,2027-01-01,Semanal,Media
+Medium/189_MED_Zen_Simplicidad.md,Medium,Zen,Simplicidad,2027-01-01,Semanal,Media
+Medium/18_MED_Airflow_v2.md,Medium,Airflow,Airflow,2026-05-09,Semanal,Media
+Medium/193_MED_Codigo_Limpio.md,Medium,General,Limpio,2027-01-01,Semanal,Media
+Medium/197_MED_Decorador_Step.md,Medium,General,Step,2027-01-01,Semanal,Media
+Medium/201_MED_Sin_Boilerplate.md,Medium,General,Boilerplate,2027-01-01,Semanal,Media
+Medium/205_MED_Menos_Es_Mejor.md,Medium,General,Mejor,2027-01-01,Semanal,Media
+Medium/209_MED_Pythonic_First.md,Medium,Python,First,2027-01-01,Semanal,Media
+Medium/213_MED_Sin_YAML_Magico.md,Medium,General,Magico,2027-01-01,Semanal,Media
+Medium/217_MED_Mantenibilidad.md,Medium,General,Mantenibilidad,2027-01-01,Semanal,Media
+Medium/21_MED_Prefect_v1.md,Medium,Prefect,Prefect,2026-05-11,Semanal,Alta
+Medium/221_MED_Legible_Git.md,Medium,General,Git,2027-01-01,Semanal,Media
+Medium/225_MED_Minimal_Setup.md,Medium,General,Setup,2027-01-01,Semanal,Media
+Medium/229_MED_Un_Modelo_Mental.md,Medium,General,Mental,2027-01-01,Semanal,Media
+Medium/22_MED_Prefect_v2.md,Medium,Prefect,Prefect,2026-05-12,Semanal,Alta
+Medium/233_MED_Piezas_Componibles.md,Medium,General,Componibles,2027-01-01,Semanal,Media
+Medium/237_MED_Auto_Documentado.md,Medium,Docs,Documentado,2027-01-01,Semanal,Media
+Medium/242_MED_Summary_Series.md,Medium,General,Series,2027-01-01,Especial,Alta
+Medium/248_MED_Final_Zen.md,Medium,Zen,Zen,2027-01-01,Especial,Alta
+Medium/254_MED_Final_Green.md,Medium,Green,Green,2027-01-01,Especial,Alta
+Medium/25_MED_Luigi_v1.md,Medium,Luigi,Luigi,2026-05-14,Semanal,Media
+Medium/260_MED_Final_Docs.md,Medium,Docs,Docs,2027-01-01,Especial,Alta
+Medium/266_MED_Final_Fear.md,Medium,Fear,Fear,2027-01-01,Especial,Alta
+Medium/26_MED_Luigi_v2.md,Medium,Luigi,Luigi,2027-01-01,Semanal,Media
+Medium/29_MED_Dagster_v1.md,Medium,Dagster,Dagster,2026-05-17,Semanal,Alta
+Medium/30_MED_Dagster_v2.md,Medium,Dagster,Dagster,2027-01-01,Semanal,Media
+Medium/33_MED_Celery_v1.md,Medium,Celery,Celery,2026-05-20,Semanal,Alta
+Medium/34_MED_Celery_v2.md,Medium,Celery,Celery,2027-01-01,Semanal,Media
+Medium/37_MED_Cron_v1.md,Medium,Cron,Cron,2026-05-23,Semanal,Media
+Medium/38_MED_Cron_v2.md,Medium,Cron,Cron,2027-01-01,Semanal,Media
+Medium/40_MED_MEGA_Comparison.md,Medium,Python,Comparison,2026-05-26,Especial,Crítica
+Medium/42_MED_CodeFirst.md,Medium,n8n,Codefirst,2027-01-01,Semanal,Media
+Medium/43_MED_Resiliencia.md,Medium,Python,Resiliencia,2027-01-01,Semanal,Media
+Medium/46_MED_Checkpoint_Paso.md,Medium,Checkpoint,Paso,2027-01-01,Semanal,Media
+Medium/47_MED_Estado_Persistente.md,Medium,General,Persistente,2027-01-01,Semanal,Media
+Medium/49_MED_WAL_Mode.md,Medium,SQLite,Mode,2027-01-01,Semanal,Media
+Medium/50_MED_Reanudar_Crash.md,Medium,Checkpoint,Crash,2027-01-01,Semanal,Media
+Medium/51_MED_Contratos_Datos.md,Medium,General,Datos,2027-01-01,Semanal,Media
+Medium/53_MED_Failover_Local.md,Medium,General,Local,2027-01-01,Semanal,Media
+Medium/54_MED_Fallos_Transitorios.md,Medium,General,Transitorios,2027-01-01,Semanal,Media
+Medium/55_MED_Recuperacion_Segundos.md,Medium,General,Segundos,2027-01-01,Semanal,Media
+Medium/57_MED_Sin_Broker.md,Medium,General,Broker,2027-01-01,Semanal,Media
+Medium/58_MED_Checkpoints_Atomicos.md,Medium,Checkpoint,Atomicos,2027-01-01,Semanal,Media
+Medium/59_MED_Trazabilidad_Forense.md,Medium,General,Forense,2027-01-01,Semanal,Media
+Medium/62_MED_Fear_Airflow.md,Medium,Airflow,Airflow,2027-01-01,Semanal,Media
+Medium/64_MED_Fear_n8n.md,Medium,n8n,N8N,2027-01-01,Semanal,Media
+Medium/66_MED_Fear_Cron.md,Medium,Cron,Cron,2027-01-01,Semanal,Media
+Medium/68_MED_Zen_Celery.md,Medium,Celery,Celery,2027-01-01,Semanal,Media
+Medium/70_MED_Zen_Prefect.md,Medium,Prefect,Prefect,2027-01-01,Semanal,Media
+Medium/72_MED_Green_Zapier.md,Medium,Zapier,Zapier,2027-01-01,Semanal,Media
+Medium/74_MED_Green_Make.md,Medium,Make,Make,2027-01-01,Semanal,Media
+Medium/77_MED_Docs_Dagster.md,Medium,Dagster,Dagster,2027-01-01,Semanal,Media
+Dev.to/106_DEV_Cron_GreenIT.md,Dev.to,Cron,Greenit,2027-01-01,Semanal,Media
+Dev.to/107_DEV_Zen_Pythonic.md,Dev.to,Zen,Pythonic,2027-01-01,Semanal,Media
+Dev.to/114_DEV_Zen_CleanCode.md,Dev.to,Zen,Cleancode,2027-01-01,Semanal,Media
+Dev.to/115_DEV_Docs_Automated.md,Dev.to,Docs,Automated,2027-01-01,Semanal,Media
+Dev.to/124_DEV_Luigi_Zen.md,Dev.to,Luigi,Zen,2027-01-01,Semanal,Media
+Dev.to/130_DEV_Dagster_Zen.md,Dev.to,Dagster,Zen,2027-01-01,Semanal,Media
+Dev.to/136_DEV_Prefect_Zen.md,Dev.to,Prefect,Zen,2027-01-01,Semanal,Media
+Dev.to/142_DEV_Luigi_Docs.md,Dev.to,Luigi,Docs,2027-01-01,Semanal,Media
+Dev.to/148_DEV_Dagster_Docs.md,Dev.to,Dagster,Docs,2027-01-01,Semanal,Media
+Dev.to/154_DEV_Prefect_Docs.md,Dev.to,Prefect,Docs,2027-01-01,Semanal,Media
+Dev.to/160_DEV_Green_Edge.md,Dev.to,Green,Edge,2027-01-01,Semanal,Media
+Dev.to/164_DEV_AutoDocs_Zen.md,Dev.to,Zen,Zen,2027-01-01,Semanal,Media
+Dev.to/170_DEV_HighResilience.md,Dev.to,General,Highresilience,2027-01-01,Semanal,Media
+Dev.to/173_DEV_Security_Edge.md,Dev.to,Edge,Edge,2027-01-01,Semanal,Media
+Dev.to/177_DEV_Scraping_Resume.md,Dev.to,Scraping,Resume,2027-01-01,Semanal,Media
+Dev.to/181_DEV_IoT_Green.md,Dev.to,Green,Green,2027-01-01,Semanal,Media
+Dev.to/185_DEV_Dev_Manifesto.md,Dev.to,General,Manifesto,2027-01-01,Semanal,Media
+Dev.to/190_DEV_RAM_Eficiencia.md,Dev.to,General,Eficiencia,2027-01-01,Semanal,Media
+Dev.to/194_DEV_Reduccion_CO2.md,Dev.to,General,Co2,2027-01-01,Semanal,Media
+Dev.to/198_DEV_Raspberry_Edge.md,Dev.to,Raspberry,Edge,2027-01-01,Semanal,Media
+Dev.to/202_DEV_Pipelines_Ligeros.md,Dev.to,General,Ligeros,2027-01-01,Semanal,Media
+Dev.to/206_DEV_SQLite_Ecologico.md,Dev.to,Green,Ecologico,2027-01-01,Semanal,Media
+Dev.to/210_DEV_Codigo_Sustentable.md,Dev.to,General,Sustentable,2027-01-01,Semanal,Media
+Dev.to/214_DEV_Sin_ColdStart.md,Dev.to,General,Coldstart,2027-01-01,Semanal,Media
+Dev.to/218_DEV_Infraestructura_Minima.md,Dev.to,General,Minima,2027-01-01,Semanal,Media
+Dev.to/222_DEV_Orquestacion_Sin_Cluster.md,Dev.to,General,Cluster,2027-01-01,Semanal,Media
+Dev.to/226_DEV_Impacto_Pipelines.md,Dev.to,General,Pipelines,2027-01-01,Semanal,Media
+Dev.to/230_DEV_Tu_Nube_En_SQLite.md,Dev.to,SQLite,Sqlite,2027-01-01,Semanal,Media
+Dev.to/234_DEV_Green_IT_LongTerm.md,Dev.to,Green,Longterm,2027-01-01,Semanal,Media
+Dev.to/238_DEV_Eficiencia_Arquitectura.md,Dev.to,Arquitectura,Arquitectura,2027-01-01,Semanal,Media
+Dev.to/243_DEV_Summary_Series.md,Dev.to,General,Series,2027-01-01,Especial,Alta
+Dev.to/249_DEV_Final_Zen.md,Dev.to,Zen,Zen,2027-01-01,Especial,Alta
+Dev.to/255_DEV_Final_Green.md,Dev.to,Green,Green,2027-01-01,Especial,Alta
+Dev.to/261_DEV_Final_Docs.md,Dev.to,Docs,Docs,2027-01-01,Especial,Alta
+Dev.to/267_DEV_Final_Fear.md,Dev.to,Fear,Fear,2027-01-01,Especial,Alta
+Dev.to/44_DEV_RAM_Savings.md,Dev.to,Python,Savings,2026-05-28,Semanal,Alta
+Dev.to/45_DEV_CleanCode.md,Dev.to,General,Cleancode,2026-05-29,Semanal,Media
+Dev.to/60_DEV_MEGA_Cybersecurity.md,Dev.to,Cybersecurity,Cybersecurity,2026-06-05,Especial,Crítica
+Dev.to/79_DEV_n8n_RAM.md,Dev.to,n8n,Ram,2026-06-07,Semanal,Alta
+Dev.to/83_DEV_Zapier_Cost.md,Dev.to,Zapier,Cost,2026-06-12,Semanal,Alta
+Dev.to/90_DEV_Zapier_GreenIT.md,Dev.to,Zapier,Greenit,2027-01-01,Semanal,Media
+Dev.to/91_DEV_Airflow_Lite.md,Dev.to,Airflow,Lite,2026-06-17,Semanal,Alta
+Dev.to/98_DEV_Airflow_Optimization.md,Dev.to,Airflow,Optimization,2027-01-01,Semanal,Media
+Dev.to/99_DEV_Cron_Modern.md,Dev.to,Cron,Modern,2027-01-01,Semanal,Media
+Reddit/100_RED_Cron_Horror_Stories.md,Reddit,Cron,Stories,2027-01-01,Semanal,Media
+Reddit/101_RED_Cron_Horror.md,Reddit,Cron,Horror,2027-01-01,Semanal,Media
+Reddit/108_RED_Zen_Philosophy.md,Reddit,Zen,Philosophy,2027-01-01,Semanal,Media
+Reddit/109_RED_Zen_Pipelines.md,Reddit,Zen,Pipelines,2027-01-01,Semanal,Media
+Reddit/116_RED_Docs_Feedback.md,Reddit,Docs,Feedback,2027-01-01,Semanal,Media
+Reddit/117_RED_Docs_Mermaid.md,Reddit,Docs,Mermaid,2027-01-01,Semanal,Media
+Reddit/125_RED_Luigi_Green.md,Reddit,Luigi,Green,2027-01-01,Semanal,Media
+Reddit/131_RED_Dagster_Green.md,Reddit,Dagster,Green,2027-01-01,Semanal,Media
+Reddit/137_RED_Prefect_Green.md,Reddit,Prefect,Green,2027-01-01,Semanal,Media
+Reddit/143_RED_Luigi_Opinion.md,Reddit,Luigi,Opinion,2027-01-01,Semanal,Media
+Reddit/149_RED_Dagster_Opinion.md,Reddit,Dagster,Opinion,2027-01-01,Semanal,Media
+Reddit/155_RED_Prefect_Opinion.md,Reddit,Prefect,Opinion,2027-01-01,Semanal,Media
+Reddit/165_RED_Cron_Replacement.md,Reddit,Cron,Replacement,2027-01-01,Semanal,Media
+Reddit/171_RED_Celery_Overkill.md,Reddit,Celery,Overkill,2027-01-01,Semanal,Media
+Reddit/244_RED_Summary_Series.md,Reddit,General,Series,2027-01-01,Especial,Alta
+Reddit/250_RED_Final_Zen.md,Reddit,Zen,Zen,2027-01-01,Especial,Alta
+Reddit/256_RED_Final_Green.md,Reddit,Green,Green,2027-01-01,Especial,Alta
+Reddit/262_RED_Final_Docs.md,Reddit,Docs,Docs,2027-01-01,Especial,Alta
+Reddit/268_RED_Final_Fear.md,Reddit,Fear,Fear,2027-01-01,Especial,Alta
+Reddit/48_RED_Python_ShowTell.md,Reddit,SQLite,Showtell,2026-05-30,Especial,Media
+Reddit/80_RED_n8n_Opinion.md,Reddit,n8n,Opinion,2026-06-08,Especial,Media
+Reddit/84_RED_Zapier_Feedback.md,Reddit,Zapier,Feedback,2027-01-01,Semanal,Media
+Reddit/85_RED_Zapier_Alternatives.md,Reddit,Zapier,Alternatives,2027-01-01,Semanal,Media
+Reddit/92_RED_Airflow_Story.md,Reddit,Airflow,Story,2027-01-01,Semanal,Media
+Reddit/93_RED_Airflow_Overkill.md,Reddit,Airflow,Overkill,2027-01-01,Semanal,Media
+Indie_Hackers/102_IH_Cron_Reliability.md,Indie Hackers,Cron,Reliability,2027-01-01,Semanal,Media
+Indie_Hackers/103_IH_Cron_Stability.md,Indie Hackers,Cron,Stability,2027-01-01,Semanal,Media
+Indie_Hackers/110_IH_Zen_Productivity_Metrics.md,Indie Hackers,Zen,Metrics,2027-01-01,Semanal,Media
+Indie_Hackers/111_IH_Zen_Productivity.md,Indie Hackers,Zen,Productivity,2027-01-01,Semanal,Media
+Indie_Hackers/118_IH_Docs_ROI.md,Indie Hackers,Docs,Roi,2027-01-01,Semanal,Media
+Indie_Hackers/119_IH_Docs_Maintenance.md,Indie Hackers,Docs,Maintenance,2027-01-01,Semanal,Media
+Indie_Hackers/126_IH_Luigi_Business.md,Indie Hackers,Luigi,Business,2027-01-01,Semanal,Media
+Indie_Hackers/132_IH_Dagster_Business.md,Indie Hackers,Dagster,Business,2027-01-01,Semanal,Media
+Indie_Hackers/138_IH_Prefect_Business.md,Indie Hackers,Prefect,Business,2027-01-01,Semanal,Media
+Indie_Hackers/144_IH_Build_vs_Buy.md,Indie Hackers,General,Buy,2027-01-01,Semanal,Media
+Indie_Hackers/150_IH_Migracion_Barata.md,Indie Hackers,General,Barata,2027-01-01,Semanal,Media
+Indie_Hackers/156_IH_Saas_vs_SelfHosted.md,Indie Hackers,General,Selfhosted,2027-01-01,Semanal,Media
+Indie_Hackers/166_IH_Bootstrap_Efficiency.md,Indie Hackers,General,Efficiency,2027-01-01,Semanal,Media
+Indie_Hackers/245_IH_Summary_Series.md,Indie Hackers,General,Series,2027-01-01,Especial,Alta
+Indie_Hackers/251_IH_Final_Zen.md,Indie Hackers,Zen,Zen,2027-01-01,Especial,Alta
+Indie_Hackers/257_IH_Final_Green.md,Indie Hackers,Green,Green,2027-01-01,Especial,Alta
+Indie_Hackers/263_IH_Final_Docs.md,Indie Hackers,Docs,Docs,2027-01-01,Especial,Alta
+Indie_Hackers/269_IH_Final_Fear.md,Indie Hackers,Fear,Fear,2027-01-01,Especial,Alta
+Indie_Hackers/52_IH_Scaling_Cheap.md,Indie Hackers,General,Cheap,2026-06-01,Semanal,Media
+Indie_Hackers/81_IH_n8n_Bootstrapping.md,Indie Hackers,n8n,Bootstrapping,2026-06-09,Semanal,Media
+Indie_Hackers/86_IH_Zapier_Scaling.md,Indie Hackers,Zapier,Scaling,2027-01-01,Semanal,Media
+Indie_Hackers/87_IH_Zapier_Profit.md,Indie Hackers,Zapier,Profit,2027-01-01,Semanal,Media
+Indie_Hackers/94_IH_Airflow_Cost.md,Indie Hackers,Airflow,Cost,2027-01-01,Semanal,Media
+Indie_Hackers/95_IH_Airflow_Minimalism.md,Indie Hackers,Airflow,Minimalism,2027-01-01,Semanal,Media
+DZone/104_DZ_Cron_Legacy_Refactor.md,DZone,Cron,Refactor,2027-01-01,Semanal,Media
+DZone/105_DZ_Cron_Legacy.md,DZone,Cron,Legacy,2027-01-01,Semanal,Media
+DZone/112_DZ_Zen_Scalability_Patterns.md,DZone,Zen,Patterns,2027-01-01,Semanal,Media
+DZone/113_DZ_Zen_Scalability.md,DZone,Zen,Scalability,2027-01-01,Semanal,Media
+DZone/120_DZ_Docs_DeepDive.md,DZone,Docs,Deepdive,2027-01-01,Semanal,Media
+DZone/121_DZ_Docs_Standards.md,DZone,Docs,Standards,2027-01-01,Semanal,Media
+DZone/127_DZ_Luigi_Architecture.md,DZone,Luigi,Architecture,2027-01-01,Semanal,Media
+DZone/133_DZ_Dagster_Architecture.md,DZone,Dagster,Architecture,2027-01-01,Semanal,Media
+DZone/139_DZ_Prefect_Architecture.md,DZone,Prefect,Architecture,2027-01-01,Semanal,Media
+DZone/145_DZ_Estabilidad_Checkpoints.md,DZone,Checkpoint,Checkpoints,2027-01-01,Semanal,Media
+DZone/151_DZ_Estabilidad_Estado.md,DZone,State,Estado,2027-01-01,Semanal,Media
+DZone/157_DZ_Estabilidad_Continuo.md,DZone,General,Continuo,2027-01-01,Semanal,Media
+DZone/167_DZ_Cron_Modernization.md,DZone,Cron,Modernization,2027-01-01,Semanal,Media
+DZone/172_DZ_Security_Intel.md,DZone,General,Intel,2027-01-01,Semanal,Media
+DZone/176_DZ_Scraping_Resilience.md,DZone,Scraping,Resilience,2027-01-01,Semanal,Media
+DZone/180_DZ_IoT_Edge.md,DZone,Green,Edge,2027-01-01,Semanal,Media
+DZone/184_DZ_Dev_Manifesto.md,DZone,General,Manifesto,2027-01-01,Semanal,Media
+DZone/191_DZ_Arquitectura_Como_Codigo.md,DZone,Docs,Codigo,2027-01-01,Semanal,Media
+DZone/195_DZ_Mermaid_Generado.md,DZone,Mermaid,Generado,2027-01-01,Semanal,Media
+DZone/199_DZ_Estado_Como_Docs.md,DZone,Docs,Docs,2027-01-01,Semanal,Media
+DZone/203_DZ_Contract_First.md,DZone,Contract,First,2027-01-01,Semanal,Media
+DZone/207_DZ_Sin_Diagramas_Viejos.md,DZone,General,Viejos,2027-01-01,Semanal,Media
+DZone/211_DZ_Docs_En_Git.md,DZone,Docs,Git,2027-01-01,Semanal,Media
+DZone/215_DZ_Composicion_Pipelines.md,DZone,Composition,Pipelines,2027-01-01,Semanal,Media
+DZone/219_DZ_Metadata_Driven.md,DZone,General,Driven,2027-01-01,Semanal,Media
+DZone/223_DZ_DAG_En_Codigo.md,DZone,General,Codigo,2027-01-01,Semanal,Media
+DZone/227_DZ_Especificaciones_Ejecutables.md,DZone,General,Ejecutables,2027-01-01,Semanal,Media
+DZone/231_DZ_Granularidad_Paso.md,DZone,General,Paso,2027-01-01,Semanal,Media
+DZone/235_DZ_Ligero_Resiliente.md,DZone,General,Resiliente,2027-01-01,Semanal,Media
+DZone/239_DZ_Docs_Verificables.md,DZone,Docs,Verificables,2027-01-01,Semanal,Media
+DZone/246_DZ_Summary_Series.md,DZone,General,Series,2027-01-01,Especial,Alta
+DZone/252_DZ_Final_Zen.md,DZone,Zen,Zen,2027-01-01,Especial,Alta
+DZone/258_DZ_Final_Green.md,DZone,Green,Green,2027-01-01,Especial,Alta
+DZone/264_DZ_Final_Docs.md,DZone,Docs,Docs,2027-01-01,Especial,Alta
+DZone/270_DZ_Final_Fear.md,DZone,Fear,Fear,2027-01-01,Especial,Alta
+DZone/56_DZ_Resilience_Architecture.md,DZone,Python,Architecture,2026-06-03,Semanal,Alta
+DZone/82_DZ_n8n_Microservices.md,DZone,n8n,Microservices,2026-06-10,Semanal,Alta
+DZone/88_DZ_Zapier_Architecture.md,DZone,Zapier,Architecture,2026-06-15,Semanal,Alta
+DZone/89_DZ_Zapier_Enterprise.md,DZone,Zapier,Enterprise,2027-01-01,Semanal,Media
+DZone/96_DZ_Airflow_DeepDive.md,DZone,Airflow,Deepdive,2027-01-01,Semanal,Media
+DZone/97_DZ_Airflow_Evolution.md,DZone,Airflow,Evolution,2027-01-01,Semanal,Media
+Especiales/240_Victory_Post.md,Especiales,General,Post,2026-11-04,Especial,Crítica
+Especiales/78_BATTLE_CARD_MASTER.md,Especiales,General,Master,2027-01-01,Especial,Crítica
