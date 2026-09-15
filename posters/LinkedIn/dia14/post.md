@@ -1,37 +1,25 @@
-# 🚀 Infrastructure Freedom: WPipe Wins vs. Dagster
+🚀 INFRASTRUCTURE FREEDOM: WPIPE VS. DAGSTER
 
-Dagster is excellent for data observability, but trying to run it in a resource-constrained (Edge) environment is a nightmare of dependencies and memory consumption. 📉
+Dagster is excellent for data observability, but trying to run it in a resource-constrained (Edge) environment is a nightmare of dependencies and memory consumption.
 
-**WPipe** was designed from the ground up to be infrastructure-agnostic. Want to run it on a massive cloud server? Perfect. On a Raspberry Pi next to a sensor? Also perfect.
+wpipe was designed from the ground up to be infrastructure-agnostic. Want to run it on a massive cloud server? Perfect. On a Raspberry Pi next to a sensor? Also perfect.
 
-### ⚔️ Battle Card: Flexibility
+⚔️ BATTLE CARD: FLEXIBILITY
 
-| Feature | WPipe | Dagster |
-| :--- | :---: | :--- |
-| **Memory Footprint** | **< 50MB** | > 500MB |
-| **Resilience** | Local SQLite WAL | PostgreSQL / Cloud |
-| **Learning Curve** | Low (Pythonic) | Medium/High |
-| **Auto-Docs** | Built-in Mermaid | Dagster UI (Dagit) |
+Feature | wpipe | Dagster
+Memory Footprint | < 50MB | > 500MB
+Resilience | Local SQLite WAL | PostgreSQL / Cloud
+Learning Curve | Low (Pythonic) | Medium/High
+Auto-Docs | Built-in Mermaid | Dagster UI
 
-### 🛠️ Code more, configure less
+🛠️ CODE MORE, CONFIGURE LESS
 
-With the `@state` decorator, your business logic is the star — not the orchestrator's configuration.
+With the @state decorator, your business logic is the star, not the orchestrator's configuration.
 
-```python
-from wpipe import state
+📈 TRANSPARENT FLOW
 
-@state(name="FilterLogs", version="v1.2")
-def filter_critical(logs: list):
-    # No complex Dagster inputs/outputs needed
-    return [log for log in logs if log['level'] == 'CRITICAL']
-```
+Join the +117k users who have already optimized their data pipelines. Efficiency isn't just about saving money, it's about saving time.
 
-### 📈 Transparent Flow
+👇 Sticking with the Dagster giant, or prefer wpipe's agility?
 
-📊 Image to upload with this post: diagrama.png
-
-Join the **+117k users** who have already optimized their data pipelines. Efficiency isn't just about saving money — it's about saving time.
-
-Sticking with the Dagster giant, or prefer WPipe's agility? ⚡
-
-#Python #EdgeComputing #WPipe #Dagster #OpenSource #DataOps
+#Python #EdgeComputing #wpipe #Dagster #OpenSource #DataOps

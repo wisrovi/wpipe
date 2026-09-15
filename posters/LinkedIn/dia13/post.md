@@ -1,38 +1,25 @@
-# 💎 WPipe vs. Dagster: Is "Asset-Based" Always Best?
+💎 WPIPE VS. DAGSTER: IS ASSET-BASED ALWAYS BEST?
 
-Dagster has done great work with its asset-based approach, but at what cost? For many projects, the infrastructure needed to run Dagster is simply too heavy. 🏋️‍♂️
+Dagster has done great work with its asset-based approach, but at what cost? For many projects, the infrastructure needed to run Dagster is simply too heavy.
 
-**WPipe** offers a "Code-First" alternative that prioritizes lightness and resilience without the need for complex IO Managers.
+wpipe offers a Code-First alternative that prioritizes lightness and resilience without the need for complex IO Managers.
 
-### ⚔️ Battle Card: WPipe vs. Dagster
+⚔️ BATTLE CARD: WPIPE VS. DAGSTER
 
-| Feature | WPipe | Dagster |
-| :--- | :---: | :--- |
-| **RAM Usage** | **< 50MB** | > 500MB |
-| **Setup** | Instant | Moderate |
-| **Resilience** | SQLite WAL | DB / IO Managers |
-| **Edge Ready** | ✅ Yes | ❌ Difficult |
+Feature | wpipe | Dagster
+RAM Usage | < 50MB | > 500MB
+Setup | Instant | Moderate
+Resilience | SQLite WAL | DB / IO Managers
+Edge Ready | Yes | Difficult
 
-### 🛠️ Simplicity with `@state`
+🛠️ SIMPLICITY WITH @STATE
 
-Instead of defining complex asset graphs, in WPipe you focus on your pipeline's state:
+Instead of defining complex asset graphs, in wpipe you focus on your pipeline's state: define an @state step for your analysis logic and let the engine handle the graph.
 
-```python
-from wpipe import state, to_obj
+📊 DIRECT VISUAL DOCUMENTATION
 
-@state(name="DataAnalysis", version="v1.0")
-@to_obj
-def analyze(data: dict):
-    # Process your data with full confidence
-    return {"score": sum(data.values()) / len(data)}
-```
+With +117k downloads, wpipe proves you can have professional orchestration with a fraction of the resources. Your pipelines even auto-generate their own documentation.
 
-### 📊 Direct Visual Documentation
+👇 Do you prefer the complexity of assets or the simplicity of state?
 
-📊 Image to upload with this post: diagrama.png
-
-With **+117k downloads**, WPipe proves you can have professional orchestration with a fraction of the resources.
-
-Do you prefer the complexity of assets or the simplicity of state? 👇
-
-#Dagster #WPipe #DataEngineering #Python #Efficiency #Microservices
+#Dagster #wpipe #DataEngineering #Python #Efficiency #Microservices

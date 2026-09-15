@@ -1,23 +1,22 @@
-# wpipe: The Developer Manifesto — Reclaiming Pipelines
+✍️ THE DEVELOPER MANIFESTO: RECLAIMING PIPELINES
 
 Visual tools are for prototypes. Code is for production.
 
-**wpipe** empowers developers to:
-- **Version** everything.
-- **Test** everything.
-- **Document** automatically.
-- **Scale** with <50MB RAM.
+✨ WPIPE EMPOWERS DEVELOPERS TO
 
-### Battle Card
-| Feature | wpipe | No-Code |
-|---------|-------|---------|
-| Control | Full | Limited |
-| Resilience | SQLite WAL | Cloud-dependent |
+🔹 Version everything.
+🔹 Test everything.
+🔹 Document automatically.
+🔹 Scale with <50MB RAM.
 
-```mermaid
-graph TD
-    A[Idea] --> B[wpipe Code]
-    B --> C[Production]
-```
+⚔️ BATTLE CARD
+
+Feature | wpipe | No-Code
+Control | Full | Limited
+Resilience | SQLite WAL | Cloud-dependent
+
+🔄 IDEA, CODE, PRODUCTION
+
+Your idea goes straight to code and into production, versioned, tested, and auto-documented. That's what reclaiming your pipelines means.
 
 #DeveloperExperience #SoftwareDesign #wpipe

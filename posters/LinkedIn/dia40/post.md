@@ -1,23 +1,21 @@
-# wpipe: Scaling Threat Intel on Less Than 50MB of RAM
+🛡️ WPIPE: SCALING THREAT INTEL ON LESS THAN 50MB OF RAM
 
-In cybersecurity, speed and efficiency are everything. 
+In cybersecurity, speed and efficiency are everything. When a threat appears, your pipeline must react instantly, with zero data loss.
 
-### Why wpipe is a game-changer:
-- **Resilience**: SQLite WAL checkpoints mean zero data loss.
-- **Footprint**: <50MB RAM allows for massive parallelization.
-- **Clarity**: Mermaid diagrams show exactly how threats are handled.
+🛠️ WHY WPIPE IS A GAME-CHANGER
 
-### Battle Card
-| Feature | wpipe | Competitors |
-|---------|-------|-------------|
-| RAM | <50MB | High |
-| Trust | +117k | Low |
+🔹 Resilience: SQLite WAL checkpoints mean zero data loss.
+🔹 Footprint: <50MB RAM allows massive parallelization.
+🔹 Clarity: auto-generated diagrams show exactly how threats are handled.
 
-```mermaid
-graph TD
-    A[Attack Detected] --> B[wpipe Pipeline]
-    B --> C[Containment]
-    B --> D[Notification]
-```
+⚔️ BATTLE CARD
+
+Feature | wpipe | Competitors
+RAM | <50MB | High
+Trust | +117k | Low
+
+🔄 THE THREAT FLOW
+
+Attack detected, wpipe pipeline, containment plus notification. Every event tracked, every step resumable. In security, that control loop is everything.
 
 #Cybersecurity #Infosec #wpipe

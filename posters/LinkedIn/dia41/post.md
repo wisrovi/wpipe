@@ -1,22 +1,21 @@
-# wpipe: 117k Users Can't Be Wrong — Checkpoints Win
+📈 WPIPE: 117K USERS CAN'T BE WRONG — CHECKPOINTS WIN
 
 Scaling your data collection? Don't let crashes slow you down.
 
-**wpipe** highlights:
-- **Resilient**: Resumes exactly where it left off.
-- **Lightweight**: <50MB RAM.
-- **Transparent**: Auto-generated Mermaid diagrams.
+✨ WPIPE HIGHLIGHTS
 
-### Battle Card
-| Feature | wpipe | Standard Tools |
-|---------|-------|----------------|
-| Persistence | SQLite WAL | Hard to Implement |
-| RAM | <50MB | Memory Leaks common |
+🔹 Resilient: resumes exactly where it left off.
+🔹 Lightweight: <50MB RAM.
+🔹 Transparent: auto-generated diagrams of every flow.
 
-```mermaid
-graph LR
-    Target[Target Web] --> wpipe
-    wpipe --> CSV[Clean Data]
-```
+⚔️ BATTLE CARD
+
+Feature | wpipe | Standard Tools
+Persistence | SQLite WAL | Hard to Implement
+RAM | <50MB | Memory leaks common
+
+🔄 TARGET, PIPELINE, CLEAN DATA
+
+What you scrape is checkpointed and processed into clean data, even if the machine reboots mid-crawl. No lost work, no duplicated records.
 
 #DataMining #Python #wpipe

@@ -1,22 +1,21 @@
-# wpipe: The Future of Industrial IoT (IIoT)
+⚙️ WPIPE: THE FUTURE OF INDUSTRIAL IOT (IIOT)
 
 The future is decentralized. Processing data at the source saves bandwidth and energy.
 
-**wpipe** for IoT:
-- **Small**: <50MB RAM.
-- **Tough**: SQLite WAL survives power cuts.
-- **Smart**: Auto-docs for field engineers.
+🛠️ WPIPE FOR IOT
 
-### Battle Card
-| Metric | wpipe | Industry Standards |
-|--------|-------|--------------------|
-| RAM | <50MB | 512MB+ |
-| Deploy | Instant | Complex |
+🔹 Small: <50MB RAM.
+🔹 Tough: SQLite WAL survives power cuts.
+🔹 Smart: auto-docs for field engineers.
 
-```mermaid
-graph LR
-    Machine --> wpipe
-    wpipe --> Dashboard
-```
+⚔️ BATTLE CARD
+
+Metric | wpipe | Industry Standards
+RAM | <50MB | 512MB+
+Deploy | Instant | Complex
+
+🔄 MACHINE, WPIPE, DASHBOARD
+
+Industrial data is processed on the edge and streamed ready-to-consume to the dashboard. Simple, local, and resilient.
 
 #IoT #Industry40 #wpipe

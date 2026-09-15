@@ -1,45 +1,28 @@
-# WPipe: Mastery of Zen on LI (Post 247)
+🧘 WPIPE: MASTERY OF ZEN
 
-## Zen and the Art of Pipeline Maintenance
-Simplicity is the ultimate sophistication. WPipe brings Pythonic beauty to your logic.
+Simplicity is the ultimate sophistication. wpipe brings Pythonic beauty to your logic.
 
-### Visualization
-```mermaid
-graph LR
-    A[Logic] --> B[@state decorator]
-    B --> C[Step Metadata]
-    C --> D[Pipeline Flow]
-    D --> E[Automatic Mermaid]
-```
+🛡️ ZEN AND THE ART OF PIPELINE MAINTENANCE
 
-### ⚔️ Battle Card
+Your logic becomes a step via @state. The step carries its metadata into the pipeline flow. And the flow generates its own documentation automatically. Code, configuration, and docs, one source of truth.
 
-| Feature | WPipe | Airflow | n8n | Celery | Prefect | Zapier/Make |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Memory Footprint** | < 50MB | > 2GB | > 500MB | > 200MB | > 500MB | Cloud / High |
-| **Configuration** | Pure Python | Python/YAML | Visual UI | Python/Broker | Python | Visual UI |
-| **Resilience** | SQLite Checkpoints | Postgres/DB | Database | Redis/RabbitMQ | Cloud/DB | None (Manual) |
-| **Setup Time** | < 1 min | Hours | Minutes | Hours | Minutes | Minutes |
-| **Cost** | Free/OSS | OSS (High Infra) | OSS/Paid | OSS (Infra) | OSS/Cloud | Per Execution |
-| **Learning Curve** | Low (Pythonic) | High | Medium | High | Medium | Low |
-| **Self-Documentation** | Mermaid Built-in | Graph UI | Node UI | None | Graph UI | Node UI |
+⚔️ BATTLE CARD
 
-## Key Metrics
-- **+117k downloads**: A community that values efficiency.
-- **<50MB RAM**: Perfect for Green-IT and edge computing.
-- **SQLite WAL Checkpoints**: Industrial-grade resilience without the overhead.
+Feature | wpipe | Airflow | n8n | Celery | Prefect | Zapier/Make
+Memory Footprint | < 50MB | > 2GB | > 500MB | > 200MB | > 500MB | Cloud / High
+Configuration | Pure Python | Python/YAML | Visual UI | Python/Broker | Python | Visual UI
+Resilience | SQLite Checkpoints | Postgres/DB | Database | Redis/RabbitMQ | Cloud/DB | None (Manual)
+Setup Time | < 1 min | Hours | Minutes | Hours | Minutes | Minutes
+Cost | Free/OSS | OSS (High Infra) | OSS/Paid | OSS (Infra) | OSS/Cloud | Per Execution
+Learning Curve | Low (Pythonic) | High | Medium | High | Medium | Low
+Self-Documentation | Mermaid Built-in | Graph UI | Node UI | None | Graph UI | Node UI
 
-### Pythonic Implementation
-```python
-from wpipe import step as state
+📌 KEY METRICS
 
-@state(name='master_step', timeout=60)
-def logic(context):
-    # Implementation of Zen
-    return {'status': 'success'}
-```
+🔹 +117k downloads: a community that values efficiency.
+🔹 <50MB RAM: perfect for Green-IT and edge computing.
+🔹 SQLite WAL checkpoints: industrial-grade resilience without the overhead.
 
-## Quick Insights
+wpipe is the final piece of your Zen strategy. Join the movement today.
 
-## Conclusion
-WPipe is the final piece of your Zen strategy. Join the movement today.
+#Python #CleanCode #wpipe #Orchestration #GreenIT

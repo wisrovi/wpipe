@@ -1,21 +1,15 @@
-# The Green-IT Choice: Zapier vs. WPipe 🌿⚡
+🌿 THE GREEN-IT CHOICE: ZAPIER VS. WPIPE
 
-Every Zap costs energy and money. Cloud-heavy automation is the "Gas Guzzler" of the digital age.
+Every Zap costs energy and money. Cloud-heavy automation is the gas guzzler of the digital age.
 
-**WPipe is the Electric Vehicle of Pipelines.**
+wpipe is the electric vehicle of pipelines.
 
-- **Ultra-Low Memory:** < 50MB RAM.
-- **Local First:** Run it on-prem or in tiny containers. No heavy cloud overhead.
-- **High Performance:** Parallel execution that doesn't burn your CPU (or your wallet).
+🔹 Ultra-Low Memory: < 50MB RAM.
+🔹 Local First: run it on-prem or in tiny containers. No heavy cloud overhead.
+🔹 High Performance: parallel execution that doesn't burn your CPU or your wallet.
 
-Save the planet. Save your budget. Use WPipe.
+Same automation task, two paths: one through the cloud with a heavy carbon footprint, the other local and lite with minimal RAM and energy.
 
-```mermaid
-graph TD
-    A[Automation Task] --> B{Zapier}
-    B -- Cloud --> C[Heavy Carbon Footprint]
-    A --> D{WPipe}
-    D -- Local/Lite --> E[Green-IT / Minimal RAM]
-```
+Save the planet. Save your budget. Use wpipe.
 
-#GreenIT #Sustainability #Zapier #WPipe #EcoFriendly
+#GreenIT #Sustainability #Zapier #wpipe #EcoFriendly

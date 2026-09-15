@@ -1,36 +1,24 @@
-# wpipe: Zen Master of Celery & Cron Alternatives
+🧘 WPIPE: ZEN MASTER OF CELERY & CRON ALTERNATIVES
 
-![wpipe Zen](https://img.shields.io/badge/wpipe-Zen-blue)
+Are you tired of managing complex Celery workers or brittle Cron jobs? Meet wpipe, the Pythonic orchestrator that brings peace of mind to your infrastructure.
 
-Are you tired of managing complex Celery workers or brittle Cron jobs? 🧘‍♂️
+⚔️ BATTLE CARD: WPIPE VS. THE STATUS QUO
 
-Meet **wpipe**, the Pythonic orchestrator that brings peace of mind to your infrastructure.
+Feature | wpipe | Celery | Cron
+Setup | Zero config | High (Redis/RabbitMQ) | Minimal
+Footprint | <50MB RAM | >200MB RAM | Minimal
+Resilience | SQLite WAL Checkpoints | Task-based | OS-dependent
+Observability | Built-in Auto-Docs | Flower (Separate) | Mail/Logs
+Syntax | Pythonic @step | Complex decorators | Crontab
 
-### The Battle Card: wpipe vs. The Status Quo
+🛠️ WHY DEVELOPERS ARE SWITCHING
 
-| Feature | wpipe | Celery | Cron |
-|---------|-------|--------|------|
-| **Setup** | Zero Config | High (Redis/RabbitMQ) | Minimal |
-| **Footprint** | <50MB RAM | >200MB RAM | Minimal |
-| **Resilience** | SQLite WAL Checkpoints | Task-based | OS-dependent |
-| **Observability**| Built-in Auto-Docs | Flower (Separate) | Mail/Logs |
-| **Syntax** | Pythonic @step | Complex Decorators | Crontab |
+1. SQLite WAL Persistence: every state transition is safe.
+2. Auto-Docs: your pipeline is your documentation.
+3. Green-IT: low CPU/RAM footprint, perfect for Edge/IoT.
 
-### Why Developers are Switching:
-1. **SQLite WAL Persistence**: Every state transition is safe.
-2. **Auto-Docs**: Your pipeline is your documentation.
-3. **Green-IT**: Low CPU/RAM footprint (perfect for Edge/IoT).
+Think of the flow: trigger, step fetch, step process, SQLite WAL, auto-generated docs. Everything you run is persisted and documented.
 
-```mermaid
-graph TD
-    A[Trigger] --> B{wpipe Agent}
-    B --> C[Step 1: Fetch]
-    B --> D[Step 2: Process]
-    C --> E[SQLite WAL]
-    D --> E
-    E --> F[Auto-Doc Generated]
-```
-
-Join the +117k developers who have found their Zen.
+Join the +117k developers who have found their zen.
 
 #Python #DevOps #Automation #wpipe #CleanCode

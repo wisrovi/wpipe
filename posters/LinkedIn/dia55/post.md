@@ -1,45 +1,26 @@
-# 🧬 Data Contracts: Validate Pipelines Where It Matters
+🧬 DATA CONTRACTS: VALIDATE PIPELINES WHERE IT MATTERS
 
-In data, the classic error is elegant: a field arrives as `str` where you expected `int`, or a `None` travels through 4 steps until it explodes at the end. In a contract-less script, you discover that in production.
+In data, the classic error is elegant: a field arrives as a string where you expected an integer, or a None travels through 4 steps until it explodes at the end. In a contract-less script, you discover that in production.
 
-With **wpipe** you define your pipeline's **data contract** and validation happens automatically — like a schema in a database, but at every step.
+With wpipe you define your pipeline's data contract and validation happens automatically, like a schema in a database, but at every step.
 
-### 📦 A contract with PipelineContext
+📦 A CONTRACT WITH PIPELINECONTEXT
 
-```python
-from wpipe import Pipeline, step, PipelineContext
+Define a class with typed fields, name, age, email, and declare it as your step's parameter. The engine validates the input against the schema at the edge, so a bad record never travels deep into your flow.
 
-class User(PipelineContext):
-    name: str
-    age: int
-    email: str
+✅ WHAT IT GIVES YOU
 
-@step(name="validate_user")
-def validate(user: User):
-    if user.age < 18:
-        return {"valid": False, "reason": "underage"}
-    return {"valid": True}
+Without contract | With PipelineContext
+The error appears at the end | Validation happens at the edge
+Types work by accident | Types verified against the schema
+No shape documentation | The contract is self-documenting
 
-pipe = Pipeline(pipeline_name="validation")
-pipe.set_steps([validate])
-pipe.run({"name": "Ana", "age": 25, "email": "ana@example.com"})
-# -> {'valid': True}
-```
+🧠 THE PHILOSOPHY
 
-### ✅ What it gives you
+You don't validate out of distrust: you validate because the data entering the pipeline defines how safely you can operate. A strict but extensible contract turns data errors into process errors, not production incidents.
 
-| Without contract | With PipelineContext |
-| :--- | :--- |
-| The error appears at the end | Validation happens at the edge |
-| Types "work by accident" | Types verified against the schema |
-| No shape documentation | The contract is self-documenting |
+Correct data in, predictable pipeline out.
 
-### 🧠 The philosophy
-
-You don't validate out of distrust: you validate because **the data entering the pipeline defines how safely you can operate**. A strict but extensible contract turns data errors into process errors, not production incidents.
-
-Correct data in = predictable pipeline out.
-
-👇 **Do your pipelines validate input types, or trust that "whoever sends, sends well"?**
+👇 Do your pipelines validate input types, or trust that whoever sends, sends well?
 
 #Python #DataEngineering #TypeSafety #wpipe #SoftwareEngineering

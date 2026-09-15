@@ -1,48 +1,26 @@
-# 🔥 Fire & Forget: tasks that don't block your pipeline
+🔥 FIRE & FORGET: TASKS THAT DON'T BLOCK YOUR PIPELINE
 
-Not every task in a flow needs to be awaited. Telemetry, notifications, an email send, or an internal sync can run **without blocking** the main result.
+Not every task in a flow needs to be awaited. Telemetry, notifications, an email send, or an internal sync can run without blocking the main result.
 
-In most orchestrators, "launching something non-blocking" is a battle: queues, workers, brokers, supervisors. With **wpipe** it's a single class: `Background`.
+In most orchestrators, launching something non-blocking is a battle: queues, workers, brokers, supervisors. With wpipe it's a single class: Background.
 
-### ⚡ Fire & Forget in action
+⚡ FIRE & FORGET IN ACTION
 
-```python
-from wpipe import Pipeline, step
-from wpipe.pipe.components.logic_blocks import Background
+Your main task processes the business result. A telemetry step wrapped in Background runs in a daemon thread. The pipeline continues immediately, and the heavy task still completes.
 
-@step(name="main_task")
-def main_task(data):
-    print("Running main task...")
-    return {"status": "done"}
+🎯 WHEN TO USE IT
 
-@step(name="telemetry")
-def telemetry(data):
-    import time
-    time.sleep(2)  # Costly task that must not delay you
-    print("Telemetry sent")
+📤 Send metrics or logs to an external service.
+🔔 Notifications that must not delay business.
+🧹 Cleanup and post-execution auxiliary tasks.
+✉️ Emails or webhooks where latency doesn't matter.
 
-pipe = Pipeline(pipeline_name="with_background")
-pipe.set_steps([
-    main_task,
-    Background(telemetry),   # Does not block the pipeline
-])
-```
+🧠 THE GOLDEN RULE
 
-The pipeline **continues immediately**; the heavy task runs in a daemon thread. Result: the flow finishes on time and telemetry is still sent.
+Every step in your pipeline should answer: does it need to block the next one? If the answer is no, that step is a perfect candidate for Background.
 
-### 🎯 When to use it
+Orchestrating isn't just chaining steps, it's deciding what waits and what doesn't.
 
-- 📤 Send metrics or logs to an external service.
-- 🔔 Notifications that must not delay business.
-- 🧹 Cleanup and post-execution auxiliary tasks.
-- Emails / webhooks where latency doesn't matter.
-
-### 🧠 The golden rule
-
-Every step in your pipeline should answer: does it **need** to block the next one? If the answer is "no," that step is a perfect candidate for `Background`.
-
-Orchestrating isn't just chaining steps — it's **deciding what waits and what doesn't**.
-
-👇 **Which of your tasks are you still waiting on "just in case" that could go in the background?**
+👇 Which of your tasks are you still waiting on just in case that could go in the background?
 
 #Python #Backend #SoftwareEngineering #wpipe #Automation

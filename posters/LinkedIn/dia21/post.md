@@ -1,24 +1,17 @@
-# Airflow Fear: The Hidden Cost of Complexity 🚫🐘
+🚫 AIRFLOW FEAR: THE HIDDEN COST OF COMPLEXITY
 
-Are you tired of managing heavy infrastructure just to run a few Python scripts? 
+Are you tired of managing heavy infrastructure just to run a few Python scripts?
 
-Airflow is great for "The Big Data Era," but in the modern "Efficiency Era," it's often overkill. Why spin up Docker containers, Redis, and Postgres just for a DAG?
+Airflow is great for the Big Data era, but in the modern Efficiency era it's often overkill. Why spin up Docker containers, Redis, and Postgres just for a DAG?
 
-**Enter WPipe.** 🚀
+Enter wpipe.
 
-- **< 50MB RAM:** Run it on a toaster (or a tiny Lambda).
-- **Zero-Config Resiliency:** SQLite-backed checkpoints (WAL mode) ensure that if your system fails, WPipe resumes exactly where it stopped. No lost states.
-- **Pure Python:** No YAML hell. Just use the `@state` decorator and focus on your logic.
+🔹 < 50MB RAM: run it on a tiny server, a Lambda, or a Raspberry Pi.
+🔹 Zero-Config Resiliency: SQLite-backed checkpoints (WAL mode) ensure that if your system fails, wpipe resumes exactly where it stopped. No lost states.
+🔹 Pure Python: no YAML hell. Just use the @state decorator and focus on your logic.
 
-Stop fearing the "Scheduler Down" notification. 
+Think about the failure path. With Airflow, a failure means restarting containers, databases, and workers. With wpipe, the checkpointed state is found and execution continues from there, automatically.
 
-```mermaid
-graph TD
-    A[Failure] --> B{Airflow?}
-    B -- Yes --> C[Restart Container/DB/Worker]
-    B -- No --> D[WPipe Auto-Resume]
-    D --> E[Checkpointed State Found]
-    E --> F[Continue Execution]
-```
+Stop fearing the Scheduler Down notification.
 
-#CleanCode #Python #WPipe #DataEngineering #Efficiency
+#CleanCode #Python #wpipe #DataEngineering #Efficiency

@@ -1,19 +1,13 @@
-# Running Pipelines on a Raspberry Pi? Yes, you can. 🥧🐍
+🥧 RUNNING PIPELINES ON A RASPBERRY PI? YES, YOU CAN.
 
-Most orchestrators crash a Raspberry Pi. WPipe loves it.
+Most orchestrators crash a Raspberry Pi. wpipe loves it.
 
-- **< 50MB RAM:** Leaving plenty of room for your actual processing.
-- **SQLite Persistence:** Perfect for SD-card based systems.
-- **Reliable:** Handles power cuts with automatic checkpoints.
+🔹 < 50MB RAM: leaving plenty of room for your actual processing.
+🔹 SQLite Persistence: perfect for SD-card based systems.
+🔹 Reliable: handles power cuts with automatic checkpoints.
+
+A typical flow: sensor read, checkpoint, data upload. Simple, robust, and resilient on the edge.
 
 The ultimate tool for Edge Computing and IoT.
 
-```mermaid
-graph TD
-    R[Raspberry Pi] --> W[WPipe]
-    W --> S1[Sensor Read]
-    S1 --> C[Checkpoint]
-    C --> S2[Data Upload]
-```
-
-#RaspberryPi #IoT #EdgeComputing #WPipe #Python
+#RaspberryPi #IoT #EdgeComputing #wpipe #Python

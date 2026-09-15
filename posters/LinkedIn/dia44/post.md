@@ -1,19 +1,18 @@
-# wpipe: Don't Let Legacy Cron Kill Your Production
+⏰ WPIPE: DON'T LET LEGACY CRON KILL YOUR PRODUCTION
 
-Are you still using Cron for mission-critical tasks? You're playing with fire. 
-wpipe offers SQLite WAL checkpoints and <50MB RAM.
+Are you still using Cron for mission-critical tasks? You're playing with fire.
 
-### Battle Card
-| Feature | wpipe | Cron |
-|---------|-------|------|
-| RAM | <50MB | Minimal |
-| Persistence | SQLite WAL | None |
-| Trust | +117k | Legacy |
+wpipe offers SQLite WAL checkpoints and <50MB RAM, the resilience for the tasks you can't afford to lose.
 
-```mermaid
-graph TD
-    Cron --> Failure --> Downtime
-    wpipe --> WAL --> Success
-```
+⚔️ BATTLE CARD
+
+Feature | wpipe | Cron
+RAM | <50MB | Minimal
+Persistence | SQLite WAL | None
+Trust | +117k | Legacy
+
+🔄 THE CONTRAST
+
+With Cron, a mid-flight failure means downtime. With wpipe, the WAL checkpoint means instant resume.
 
 #DevOps #Stability #wpipe

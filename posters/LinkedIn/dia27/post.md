@@ -1,21 +1,13 @@
-# Make (Integromat) is Expensive. WPipe is Efficient. 💸🌿
+💸 MAKE (INTEGROMAT) IS EXPENSIVE. WPIPE IS EFFICIENT.
 
-Paying per execution? That's old school. 
+Paying per execution? That's old school. wpipe allows you to scale without scaling your costs.
 
-**WPipe** allows you to scale without scaling your costs.
+🔹 Unlimited Executions: it's your code, on your hardware.
+🔹 Efficiency: optimized SQLite WAL mode means minimal disk I/O and near-zero idle RAM.
+🔹 Resilience: if your local machine reboots, wpipe resumes. Make just fails.
 
-- **Unlimited Executions:** It's your code, on your hardware.
-- **Efficiency:** Optimized SQLite WAL mode means minimal disk I/O and near-zero idle RAM.
-- **Resilience:** If your local machine reboots, WPipe resumes. Make just "fails."
+While Make scales your invoice with usage, wpipe keeps the same low RAM and lets you grow freely.
 
-Choose the Green-IT path. Choose WPipe.
+Choose the Green-IT path. Choose wpipe.
 
-```mermaid
-graph LR
-    A[Scale Up] --> B{Make.com}
-    B --> C[$$$ Bills]
-    A --> D{WPipe}
-    D --> E[Same Low RAM]
-```
-
-#MakeCom #Automation #WPipe #Efficiency #CostSaving
+#MakeCom #Automation #wpipe #Efficiency #CostSaving
