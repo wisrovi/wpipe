@@ -1,4 +1,4 @@
-# 🕒 Your Cron deserves a second version: from orphan script to supervised service
+# 🕒 From orphan script to supervised service
 
 In my previous post I talked about why Cron alone is a risk for critical tasks. Now the practical part: **how do you migrate?**
 

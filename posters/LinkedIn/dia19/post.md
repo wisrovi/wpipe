@@ -1,4 +1,4 @@
-# 🌌 The Orchestration Spectrum: Where does your stack belong?
+# 🌌 The Orchestration Spectrum: Where's Your Stack?
 
 **Headline: Is Airflow too much? Is n8n too little? Let's talk about the elephant in the orchestration room. 🐘🐍**
 

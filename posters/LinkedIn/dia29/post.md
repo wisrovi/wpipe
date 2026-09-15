@@ -1,4 +1,4 @@
-# Stop Writing Docs. Let your Pipelines describe themselves. 📖✨
+# 📖 Let Your Pipelines Write Their Own Docs
 
 Dagster tried to solve the documentation problem with "Software Defined Assets." WPipe solves it with **Auto-Visualizing States**.
 

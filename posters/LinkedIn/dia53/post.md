@@ -1,4 +1,4 @@
-# 📄 Logs, metrics, and audits: export what your pipeline did
+# 📄 Logs, Metrics, Audits: Export What Your Pipeline Did
 
 A resilient pipeline is useless if you can't afterwards **prove** what happened: for an audit, a compliance report, or comparing performance evolution across runs.
 

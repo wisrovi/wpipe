@@ -1,4 +1,4 @@
-# 🔍 LinkedIn Post: wpipe vs. Make — Forensic Tracking & Resiliency
+# 🔍 wpipe vs. Make: Forensic Tracking & Resiliency
 
 ## 📌 Post Draft
 

@@ -1,4 +1,4 @@
-# 🎨 LinkedIn Post: wpipe — Scaling Beyond Visual Entropy 🍝
+# 🎨 wpipe: Scaling Beyond Visual Entropy 🍝
 
 ## 📌 Post Draft
 

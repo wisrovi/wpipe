@@ -1,4 +1,4 @@
-# 182: LinkedIn | Why wpipe is the future of Industrial IoT (IIoT)
+# wpipe: The Future of Industrial IoT (IIoT)
 
 The future is decentralized. Processing data at the source saves bandwidth and energy.
 

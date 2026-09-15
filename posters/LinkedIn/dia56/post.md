@@ -1,4 +1,4 @@
-# 🎓 Learning to orchestrate shouldn't require 3 certifications
+# 🎓 Orchestration Without 3 Certifications
 
 When someone wants to start with orchestration, the "traditional" path is: read a thousand docs, spin up an environment, understand a panel, dream of Airflow... and get frustrated. The barrier isn't the concept — it's the tool.
 

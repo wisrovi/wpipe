@@ -1,4 +1,4 @@
-# 🚀 LinkedIn Post: wpipe — Scaling Beyond the Limits of SaaS Automation 💸
+# 🚀 wpipe: Scaling Beyond SaaS Automation Limits
 
 ## 📌 Post Draft
 

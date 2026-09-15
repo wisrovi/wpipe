@@ -1,4 +1,4 @@
-# 🚀 LinkedIn Post: wpipe — Orchestration without the Infrastructure Tax 🐍
+# 🚀 wpipe: Orchestration Without the Infrastructure Tax 🐍
 
 ## 📌 Post Draft
 

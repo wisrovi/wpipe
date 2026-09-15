@@ -1,4 +1,4 @@
-# 186: LinkedIn | The Developer's Manifesto: Reclaiming our Pipelines
+# wpipe: The Developer Manifesto — Reclaiming Pipelines
 
 Visual tools are for prototypes. Code is for production.
 

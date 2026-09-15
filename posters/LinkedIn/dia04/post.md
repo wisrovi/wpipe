@@ -1,4 +1,4 @@
-# 🔐 LinkedIn Post: wpipe — Orchestration with Integrity 🛡️
+# 🔐 wpipe: Orchestration with Integrity 🛡️
 
 ## 📌 Post Draft
 

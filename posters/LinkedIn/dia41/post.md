@@ -1,4 +1,4 @@
-# 178: LinkedIn | 117k wpipe Users can't be wrong: Web Scraping is better with Checkpoints
+# wpipe: 117k Users Can't Be Wrong — Checkpoints Win
 
 Scaling your data collection? Don't let crashes slow you down.
 

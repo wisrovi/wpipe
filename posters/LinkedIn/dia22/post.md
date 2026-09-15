@@ -1,4 +1,4 @@
-# Low-Code, High-Risk? Why n8n users are moving back to Code. 🛠️➡️🐍
+# 🛠️ Low-Code, High-Risk: Why n8n Devs Move Back to Code
 
 Visual builders like n8n are beautiful until you hit a logic wall. When your workflow gets complex, "drag-and-drop" becomes "drag-and-drop-and-pray."
 

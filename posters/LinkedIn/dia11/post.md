@@ -1,4 +1,4 @@
-# 🌿 WPipe vs. Luigi: Sustainable Orchestration for the Modern Dev
+# 🌿 WPipe vs. Luigi: Sustainable Orchestration
 
 Is your orchestrator consuming more energy and resources than your actual data logic? 🔋 In a world moving toward **Green IT**, efficiency isn't an option — it's a responsibility.
 

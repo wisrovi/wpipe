@@ -1,4 +1,4 @@
-# ⚙️ Declarative configuration, without leaving the Python ecosystem
+# ⚙️ Declarative Config, Staying in the Python Ecosystem
 
 In the "low-code" world you switch environments when you want to configure: a visual panel, a giant YAML, a proprietary database. All outside your code, all hard to version.
 

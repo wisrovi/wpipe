@@ -1,4 +1,4 @@
-# 🚀 Infrastructure Freedom: Why WPipe Wins "Edge" vs. Dagster
+# 🚀 Infrastructure Freedom: WPipe Wins vs. Dagster
 
 Dagster is excellent for data observability, but trying to run it in a resource-constrained (Edge) environment is a nightmare of dependencies and memory consumption. 📉
 

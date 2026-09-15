@@ -1,4 +1,4 @@
-# 🎮 LinkedIn Post: wpipe — Resilience for Long-Running Engineering 🐍
+# 🎮 wpipe: Resilience for Long-Running Engineering 🐍
 
 ## 📌 Post Draft
 

@@ -1,4 +1,4 @@
-# 174: LinkedIn | How we scaled Threat Intel Processing to 117k+ Events with <50MB RAM
+# wpipe: Scaling Threat Intel on Less Than 50MB of RAM
 
 In cybersecurity, speed and efficiency are everything. 
 

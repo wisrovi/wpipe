@@ -1,4 +1,4 @@
-# 🧬 Data contracts: your pipeline validated where it hurts most
+# 🧬 Data Contracts: Validate Pipelines Where It Matters
 
 In data, the classic error is elegant: a field arrives as `str` where you expected `int`, or a `None` travels through 4 steps until it explodes at the end. In a contract-less script, you discover that in production.
 

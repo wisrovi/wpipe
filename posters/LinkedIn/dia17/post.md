@@ -1,4 +1,4 @@
-# 🕒 Still trusting your business to a crontab file? Time to wake up.
+# 🕒 Still trusting a crontab file? Time to wake up.
 
 We all love **Cron**. It's simple, it's native, and it's been running for decades. But in modern engineering, Cron's "simplicity" is a security and reliability risk.
 

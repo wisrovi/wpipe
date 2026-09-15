@@ -1,4 +1,4 @@
-# 🔨 LinkedIn Post: wpipe — Embedded Orchestration for Modern Python 🐍
+# 🔨 wpipe: Embedded Orchestration for Modern Python 🐍
 
 ## 📌 Post Draft
 

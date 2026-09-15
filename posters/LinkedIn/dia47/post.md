@@ -1,4 +1,4 @@
-# 🔄 One pipeline, two worlds: synchronous and asynchronous
+# 🔄 One pipeline, two worlds: sync and async
 
 Many libraries force you to choose: build a sync orchestrator or an async one, and migrating between them means rewriting everything.
 

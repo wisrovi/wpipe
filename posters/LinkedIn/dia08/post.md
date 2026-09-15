@@ -1,4 +1,4 @@
-# 🚀 LinkedIn Post: wpipe — Zero-Friction Orchestration for Python Developers 🐍
+# 🚀 wpipe: Zero-Friction Orchestration for Python Devs 🐍
 
 ## 📌 Post Draft
 

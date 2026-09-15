@@ -1,4 +1,4 @@
-# 162: LinkedIn | Why wpipe is the Zen Master of Celery & Cron Alternatives
+# wpipe: Zen Master of Celery & Cron Alternatives
 
 ![wpipe Zen](https://img.shields.io/badge/wpipe-Zen-blue)
 

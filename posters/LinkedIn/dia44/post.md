@@ -1,4 +1,4 @@
-# 188: LinkedIn | Don't let Legacy Cron kill your production!
+# wpipe: Don't Let Legacy Cron Kill Your Production
 
 Are you still using Cron for mission-critical tasks? You're playing with fire. 
 wpipe offers SQLite WAL checkpoints and <50MB RAM.

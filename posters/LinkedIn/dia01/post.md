@@ -1,4 +1,4 @@
-# 🚀 LinkedIn Post: wpipe — The Natural Evolution from No-Code to Engineering Excellence
+# 🚀 wpipe: From No-Code to Engineering Excellence
 
 ## 📌 Post Draft
 
