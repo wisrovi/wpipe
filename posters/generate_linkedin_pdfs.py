@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Generate one modern companion PDF per LinkedIn day folder (visual-first, A6).
+"""Generate bilingual modern companion PDFs per LinkedIn day folder (A6).
 
-Strategy: LinkedIn readers skim. Each PDF is a compact card-deck on A6 —
-one clean, airy idea per page, bigger type, minimal redundant graphics:
+Each day folder gets companion_es.pdf (from post_es.md) and
+companion_en.pdf (from post_en.md). Cards:
 
     1. Cover   — gradient, one-sentence pitch, key stat
     2. Pains   — the real problems (three cards)
     3. Wins    — what wpipe gives you (three icon cards)
-    4. Diagram — the architecture, large
+    4. Diagram — the architecture, large (diagrama*.png or generated Mermaid)
     5. Compare — the table (only when the post has one)
     6. Code    — the tiny learning curve
     7. Action  — soft CTA + footer
@@ -31,38 +31,76 @@ PUPPETEER_CONFIG = os.path.join("/tmp/opencode", "puppeteer-config.json")
 PLATFORMS = ["n8n", "Zapier", "Make", "Airflow", "Prefect", "Luigi", "Dagster", "Celery", "Cron"]
 
 TAGLINES = {
-    "n8n": "No-code today, code you can ship tomorrow.",
-    "Zapier": "Automations that finally hold state.",
-    "Make": "Visual flows, real engineering rigor.",
-    "Airflow": "DAG power, none of the daemon.",
-    "Prefect": "Long-running flows that never lose their place.",
-    "Luigi": "Dependencies without the legacy lock-in.",
-    "Dagster": "Step-first resilience, minus the server.",
-    "Celery": "Async jobs without the broker tax.",
-    "Cron": "Upgrade cron from script to system.",
-    "wpipe": "Pipelines that resume, not restart.",
+    "en": {
+        "n8n": "No-code today, code you can ship tomorrow.",
+        "Zapier": "Automations that finally hold state.",
+        "Make": "Visual flows, real engineering rigor.",
+        "Airflow": "DAG power, none of the daemon.",
+        "Prefect": "Long-running flows that never lose their place.",
+        "Luigi": "Dependencies without the legacy lock-in.",
+        "Dagster": "Step-first resilience, minus the server.",
+        "Celery": "Async jobs without the broker tax.",
+        "Cron": "Upgrade cron from script to system.",
+        "wpipe": "Pipelines that resume, not restart.",
+    },
+    "es": {
+        "n8n": "No-code hoy, código que despliegas mañana.",
+        "Zapier": "Automatizaciones que por fin mantienen el estado.",
+        "Make": "Flujos visuales, rigor real de ingeniería.",
+        "Airflow": "El poder del DAG, sin el daemon.",
+        "Prefect": "Flujos prolongados que nunca pierden su sitio.",
+        "Luigi": "Dependencias sin el candado del legado.",
+        "Dagster": "Resiliencia paso a paso, menos servidor.",
+        "Celery": "Trabajos async sin el impuesto del broker.",
+        "Cron": "Mejora tu cron de script a sistema.",
+        "wpipe": "Pipelines que reanudan, no que reinician.",
+    },
 }
 
 PAINS = {
-    "n8n": ["READMEs stay empty", "JSON exports un-diffable", "Debugging is a black box"],
-    "Zapier": ["Zaps break silently", "No real retry policy", "Data held hostage by a SaaS"],
-    "Make": ["More canvas JS, less logic", "Parallelism done by hand", "Observability is luck"],
-    "Airflow": ["A metadata DB to babysit", "DAGs drift from reality", "CI for DAGs is painful"],
-    "Prefect": ["Long runs lose state", "Workers + server + fleet", "Observability gets costly"],
-    "Luigi": ["Last-mile brittleness", "No granular resume", "Sprawl in one repo"],
-    "Dagster": ["A service to run one flow", "Type-checked but heavy", "Slow onboarding curve"],
-    "Celery": ["A broker to install and tune", "Fire-and-forget tasks", "Hard to replay a job"],
-    "Cron": ["Failures are silent", "No history, no audit", "One typo kills the job"],
-    "wpipe": ["State lost on crash", "Retries hand-rolled", "Zero audit trail"],
+    "en": {
+        "n8n": ["READMEs stay empty", "JSON exports un-diffable", "Debugging is a black box"],
+        "Zapier": ["Zaps break silently", "No real retry policy", "Data held hostage by a SaaS"],
+        "Make": ["More canvas JS, less logic", "Parallelism done by hand", "Observability is luck"],
+        "Airflow": ["A metadata DB to babysit", "DAGs drift from reality", "CI for DAGs is painful"],
+        "Prefect": ["Long runs lose state", "Workers + server + fleet", "Observability gets costly"],
+        "Luigi": ["Last-mile brittleness", "No granular resume", "Sprawl in one repo"],
+        "Dagster": ["A service to run one flow", "Type-checked but heavy", "Slow onboarding curve"],
+        "Celery": ["A broker to install and tune", "Fire-and-forget tasks", "Hard to replay a job"],
+        "Cron": ["Failures are silent", "No history, no audit", "One typo kills the job"],
+        "wpipe": ["State lost on crash", "Retries hand-rolled", "Zero audit trail"],
+    },
+    "es": {
+        "n8n": ["Los READMEs siguen vacíos", "Exports JSON imposibles de diffear", "El debugging es una caja negra"],
+        "Zapier": ["Los Zaps fallan en silencio", "Sin política real de reintentos", "Datos secuestrados por un SaaS"],
+        "Make": ["Más JS en el canvas, menos lógica", "Paralelismo a mano", "La observabilidad es suerte"],
+        "Airflow": ["Una BD de metadatos que cuidar", "Los DAGs se alejan de la realidad", "El CI de DAGs es doloroso"],
+        "Prefect": ["Ejecuciones largas pierden estado", "Workers + servidor + flota", "La observabilidad se encarece"],
+        "Luigi": ["Fragilidad en el último tramo", "Sin reanudación granular", "Crecimiento desordenado en un repo"],
+        "Dagster": ["Un servicio para un solo flujo", "Con tipos, pero pesado", "Curva de onboarding lenta"],
+        "Celery": ["Un broker que instalar y ajustar", "Tareas fire-and-forget", "Difícil de reproducir un trabajo"],
+        "Cron": ["Los fallos son silenciosos", "Sin historial ni auditoría", "Un typo mata el trabajo"],
+        "wpipe": ["Estado perdido en un crash", "Reintentos hechos a mano", "Cero trazabilidad"],
+    },
 }
 
-WINS = [
-    ("📦", "Code-first", "Pipelines are Python — versionable, testable."),
-    ("🧭", "Resume, don't restart", "Every step checkpoints to the WAL."),
-    ("🪶", "Featherweight", "<50 MB. No broker, no daemon."),
-]
+WINS = {
+    "en": [
+        ("📦", "Code-first", "Pipelines are Python — versionable, testable."),
+        ("🧭", "Resume, don't restart", "Every step checkpoints to the WAL."),
+        ("🪶", "Featherweight", "<50 MB. No broker, no daemon."),
+    ],
+    "es": [
+        ("📦", "Código primero", "Los pipelines son Python: versionables y testeables."),
+        ("🧭", "Reanuda, no reinicies", "Cada paso hace checkpoint en el WAL."),
+        ("🪶", "Pluma ligera", "<50 MB. Sin broker, sin daemon."),
+    ],
+}
 
-METRICS = [("+117k", "downloads"), ("<50 MB", "RAM, total"), ("SQLite", "WAL state")]
+METRICS = {
+    "en": [("+117k", "downloads"), ("<50 MB", "RAM, total"), ("SQLite", "WAL state")],
+    "es": [("+117k", "descargas"), ("<50 MB", "de RAM total"), ("SQLite", "estado WAL")],
+}
 
 TECH_CODE = {
     "n8n": "from wpipe import Pipeline, step\n\n@step(name=\"ingest\", retry_count=3)\ndef ingest(data):\n    return {\"rows\": data[\"payload\"]}\n\npipe = Pipeline(pipeline_name=\"from_n8n\")\npipe.set_steps([ingest])",
@@ -96,16 +134,37 @@ TECH_MERMAID = {
 DEFAULT_MERMAID = ("flowchart LR\n    A[Input] --> B[Validate]\n    B --> C[Process]\n    C --> D[Checkpoint WAL]\n"
                    "C --> E[Tracker SQL]\n    D --> F[Resume on failure]\n    E --> G[Auto-doc]")
 
-PALETTES = [
-    {"d": "#0b3d2e", "m": "#0e8a5f", "l": "#116149", "bg": "#f0f7f3", "c": "#dcefe5",
-     "ink": "#12372c", "soft": "#5d746a"},
-    {"d": "#0d2c4a", "m": "#1565c0", "l": "#1a73e8", "bg": "#eef4fb", "c": "#dce8f7",
-     "ink": "#12304e", "soft": "#5a6f87"},
-    {"d": "#123b3a", "m": "#0e9aa7", "l": "#12939f", "bg": "#eefafa", "c": "#d8eef0",
-     "ink": "#10393a", "soft": "#57706f"},
-    {"d": "#2a2350", "m": "#5e35b1", "l": "#7c4dff", "bg": "#f4f1fb", "c": "#e6def7",
-     "ink": "#2b2350", "soft": "#6d6492"},
-]
+DEFAULT_HEADLINE = {"en": "Orchestration that scales with you.",
+                    "es": "Orquestación que escala contigo."}
+
+UI = {
+    "en": {
+        "day": "DAY", "kicker": lambda t: f"{t.upper()} pipelines, engineered",
+        "title_head": "The architecture", "title_h2": "One pipeline, fully instrumented",
+        "title_cap": "State, retries and audit — inside a single run.",
+        "ctx_eyebrow": "The context", "ctx_h2": "Where it hurts today",
+        "shift_eyebrow": "The shift", "shift_h2": "What you gain",
+        "cmp_eyebrow": "Side by side", "cmp_h2": "wpipe vs. the status quo",
+        "code_eyebrow": "See it in action", "code_h2": "Six lines. That’s it.",
+        "code_stamp": "checkpoints · retries · timeout · parallel · tracker",
+        "cta_b": "Try wpipe in your next pipeline ↙",
+        "cta_p": "Install the library, wrap your step — checkpoints and docs appear by themselves.",
+        "foot": "Python-native orchestration",
+    },
+    "es": {
+        "day": "DÍA", "kicker": lambda t: f"Pipelines {t.upper()}, con ingeniería",
+        "title_head": "La arquitectura", "title_h2": "Un pipeline, totalmente instrumentado",
+        "title_cap": "Estado, reintentos y auditoría, en una sola ejecución.",
+        "ctx_eyebrow": "El contexto", "ctx_h2": "Dónde duele hoy",
+        "shift_eyebrow": "El cambio", "shift_h2": "Qué ganas",
+        "cmp_eyebrow": "Lado a lado", "cmp_h2": "wpipe vs. el statu quo",
+        "code_eyebrow": "Míralo en acción", "code_h2": "Seis líneas. Eso es todo.",
+        "code_stamp": "checkpoints · reintentos · timeout · paralelo · tracker",
+        "cta_b": "Prueba wpipe en tu próximo pipeline ↙",
+        "cta_p": "Instala la librería, envuelve tu paso: los checkpoints y las docs aparecen solas.",
+        "foot": "Orquestación nativa en Python",
+    },
+}
 
 
 def esc(s):
@@ -190,27 +249,30 @@ def fetch_images(folder, tech, fname):
     return [m] if m else []
 
 
-def build_html(day, folder):
-    txt = open(os.path.join(folder, "post.md"), encoding="utf-8").read()
+def build_html(day, folder, lang):
+    post_file = os.path.join(folder, "post_en.md" if lang == "en" else "post_es.md")
+    txt = open(post_file, encoding="utf-8").read()
     tech = detect_tech(txt) or "wpipe"
-    pal = PALETTES[int(re.match(r"dia(\d+)", day).group(1)) % len(PALETTES)]
-    day_num = re.match(r"dia(\d+)", day).group(1)
+    day_num = re.search(r"(\d+)", day).group(1)
+    pal = PALETTES[int(day_num) % len(PALETTES)]
+    u = UI[lang]
 
-    m = re.search(r"\*\*Headline:\s*(.+?)\*\*", txt, re.S)
-    headline = (m.group(1).strip() if m else "") or "Orchestration that scales with you."
+    headline = DEFAULT_HEADLINE[lang]
     if len(headline) > 90:
         headline = headline[:87].rstrip() + "…"
 
-    pains = PAINS.get(tech, PAINS["wpipe"])
-    tagline = TAGLINES.get(tech, TAGLINES["wpipe"])
+    pains = PAINS[lang].get(tech, PAINS[lang]["wpipe"])
+    tagline = TAGLINES[lang].get(tech, TAGLINES[lang]["wpipe"])
     code = TECH_CODE.get(tech, DEFAULT_CODE)
     table = extract_table(txt)
     imgs = fetch_images(folder, tech, f"{day}_{tech}")
 
     pain_cards = "".join(f'<div class="pcard">{esc(p)}</div>' for p in pains[:3])
     win_cards = "".join(f'<div class="wcard"><span class="ico">{w[0]}</span>'
-                        f"<div><b>{w[1]}</b><p>{w[2]}</p></div></div>" for w in WINS[:3])
-    metric_html = "".join(f'<div class="stat"><b>{m[0]}</b><span>{m[1]}</span></div>' for m in METRICS)
+                        f"<div><b>{esc(w[1])}</b><p>{esc(w[2])}</p></div></div>"
+                        for w in WINS[lang][:3])
+    metric_html = "".join(f'<div class="stat"><b>{esc(m[0])}</b><span>{esc(m[1])}</span></div>'
+                          for m in METRICS[lang])
 
     table_html = ""
     if table:
@@ -226,17 +288,17 @@ def build_html(day, folder):
     if imgs:
         for p in imgs[:10]:
             dia_pages += f"""<div class="sheet"><div class="inner cardpage">
-  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">DAY {day_num}</span></div>
-  <div class="eyebrow">The architecture</div>
-  <h2>One pipeline, fully instrumented</h2>
+  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">{esc(u['day'])} {day_num}</span></div>
+  <div class="eyebrow">{esc(u['title_head'])}</div>
+  <h2>{esc(u['title_h2'])}</h2>
   <div class="figblock"><div class="figwrap"><div class="fig"><img src="file://{p}"/></div></div>
-  <p class="cap">State, retries and audit — inside a single run.</p></div>
+  <p class="cap">{esc(u['title_cap'])}</p></div>
   </div></div>"""
     code_html = highlight_code(code)
     d = pal
 
     html = f"""<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="{lang}"><head><meta charset="utf-8">
 <style>
 @page {{ size: 105mm 148mm; margin: 0; }}
 * {{ box-sizing: border-box; }}
@@ -333,10 +395,10 @@ tr:nth-child(even) td {{ background: {d['bg']}; }}
   <div class="inner">
     <div class="titlebar">
       <div class="logo"><i>w</i>pipe</div>
-      <div class="chip" style="font-size:9pt;font-weight:800;letter-spacing:.18em;opacity:.9">DAY {day_num}</div>
+      <div class="chip" style="font-size:9pt;font-weight:800;letter-spacing:.18em;opacity:.9">{esc(u['day'])} {day_num}</div>
     </div>
     <div class="spacer"></div>
-    <div class="kicker">{esc(tech.upper())} pipelines, engineered</div>
+    <div class="kicker">{esc(u['kicker'](tech))}</div>
     <h1>{esc(tech.title())}: {esc(tagline)}</h1>
     <p class="pitch">{esc(headline)}</p>
     <div class="stats">{metric_html}</div>
@@ -345,64 +407,77 @@ tr:nth-child(even) td {{ background: {d['bg']}; }}
 
 <!-- 2 · PAINS -->
 <div class="sheet"><div class="inner cardpage">
-  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">DAY {day_num}</span></div>
-  <div class="eyebrow">The context</div>
-  <h2>Where it hurts today</h2>
+  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">{esc(u['day'])} {day_num}</span></div>
+  <div class="eyebrow">{esc(u['ctx_eyebrow'])}</div>
+  <h2>{esc(u['ctx_h2'])}</h2>
   <div class="pains">{pain_cards}</div>
 </div></div>
 
 <!-- 3 · WINS -->
 <div class="sheet"><div class="inner cardpage">
-  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">DAY {day_num}</span></div>
-  <div class="eyebrow">The shift</div>
-  <h2>What you gain</h2>
+  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">{esc(u['day'])} {day_num}</span></div>
+  <div class="eyebrow">{esc(u['shift_eyebrow'])}</div>
+  <h2>{esc(u['shift_h2'])}</h2>
   <div class="wins">{win_cards}</div>
 </div></div>
 
 {dia_pages}
 {('<div class="sheet"><div class="inner cardpage">'
-  '<div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">DAY ' + day_num + '</span></div>'
-  '<div class="eyebrow">Side by side</div><h2>wpipe vs. the status quo</h2>'
+  '<div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">' + esc(u['day']) + ' ' + day_num + '</span></div>'
+  '<div class="eyebrow">' + esc(u['cmp_eyebrow']) + '</div><h2>' + esc(u['cmp_h2']) + '</h2>'
   + table_html + '</div></div>') if table_html else ''}
 
 <!-- CODE -->
 <div class="sheet"><div class="inner cardpage">
-  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">DAY {day_num}</span></div>
-  <div class="eyebrow">See it in action</div>
-  <h2>Six lines. That’s it.</h2>
+  <div class="titlebar"><span class="logo"><i>w</i>pipe</span><span class="daychip">{esc(u['day'])} {day_num}</span></div>
+  <div class="eyebrow">{esc(u['code_eyebrow'])}</div>
+  <h2>{esc(u['code_h2'])}</h2>
   <div class="codecard"><pre>{code_html}</pre>
-    <span class="stamp">checkpoints · retries · timeout · parallel · tracker</span></div>
+    <span class="stamp">{esc(u['code_stamp'])}</span></div>
 </div></div>
 
 <!-- ACTION -->
 <div class="sheet last"><div class="inner cardpage">
   <div class="cta">
-    <b>Try wpipe in your next pipeline ↙</b>
-    <p>Install the library, wrap your step — checkpoints and docs appear by themselves.</p>
+    <b>{esc(u['cta_b'])}</b>
+    <p>{esc(u['cta_p'])}</p>
     <span class="pill">pip install wpipe</span>
   </div>
   <div class="foot"><span class="logo"><i>w</i>pipe</span>
-    <span>Python-native orchestration</span></div>
+    <span>{esc(u['foot'])}</span></div>
 </div></div>
 
 </body></html>"""
     return html
 
 
+PALETTES = [
+    {"d": "#0b3d2e", "m": "#0e8a5f", "l": "#116149", "bg": "#f0f7f3", "c": "#dcefe5",
+     "ink": "#12372c", "soft": "#5d746a"},
+    {"d": "#0d2c4a", "m": "#1565c0", "l": "#1a73e8", "bg": "#eef4fb", "c": "#dce8f7",
+     "ink": "#12304e", "soft": "#5a6f87"},
+    {"d": "#123b3a", "m": "#0e9aa7", "l": "#12939f", "bg": "#eefafa", "c": "#d8eef0",
+     "ink": "#10393a", "soft": "#57706f"},
+    {"d": "#2a2350", "m": "#5e35b1", "l": "#7c4dff", "bg": "#f4f1fb", "c": "#e6def7",
+     "ink": "#2b2350", "soft": "#6d6492"},
+]
+
+
 def main():
-    folders = sorted(glob.glob(os.path.join(LINKEDIN, "dia*")))
+    folders = sorted(glob.glob(os.path.join(LINKEDIN, "*dia*")))
     os.makedirs(TMP, exist_ok=True)
     ok, fail = [], []
     for folder in folders:
         day = os.path.basename(folder)
-        out = os.path.join(folder, "companion.pdf")
-        try:
-            okp = render_pdf(build_html(day, folder), out)
-            (ok if okp else fail).append(day)
-            print(f"[{'OK' if okp else 'FAIL'}] {day}")
-        except Exception as e:
-            fail.append(day)
-            print(f"[ERROR] {day}: {e}")
+        for lang in ("en", "es"):
+            out = os.path.join(folder, f"companion_{lang}.pdf")
+            try:
+                okp = render_pdf(build_html(day, folder, lang), out)
+                (ok if okp else fail).append(f"{day}/{lang}")
+                print(f"[{'OK' if okp else 'FAIL'}] {day} {lang}")
+            except Exception as e:
+                fail.append(f"{day}/{lang}")
+                print(f"[ERROR] {day} {lang}: {e}")
     print(f"\nDone: {len(ok)} generated, {len(fail)} failed.")
     return 1 if fail else 0
 
