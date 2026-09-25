@@ -161,17 +161,17 @@ flowchart LR
     subgraph Upstream
         API[REST API]
     end
-    
+
     subgraph This Service
         GW[Gateway]
         PL[Pipeline]
     end
-    
+
     subgraph Downstream
         DB[(SQLite)]
         EXT[External API]
     end
-    
+
     API --> GW
     GW --> PL
     PL --> DB
@@ -203,19 +203,19 @@ sequenceDiagram
 ```mermaid
 stateDiagram-v2
     [*] --> Initialized
-    
+
     Initialized --> Starting: start()
     Starting --> Running: Ready
     Running --> Stopping: stop() / SIGINT
     Stopping --> Stopped: Cleanup complete
-    
+
     Running --> Processing: Process message
     Processing --> Running: Complete
-    
+
     Running --> Error: Exception
     Error --> Running: Retry success
     Error --> Stopping: Retry failed
-    
+
     Stopped --> [*]
 ```
 
@@ -227,14 +227,14 @@ sequenceDiagram
     participant Service
     participant Counter
     participant Pipeline
-    
+
     Client->>Service: process(msg_1)
     Service->>Counter: increment()
     Counter-->>Service: count = 1
     Service->>Pipeline: run(msg_1)
     Pipeline-->>Service: result_1
     Service-->>Client: result_1
-    
+
     Client->>Service: process(msg_2)
     Service->>Counter: increment()
     Counter-->>Service: count = 2
@@ -252,23 +252,23 @@ flowchart LR
     subgraph Input
         JSON[JSON Message]
     end
-    
+
     subgraph Validation
         V[Validate Schema]
     end
-    
+
     subgraph Processing
         T1[Transform]
         T2[Enrich]
         T3[Aggregate]
     end
-    
+
     subgraph Output
         RES[Result Object]
         DB[(SQLite)]
         API[Response]
     end
-    
+
     JSON --> V
     V --> T1
     T1 --> T2
@@ -324,7 +324,7 @@ sequenceDiagram
     participant Service
     participant Logger
     participant File
-    
+
     Client->>Service: POST /process
     Service->>Logger: [MSG-1] Received message
     Service->>Logger: [MSG-1] Starting pipeline

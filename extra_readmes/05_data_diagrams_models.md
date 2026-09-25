@@ -10,14 +10,14 @@ erDiagram
     MESSAGE ||--o{ PROCESSING_STEP : executes
     SERVICE ||--o{ LOG : generates
     MESSAGE ||--o{ ERROR : has
-    
+
     SERVICE {
         string nombre PK
         bool ejecutando
         int contador_mensajes
         datetime created_at
     }
-    
+
     MESSAGE {
         int id PK
         string correlation_id
@@ -26,7 +26,7 @@ erDiagram
         string status
         datetime timestamp
     }
-    
+
     PROCESSING_STEP {
         int id PK
         int message_id FK
@@ -36,7 +36,7 @@ erDiagram
         json input
         json output
     }
-    
+
     LOG {
         int id PK
         int message_id FK
@@ -44,7 +44,7 @@ erDiagram
         string message
         datetime timestamp
     }
-    
+
     ERROR {
         int id PK
         int message_id FK
@@ -70,7 +70,7 @@ classDiagram
         +iniciar() None
         +detener() None
     }
-    
+
     class Pipeline {
         +str pipeline_name
         +bool verbose
@@ -79,7 +79,7 @@ classDiagram
         +set_steps(steps: list) None
         +run(context: dict) dict
     }
-    
+
     class Logger {
         +str process_name
         +str path_file
@@ -87,7 +87,7 @@ classDiagram
         +error(message: str) None
         +debug(message: str) None
     }
-    
+
     MicroservicioBasico --> Pipeline : owns
     MicroservicioBasico --> Logger : uses
 ```
@@ -100,7 +100,7 @@ classDiagram
 interface InputMessage {
     // Required fields
     mensaje: string;
-    
+
     // Optional fields
     correlation_id?: string;
     timestamp?: string;
@@ -130,17 +130,17 @@ interface ProcessingResult {
     // Processing status
     procesado: boolean;
     validado: boolean;
-    
+
     // Transformed data
     mensaje: string;
     mensaje_upper: string;
     longitud: number;
-    
+
     // Enriched data
     enriquecido: boolean;
     timestamp: string;
     origen: string;
-    
+
     // Optional fields
     error?: string;
     correlation_id?: string;
@@ -232,18 +232,18 @@ CREATE TABLE IF NOT EXISTS metrics (
 ```mermaid
 erDiagram
     service_state ||--o{ processing_logs : tracks
-    
+
     processing_logs ||--o{ step_logs : contains
-    
+
     processing_logs ||--o{ metrics : generates
-    
+
     service_state {
         int id PK
         string service_name UK
         bool ejecutando
         int contador_mensajes
     }
-    
+
     processing_logs {
         int id PK
         string service_name
@@ -253,7 +253,7 @@ erDiagram
         text input_data
         text output_data
     }
-    
+
     step_logs {
         int id PK
         int processing_id FK
@@ -262,7 +262,7 @@ erDiagram
         text input_data
         text output_data
     }
-    
+
     metrics {
         int id PK
         string service_name
@@ -280,27 +280,27 @@ flowchart LR
     subgraph Input_Json["JSON Input"]
         J1["{ \"mensaje\": \"hello\" }"]
     end
-    
+
     subgraph Python_Dict["Python Dictionary"]
         D1["{ 'mensaje': 'hello' }"]
     end
-    
+
     subgraph Validation["Validation Layer"]
         D2["{ 'validado': True, ... }"]
     end
-    
+
     subgraph Transform["Transformation"]
         D3["{ 'mensaje_upper': 'HELLO', ... }"]
     end
-    
+
     subgraph Enrich["Enrichment"]
         D4["{ 'timestamp': '2026-04-20...', ... }"]
     end
-    
+
     subgraph Output_Json["JSON Output"]
         J2["{ \"mensaje_upper\": \"HELLO\", ... }"]
     end
-    
+
     J1 --> D1
     D1 --> D2
     D2 --> D3
@@ -315,23 +315,23 @@ flowchart TB
     subgraph Input
         A[mensaje: str]
     end
-    
+
     subgraph Step1["Step 1: Validation"]
         B[validado: bool]
     end
-    
+
     subgraph Step2["Step 2: Processing"]
         C[mensaje_upper: str]
         D[longitud: int]
         E[procesado: bool]
     end
-    
+
     subgraph Step3["Step 3: Enrichment"]
         F[timestamp: str]
         G[origen: str]
         H[enriquecido: bool]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -408,11 +408,11 @@ class ServiceMetrics:
     requests_failed: int = 0
     avg_latency_ms: float = 0.0
     last_updated: datetime = None
-    
+
     def __post_init__(self):
         if self.last_updated is None:
             self.last_updated = datetime.now()
-    
+
     @property
     def success_rate(self) -> float:
         if self.requests_total == 0:

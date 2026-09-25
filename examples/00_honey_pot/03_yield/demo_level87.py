@@ -12,9 +12,9 @@ import time
 
 from wpipe import Pipeline, ResourceMonitor, step
 
+
 @step(name="proceso_pesado")
 def proceso_pesado(data: dict) -> None:
-
     """Proceso pesado step.
 
     Args:
@@ -31,6 +31,7 @@ def proceso_pesado(data: dict) -> None:
     print("✅ Completado")
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Proceso monitorizado...")
 
@@ -40,6 +41,6 @@ if __name__ == "__main__":
         pipe.run({})
 
     summary = monitor.get_summary()
-    print(f"\n📊 Estado final:")
+    print("\n📊 Estado final:")
     print(f"  RAM: {summary['peak_ram_mb']:.1f} MB")
     print(f"  CPU: {summary['avg_cpu_percent']:.1f}%")

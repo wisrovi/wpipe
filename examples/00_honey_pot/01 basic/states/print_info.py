@@ -1,5 +1,5 @@
-from wpipe import to_obj, Pipeline
-from wpipe.decorators import step, AutoRegister, get_step_registry
+from wpipe import Pipeline, to_obj
+from wpipe.decorators import AutoRegister, get_step_registry, step
 
 
 @step(name="print_info", version="v1.0")

@@ -26,7 +26,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: Request with timeout
     A-->>P: Timeout
     P->>A: Retry 1
@@ -42,15 +42,15 @@ graph TB
         B[timeout]
         C[retry]
     end
-    
+
     subgraph Request
         D[Send]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -74,7 +74,7 @@ flowchart LR
     C([Config]) --> P([Pipeline])
     P --> R([Retry Loop])
     R --> O([Result])
-    
+
     style C fill:#e1f5fe
     style O fill:#c8e6c9
 ```

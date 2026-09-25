@@ -15,9 +15,9 @@ import random
 
 from wpipe import Pipeline, step
 
+
 @step(name="conectar_servidor", retry_count=5, retry_delay=1)
 def conectar_servidor(data: dict) -> None:
-
     """Conectar servidor step.
 
     Args:
@@ -34,9 +34,9 @@ def conectar_servidor(data: dict) -> None:
     print("✅ Conectado al servidor")
     return {"connected": True}
 
+
 @step(name="descargar_datos")
 def descargar_datos(data: dict) -> None:
-
     """Descargar datos step.
 
     Args:
@@ -51,11 +51,12 @@ def descargar_datos(data: dict) -> None:
     print("📥 Descargando datos...")
     return {"datos": "descargados"}
 
+
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l59_retrydelay", verbose=True)
     pipe.set_steps([conectar_servidor, descargar_datos])
     print("\n>>> Probando retry con delay...\n")
-    
+
     try:
         pipe.run({})
     except ConnectionError as e:

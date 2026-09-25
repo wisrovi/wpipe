@@ -69,9 +69,9 @@ if __name__ == "__main__":
     print("→ Executing main pipeline...\n")
     result = main_pipeline.run({})
 
-    print(f"\n✓ Pipeline completed!")
+    print("\n✓ Pipeline completed!")
     print(f"  ETL execution time: {etl_step.get_execution_time():.3f}s")
-    print(f"  Final result:")
+    print("  Final result:")
     print(f"    - Validation: {result.get('validation')}")
     print(f"    - Quality: {result.get('quality_score')}")
     print(f"    - Notified: {result.get('notified')}")

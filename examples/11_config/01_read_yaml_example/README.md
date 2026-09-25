@@ -37,7 +37,7 @@ sequenceDiagram
     participant Util as wpipe.util
     participant FS as File System
     participant YAML as YAML Parser
-    
+
     App->>FS: Open config.yaml
     FS-->>YAML: Raw file content
     YAML->>Util: Parse YAML

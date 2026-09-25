@@ -10,11 +10,11 @@ For(validation_expression="_loop_iteration < 3") {
 }
 """
 
-from wpipe import Pipeline, For, step
+from wpipe import For, Pipeline, step
+
 
 @step(name="drive")
 def drive(data: dict) -> None:
-
     """Drive step.
 
     Args:
@@ -30,9 +30,9 @@ def drive(data: dict) -> None:
     print(f"🚗 Conduciendo iteración: {iteration}")
     return {"distancia": iteration * 10}
 
+
 @step(name="verificar_llegada")
 def verificar_llegada(data: dict) -> None:
-
     """Verificar llegada step.
 
     Args:
@@ -47,6 +47,7 @@ def verificar_llegada(data: dict) -> None:
     distancia = data.get("distancia", 0)
     print(f"🏁 Destino: {distancia}km")
     return {"verificado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l72_whilefuel", verbose=True)

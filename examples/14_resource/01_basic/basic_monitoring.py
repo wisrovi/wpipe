@@ -42,7 +42,7 @@ if __name__ == "__main__":
         result = cpu_intensive_task()
 
     summary = monitor.get_summary()
-    print(f"✓ Task completed")
+    print("✓ Task completed")
     print(f"  Elapsed: {summary['elapsed_seconds']}s")
     print(f"  Peak RAM: {summary['peak_ram_mb']:.2f} MB")
     print(f"  RAM increase: {summary['ram_increase_mb']:.2f} MB")

@@ -13,6 +13,7 @@ from typing import Any, Dict
 
 from wpipe import CheckpointManager, Pipeline, step
 
+
 @step(name="critical_consumption")
 def critical_consumption(data: Any) -> Dict[str, int]:
     """Critical consumption detection step.
@@ -27,6 +28,7 @@ def critical_consumption(data: Any) -> Dict[str, int]:
     fuel_actual = 10
     print(f"⛽ Fuel Alert: {fuel_actual}%")
     return {"fuel": fuel_actual}
+
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)

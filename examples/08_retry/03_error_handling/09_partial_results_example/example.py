@@ -23,10 +23,12 @@ def main() -> None:
     """Run partial results example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (step1, "Step 1", "v1.0"),
-        (step2, "Step 2", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (step1, "Step 1", "v1.0"),
+            (step2, "Step 2", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

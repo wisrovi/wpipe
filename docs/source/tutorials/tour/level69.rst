@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert condicional...
    
-   [PIPELINE STATUS] Registered: PIPE-0669E7F3
+   [PIPELINE STATUS] Registered: PIPE-98DD1708
    ⚡ Tarea rápida
    📊 Tarea normal
    viaje_l69_conditionalalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-0669E7F3: COMPLETED
+   [PIPELINE STATUS] PIPE-98DD1708: COMPLETED

@@ -12,17 +12,24 @@ DIAGRAM:
 """
 
 from typing import Any, Dict, List
+
 from pydantic import BaseModel, Field
+
 from wpipe import Pipeline, step, to_obj
+
 
 class DetectedObject(BaseModel):
     """Pydantic model for a single detected object."""
+
     type: str
     confidence: float = Field(..., ge=0, le=1)
 
+
 class RadarMap(BaseModel):
     """Pydantic model for radar detection map."""
+
     detections: List[DetectedObject]
+
 
 @step(name="radar_yolo_pro")
 def radar_yolo_pro(data: Any) -> Dict[str, List[Dict[str, Any]]]:
@@ -42,6 +49,7 @@ def radar_yolo_pro(data: Any) -> Dict[str, List[Dict[str, Any]]]:
         ]
     }
 
+
 @step(name="environment_analysis")
 @to_obj(RadarMap)
 def environment_analysis(ctx: RadarMap) -> Dict[str, bool]:
@@ -57,6 +65,7 @@ def environment_analysis(ctx: RadarMap) -> Dict[str, bool]:
     for obj in ctx.detections:
         print(f"   - {obj.type} (Confidence: {obj.confidence*100:.0f}%)")
     return {"path_clear": False}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="advanced_radar_l35", verbose=True)

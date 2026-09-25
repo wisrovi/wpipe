@@ -105,6 +105,7 @@ def _parallel_step_runner(func, context):
         print(f"Error in parallel step: {e}")
         raise
 
+
 class ParallelExecutor:
     """Executes pipeline steps in parallel with dependency resolution."""
 
@@ -234,7 +235,7 @@ class ParallelExecutor:
             "name": step.name,
             "version": "v1.0",
             "step_type": "parallel_task",
-            "metadata": {"mode": step.mode.value, "timeout": step.timeout}
+            "metadata": {"mode": step.mode.value, "timeout": step.timeout},
         }
 
         # Global Pre-Hooks

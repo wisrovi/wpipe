@@ -30,11 +30,13 @@ def main() -> None:
     """Run middle error example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (step1, "Step 1", "v1.0"),
-        (step2, "Step 2", "v1.0"),
-        (step3, "Step 3", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (step1, "Step 1", "v1.0"),
+            (step2, "Step 2", "v1.0"),
+            (step3, "Step 3", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({"fail": False})
     print(f"Result: {result}")

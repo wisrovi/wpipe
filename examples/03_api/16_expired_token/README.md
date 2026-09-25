@@ -24,7 +24,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: Request
     A-->>P: 401 Unauthorized
     Note over P: Handle error
@@ -36,16 +36,16 @@ graph TB
     subgraph Error
         A[401 Response]
     end
-    
+
     subgraph Recovery
         B[Log error]
         C[Continue]
     end
-    
+
     subgraph Result
         D[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -64,7 +64,7 @@ flowchart LR
     T([Token Expired]) --> E([Error])
     E --> C([Continue])
     C --> O([Output])
-    
+
     style T fill:#ffcdd2
     style O fill:#c8e6c9
 ```

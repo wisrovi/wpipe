@@ -28,7 +28,7 @@ sequenceDiagram
     participant C as Client
     participant P as Pipeline
     participant A as API Server
-    
+
     C->>P: Create pipeline
     P->>A: worker_register
     A-->>P: worker_id
@@ -42,16 +42,16 @@ graph TB
         A[api_config]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[Step 1]
         D[Step 2]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -70,7 +70,7 @@ stateDiagram-v2
 flowchart LR
     I[Input] --> P[Process]
     P --> O[Output]
-    
+
     style I fill:#e1f5fe
     style P fill:#b3e5fc
     style O fill:#81d4fa

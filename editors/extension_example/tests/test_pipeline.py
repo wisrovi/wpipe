@@ -1,6 +1,8 @@
-import pytest
 import os
+
+import pytest
 from test_extension import pipeline
+
 
 def test_pipeline_execution():
     """
@@ -9,7 +11,7 @@ def test_pipeline_execution():
     # Asegurar que el directorio de salida existe
     if not os.path.exists("output"):
         os.makedirs("output")
-    
+
     # Ejecutar pipeline con datos de prueba
     try:
         # Usamos un tracking_db diferente para el test para evitar conflictos
@@ -18,6 +20,7 @@ def test_pipeline_execution():
         assert True
     except Exception as e:
         pytest.fail(f"El pipeline falló con el error: {e}")
+
 
 if __name__ == "__main__":
     pytest.main([__file__])

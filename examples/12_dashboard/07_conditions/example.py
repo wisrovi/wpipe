@@ -107,7 +107,7 @@ def main():
     print("  - Normal: heating_on executed (cooling_on + fan_high skipped)")
     print("=" * 60)
     print(
-        f"\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+        "\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
 
 

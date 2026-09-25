@@ -14,7 +14,9 @@ Parallel(PROCESSES)
 """
 
 from typing import Any, Dict, List
+
 from wpipe import Parallel, Pipeline, step
+
 
 @step(name="ai_signals")
 def ai_signals(data: Any) -> Dict[str, List[str]]:
@@ -29,6 +31,7 @@ def ai_signals(data: Any) -> Dict[str, List[str]]:
     print("🛑 CPU-1: Analyzing traffic signals...")
     return {"signals": ["Stop", "60km/h"]}
 
+
 @step(name="ai_objects")
 def ai_objects(data: Any) -> Dict[str, List[str]]:
     """AI Pedestrian and obstacle analysis step.
@@ -42,6 +45,7 @@ def ai_objects(data: Any) -> Dict[str, List[str]]:
     print("🚶 CPU-2: Analyzing pedestrians and obstacles...")
     return {"objects": ["Pedestrian crossing"]}
 
+
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="vision_360_l33", verbose=True)
     pipe.set_steps(
@@ -50,4 +54,6 @@ if __name__ == "__main__":
 
     final_results = pipe.run({})
     print(f"\n📊 FULL 360 MAP: {list(final_results.keys())}")
-    print(f"   Detections: {final_results.get('signals')} + {final_results.get('objects')}")
+    print(
+        f"   Detections: {final_results.get('signals')} + {final_results.get('objects')}"
+    )

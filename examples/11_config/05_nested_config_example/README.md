@@ -36,7 +36,7 @@ sequenceDiagram
     participant App as Application
     participant YAML as YAML File
     participant Config as Config Dict
-    
+
     App->>YAML: Load file
     App->>Config: config["app"]
     App->>Config: config["app"]["settings"]

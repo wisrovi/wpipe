@@ -10,7 +10,9 @@ DIAGRAM:
 
 import asyncio
 from typing import Any, Dict
+
 from wpipe import PipelineAsync
+
 
 async def start_motor(data: Any) -> Dict[str, str]:
     """Start motor step asynchronously with tracking enabled.
@@ -25,6 +27,7 @@ async def start_motor(data: Any) -> Dict[str, str]:
     print("🔑 [ASYNC] Motor started and tracked")
     return {"motor": "on"}
 
+
 async def main() -> None:
     """Main async entry point."""
     db_path = "output/async_tracking.db"
@@ -37,6 +40,7 @@ async def main() -> None:
     print("\n>>> Testing async with tracking...\n")
     result = await pipe.run({})
     print(f"Result: {result}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

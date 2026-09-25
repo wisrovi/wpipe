@@ -15,6 +15,7 @@ from typing import Any, Dict
 
 from wpipe import Metric, Pipeline, step
 
+
 @step(name="measure_efficiency")
 def measure_efficiency(data: Any) -> Dict[str, float]:
     """Measure efficiency step recording fuel and speed metrics.
@@ -34,6 +35,7 @@ def measure_efficiency(data: Any) -> Dict[str, float]:
 
     print(f"📊 Telemetry: {speed} km/h | {consumption:.1f} L/100km")
     return {"fuel": consumption, "speed": float(speed)}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

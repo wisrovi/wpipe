@@ -15,15 +15,13 @@ from typing import Any, Dict
 
 import cv2
 from dto.car import Car
-from states.car_info_printer import CarInfoPrinter
+from states.car_info_printer import CarInfoPrinter, nested_step
 from states.change_oil import change_oil
-from states.drive import drive
 from states.deflate_tires import deflate_tires
+from states.drive import drive
+from states.inflate_tires import inflate_tires
 from states.preparation import preparation_phase
 from states.refuel import refuel
-from states.inflate_tires import inflate_tires
-from states.car_info_printer import nested_step
-from states.print_fuel_level import print_fuel_level
 
 from wpipe import (
     Condition,
@@ -307,7 +305,7 @@ def main() -> None:
             car = Car(make="Toyota", model="Corolla")
             results = run_pipeline(car)
 
-    print(f"\nResource Summary:")
+    print("\nResource Summary:")
     summary = monitor.get_summary()
     print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")

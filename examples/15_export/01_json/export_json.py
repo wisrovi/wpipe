@@ -6,7 +6,9 @@ Demonstrates exporting pipeline execution data to JSON and CSV.
 
 import json
 from pathlib import Path
+
 from wsqlite import WSQLite
+
 from wpipe import PipelineExporter
 from wpipe.sqlite.tables_dto.tracker_models import PipelineModel
 
@@ -18,7 +20,7 @@ export_dir.mkdir(exist_ok=True)
 def setup_sample_data():
     """Setup sample execution data using WSQLite."""
     db_path = "export_example.db"
-    
+
     # Limpiamos ejecuciones previas para evitar IntegrityError
     if Path(db_path).exists():
         Path(db_path).unlink()
@@ -32,9 +34,27 @@ def setup_sample_data():
 
     # Insert sample data using PipelineModel
     sample_data = [
-        PipelineModel(id="pipeline_1", name="viaje", status="completed", started_at="2024-03-31T10:00:00", total_duration_ms=5000),
-        PipelineModel(id="pipeline_2", name="viaje", status="completed", started_at="2024-03-31T11:00:00", total_duration_ms=6000),
-        PipelineModel(id="pipeline_3", name="analisis", status="error", started_at="2024-03-31T12:00:00", error_message="Fatal error"),
+        PipelineModel(
+            id="pipeline_1",
+            name="viaje",
+            status="completed",
+            started_at="2024-03-31T10:00:00",
+            total_duration_ms=5000,
+        ),
+        PipelineModel(
+            id="pipeline_2",
+            name="viaje",
+            status="completed",
+            started_at="2024-03-31T11:00:00",
+            total_duration_ms=6000,
+        ),
+        PipelineModel(
+            id="pipeline_3",
+            name="analisis",
+            status="error",
+            started_at="2024-03-31T12:00:00",
+            error_message="Fatal error",
+        ),
     ]
 
     for item in sample_data:

@@ -183,7 +183,8 @@ class Wsqlite:
             # Update the existing record.
             query = f"UPDATE {table} SET input=?, output=?, details=?, error=? WHERE rowid=?"
             conn.execute(
-                query, (model.input, model.output, model.details, model.error, self._last_id)
+                query,
+                (model.input, model.output, model.details, model.error, self._last_id),
             )
             conn.commit()
 
@@ -262,9 +263,7 @@ class SQLite:
         conn = self.db._get_connection()
         if record_id:
             query = f"UPDATE {table} SET input=?, output=?, details=?, error=? WHERE rowid=?"
-            conn.execute(
-                query, (input_str, output_str, details_str, error, record_id)
-            )
+            conn.execute(query, (input_str, output_str, details_str, error, record_id))
             conn.commit()
             return record_id
 
@@ -324,6 +323,7 @@ class SQLite:
             Any: A pandas DataFrame containing all records.
         """
         import pandas as pd  # pylint: disable=import-outside-toplevel
+
         table = self.db.table_name
         conn = self.db._get_connection()
         return pd.read_sql_query(f"SELECT * FROM {table}", conn)

@@ -10,9 +10,9 @@ DIAGRAM:
 
 from wpipe import Pipeline, step
 
+
 @step(name="mostrar_estado")
 def mostrar_estado(data: dict) -> None:
-
     """Mostrar estado step.
 
     Args:
@@ -28,6 +28,7 @@ def mostrar_estado(data: dict) -> None:
     print(f"🌡️ Temp: {data.get('temp')}°C")
     print(f"⛽ Fuel: {data.get('fuel')}%")
     return {"ok": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l78_lambdadata", verbose=True)

@@ -22,7 +22,7 @@ graph TD
     T --> M
     R --> M
     M --> O[Complete]
-    
+
     M -.-> DB[(SQLite)]
 ```
 
@@ -33,7 +33,7 @@ gantt
     title Multiple Pipeline Runs
     dateFormat X
     axisFormat %s
-    
+
     Run 1 - Numbers :0, 10
     Run 2 - Text   :10, 20
     Run 3 - Records :20, 30

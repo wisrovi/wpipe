@@ -15,11 +15,11 @@ For() {
 
 import random
 
-from wpipe import Pipeline, For, Condition, step
+from wpipe import Condition, For, Pipeline, step
+
 
 @step(name="evaluar_situacion")
 def evaluar_situacion(data: dict) -> None:
-
     """Evaluar situacion step.
 
     Args:
@@ -34,9 +34,9 @@ def evaluar_situacion(data: dict) -> None:
     obstaculo = random.random() < 0.3
     return {"obstaculo": obstaculo}
 
+
 @step(name="frenar")
 def frenar(data: dict) -> None:
-
     """Frenar step.
 
     Args:
@@ -51,9 +51,9 @@ def frenar(data: dict) -> None:
     print("🛑 FRENANDO")
     return {"action": "brake"}
 
+
 @step(name="acelerar")
 def acelerar(data: dict) -> None:
-
     """Acelerar step.
 
     Args:
@@ -67,6 +67,7 @@ def acelerar(data: dict) -> None:
     """
     print("🚀 ACELERANDO")
     return {"action": "accelerate"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l74_forcondition", verbose=True)

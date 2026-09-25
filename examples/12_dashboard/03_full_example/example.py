@@ -16,7 +16,7 @@ The pipeline simulates a data processing workflow with:
 import os
 import random
 
-from wpipe import Condition, Pipeline
+from wpipe import Pipeline
 
 
 def validate_input(data: dict) -> dict:
@@ -133,7 +133,7 @@ def run_pipeline_batch(db_path: str, config_dir: str, batch_id: int) -> None:
 
     try:
         result = pipeline.run(input_data)
-    except Exception as e:
+    except Exception:
         pass
 
 

@@ -42,7 +42,7 @@ sequenceDiagram
     participant Config as Loaded Config
     participant Functions as Function Map
     participant Pipeline as Pipeline
-    
+
     User->>YAML: Load steps.yaml
     User->>Config: Read config["steps"]
     loop For each step

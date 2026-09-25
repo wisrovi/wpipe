@@ -19,7 +19,7 @@ Resultado de Ejecución
 ----------------------
 
 
-   🖥️  HUD [Frame 0]: Visualizing vehicle at 97m
-   🖥️  HUD [Frame 1]: Visualizing vehicle at 34m
-   🖥️  HUD [Frame 2]: Visualizing vehicle at 84m
+   🖥️  HUD [Frame 0]: Visualizing vehicle at 33m
+   🖥️  HUD [Frame 1]: Visualizing vehicle at 44m
+   🖥️  HUD [Frame 2]: Visualizing vehicle at 27m
    Trip_L10_HUD ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

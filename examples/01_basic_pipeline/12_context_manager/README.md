@@ -25,7 +25,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant F as FileProcessor
-    
+
     P->>F: __enter__()
     F-->>P: self
     P->>F: run({value: 100})
@@ -39,17 +39,17 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[__enter__]
         D[Process]
         E[__exit__]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

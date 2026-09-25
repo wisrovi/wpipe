@@ -24,7 +24,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant N as Network
-    
+
     P->>N: Invalid URL
     N-->>P: URL error
     Note over P: Handle error
@@ -36,15 +36,15 @@ graph TB
     subgraph Invalid
         A[Bad URL]
     end
-    
+
     subgraph Error
         B[Connection fail]
     end
-    
+
     subgraph Recovery
         C[Local mode]
     end
-    
+
     A --> B
     B --> C
 ```
@@ -61,7 +61,7 @@ stateDiagram-v2
 flowchart LR
     U([Invalid URL]) --> E([Error])
     E --> C([Continue])
-    
+
     style U fill:#ffcdd2
     style C fill:#c8e6c9
 ```

@@ -6,7 +6,7 @@ Demonstrates resuming from a checkpoint after a simulated failure.
 
 import time
 
-from wpipe import CheckpointManager, Pipeline
+from wpipe import CheckpointManager
 
 db_path = "checkpoint_resume.db"
 checkpoint_mgr = CheckpointManager(db_path)
@@ -79,14 +79,14 @@ def run_or_resume(pipeline_id="resume_demo"):
                 status="success",
                 data=result,
             )
-            print(f"✓ Checkpoint saved")
+            print("✓ Checkpoint saved")
 
         except Exception as e:
             print(f"✗ Error: {e}")
             checkpoint_mgr.save_checkpoint(
                 pipeline_id=pipeline_id, step_order=i, step_name=name, status="failed"
             )
-            print(f"\nTo resume, run the script again.")
+            print("\nTo resume, run the script again.")
             raise
 
 

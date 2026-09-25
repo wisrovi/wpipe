@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant I as Input
     participant P as Pipeline
-    
+
     I->>P: run with items
     P->>P: Step 1
     P->>P: Step 2
@@ -35,16 +35,16 @@ graph TB
     subgraph Input
         A[items list]
     end
-    
+
     subgraph Steps
         B[process_items]
         C[calculate_stats]
     end
-    
+
     subgraph Output
         D[results]
     end
-    
+
     A --> B
     B --> C
     C --> D

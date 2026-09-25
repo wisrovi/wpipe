@@ -50,7 +50,7 @@ sequenceDiagram
     participant G as Gateway
     participant S as Service
     participant D as Database
-    
+
     U->>G: Request
     G->>S: Process
     S->>D: Query
@@ -174,7 +174,7 @@ pytest --cov=app --cov-report=html
 
 ## Author
 
-**[Author]**  
-AI Solutions Architect & Technology Evangelist  
+**[Author]**
+AI Solutions Architect & Technology Evangelist
 [LinkedIn](https://[linkedin-url]
 ```

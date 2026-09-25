@@ -43,7 +43,7 @@ python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open
 ## Dashboard Features
 
 - 🔀 **Pipeline Graph**: Visual SVG flow diagram with animations
-- ⏱️ **Timeline**: Gantt-style execution timeline  
+- ⏱️ **Timeline**: Gantt-style execution timeline
 - 📊 **Analytics**: Chart.js pie charts and bar graphs
 - 🔔 **Alerts**: Configurable thresholds with severity levels
 - 📝 **Events**: Timeline of pipeline events and annotations
@@ -61,11 +61,11 @@ flowchart TB
         P[Pipeline] --> S[Steps]
         S --> T[Tracker]
     end
-    
+
     subgraph Storage
         T --> DB[(SQLite)]
     end
-    
+
     subgraph Dashboard
         DB --> API[FastAPI]
         API --> UI[Web UI]

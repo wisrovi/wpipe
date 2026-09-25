@@ -21,9 +21,9 @@ class ImageInference:
     }
 
     def __init__(self, model_path: str):
-        assert os.path.exists(model_path), (
-            f"The model file in {model_path} does not exist"
-        )
+        assert os.path.exists(
+            model_path
+        ), f"The model file in {model_path} does not exist"
 
         self.model_path = model_path
 

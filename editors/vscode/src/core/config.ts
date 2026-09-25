@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 export class ConfigManager {
     /**
-     * Obtiene una configuración priorizando un archivo local 'wpipe.config.json' 
+     * Obtiene una configuración priorizando un archivo local 'wpipe.config.json'
      * en la raíz del workspace, y cayendo de vuelta a las configuraciones de VS Code.
      */
     public static async getSetting<T>(key: string, defaultValue: T): Promise<T> {

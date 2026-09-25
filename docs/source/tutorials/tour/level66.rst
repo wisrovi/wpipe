@@ -22,7 +22,9 @@ Resultado de Ejecución
    
    >>> Probando alert threshold...
    
-   [PIPELINE STATUS] Registered: PIPE-043B35B6
+   [PIPELINE STATUS] Registered: PIPE-D5A9A291
    ⏳ Proceso completado (tardó 100ms)
    viaje_l66_alertthreshold ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-043B35B6: COMPLETED
+   [ALERTS] Firing 1 alert hooks...
+   ⚠️ [ALERTA] Pipeline lento detectado
+   [PIPELINE STATUS] PIPE-D5A9A291: COMPLETED

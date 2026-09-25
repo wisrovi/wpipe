@@ -75,15 +75,9 @@ class ResourceMonitor:
             # Calculate RAM percentage based on total available memory
             total_ram = psutil.virtual_memory().total / (1024 * 1024)
             ram_percent = (ram_mb / total_ram) * 100 if total_ram > 0 else 0.0
-            return {
-                "cpu_percent": cpu_percent,
-                "ram_percent": ram_percent
-            }
+            return {"cpu_percent": cpu_percent, "ram_percent": ram_percent}
         except (psutil.NoSuchProcess, psutil.AccessDenied):
-            return {
-                "cpu_percent": 0.0,
-                "ram_percent": 0.0
-            }
+            return {"cpu_percent": 0.0, "ram_percent": 0.0}
 
     def __enter__(self) -> "ResourceMonitor":
         """
@@ -263,7 +257,7 @@ class ResourceMonitor:
                 peak_ram_mb=self.peak_ram_mb,
                 end_ram_mb=self.end_ram_mb,
                 avg_cpu_percent=self.avg_cpu_percent,
-                elapsed_seconds=self.elapsed_seconds
+                elapsed_seconds=self.elapsed_seconds,
             )
 
             db.insert(metric_data)

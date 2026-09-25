@@ -12,7 +12,7 @@ Building a pipeline is easy. Building an **industrial-grade** pipeline that surv
     <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 30px; border-radius: 12px; border-left: 8px solid #f59e0b; margin-bottom: 40px;">
        <h4 style="color: #f59e0b; margin-top: 0;">📜 The Golden Rule</h4>
        <p style="color: #94a3b8; margin-bottom: 0;">
-           Every step must be <strong>Atomic, Idempotent, and Type-Safe</strong>. 
+           Every step must be <strong>Atomic, Idempotent, and Type-Safe</strong>.
            If a pipeline fails and resumes, it should never corrupt your target data.
        </p>
     </div>
@@ -33,7 +33,7 @@ Each step should have a single responsibility. Avoid "Mega-steps" that handle fe
             def validate(data): ...
             def transform(data): ...
             def save(data): ...
-            
+
             pipe.set_steps([validate, transform, save])
 
     .. grid-item-card:: ❌ BAD: The Mega-Step
@@ -80,7 +80,7 @@ Production pipelines **will** encounter transient failures. Use WPipe's built-in
         :sync: retry
 
         Use `@step` decorators to configure retries for unstable I/O tasks.
-        
+
         .. code-block:: python
 
             @step(name="Fetch", retry_count=3, retry_delay=1.0)
@@ -90,7 +90,7 @@ Production pipelines **will** encounter transient failures. Use WPipe's built-in
         :sync: checkpoint
 
         For long-running tasks (>10 min), add checkpoints at logical milestones.
-        
+
         .. code-block:: python
 
             pipeline.add_checkpoint("phase_1_complete", "True")
@@ -99,7 +99,7 @@ Production pipelines **will** encounter transient failures. Use WPipe's built-in
         :sync: timeout
 
         Always enforce timeouts on external network calls.
-        
+
         .. code-block:: python
 
             @timeout_sync(seconds=30)

@@ -52,7 +52,7 @@ graph TB
         B --> C[validate_request]
         B --> D[process]
     end
-    
+
     E[handle] --> F[Run pipeline]
     F --> G[Return result]
 ```
@@ -82,7 +82,7 @@ flowchart LR
         C1 --> D1[process]
         D1 --> E1["{processed: True}"]
     end
-    
+
     subgraph Invalid Request
         A2["{other_field: 'x'}"] --> B2[validate_request]
         B2 --> C2{required_field?}

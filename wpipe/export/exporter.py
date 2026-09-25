@@ -37,7 +37,7 @@ class PipelineExporter:
         pipeline_id: Optional[str] = None,
         export_format: str = "json",
         output_path: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         """
         Exports pipeline execution logs.
@@ -79,7 +79,7 @@ class PipelineExporter:
         pipeline_id: Optional[str] = None,
         export_format: str = "json",
         output_path: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         """
         Exports system metrics data.
@@ -120,7 +120,7 @@ class PipelineExporter:
         pipeline_id: Optional[str] = None,
         export_format: str = "json",
         output_path: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         """
         Exports calculated pipeline statistics.
@@ -234,14 +234,14 @@ class PipelineExporter:
                 if r.total_duration_ms is not None
             ]
             avg_time = sum(durations) / len(durations) if durations else 0.0
-            successful = len([r for r in results if r.status == 'completed'])
+            successful = len([r for r in results if r.status == "completed"])
 
             return {
                 "total_executions": total_executions,
                 "successful_executions": successful,
-                "success_rate_percent": round(
-                    (successful / total_executions * 100), 2
-                ) if total_executions > 0 else 0,
+                "success_rate_percent": round((successful / total_executions * 100), 2)
+                if total_executions > 0
+                else 0,
                 "average_execution_time_seconds": round(avg_time, 2),
                 "exported_at": datetime.now().isoformat(),
             }

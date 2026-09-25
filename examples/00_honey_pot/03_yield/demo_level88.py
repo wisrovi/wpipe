@@ -41,6 +41,6 @@ if __name__ == "__main__":
             print(f"  ✅ iteración {i}")
 
     summary = monitor.get_summary()
-    print(f"\n📊 Total 3 ejecuciones:")
+    print("\n📊 Total 3 ejecuciones:")
     print(f"  Peak RAM: {summary['peak_ram_mb']:.1f} MB")
     print(f"  Avg CPU: {summary['avg_cpu_percent']:.1f}%")

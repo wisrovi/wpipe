@@ -13,20 +13,25 @@ import asyncio
 from wpipe import PipelineAsync
 from wpipe.sqlite import Wsqlite
 
+
 async def proceso(data):
     return {"ok": True}
+
 
 async def main():
     print(">>> Wsqlite + async...")
 
     db = "output/async110.db"
-    pipe = PipelineAsync(pipeline_name="viaje_l110", verbose=True, tracking_db=db, show_progress=True)
+    pipe = PipelineAsync(
+        pipeline_name="viaje_l110", verbose=True, tracking_db=db, show_progress=True
+    )
     pipe.set_steps([proceso])
     await pipe.run({})
 
     with Wsqlite(db_name=db) as wdb:
         wdb.details = {"async": "test"}
         print("✅ Async + Wsqlite")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

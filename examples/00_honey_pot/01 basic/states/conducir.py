@@ -3,7 +3,15 @@ from dto.car import Car, Niveles
 from wpipe import step, timeout_sync, to_obj
 
 
-@step(name="conducir", version="v1.0", timeout=10, description="Conducir el coche" , tags=["viaje", "coche"], retry_count=3, retry_delay=0.01)
+@step(
+    name="conducir",
+    version="v1.0",
+    timeout=10,
+    description="Conducir el coche",
+    tags=["viaje", "coche"],
+    retry_count=3,
+    retry_delay=0.01,
+)
 @timeout_sync(seconds=2)
 @to_obj
 def conducir(my_car: Car):

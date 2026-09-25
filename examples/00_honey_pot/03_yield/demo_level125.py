@@ -9,11 +9,10 @@ Pipeline + APIClient
 """
 
 from wpipe import Pipeline, step
-from wpipe.api_client import APIClient
+
 
 @step(name="fetch_data")
 def fetch_data(data: dict) -> None:
-
     """Fetch data step.
 
     Args:
@@ -27,6 +26,7 @@ def fetch_data(data: dict) -> None:
     """
     print("📥 Obteniendo datos de API...")
     return {"datos": [1, 2, 3]}
+
 
 if __name__ == "__main__":
     print(">>> Pipeline con API...")

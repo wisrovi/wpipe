@@ -30,7 +30,7 @@ class LoadConfig:
 
     def __call__(self, args_dict: dict) -> dict:
         try:
-            with open(self.yaml_path, "r") as file:
+            with open(self.yaml_path) as file:
                 yaml_data = yaml.safe_load(file)
 
         except yaml.YAMLError as e:

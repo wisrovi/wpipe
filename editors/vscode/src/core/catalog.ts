@@ -26,7 +26,7 @@ export class CatalogManager {
     private static normalizeStep(s: StepEntry): StepEntry {
         const step = { ...s };
         step.repo = step.repo || 'Official';
-        
+
         const capitalize = (str: string) => {
             if (!str) return '';
             return str.split(/[_-]/)
@@ -46,7 +46,7 @@ export class CatalogManager {
             if (parts[0] === 'wpipe_steps' || parts[0] === 'wpipe_plugins') {
                 parts.shift();
             }
-            
+
             if (parts.length > 0) step.category = parts[0];
             if (parts.length > 1) step.subcategory1 = parts[1];
             if (parts.length > 2) step.subcategory2 = parts[2];
@@ -75,7 +75,7 @@ export class CatalogManager {
 
     private static mergeCatalogs(base: StepEntry[], incoming: StepEntry[]): StepEntry[] {
         const mergedMap = new Map<string, StepEntry>();
-        
+
         base.forEach(s => {
             const normalized = this.normalizeStep(s);
             mergedMap.set(`${normalized.repo}:${normalized.name}`, normalized);
@@ -98,7 +98,7 @@ export class CatalogManager {
 
     public static async init(context: vscode.ExtensionContext): Promise<void> {
         const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
-        
+
         // 1. Load from remote cache
         let cachedCatalog: StepEntry[] = [];
         try {
@@ -117,14 +117,14 @@ export class CatalogManager {
     public static async update(context: vscode.ExtensionContext, manual: boolean = false): Promise<void> {
         const download = async () => {
             const oldNames = new Set(this.catalog.map(s => `${s.repo}:${s.name}`));
-            
+
             const fetchJson = async (url: string, defaultRepo: string): Promise<any[]> => {
                 try {
                     const response = await fetch(url);
                     if (!response.ok) return [];
                     const p = await response.json();
                     const items = Array.isArray(p) ? p : [];
-                    
+
                     const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
 
                     const resolveUrl = (path: string | undefined) => {
@@ -133,8 +133,8 @@ export class CatalogManager {
                         return `${baseUrl}${path.startsWith('/') ? path.substring(1) : path}`;
                     };
 
-                    return items.map(item => ({ 
-                        ...item, 
+                    return items.map(item => ({
+                        ...item,
                         repo: item.repo || defaultRepo,
                         requirements: resolveUrl(item.requirements),
                         examples: resolveUrl(item.examples)
@@ -143,9 +143,9 @@ export class CatalogManager {
                     return [];
                 }
             };
-            
+
             const [off, com] = await Promise.all([
-                fetchJson(this.OFFICIAL_URL, 'Official'), 
+                fetchJson(this.OFFICIAL_URL, 'Official'),
                 fetchJson(this.COMMUNITY_URL, 'Community')
             ]);
             const newCatalog = [...off, ...com];
@@ -154,12 +154,12 @@ export class CatalogManager {
                 const merged = this.mergeCatalogs(this.catalog, newCatalog);
                 const newItems = merged.filter(s => !oldNames.has(`${s.repo}:${s.name}`));
                 this.catalog = merged;
-                
+
                 try {
                     const cacheUri = vscode.Uri.joinPath(context.globalStorageUri, 'catalog_cache.json');
                     await vscode.workspace.fs.writeFile(cacheUri, new TextEncoder().encode(JSON.stringify(this.catalog)));
                 } catch (e) {}
-                
+
                 if (newItems.length > 0) {
                     vscode.window.showInformationMessage(`🚀 ¡Hay ${newItems.length} nuevos estados en WPipe!`, "Ver Catálogo").then(selection => {
                         if (selection === "Ver Catálogo") vscode.commands.executeCommand('wpipe-vscode.searchSteps');

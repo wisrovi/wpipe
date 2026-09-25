@@ -38,14 +38,14 @@ graph TB
         P[Pipeline]
         SE[Step Executor]
     end
-    
+
     subgraph Storage
         DB[(SQLite Database)]
         W[Write Operation]
         R[Read Operation]
         E[Export Operation]
     end
-    
+
     P --> SE
     SE --> W
     W --> DB
@@ -217,7 +217,7 @@ flowchart LR
         D2[Export regularly]
         D3[Query with filters]
     end
-    
+
     subgraph Dont
         A1[Open too many connections]
         A2[Store large blobs]

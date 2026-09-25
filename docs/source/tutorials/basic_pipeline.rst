@@ -153,14 +153,14 @@ Add the step functions:
 
     def generate_sample_data(data):
         """Generate sample numeric data for processing.
-        
+
         This step simulates fetching data from an external source.
         In a real application, this might fetch from a database,
         API, or file system.
-        
+
         Args:
             data: Initial input data (can be empty dict)
-            
+
         Returns:
             Dictionary containing the generated data
         """
@@ -172,44 +172,44 @@ Add the step functions:
 
     def validate_data(data):
         """Validate that required data exists and is valid.
-        
+
         This step performs data validation to ensure the pipeline
         has valid input before proceeding with processing.
-        
+
         Args:
             data: Dictionary containing 'numbers' key
-            
+
         Returns:
             Dictionary with validation result
-            
+
         Raises:
             ValueError: If data is invalid
         """
         numbers = data.get("numbers", [])
-        
+
         if not numbers:
             raise ValueError("No numbers provided in data")
-        
+
         if not all(isinstance(n, (int, float)) for n in numbers):
             raise ValueError("All values in numbers must be numeric")
-        
+
         return {"validation": "passed", "count": len(numbers)}
 
 
     def calculate_statistics(data):
         """Calculate statistical measures on the data.
-        
+
         This step processes the validated data and produces
         statistical analysis.
-        
+
         Args:
             data: Dictionary containing 'numbers' list
-            
+
         Returns:
             Dictionary with statistical measures
         """
         numbers = data["numbers"]
-        
+
         return {
             "min": min(numbers),
             "max": max(numbers),
@@ -222,13 +222,13 @@ Add the step functions:
 
     def format_results(data):
         """Format the calculation results for output.
-        
+
         This step takes the raw statistics and formats them
         into a human-readable string.
-        
+
         Args:
             data: Dictionary containing statistical measures
-            
+
         Returns:
             Dictionary with formatted output string
         """
@@ -239,7 +239,7 @@ Add the step functions:
             "average": data["average"],
             "count": data["count"]
         }
-        
+
         output = f"""
     ╔══════════════════════════════════════════╗
     ║       STATISTICAL ANALYSIS RESULTS       ║
@@ -251,19 +251,19 @@ Add the step functions:
     ║  Max:     {stats['max']:>25} ║
     ╚══════════════════════════════════════════╝
         """
-        
+
         return {"output": output.strip(), "stats": stats}
 
 
     def save_results(data):
         """Save results (simulated).
-        
+
         In a real application, this would write to a database,
         file, or external service.
-        
+
         Args:
             data: Dictionary containing results to save
-            
+
         Returns:
             Dictionary with save confirmation
         """
@@ -312,7 +312,7 @@ Here's the complete script:
 
     """
     Complete wpipe Basic Pipeline Example
-    
+
     This example demonstrates creating a basic data processing pipeline
     with multiple steps, showing data flow and accumulation.
     """
@@ -358,7 +358,7 @@ Here's the complete script:
             "min": data["min"],
             "max": data["max"]
         }
-        
+
         output = f"""
     Statistical Analysis:
     ---------------------
@@ -368,7 +368,7 @@ Here's the complete script:
     Min:     {stats['min']}
     Max:     {stats['max']}
         """
-        
+
         return {"output": output.strip(), "stats": stats}
 
 
@@ -380,7 +380,7 @@ Here's the complete script:
     # Create and run the pipeline
     if __name__ == "__main__":
         pipeline = Pipeline(verbose=True)
-        
+
         pipeline.set_steps([
             (generate_sample_data, "Generate Data", "v1.0"),
             (validate_data, "Validate Data", "v1.0"),
@@ -388,9 +388,9 @@ Here's the complete script:
             (format_results, "Format Results", "v1.0"),
             (save_results, "Save Results", "v1.0"),
         ])
-        
+
         result = pipeline.run({})
-        
+
         print("\n" + "=" * 50)
         print("RESULTS:")
         print("=" * 50)
@@ -409,27 +409,27 @@ One of the most important concepts in wpipe is how data flows through the pipeli
     ┌─────────────────────────────────────────────────────────────────────────────┐
     │                           DATA FLOW DIAGRAM                                │
     └─────────────────────────────────────────────────────────────────────────────┘
-    
+
     INITIAL DATA: {}
-    
+
     ↓ (Step 1: generate_sample_data)
-    
+
     data = {
         "numbers": [12, 45, 67, 89, 23, 56, 78, 34, 90, 11],
         "source": "sample_generator"
     }
-    
+
     ↓ (Step 2: validate_data)
-    
+
     data = {
         "numbers": [12, 45, 67, 89, 23, 56, 78, 34, 90, 11],
         "source": "sample_generator",
         "validation": "passed",
         "count": 10
     }
-    
+
     ↓ (Step 3: calculate_statistics)
-    
+
     data = {
         "numbers": [...],
         "source": "sample_generator",
@@ -441,9 +441,9 @@ One of the most important concepts in wpipe is how data flows through the pipeli
         "average": 50.5,
         "sorted": [11, 12, 23, ...]
     }
-    
+
     ↓ (Step 4 & 5...)
-    
+
     FINAL RESULT: All accumulated data from all steps
 
 4.2 Practical Example of Data Evolution
@@ -565,10 +565,10 @@ Classes with ``__call__`` can be used as steps:
 
     class Multiply:
         """Multiply a value by a factor."""
-        
+
         def __init__(self, factor: float):
             self.factor = factor
-        
+
         def __call__(self, data: dict) -> dict:
             value = data.get("value", 0)
             return {"result": value * self.factor}
@@ -576,10 +576,10 @@ Classes with ``__call__`` can be used as steps:
 
     class Add:
         """Add an amount to a value."""
-        
+
         def __init__(self, amount: float):
             self.amount = amount
-        
+
         def __call__(self, data: dict) -> dict:
             value = data.get("result", 0)
             return {"result": value + self.amount}
@@ -636,10 +636,10 @@ Use validation to catch problems early:
         """Step with input validation."""
         if "required_field" not in data:
             raise ValueError("Missing required_field!")
-        
+
         if not isinstance(data["required_field"], str):
             raise ValueError("required_field must be a string!")
-        
+
         return {"processed": True}
 
 8. Advanced Features
@@ -708,11 +708,11 @@ Configure automatic retries:
         """Test the statistics calculation step."""
         # Arrange
         data = {"numbers": [1, 2, 3, 4, 5]}
-        
+
         # Act
         from your_module import calculate_statistics
         result = calculate_statistics(data)
-        
+
         # Assert
         assert result["min"] == 1
         assert result["max"] == 5
@@ -733,10 +733,10 @@ Configure automatic retries:
             (lambda d: {"numbers": [10, 20, 30]}, "Generate", "v1.0"),
             (lambda d: {"sum": sum(d["numbers"])}, "Sum", "v1.0"),
         ])
-        
+
         # Act
         result = pipeline.run({})
-        
+
         # Assert
         assert result["sum"] == 60
 

@@ -86,7 +86,7 @@ A continuación tienes el acceso directo a cada neurona del sistema:
 
         .. toctree::
            :maxdepth: 1
-           
+
            level1
            level2
            level3

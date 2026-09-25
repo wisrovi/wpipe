@@ -39,11 +39,13 @@ if __name__ == "__main__":
 
     pipe = Pipeline(pipeline_name="demo_139", verbose=True)
 
-    pipe.set_steps([
-        start,
-        Background(failing_task),  # capture_error=False por defecto
-        continue_step,
-    ])
+    pipe.set_steps(
+        [
+            start,
+            Background(failing_task),  # capture_error=False por defecto
+            continue_step,
+        ]
+    )
 
     result = pipe.run({})
     print("\n✅ El error fue ignorado (silent fail)!")

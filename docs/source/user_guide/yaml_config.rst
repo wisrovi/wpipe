@@ -6,7 +6,7 @@ Load and manage pipeline configuration from YAML files.
 Overview
 --------
 
-YAML configuration allows you to define pipeline settings externally, making it 
+YAML configuration allows you to define pipeline settings externally, making it
 easy to modify configuration without changing code.
 
 Reading YAML
@@ -45,14 +45,14 @@ YAML File Structure
    # config.yaml
    name: data_processing
    version: 1.0.0
-   
+
    pipeline:
      verbose: true
-   
+
    api:
      base_url: http://localhost:8418
      token: my_secret_token
-   
+
    steps:
      - name: fetch
        version: v1.0

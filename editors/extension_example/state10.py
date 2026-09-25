@@ -1,7 +1,9 @@
-from wpipe import step, to_obj, PipelineContext
+from wpipe import PipelineContext, step, to_obj
+
 
 class MyContext(PipelineContext):
     field: str
+
 
 @step(name="StepClass10", version="v1.0")
 class StepClass10:

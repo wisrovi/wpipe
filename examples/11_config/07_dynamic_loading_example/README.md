@@ -39,7 +39,7 @@ sequenceDiagram
     participant YAML as YAML Library
     participant FS as File System
     participant Util as wpipe.util
-    
+
     Code->>YAML: Create config dict
     YAML-->>Code: Dict ready
     Code->>FS: Write to file

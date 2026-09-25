@@ -50,7 +50,7 @@ def main() -> None:
     print(f"Data saved to: {db_path}")
     print("\nTo view the dashboard, run:")
     print(
-        f"  cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+        "  cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
     print("=" * 50)
 

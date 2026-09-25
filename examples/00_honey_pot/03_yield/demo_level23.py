@@ -12,7 +12,9 @@ DIAGRAM:
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
+
 
 @step(name="full_telemetry")
 def full_telemetry(data: Any) -> Dict[str, Any]:
@@ -25,6 +27,7 @@ def full_telemetry(data: Any) -> Dict[str, Any]:
         Dict[str, Any]: Engine ID, position, and speed.
     """
     return {"engine_id": "X-100", "position": "Gran Via", "speed": 50}
+
 
 # NEW IN L23: A step that only sees what we filter for it
 @step(name="suggest_restaurants")
@@ -39,10 +42,9 @@ def suggest_restaurants(data: Dict[str, Any]) -> Dict[str, str]:
     """
     # Verify we cannot see 'engine_id'
     id_visible = "engine_id" in data
-    print(
-        f"📍 Suggestion in {data.get('position')}: Engine ID visible? {id_visible}"
-    )
+    print(f"📍 Suggestion in {data.get('position')}: Engine ID visible? {id_visible}")
     return {"suggestion": "VIPS 200m away"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l23_privacy", verbose=True)

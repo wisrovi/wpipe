@@ -18,9 +18,11 @@ def main() -> None:
     """Run custom error example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (process_data, "Process", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (process_data, "Process", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

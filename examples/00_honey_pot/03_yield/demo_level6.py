@@ -16,8 +16,11 @@ DIAGRAM:
 [Warehouse with 'stream': <generator object>]
 """
 
-from typing import Any, Dict, Generator, Tuple
+from collections.abc import Generator
+from typing import Any, Dict, Tuple
+
 import numpy as np
+
 from wpipe import Pipeline, step
 
 

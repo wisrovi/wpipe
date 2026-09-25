@@ -10,11 +10,11 @@ with TaskTimer(timeout=1s)
 
 import time
 
-from wpipe import Pipeline, step, TaskTimer
+from wpipe import Pipeline, TaskTimer, step
+
 
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -29,6 +29,7 @@ def task(data: dict) -> None:
     print("⚡ Ejecutando task...")
     time.sleep(0.05)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> TaskTimer básico...")

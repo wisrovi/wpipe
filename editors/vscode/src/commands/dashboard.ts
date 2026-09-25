@@ -63,7 +63,7 @@ export async function openDashboard(context: vscode.ExtensionContext, dbPath?: a
     terminal.sendText(cmd);
 
     vscode.window.showInformationMessage(`🚀 Starting WPipe Dashboard inside VS Code...`);
-    
+
     // Open the native Webview panel
     // We wait a bit for the server to start (similar to the previous timeout)
     setTimeout(() => {

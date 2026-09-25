@@ -27,7 +27,7 @@ sequenceDiagram
     participant A as step_a
     participant B as step_b
     participant C as step_c
-    
+
     P->>A: run({value: 5})
     A-->>P: {step: A, value: 5}
     P->>B: run({step: A, value: 5})
@@ -42,17 +42,17 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[step_a]
         D[step_b]
         E[step_c]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

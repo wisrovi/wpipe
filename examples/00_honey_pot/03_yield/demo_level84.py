@@ -9,14 +9,13 @@ Pipeline --> JSON + CSV + STATS
 """
 
 import os
-
 from pathlib import Path
 
 from wpipe import Pipeline, PipelineExporter, step
 
+
 @step(name="start")
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -31,9 +30,9 @@ def start(data: dict) -> None:
     print("🔑 Motor iniciado")
     return {"motor": "on"}
 
+
 @step(name="process")
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -47,6 +46,7 @@ def process(data: dict) -> None:
     """
     print("📊 Procesando...")
     return {"procesado": True}
+
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)

@@ -1,8 +1,6 @@
-import os
-import random
-import json
 import asyncio
-from pathlib import Path
+import random
+
 from dto.car import Car
 from states import (
     Print_info,
@@ -12,25 +10,24 @@ from states import (
     fase_preparacion,
     hechar_gasolina,
     inflar_neumaticos,
+    nested,
     print_gasolina,
-    nested
 )
 
 from wpipe import (
-    Condition, 
-    For, 
-    Metric, 
-    PipelineAsync, 
-    Severity, 
-    auto_dict_input, 
-    PipelineExporter, 
-    TaskTimer, 
-    ResourceMonitor,
-    step,
+    Condition,
+    For,
+    Metric,
     Parallel,
+    PipelineAsync,
     PipelineContext,
-    object_to_dict
+    ResourceMonitor,
+    Severity,
+    TaskTimer,
+    auto_dict_input,
+    step,
 )
+
 
 # Definimos el esquema de la Bodega (Contexto)
 class ViajeContext(PipelineContext):
@@ -40,18 +37,21 @@ class ViajeContext(PipelineContext):
     nivel_aceite: str
     nivel_neumaticos: str
 
+
 # Definimos revisar_luces para que el bloque Parallel no falle por NameError
 @step(name="revisar_luces", version="v1.0")
-async def revisar_luces(d): 
+async def revisar_luces(d):
     print("     * [ASYNC] Revisando luces traseras y delanteras... OK")
-    await asyncio.sleep(0.01) # Simulación de trabajo I/O
+    await asyncio.sleep(0.01)  # Simulación de trabajo I/O
     return d
+
 
 @step(name="pinchazo_aleatorio", version="v1.0", retry_count=10, retry_delay=0)
 async def pinchazo_aleatorio(d):
     if random.random() < 0.5:
         raise RuntimeError("Pinchazo aleatorio")
     return d
+
 
 @step(name="notificar_telegram_error", version="v1.0")
 async def notificar_telegram_error(context, error):
@@ -63,7 +63,9 @@ async def notificar_telegram_error(context, error):
     print("-" * 60)
     return context
 
+
 db_path = "wpipe_dashboard_async.db"
+
 
 async def get_viaje_pipeline_async():
     viaje = PipelineAsync(
@@ -111,14 +113,10 @@ async def get_viaje_pipeline_async():
             For(
                 iterations=3,
                 steps=[
-                    Print_info(f"--- Nuevo viaje asíncrono ---", "_loop_iteration"),
+                    Print_info("--- Nuevo viaje asíncrono ---", "_loop_iteration"),
                     Parallel(
-                        steps=[
-                            hechar_gasolina,
-                            cambiar_aceite,
-                            revisar_luces
-                        ],
-                        max_workers=3
+                        steps=[hechar_gasolina, cambiar_aceite, revisar_luces],
+                        max_workers=3,
                     ),
                     Print_info("Resumen post-paralelo"),
                     (print_gasolina, "Mostrar gasolina", "v1.0"),
@@ -144,6 +142,7 @@ async def get_viaje_pipeline_async():
     )
     return viaje
 
+
 async def main():
     # Usamos ResourceMonitor para medir el consumo de hardware (RAM/CPU)
     with ResourceMonitor("Viaje_Completo_Async") as monitor:
@@ -160,14 +159,14 @@ async def main():
             results = await run_pipeline(car)
 
     # Resumen de recursos al terminar
-    print(f"\nResource Summary (Async):")
+    print("\nResource Summary (Async):")
     summary = monitor.get_summary()
     print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
     print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
 
     print(f"\nViajes completados: {results.get('_loop_iteration')}")
-    
+
     # --- ANÁLISIS DE DATOS ---
     analysis = viaje.tracker.analysis
     stats = analysis.get_stats()
@@ -176,6 +175,7 @@ async def main():
     print("=" * 70)
     print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
     print(f"  - Tasa de Éxito: {stats['success_rate']}%")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

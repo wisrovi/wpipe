@@ -38,7 +38,7 @@ The Wsqlite class provides a simple interface:
     with Wsqlite(db_name="results.db") as db:
         input_data = {"x": 10}
         db.input = input_data
-        
+
         result = pipeline.run(input_data)
         db.output = result
 
@@ -94,17 +94,17 @@ The Wsqlite class provides a simple interface:
 
     class PersistentPipeline(Pipeline):
         """Pipeline that automatically saves results to SQLite."""
-        
+
         def __init__(self, db_name: str, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.db_name = db_name
-        
+
         def run(self, *args, **kwargs):
             with Wsqlite(db_name=self.db_name) as db:
                 db.input = args[0] if args else {}
-                
+
                 result = super().run(*args, **kwargs)
-                
+
                 db.output = result
                 return result
 

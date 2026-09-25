@@ -20,8 +20,58 @@ Resultado de Ejecución
 
 
    >>> Múltiples alerts...
-   [PIPELINE STATUS] Registered: PIPE-D391A4B4
+   [PIPELINE STATUS] Registered: PIPE-CD1F87DA
    viaje_l99_multialerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-D391A4B4: COMPLETED
+   [PIPELINE STATUS] PIPE-CD1F87DA: COMPLETED
    
-   🚨 Total alerts: 0
+   🚨 Total alerts: 50
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms
+     - critical: 131.034ms
+     - warning: 131.034ms

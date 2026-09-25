@@ -42,11 +42,13 @@ async def main():
     start = time.time()
 
     pipe = PipelineAsync(pipeline_name="demo_136", verbose=False)
-    pipe.set_steps([
-        process_task,
-        Background(background_async),
-        after_background,
-    ])
+    pipe.set_steps(
+        [
+            process_task,
+            Background(background_async),
+            after_background,
+        ]
+    )
 
     result = await pipe.run({})
 

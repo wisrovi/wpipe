@@ -38,7 +38,7 @@ sequenceDiagram
     participant Pipeline
     participant Step
     participant RetryManager
-    
+
     User->>Pipeline: Run with data
     Pipeline->>Step: Execute step
     Step-->>Pipeline: Exception raised
@@ -63,13 +63,13 @@ graph TB
         P[Pipeline]
         SE[Step Executor]
     end
-    
+
     subgraph Retry_Manager
         RC[Retry Counter]
         RD[Retry Delayer]
         RF[Retry Filter]
     end
-    
+
     P --> SE
     SE --> RC
     RC --> RD
@@ -219,7 +219,7 @@ flowchart LR
         D3[Filter specific exceptions]
         D4[Log retry attempts]
     end
-    
+
     subgraph Dont
         A1[Infinite retries]
         A2[Zero delay]

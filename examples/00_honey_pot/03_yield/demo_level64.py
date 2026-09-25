@@ -15,12 +15,13 @@ import random
 
 from wpipe import Pipeline, step
 
+
 class APIError(Exception):
     pass
 
+
 @step(name="llamar_api", retry_count=4, retry_delay=1)
 def llamar_api(data: dict) -> None:
-
     """Llamar api step.
 
     Args:
@@ -37,9 +38,9 @@ def llamar_api(data: dict) -> None:
     print("✅ API respondiendo")
     return {"response": "ok"}
 
+
 @step(name="process")
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -53,6 +54,7 @@ def process(data: dict) -> None:
     """
     print("📊 Processing data...")
     return {"procesado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

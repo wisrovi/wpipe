@@ -20,8 +20,8 @@ Resultado de Ejecución
 
 
    >>> Filtrar alerts por severity...
-   [PIPELINE STATUS] Registered: PIPE-F31CCB58
+   [PIPELINE STATUS] Registered: PIPE-49150698
    viaje_l98_alertsseverity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-F31CCB58: COMPLETED
+   [PIPELINE STATUS] PIPE-49150698: COMPLETED
    
-   🚨 Total: 0, Critical: 0
+   🚨 Total: 50, Critical: 50

@@ -48,29 +48,215 @@ Resultado de Ejecución
    🚨 SYSTEM ALERT: ERROR DETECTED
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    📍 FAILED STATE: random_flat_tire
-   📄 FILE: /home/william.rodriguez/Documents/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
-   🔢 LINE: 72
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
    ⚠️ MESSAGE: Random puncture
    🔄 ATTEMPT: 1
-   🕒 TIMESTAMP: 2026-04-30T13:36:49.198797
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.606704
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 2
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.617515
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 3
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.628305
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 4
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.639014
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.651515
    ------------------------------------------------------------
    [non_serializable_obj]: <InternalSystemHandler active> non_serializable_objv1.0
    --- New trip ---_loop_iteration
         * Checking front and rear lights... OK
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.665358
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.677314
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.689801
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 2
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.702623
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 3
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.713441
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 4
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.724161
+   ------------------------------------------------------------
    [non_serializable_obj]: <InternalSystemHandler active> non_serializable_objv1.0
    --- New trip ---_loop_iteration
         * Checking front and rear lights... OK
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.739443
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.751396
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 2
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.762104
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 1
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.774314
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 2
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.784996
+   ------------------------------------------------------------
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   🚨 SYSTEM ALERT: ERROR DETECTED
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   📍 FAILED STATE: random_flat_tire
+   📄 FILE: /home/william.rodriguez/Documents/w_libraries/w_libraries/wpipe_os/wpipe/examples/00_honey_pot/03_yield/demo_level50.py
+   🔢 LINE: 70
+   ⚠️ MESSAGE: Random puncture
+   🔄 ATTEMPT: 3
+   🕒 TIMESTAMP: 2026-09-25T10:04:01.795810
+   ------------------------------------------------------------
    [non_serializable_obj]: <InternalSystemHandler active> non_serializable_objv1.0
    trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    >>> [HOOK] Trip finished sending final summary...
    
    Resource Summary:
-     - Peak RAM: 80.47 MB
-     - Avg CPU: 68.68%
-   ✓ Total time monitored: 0.03s
+     - Peak RAM: 90.36 MB
+     - Avg CPU: 9.99%
+   ✓ Total time monitored: 0.22s
    
    Trips completed: 2
    Final fuel: Empty
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
+     - [CRITICAL] None: Pipeline viaje_tmp alert
    ======================================================================
    EXPORTING DATA
    ======================================================================
@@ -82,7 +268,7 @@ Resultado de Ejecución
    JSON EXPORT
    ======================================================================
    ✓ Exported to: output/export_output/pipeline_logs.json
-     Records: 6
+     Records: 161
    
    ======================================================================
    CSV EXPORT
@@ -94,8 +280,8 @@ Resultado de Ejecución
    ======================================================================
    
    Global Summary:
-     - Total Executions: 6
-     - Success Rate: 0.0%
+     - Total Executions: 161
+     - Success Rate: 52.2%
 
 .. raw:: html
 
@@ -103,7 +289,7 @@ Resultado de Ejecución
         <div style="text-align: center; margin-bottom: 40px;">
             <h2 style="color: #f59e0b; margin-bottom: 10px;">¡RECLAMA TU LOGRO!</h2>
             <p style="color: #94a3b8;">Introduce tu nombre para desbloquear tu certificado oficial.</p>
-            <input type="text" id="cert-name-input" placeholder="ESCRIBE TU NOMBRE COMPLETO AQUÍ" 
+            <input type="text" id="cert-name-input" placeholder="ESCRIBE TU NOMBRE COMPLETO AQUÍ"
                    style="background: #0f172a; border: 2px solid #334155; color: white; padding: 15px 25px; border-radius: 12px; margin-top: 15px; width: 80%; max-width: 500px; text-align: center; font-size: 1.2em; font-weight: bold; outline: none; border-color: #f59e0b; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
         </div>
 
@@ -114,7 +300,7 @@ Resultado de Ejecución
                     <h1 style="color: #f59e0b; margin: 0; font-size: 3.2em; text-transform: uppercase; font-weight: 900; letter-spacing: 3px; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">Certificado de Misión</h1>
                     <p style="font-size: 1.3em; margin-top: 10px; opacity: 0.8; letter-spacing: 1px;">WPipe Engine Certification • Misión 2</p>
                 </div>
-                
+
                 <div style="margin: 10px 0;">
                     <p style="font-size: 1.4em; margin-bottom: 5px; color: #94a3b8;">Se otorga con honor a:</p>
                     <h2 class="cert-name-display" style="font-size: 4.2em; border-bottom: 4px solid #f59e0b; min-width: 500px; display: inline-block; font-family: 'Times New Roman', serif; text-shadow: 0 0 20px rgba(255,255,255,0.3); margin: 10px 0; color: #fff;">---</h2>
@@ -138,9 +324,9 @@ Resultado de Ejecución
         </div>
 
         <div style="text-align: center; margin-top: 40px; display: flex; justify-content: center; gap: 20px;">
-            <button id="btn-download" onclick="downloadCert(50)" disabled 
+            <button id="btn-download" onclick="downloadCert(50)" disabled
                     style="background: #475569; color: #94a3b8; padding: 12px 35px; border-radius: 12px; font-weight: bold; cursor: not-allowed; border: none; transition: all 0.3s; font-size: 1em;">⬇️ DESCARGAR PNG</button>
-            <button id="btn-share" onclick="shareLinkedIn(50)" disabled 
+            <button id="btn-share" onclick="shareLinkedIn(50)" disabled
                     style="background: #475569; color: #94a3b8; padding: 12px 35px; border-radius: 12px; font-weight: bold; cursor: not-allowed; border: none; transition: all 0.3s; font-size: 1em;">🔗 COMPARTIR LOGRO</button>
             <a href="level51.html" style="background: #f59e0b; color: #020617; padding: 12px 35px; border-radius: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; font-size: 1em;">CONTINUAR ➡️</a>
         </div>
@@ -154,12 +340,12 @@ Resultado de Ejecución
             const btnDownload = document.getElementById('btn-download');
             const btnShare = document.getElementById('btn-share');
             const dateDisplays = document.querySelectorAll('.cert-date-display');
-            
+
             // Inyectar fecha actual inmediatamente
             const now = new Date();
             const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
             dateDisplays.forEach(el => el.innerText = dateStr);
-            
+
             const updateUI = (val) => {
                 const cleanVal = val.trim();
                 if (cleanVal.length >= 3) {
@@ -205,8 +391,8 @@ Resultado de Ejecución
 
         function downloadCert(level) {
             const element = document.getElementById('cert-container-' + level);
-            html2canvas(element, { 
-                scale: 3, 
+            html2canvas(element, {
+                scale: 3,
                 backgroundColor: '#0f172a',
                 logging: false,
                 useCORS: true
@@ -221,11 +407,11 @@ Resultado de Ejecución
         function shareLinkedIn(level) {
             const rank = "Arquitecto WPipe Bronze";
             const text = `🚀 ¡Certificación alcanzada! Acabo de obtener mi rango de ${rank} en el WPipe Learning Tour. Agradezco a @wisrovi por crear este potente motor de orquestación industrial. #wpipe #python #dataengineering #backend #wisrovidev`;
-            
+
             downloadCert(level);
             navigator.clipboard.writeText(text);
             const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
-            
+
             setTimeout(() => {
                 window.open(linkedInUrl, '_blank');
             }, 1000);

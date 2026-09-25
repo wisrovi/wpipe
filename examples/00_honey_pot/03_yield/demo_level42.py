@@ -13,7 +13,9 @@ DIAGRAM:
 
 import asyncio
 from typing import Any, Dict
+
 from wpipe import PipelineAsync
+
 
 async def verify_battery(data: Any) -> Dict[str, int]:
     """Verify battery step asynchronously.
@@ -28,6 +30,7 @@ async def verify_battery(data: Any) -> Dict[str, int]:
     print("🔋 [ASYNC] Battery at 85%")
     return {"battery": 85}
 
+
 async def start_system(data: Any) -> Dict[str, str]:
     """Start system step asynchronously.
 
@@ -40,6 +43,7 @@ async def start_system(data: Any) -> Dict[str, str]:
     await asyncio.sleep(0.05)
     print("🟢 [ASYNC] System started")
     return {"system": "ON"}
+
 
 if __name__ == "__main__":
 

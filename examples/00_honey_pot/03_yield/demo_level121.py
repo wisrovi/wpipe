@@ -15,5 +15,5 @@ if __name__ == "__main__":
 
     client = APIClient()
 
-    print(f"✅ Cliente creado")
+    print("✅ Cliente creado")
     print(f"📡 Base URL: {client.base_url}")

@@ -20,11 +20,11 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipeline...
-   [PIPELINE STATUS] Registered: PIPE-69D20F04
+   [PIPELINE STATUS] Registered: PIPE-F596F4B5
    viaje_l101_analysis ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-69D20F04: COMPLETED
+   [PIPELINE STATUS] PIPE-F596F4B5: COMPLETED
    
    📊 Stats:
-     Pipelines: 2
-     Éxito: 0.0%
-     Duración avg: 0ms
+     Pipelines: 33
+     Éxito: 93.9%
+     Duración avg: 9.17ms

@@ -13,7 +13,9 @@ DIAGRAM:
 
 import asyncio
 from typing import Any, Dict
+
 from wpipe import PipelineAsync
+
 
 def start_motor(data: Any) -> Dict[str, Any]:
     """Start motor step.
@@ -27,6 +29,7 @@ def start_motor(data: Any) -> Dict[str, Any]:
     print("🔑 [ASYNC] Motor started")
     return {"motor": "ON", "fuel": 100}
 
+
 def verify_sensors(data: Any) -> Dict[str, str]:
     """Verify sensors step.
 
@@ -38,6 +41,7 @@ def verify_sensors(data: Any) -> Dict[str, str]:
     """
     print("📡 [ASYNC] Sensors verified")
     return {"sensors": "OK"}
+
 
 if __name__ == "__main__":
 

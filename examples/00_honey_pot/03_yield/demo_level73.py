@@ -12,11 +12,11 @@ For(iterations=2) {
 }
 """
 
-from wpipe import Pipeline, For, step
+from wpipe import For, Pipeline, step
+
 
 @step(name="procesar_tramo")
 def procesar_tramo(data: dict) -> None:
-
     """Procesar tramo step.
 
     Args:
@@ -32,9 +32,9 @@ def procesar_tramo(data: dict) -> None:
     print(f"🛣️ Tramo: {outer}")
     return {"stretch": outer}
 
+
 @step(name="procesar_segmento")
 def procesar_segmento(data: dict) -> None:
-
     """Procesar segmento step.
 
     Args:
@@ -49,6 +49,7 @@ def procesar_segmento(data: dict) -> None:
     inner = data.get("_loop_iteration", 0)
     print(f"  📍 Segmento: {inner}")
     return {"segmento": inner}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l73_nestedfor", verbose=True)

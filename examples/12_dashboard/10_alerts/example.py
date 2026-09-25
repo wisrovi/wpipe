@@ -18,9 +18,11 @@ def main() -> None:
     """Run alerts example."""
     pipeline = Pipeline(pipeline_name="alerts_demo", verbose=True)
 
-    pipeline.set_steps([
-        (slow_step, "Slow Step", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (slow_step, "Slow Step", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

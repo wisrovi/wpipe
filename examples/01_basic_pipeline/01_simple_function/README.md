@@ -28,7 +28,7 @@ sequenceDiagram
     participant S1 as multiply_by_two
     participant S2 as add_ten
     participant S3 as square
-    
+
     P->>S1: run({input: 5})
     S1-->>P: {value: 10}
     P->>S2: run({value: 10})
@@ -43,17 +43,17 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[multiply_by_two]
         D[add_ten]
         E[square]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

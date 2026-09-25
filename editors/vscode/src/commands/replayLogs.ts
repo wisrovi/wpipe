@@ -68,21 +68,21 @@ export async function replayLogErrors() {
         if (files.length > 0) {
             const doc = await vscode.workspace.openTextDocument(files[0]);
             const editor = await vscode.window.showTextDocument(doc, { preview: false });
-            
+
             const decoration = {
                 range: new vscode.Range(error.line, 0, error.line, 0),
                 hoverMessage: `**[WPipe ${error.level}]** ${error.message}`
             };
-            
+
             editor.setDecorations(errorDecorationType, [decoration]);
-            
+
             // Also reveal the first error
             if (error === errors[0]) {
                 editor.revealRange(decoration.range, vscode.TextEditorRevealType.InCenter);
             }
         }
     }
-    
+
     // Highlight nodes in the DAG if open
     if (DAGPanel.currentPanel) {
         const stepNames = errors.map(e => e.function);

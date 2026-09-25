@@ -57,7 +57,7 @@ export class DashboardPanel {
 
     private _getHtmlForWebview(port: string) {
         const url = `http://localhost:${port}`;
-        
+
         return `<!DOCTYPE html>
         <html lang="en">
         <head>

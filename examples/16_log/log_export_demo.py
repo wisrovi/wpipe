@@ -5,7 +5,6 @@ Shows how to export execution logs for analysis, debugging, and reporting
 to various formats that can be used in Excel, Python, or web dashboards.
 """
 
-import csv
 import json
 import time
 from pathlib import Path

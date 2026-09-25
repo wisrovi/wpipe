@@ -1,9 +1,7 @@
-import os
 import random
 import tempfile
 import threading
 from datetime import datetime
-from pathlib import Path
 
 # Tracking start time for performance verification
 start_time_global = datetime.now()
@@ -31,12 +29,10 @@ from wpipe import (
     Metric,
     Parallel,
     Pipeline,
-    PipelineContext,
     ResourceMonitor,
     Severity,
     TaskTimer,
     auto_dict_input,
-    object_to_dict,
     step,
 )
 from wpipe.pipe.components.logic_blocks import Background
@@ -246,7 +242,7 @@ def main():
     stop_exec = datetime.now()
     exec_ms = (stop_exec - start_exec).total_seconds() * 1000
 
-    print(f"\nResource Summary:")
+    print("\nResource Summary:")
     summary = monitor.get_summary()
     print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
@@ -269,20 +265,20 @@ def main():
     analysis = viaje.tracker.analysis
     stats = analysis.get_stats()
 
-    print(f"\nResumen Global:")
+    print("\nResumen Global:")
     print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
     print(f"  - Tasa de Éxito: {stats['success_rate']}%")
     print(f"  - Duración Media: {stats['avg_duration_ms']:.2f} ms")
 
     slow_steps = analysis.get_top_slow_steps(limit=3)
     if slow_steps:
-        print(f"\nPasos más lentos (Cuellos de botella):")
+        print("\nPasos más lentos (Cuellos de botella):")
         for step in slow_steps:
             print(f"  - {step['step_name']}: {step['avg_duration_ms']:.2f} ms")
 
     trends = analysis.get_trend_data(days=1)
     if trends:
-        print(f"\nTendencia de Hoy:")
+        print("\nTendencia de Hoy:")
         print(f"  - Ejecuciones realizadas: {trends[0]['count']}")
         print(f"  - Éxitos: {trends[0]['success']}")
 
@@ -295,7 +291,6 @@ def test_Wsqlite():
     image = cv2.imread("images.jpeg")
 
     with Wsqlite(db_name="output/demo.db") as db:
-
         args_dict = {
             "inference": {
                 "source": image,

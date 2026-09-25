@@ -26,7 +26,7 @@ classDiagram
         +dict tags
         +timestamp created_at
     }
-    
+
     class EventTypes {
         +STARTED = "pipeline"
         +CHECKPOINT = "checkpoint"
@@ -42,14 +42,14 @@ gantt
     title Pipeline with Events
     dateFormat X
     axisFormat %s
-    
+
     Section Execution
     Initialize      :0, 5
     Process Batch 1 :5, 15
     Checkpoint      :15, 15
     Process Batch 2 :15, 25
     Complete        :25, 30
-    
+
     Section Events
     Started         :milestone, 0, 0
     Checkpoint      :milestone, 15, 15

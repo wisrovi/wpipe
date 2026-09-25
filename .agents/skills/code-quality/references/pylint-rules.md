@@ -123,7 +123,7 @@ pylint app/ --output-format=json > pylint_report.json
 class User:
     def __init__(self, name: str):
         self.name = name
-    
+
     def greet(self) -> str:  # ✅ Has public method
         return f"Hello, {self.name}"
 

@@ -12,7 +12,7 @@ flowchart TD
     D --> E[Store in DB]
     E --> F[Mark Pipeline Failed]
     F --> G[Dashboard Error Panel]
-    
+
     D --> ET[Error Type]
     D --> EM[Error Message]
     D --> ES[Error Step]

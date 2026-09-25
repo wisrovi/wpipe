@@ -16,6 +16,7 @@ from typing import Any, Dict
 
 from wpipe import CheckpointManager, Pipeline, step
 
+
 @step(name="preparation_phase")
 def preparation_phase(data: Any) -> Dict[str, str]:
     """Preparation phase step.
@@ -28,6 +29,7 @@ def preparation_phase(data: Any) -> Dict[str, str]:
     """
     print("🏠 Leaving home (Step already done in the past)...")
     return {"location": "road"}
+
 
 @step(name="critical_phase")
 def critical_phase(data: Any) -> Dict[str, str]:
@@ -47,6 +49,7 @@ def critical_phase(data: Any) -> Dict[str, str]:
         raise RuntimeError("Battery failure")
     print("🏁 Arrival at final destination.")
     return {"status": "Arrived"}
+
 
 if __name__ == "__main__":
     ck_mgr = CheckpointManager("output/trip_emergency.db")

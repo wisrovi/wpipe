@@ -17,7 +17,7 @@ graph LR
     A[Health Check Request] --> B[Check Service Status]
     B --> C[Check Pipeline]
     C --> D[Return Status]
-    
+
     E[Process Request] --> F[Run Pipeline]
     F --> G[Return Result]
 ```
@@ -48,7 +48,7 @@ graph TB
         A --> C[Pipeline]
         C --> D[process_step]
     end
-    
+
     E[health_check] --> F[Status Check]
     G[process] --> C
 ```
@@ -72,17 +72,17 @@ flowchart LR
     subgraph Input
         A["{test: 'data'}"]
     end
-    
+
     subgraph Process Step
         B[process_step]
         B --> C["{status: ok}"]
         B --> D["{processed: true}"]
     end
-    
+
     subgraph Output
         E["{status: ok, processed: true}"]
     end
-    
+
     A --> B --> E
 ```
 

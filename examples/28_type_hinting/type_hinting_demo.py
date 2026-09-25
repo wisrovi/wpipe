@@ -5,7 +5,7 @@ Shows best practices for using type hints to catch errors at development time
 and improve IDE autocomplete and documentation.
 """
 
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, TypedDict
 
 from wpipe import Pipeline
 

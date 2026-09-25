@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('thebe-status-changed', function(e) {
         const status = e.detail.status;
         console.log("WPipe Thebe Status:", status);
-        
+
         const activateBtn = document.querySelector('.thebe-button') || document.querySelector('.thebe-launch-button');
-        
+
         if (status === "building" || status === "starting") {
             if (activateBtn) activateBtn.innerHTML = "🚀 SINCRONIZANDO MOTOR...";
             sessionStorage.setItem('wpipe_thebe_active', 'true');
-        } 
+        }
         else if (status === "ready") {
             if (activateBtn) {
                 activateBtn.innerHTML = "✅ MOTOR CONECTADO";

@@ -17,7 +17,7 @@ graph LR
     A[Create Config] --> B[Init Service]
     B --> C[Load Config]
     C --> D[Create Pipeline]
-    
+
     E[Handle Request] --> F[Run Pipeline]
     F --> G[Return Result]
 ```
@@ -54,7 +54,7 @@ graph TB
         B --> C[Pipeline]
         C --> D[get_config_value step]
     end
-    
+
     E[handle] --> F[Run pipeline]
     F --> G[Return result]
 ```
@@ -78,21 +78,21 @@ flowchart LR
     subgraph App Setup
         A["config = {timeout: 30, max_retries: 3}"]
     end
-    
+
     subgraph Service Init
         B["ConfigurableService(config)"]
         B --> C[Store self.config]
         C --> D[Create pipeline]
         D --> E[Set steps]
     end
-    
+
     subgraph Handle Request
         F[handle(data)]
         F --> G[Run pipeline]
         G --> H[get_config_value]
         H --> I["{config_loaded: True}"]
     end
-    
+
     A --> B
     E --> F
 ```

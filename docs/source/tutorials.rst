@@ -12,7 +12,7 @@ Welcome to the **WPipe Academy**. This section is your definitive guide to becom
     <div class="hero-section" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px; border-radius: 16px; margin-bottom: 40px; border-left: 8px solid #00f2fe;">
         <h2 style="color: #00f2fe; margin-top: 0;">🚀 The Learning Path</h2>
         <p style="color: #94a3b8; font-size: 1.1em;">
-            Our curriculum is designed to take you from a curious beginner to a senior pipeline architect. 
+            Our curriculum is designed to take you from a curious beginner to a senior pipeline architect.
             Follow the 140-level tour for a deep dive, or jump into specific tutorials to solve your immediate problems.
         </p>
     </div>

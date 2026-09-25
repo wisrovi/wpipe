@@ -9,7 +9,7 @@ export class WPipeCodeActionProvider implements vscode.CodeActionProvider {
     public provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.CodeAction[] {
         const actions: vscode.CodeAction[] = [];
         const content = document.getText();
-        
+
         try {
             const tree = parser.parse(content);
             tree.iterate({
@@ -19,7 +19,7 @@ export class WPipeCodeActionProvider implements vscode.CodeActionProvider {
                             document.positionAt(node.from),
                             document.positionAt(node.to)
                         );
-                        
+
                         // Check if the current range (cursor) is within this function definition
                         if (range.intersection(funcRange)) {
                             // Check if it already has a @step decorator
@@ -39,18 +39,18 @@ export class WPipeCodeActionProvider implements vscode.CodeActionProvider {
                             if (!hasStepDecorator) {
                                 const action = new vscode.CodeAction('Convert to WPipe Step', vscode.CodeActionKind.QuickFix);
                                 action.edit = new vscode.WorkspaceEdit();
-                                
+
                                 const nameNode = node.node.getChild('VariableName');
                                 const funcName = nameNode ? content.substring(nameNode.from, nameNode.to) : 'my_step';
-                                
+
                                 const decorator = `@step(name="${funcName}", version="1.0.0")\n`;
                                 action.edit.insert(document.uri, document.positionAt(node.from), decorator);
-                                
+
                                 // Check if wpipe is imported
                                 if (!content.includes('from wpipe import step')) {
                                     action.edit.insert(document.uri, new vscode.Position(0, 0), 'from wpipe import step\n');
                                 }
-                                
+
                                 actions.push(action);
                             }
                         }

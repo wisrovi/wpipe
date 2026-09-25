@@ -2,7 +2,8 @@
 Module for printing the fuel level.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from wpipe import timeout_sync, to_obj
 
 

@@ -12,10 +12,12 @@ DIAGRAM:
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
 
 # Global counter to simulate retry success after some attempts
 RETRY_ATTEMPT = 0
+
 
 @step(name="recover_gps", retry_count=3, retry_delay=0.5)
 def recover_gps(data: Any) -> Dict[str, bool]:
@@ -38,6 +40,7 @@ def recover_gps(data: Any) -> Dict[str, bool]:
 
     print("📡 Satellite: GPS signal fixed!")
     return {"locked": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="gps_tunnel_l32", verbose=True)

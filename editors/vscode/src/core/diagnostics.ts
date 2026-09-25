@@ -36,13 +36,13 @@ function updateDiagnostics(document: vscode.TextDocument, collection: vscode.Dia
                 const callText = content.substring(node.from, node.to);
                 if (callText.includes('.set_steps(') || (callText.includes('Pipeline(') && callText.includes('steps='))) {
                     // Extract step names from set_steps([ ... ])
-                    const match = callText.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/) || 
+                    const match = callText.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/) ||
                                   callText.match(/steps\s*=\s*\[([\s\S]*?)\]/);
-                    
+
                     if (match) {
                         const stepsContent = match[1];
                         const baseOffset = node.from + callText.indexOf(match[1]);
-                        
+
                         // Simple split by comma, ignoring nested brackets
                         const parts = splitWithOffsets(stepsContent, baseOffset);
                         parts.forEach(part => {
@@ -50,7 +50,7 @@ function updateDiagnostics(document: vscode.TextDocument, collection: vscode.Dia
                             // Ignore common WPipe logic blocks
                             const logicBlocks = ['Condition', 'Parallel', 'For', 'Background'];
                             if (name && !logicBlocks.includes(name) && !knownSteps.has(name)) {
-                                // Extra check: maybe it's imported but not indexed yet? 
+                                // Extra check: maybe it's imported but not indexed yet?
                                 // For now, if it's not in knownSteps, we warn.
                                 const range = new vscode.Range(
                                     document.positionAt(part.offset),
@@ -76,11 +76,11 @@ function splitWithOffsets(c: string, baseOffset: number) {
     const r: {text: string, offset: number}[] = []; let cur = ""; let d = 0; let start = 0;
     for (let i = 0; i < c.length; i++) {
         if (c[i] === '[' || c[i] === '(') d++; else if (c[i] === ']' || c[i] === ')') d--;
-        if (c[i] === ',' && d === 0) { 
-            r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) }); 
-            cur = ""; start = i + 1; 
+        if (c[i] === ',' && d === 0) {
+            r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+            cur = ""; start = i + 1;
         } else cur += c[i];
     }
-    if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) }); 
+    if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
     return r;
 }

@@ -19,6 +19,7 @@ from typing import Any, Dict
 
 from wpipe import CheckpointManager, Pipeline, step
 
+
 @step(name="drive_to_service_area")
 def drive_to_service_area(data: Any) -> Dict[str, int]:
     """Drive to service area step.
@@ -32,6 +33,7 @@ def drive_to_service_area(data: Any) -> Dict[str, int]:
     print("🛣️  Driving 100km to the service area...")
     return {"km": 100, "gasoline": 70}
 
+
 @step(name="service_break")
 def service_break(data: Any) -> Dict[str, bool]:
     """Service break step.
@@ -44,6 +46,7 @@ def service_break(data: Any) -> Dict[str, bool]:
     """
     print("☕ Taking a coffee. The car saves progress automatically.")
     return {"rested": True}
+
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)

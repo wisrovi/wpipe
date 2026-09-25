@@ -60,9 +60,9 @@ evidencias/
 ```markdown
 # File Date Mapping Report
 
-**Source:** ./project  
-**Destination:** ./evidencias  
-**Date Range:** 2025-05-01 to 2026-01-31  
+**Source:** ./project
+**Destination:** ./evidencias
+**Date Range:** 2025-05-01 to 2026-01-31
 **Generated:** 2026-03-24
 
 ## Summary

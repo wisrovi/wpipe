@@ -9,7 +9,7 @@ flowchart LR
     A[CLI] --> D[Dashboard]
     B[Python Module] --> D
     C[Programmatic] --> D
-    
+
     D --> DB[(SQLite)]
     D --> UI[Web Browser]
 ```
@@ -24,7 +24,7 @@ graph TB
         O3[--port number]
         O4[--open auto]
     end
-    
+
     O1 --> C[Dashboard]
     O2 --> C
     O3 --> C
@@ -39,10 +39,10 @@ flowchart TB
         P[Pipeline] --> T[Tracker]
         T --> DB[(SQLite)]
     end
-    
+
     D[Dashboard] --> DB
     D --> UI[Browser]
-    
+
     subgraph "Dashboard Components"
         D --> S[Stats]
         D --> G[Graph]

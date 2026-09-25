@@ -15,6 +15,7 @@ from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+
 @step(name="active_navigation")
 def active_navigation(data: Any) -> Dict[str, str]:
     """Active navigation step.
@@ -25,8 +26,11 @@ def active_navigation(data: Any) -> Dict[str, str]:
     Returns:
         Dict[str, str]: Navigation details.
     """
-    print("🗺️  Navigation: Guiding to destination... (Data being recorded for the Dashboard)")
+    print(
+        "🗺️  Navigation: Guiding to destination... (Data being recorded for the Dashboard)"
+    )
     return {"stretch": "Highway A-6"}
+
 
 if __name__ == "__main__":
     db_path = "output/car_dashboard.db"

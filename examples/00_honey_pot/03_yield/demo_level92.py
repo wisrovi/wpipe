@@ -10,11 +10,11 @@ TaskTimer(timeout=0.05s) -> exceede si > 0.05s
 
 import time
 
-from wpipe import Pipeline, step, TaskTimer
+from wpipe import Pipeline, TaskTimer, step
+
 
 @step(name="tarea_lenta")
 def tarea_lenta(data: dict) -> None:
-
     """Tarea lenta step.
 
     Args:
@@ -29,6 +29,7 @@ def tarea_lenta(data: dict) -> None:
     print("🐢 Tarea lenta...")
     time.sleep(0.1)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Verificando timeout...")

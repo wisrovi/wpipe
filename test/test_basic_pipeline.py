@@ -2,21 +2,21 @@
 Tests for basic pipeline functionality.
 """
 
-import pytest
-import asyncio
 import sqlite3
 import threading
-from typing import Dict, Any, List, Optional, Callable
+from typing import Any, Dict, List
 
-from wpipe import Pipeline, step
-from wpipe.api_client.api_client import APIClient # Imported for context, though not used in this file
-from wpipe.ram.ram import get_memory, memory_limit # Imported for context
-
+import pytest
 
 # --- RE-PARCHE DE EMERGENCIA PARA ARREGLAR BUG DE WPIPE ---
 from wsqlite import WSQLite
+
+from wpipe import Pipeline
+from wpipe.ram.ram import get_memory, memory_limit  # Imported for context
+
 _db_connections = {}
 _db_lock = threading.Lock()
+
 
 def better_get_connection(self):
     db_path = getattr(self, "db_path", getattr(self, "db_name", "register.db"))
@@ -27,9 +27,11 @@ def better_get_connection(self):
             _db_connections[db_path] = conn
         return _db_connections[db_path]
 
+
 WSQLite._get_connection = better_get_connection
 
 # --- END RE-PARCHE ---
+
 
 class TestBasicPipeline:
     """Tests for basic pipeline execution and initialization.
@@ -111,6 +113,7 @@ class TestSetSteps:
 
         class MyStep:
             """A simple callable class to be used as a pipeline step."""
+
             def __call__(self, data: Dict[str, Any]) -> Dict[str, str]:
                 """Processes data and returns a result."""
                 return {"result": "ok"}
@@ -132,7 +135,7 @@ class TestSetSteps:
         pipeline = Pipeline()
 
         with pytest.raises(ValueError):
-            pipeline.set_steps([("not_a_tuple",)]) # type: ignore
+            pipeline.set_steps([("not_a_tuple",)])  # type: ignore
 
     def test_set_steps_wrong_tuple_length(self) -> None:
         """Tests set_steps normalization for 2-element tuples.
@@ -144,17 +147,17 @@ class TestSetSteps:
         pipeline = Pipeline()
 
         # A 2-tuple (function, name) should be valid and get normalized
-        pipeline.set_steps([(lambda x: x, "name")]) # type: ignore
-        
+        pipeline.set_steps([(lambda x: x, "name")])  # type: ignore
+
         # Should have one task that was normalized to 4 elements
         assert len(pipeline.tasks_list) == 1
         task = pipeline.tasks_list[0]
         assert isinstance(task, tuple)
         assert len(task) == 4
         assert task[0] is not None  # function
-        assert task[1] == "name"    # name
-        assert task[2] == "v1.0"    # version (default)
-        assert task[3] == {}        # metadata (default)
+        assert task[1] == "name"  # name
+        assert task[2] == "v1.0"  # version (default)
+        assert task[3] == {}  # metadata (default)
 
 
 class TestPipelineRun:
@@ -219,6 +222,7 @@ class TestPipelineRun:
 
         class Doubler:
             """A callable class that doubles the input value 'x'."""
+
             def __call__(self, data: Dict[str, int]) -> Dict[str, int]:
                 """Doubles the value of 'x' from the input data."""
                 return {"doubled": data["x"] * 2}
@@ -291,8 +295,8 @@ class TestWorkerId:
         Ensures type safety by checking that only string worker IDs are accepted.
         """
         pipeline = Pipeline()
-        with pytest.raises(TypeError): # Expecting TypeError for incorrect type
-            pipeline.set_worker_id(123) # type: ignore
+        with pytest.raises(TypeError):  # Expecting TypeError for incorrect type
+            pipeline.set_worker_id(123)  # type: ignore
 
     def test_set_worker_id_enables_api(self) -> None:
         """Tests that setting a worker_id enables send_to_api when API config is present.
@@ -487,7 +491,7 @@ class TestPipelineAdvancedFeatures:
         pipeline = Pipeline()
         pipeline.set_steps(
             [
-                (lambda d: {"result": True}, "Step1", "v1.0"), # type: ignore
+                (lambda d: {"result": True}, "Step1", "v1.0"),  # type: ignore
             ]
         )
         result = pipeline.worker_register("test_worker", "v1.0")
@@ -502,7 +506,7 @@ class TestPipelineAdvancedFeatures:
         pipeline = Pipeline()
         pipeline.set_steps(
             [
-                (lambda d: {"result": True}, "Step1", "v1.0"), # type: ignore
+                (lambda d: {"result": True}, "Step1", "v1.0"),  # type: ignore
             ]
         )
         pipeline._api_task_update({"task_id": "123", "status": "start"})
@@ -517,7 +521,7 @@ class TestPipelineAdvancedFeatures:
         pipeline = Pipeline()
         pipeline.set_steps(
             [
-                (lambda d: {"result": True}, "Step1", "v1.0"), # type: ignore
+                (lambda d: {"result": True}, "Step1", "v1.0"),  # type: ignore
             ]
         )
         pipeline._api_process_update({"process_id": "123"}, start=True)
@@ -532,7 +536,7 @@ class TestPipelineAdvancedFeatures:
         pipeline = Pipeline()
         pipeline.set_steps(
             [
-                (lambda d: {"result": True}, "Step1", "v1.0"), # type: ignore
+                (lambda d: {"result": True}, "Step1", "v1.0"),  # type: ignore
             ]
         )
         pipeline._api_process_update({"process_id": "123"}, start=False)
@@ -548,7 +552,7 @@ class TestPipelineAdvancedFeatures:
         pipeline.SHOW_API_ERRORS = True
         pipeline.set_steps(
             [
-                (lambda d: {"result": True}, "Step1", "v1.0"), # type: ignore
+                (lambda d: {"result": True}, "Step1", "v1.0"),  # type: ignore
             ]
         )
         assert pipeline.SHOW_API_ERRORS is True
@@ -561,7 +565,7 @@ class TestPipelineAdvancedFeatures:
         pipeline = Pipeline()
         pipeline.set_steps(
             [
-                (lambda d: {"result": True}, "Step1", "v1.0"), # type: ignore
+                (lambda d: {"result": True}, "Step1", "v1.0"),  # type: ignore
             ]
         )
         pipeline.progress_rich = None

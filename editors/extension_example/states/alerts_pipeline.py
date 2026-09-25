@@ -1,7 +1,9 @@
+from typing import Any
+
+from pydantic import BaseModel
+
 from wpipe import step, to_obj
 from wpipe.timeout import timeout_sync
-from typing import Any
-from pydantic import BaseModel
 
 
 class AlertsPipelineContext(BaseModel):

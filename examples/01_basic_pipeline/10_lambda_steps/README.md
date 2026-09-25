@@ -27,7 +27,7 @@ sequenceDiagram
     participant L1 as Double Lambda
     participant L2 as Quadruple Lambda
     participant L3 as Add 10 Lambda
-    
+
     P->>L1: run({value: 5})
     L1-->>P: {x2: 10}
     P->>L2: run({x2: 10})
@@ -42,17 +42,17 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[Double]
         D[Quadruple]
         E[Add 10]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

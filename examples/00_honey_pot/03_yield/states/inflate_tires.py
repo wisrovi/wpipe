@@ -2,8 +2,10 @@
 Module for inflating car tires.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from dto.car import Car, Levels
+
 from wpipe import step, to_obj
 
 

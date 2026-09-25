@@ -15,9 +15,9 @@ import random
 
 from wpipe import Pipeline, step
 
+
 @step(name="sincronizar_datos")
 def sincronizar_datos(data: dict) -> None:
-
     """Sincronizar datos step.
 
     Args:
@@ -34,8 +34,8 @@ def sincronizar_datos(data: dict) -> None:
     print("✅ Datos sincronizados")
     return {"sync": "ok"}
 
-def error_handler(context, error: dict) -> dict:
 
+def error_handler(context, error: dict) -> dict:
     """Sincronizar datos step.
 
     Args:
@@ -49,6 +49,7 @@ def error_handler(context, error: dict) -> dict:
     """
     print(f"⚠️ [MANEJADOR] Error: {error.get('error_message')}")
     return {"manejado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

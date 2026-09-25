@@ -24,3 +24,6 @@ Resultado de Ejecución
    
    
    [PARALLEL ASYNC] Executing 3 steps concurrently
+   📷 [ASYNC] Front camera activated
+   📷 [ASYNC] Rear camera activated
+   📡 [ASYNC] Radar activated

@@ -48,22 +48,22 @@ graph TB
     subgraph Input
         D[Input Data]
     end
-    
+
     subgraph Pipeline
         P[Pipeline]
         S[Steps List]
     end
-    
+
     subgraph Steps
         S1[Step 1]
         S2[Step 2]
         S3[Step 3]
     end
-    
+
     subgraph Output
         O[Result Data]
     end
-    
+
     D --> P
     P --> S
     S --> S1
@@ -114,7 +114,7 @@ sequenceDiagram
     participant Step1
     participant Step2
     participant Output
-    
+
     Input->>Step1: {"x": 1}
     Step1->>Step1: Process
     Step1->>Step2: {"x": 1, "step1": True}
@@ -145,7 +145,7 @@ flowchart LR
         G2[Handle missing keys]
         G3[Type hints]
     end
-    
+
     subgraph Avoid
         B1[Mutate global state]
         B2[Side effects]

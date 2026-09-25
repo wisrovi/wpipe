@@ -10,9 +10,9 @@ tracker.analysis.get_stats()
 
 from wpipe import Pipeline, step
 
+
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -26,6 +26,7 @@ def task(data: dict) -> None:
     """
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Análisis de pipeline...")
 
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     pipe.run({})
 
     stats = pipe.tracker.analysis.get_stats()
-    print(f"\n📊 Stats:")
+    print("\n📊 Stats:")
     print(f"  Pipelines: {stats.get('total_pipelines')}")
     print(f"  Éxito: {stats.get('success_rate')}%")
     print(f"  Duración avg: {stats.get('avg_duration_ms')}ms")

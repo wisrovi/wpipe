@@ -10,11 +10,11 @@ get_fired_alerts(severity=CRITICAL)
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -28,6 +28,7 @@ def task(data: dict) -> None:
     """
     time.sleep(0.02)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Filtrar alerts por severity...")

@@ -18,9 +18,11 @@ def main() -> None:
     """Run filter exceptions example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (unreliable_step, "Unreliable Step", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (unreliable_step, "Unreliable Step", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

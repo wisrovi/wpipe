@@ -73,7 +73,7 @@ def demo_checkpoint():
 
     try:
         result = pipeline.run({"test_data": "initial"})
-        print(f"\n✓ Pipeline completed successfully!")
+        print("\n✓ Pipeline completed successfully!")
         print(f"Final result: {result}\n")
 
         # Save checkpoint after success

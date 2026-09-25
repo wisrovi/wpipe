@@ -12,7 +12,7 @@ This is the exhaustive technical specification for the **WPipe v2.4.0-LTS** engi
     <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 25px; border-radius: 12px; border-left: 5px solid #00f2fe; margin-bottom: 40px;">
         <h4 style="color: #00f2fe; margin-top: 0;">🛠️ Engineering Standard</h4>
         <p style="color: #94a3b8; margin-bottom: 0; font-size: 0.95em;">
-            All public APIs adhere to <strong>Semantic Versioning 2.0.0</strong>. 
+            All public APIs adhere to <strong>Semantic Versioning 2.0.0</strong>.
             Method signatures are type-hinted and documented following the Google Python Style Guide.
         </p>
     </div>
@@ -50,19 +50,19 @@ This is the exhaustive technical specification for the **WPipe v2.4.0-LTS** engi
     :gutter: 2
 
     .. grid-item-card:: Condition
-        
+
         Ramificación lógica.
         ^^^
         ``Condition(expression, branch_true, branch_false)``
 
     .. grid-item-card:: For
-        
+
         Bucles controlados.
         ^^^
         ``For(iterations, validation_expression, steps)``
 
     .. grid-item-card:: Parallel
-        
+
         Multi-executor block.
         ^^^
         ``Parallel(steps, max_workers, use_processes)``
@@ -93,7 +93,7 @@ This is the exhaustive technical specification for the **WPipe v2.4.0-LTS** engi
     :gutter: 3
 
     .. grid-item-card:: 🗄️ Wsqlite (Context Wrapper)
-        
+
         The recommended high-level API for data persistence.
         ^^^
         .. code-block:: python
@@ -103,7 +103,7 @@ This is the exhaustive technical specification for the **WPipe v2.4.0-LTS** engi
                 db.output = ...
 
     .. grid-item-card:: ⚙️ SQLite (Core Engine)
-        
+
         The low-level driver optimized with WAL mode and thread-safe connection pooling.
 
 5. Industrial Observability
@@ -121,7 +121,7 @@ This is the exhaustive technical specification for the **WPipe v2.4.0-LTS** engi
     :shadow: md
 
     Data bridge for external analysis.
-    
+
     *   ``.export_pipeline_logs(format="json|csv")``
     *   ``.export_statistics()``
 

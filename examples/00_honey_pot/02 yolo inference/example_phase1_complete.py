@@ -16,11 +16,10 @@ import json
 import random
 import time
 from pathlib import Path
-from typing import Any, Dict, TypedDict
+from typing import Any, Dict
 
 from wpipe import (
     CheckpointManager,
-    Pipeline,
     PipelineContext,
     PipelineExporter,
     ResourceMonitor,
@@ -207,20 +206,19 @@ def run_phase1_pipeline(infrastructure: dict, pipeline_id: str = "honey_pot_phas
 
     # Check if we can resume
     if checkpoint_mgr.can_resume(pipeline_id):
-        print(f"\n⟲ Resuming from checkpoint...")
+        print("\n⟲ Resuming from checkpoint...")
         last = checkpoint_mgr.get_last_checkpoint(pipeline_id)
         print(f"  Last completed: {last['step_name']} (order {last['step_order']})")
         start_from = last["step_order"] + 1
         context = last.get("data", {})
     else:
-        print(f"\n→ Starting new pipeline execution...")
+        print("\n→ Starting new pipeline execution...")
         start_from = 0
 
     # Execute steps with full Phase 1 support
     with ResourceMonitor(
         f"pipeline_{pipeline_id}", db_path=infrastructure["db_path"]
     ) as pipeline_monitor:
-
         for i, (step_name, step_func) in enumerate(steps):
             if i < start_from:
                 print(f"\n  ⊘ Skipping {step_name} (already completed)")
@@ -255,7 +253,7 @@ def run_phase1_pipeline(infrastructure: dict, pipeline_id: str = "honey_pot_phas
 
                     print(f"    ✓ Completed in {step_summary['elapsed_seconds']:.2f}s")
                     print(f"    ✓ Peak RAM: {step_summary['peak_ram_mb']:.2f} MB")
-                    print(f"    ✓ Checkpoint saved")
+                    print("    ✓ Checkpoint saved")
 
                 except TimeoutError as e:
                     print(f"    ✗ Timeout: {e}")
@@ -318,7 +316,7 @@ def generate_reports(infrastructure: dict, pipeline_id: str):
     # Show checkpoint statistics
     checkpoint_mgr = infrastructure["checkpoint_mgr"]
     cp_stats = checkpoint_mgr.get_checkpoint_stats(pipeline_id)
-    print(f"\n[CHECKPOINTS]")
+    print("\n[CHECKPOINTS]")
     print(f"  Total checkpoints: {cp_stats['total_checkpoints']}")
     print(f"  Successful: {cp_stats['successful']}")
     print(f"  Failed: {cp_stats['failed']}")
@@ -352,7 +350,7 @@ if __name__ == "__main__":
         print("\n" + "=" * 60)
         print("PIPELINE EXECUTION SUMMARY")
         print("=" * 60)
-        print(f"\n✓ Pipeline completed successfully!")
+        print("\n✓ Pipeline completed successfully!")
         print(f"  Completed steps: {result['completed_steps']}/{result['total_steps']}")
         print(
             f"  Total execution time: {result['pipeline_monitor'].get_summary()['elapsed_seconds']:.2f}s"

@@ -25,12 +25,12 @@ The APIClient class provides methods for interacting with external APIs:
 .. code-block:: python
 
     from wpipe import Pipeline
-    
+
     api_config = {
         "base_url": "http://localhost:8418",
         "token": "your-auth-token"
     }
-    
+
     pipeline = Pipeline(api_config=api_config)
 
 3. Worker Registration
@@ -174,11 +174,11 @@ Create a custom API client for your specific needs:
 
     class CustomAPIClient(APIClient):
         """Custom API client with additional methods."""
-        
+
         def __init__(self, base_url: str, token: str, team_id: str):
             super().__init__(base_url, token)
             self.team_id = team_id
-        
+
         def report_metrics(self, metrics: dict) -> dict:
             """Report custom metrics to the API."""
             data = {
@@ -187,7 +187,7 @@ Create a custom API client for your specific needs:
                 "timestamp": self._get_timestamp()
             }
             return self.send_post("/metrics", data)
-        
+
         def _get_timestamp(self) -> str:
             from datetime import datetime
             return datetime.utcnow().isoformat()
@@ -206,11 +206,11 @@ Handle API failures gracefully:
 
     class FallbackPipeline(Pipeline):
         """Pipeline that works offline if API is unavailable."""
-        
+
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.api_available = True
-        
+
         def _api_task_update(self, msg: dict):
             try:
                 super()._api_task_update(msg)
@@ -235,11 +235,11 @@ Here's a complete example with full API integration:
 
     class TrackedPipeline(Pipeline):
         """Pipeline with comprehensive API tracking."""
-        
+
         def __init__(self, api_config: dict, worker_name: str):
             super().__init__(api_config=api_config, verbose=True)
             self.worker_name = worker_name
-        
+
         def run(self, *args, **kwargs):
             logger.info(f"Starting pipeline: {self.worker_name}")
             try:
@@ -311,7 +311,7 @@ Use a mock server for testing:
     @responses.activate
     def test_pipeline_with_mock_api():
         """Test pipeline with mocked API responses."""
-        
+
         # Mock the worker registration endpoint
         responses.add(
             responses.POST,
@@ -319,7 +319,7 @@ Use a mock server for testing:
             json={"id": "worker_test_123", "name": "test_worker"},
             status=200
         )
-        
+
         # Mock the process registration endpoint
         responses.add(
             responses.POST,
@@ -327,7 +327,7 @@ Use a mock server for testing:
             json={"father": "process_123", "sons": []},
             status=200
         )
-        
+
         # Run pipeline
         pipeline = Pipeline(
             api_config={"base_url": "http://localhost:8418", "token": "test"}
@@ -335,7 +335,7 @@ Use a mock server for testing:
         pipeline.set_steps([
             (lambda d: {"result": "ok"}, "Test Step", "v1.0"),
         ])
-        
+
         result = pipeline.run({})
         assert result["result"] == "ok"
 

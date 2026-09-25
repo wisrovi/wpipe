@@ -14,9 +14,12 @@ DIAGRAM:
 
 # pylint: disable=no-member
 import random
-from typing import Any, Dict, Generator, Tuple
+from collections.abc import Generator
+from typing import Any, Dict, Tuple
+
 import cv2
 import numpy as np
+
 from wpipe import For, Pipeline, step, to_obj
 
 

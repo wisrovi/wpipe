@@ -102,7 +102,7 @@ flowchart LR
     subgraph Output
         I["{listo_para_guardar: True}"]
     end
-    
+
     A --> B --> D --> F --> H --> I
     A --> C --> E -.-> H
     D -.-> H

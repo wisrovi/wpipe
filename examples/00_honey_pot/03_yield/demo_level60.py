@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any
+
 """
 DEMO LEVEL 60: Eventos con Acciones Automáticas
 ---------------------------------------
@@ -11,9 +12,9 @@ DIAGRAM:
 
 from wpipe import Pipeline, step
 
+
 @step(name="iniciar_sistema")
 def iniciar_sistema(data: dict) -> None:
-
     """Startsr sistema step.
 
     Args:
@@ -28,9 +29,9 @@ def iniciar_sistema(data: dict) -> None:
     print("🟢 Sistema iniciado")
     return {"estado": "iniciado"}
 
+
 @step(name="apagar_sistemas")
 def apagar_sistemas(context: Any) -> None:
-
     """Apagar sistemas step.
 
     Args:
@@ -45,9 +46,9 @@ def apagar_sistemas(context: Any) -> None:
     print("🔴 Apagando sistemas...")
     return {"sistemas": "apagados"}
 
+
 @step(name="guardar_estado")
 def guardar_estado(context: Any) -> None:
-
     """Guardar estado step.
 
     Args:
@@ -61,6 +62,7 @@ def guardar_estado(context: Any) -> None:
     """
     print("💾 Guardando estado en memoria...")
     return {"estado": "guardado"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l60_eventactions", verbose=True)

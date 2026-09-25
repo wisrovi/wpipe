@@ -26,7 +26,7 @@ sequenceDiagram
     participant M as Main Pipeline
     participant P1 as Pipeline A
     participant P2 as Pipeline B
-    
+
     M->>P1: run({value: 10})
     P1-->>M: {a: 11}
     M->>P2: run({a: 11})
@@ -39,16 +39,16 @@ graph TB
         A[Input]
         B[Main Pipeline]
     end
-    
+
     subgraph Pipelines
         C[Pipeline A]
         D[Pipeline B]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

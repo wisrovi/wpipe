@@ -87,7 +87,7 @@ WPipe v2.4.0 features a non-blocking ``ResourceMonitor`` using **WAL (Write-Ahea
 
     with ResourceMonitor("Heavy_Process") as monitor:
         pipeline.run(large_dataset)
-        
+
     stats = monitor.get_summary()
     print(f"Peak Memory: {stats['peak_ram_mb']} MB")
 

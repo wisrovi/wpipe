@@ -8,11 +8,11 @@ DIAGRAM:
 @step + AutoRegister.register_all()
 """
 
-from wpipe import Pipeline, step, AutoRegister
+from wpipe import AutoRegister, Pipeline, step
+
 
 @step(name="start", tags=["inic"])
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -27,9 +27,9 @@ def start(data: dict) -> None:
     print("🔑 Startsndo...")
     return {"estado": "iniciado"}
 
+
 @step(name="process", tags=["proc"])
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -43,6 +43,7 @@ def process(data: dict) -> None:
     """
     print("⚡ Procesando...")
     return {"procesado": True}
+
 
 if __name__ == "__main__":
     print(">>> AutoRegister...")

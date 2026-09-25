@@ -98,7 +98,7 @@ if __name__ == "__main__":
     elapsed = time.time() - start
 
     print(f"\n✓ Pipeline completed in {elapsed:.2f}s!")
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  Saved users: {result.get('saved_count')}")
     print(f"  Save status: {result.get('save_status')}")
     print(f"  Validation: {result.get('validation_passed')}")

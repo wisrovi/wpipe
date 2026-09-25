@@ -64,13 +64,13 @@ Raise TaskError from step functions:
                 "Email is required",
                 Codes.VALIDATION_ERROR
             )
-        
+
         if "@" not in data["email"]:
             raise TaskError(
                 "Invalid email format",
                 Codes.VALIDATION_ERROR
             )
-        
+
         return {"validated": True}
 
 3.2 With Step Information
@@ -181,26 +181,26 @@ Validate at the start of the pipeline:
         """Validate all required fields exist."""
         required = ["email", "name", "age"]
         missing = [f for f in required if f not in data]
-        
+
         if missing:
             raise TaskError(
                 f"Missing required fields: {missing}",
                 Codes.VALIDATION_ERROR
             )
-        
+
         # Validate types
         if not isinstance(data["age"], int):
             raise TaskError(
                 "Age must be an integer",
                 Codes.VALIDATION_ERROR
             )
-        
+
         if data["age"] < 0 or data["age"] > 150:
             raise TaskError(
                 "Age must be between 0 and 150",
                 Codes.VALIDATION_ERROR
             )
-        
+
         return data
 
 6.2 Chain Validation
@@ -212,10 +212,10 @@ Validate at each step:
 
     class ValidatingStep:
         """Step with built-in validation."""
-        
+
         def __init__(self, required_fields: list):
             self.required_fields = required_fields
-        
+
         def __call__(self, data: dict) -> dict:
             # Check required fields exist
             missing = [f for f in self.required_fields if f not in data]
@@ -224,7 +224,7 @@ Validate at each step:
                     f"Missing fields: {missing}",
                     Codes.VALIDATION_ERROR
                 )
-            
+
             # Process
             return {"processed": True}
 
@@ -239,9 +239,9 @@ Validate at each step:
     def call_api_with_retry(data):
         """Call API with error handling."""
         from wpipe import APIClient
-        
+
         client = APIClient(base_url="http://api.example.com", token="...")
-        
+
         try:
             result = client.send_post("/process", data)
             if result is None:
@@ -367,10 +367,10 @@ Here's a complete error handling example:
 
     class ErrorHandlingPipeline(Pipeline):
         """Pipeline with comprehensive error handling."""
-        
+
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-        
+
         def run(self, *args, **kwargs):
             try:
                 return super().run(*args, **kwargs)
@@ -388,23 +388,23 @@ Here's a complete error handling example:
         """Validate input data."""
         if "value" not in data:
             raise TaskError("Missing 'value' in input", Codes.VALIDATION_ERROR)
-        
+
         if not isinstance(data["value"], (int, float)):
             raise TaskError("'value' must be a number", Codes.VALIDATION_ERROR)
-        
+
         if data["value"] < 0:
             raise TaskError("'value' must be non-negative", Codes.VALIDATION_ERROR)
-        
+
         return {"validated": True}
 
 
     def process_value(data):
         """Process the validated value."""
         value = data["value"]
-        
+
         if value > 1000:
             raise TaskError("Value too large for processing", Codes.TASK_FAILED)
-        
+
         return {"processed_value": value * 2}
 
 

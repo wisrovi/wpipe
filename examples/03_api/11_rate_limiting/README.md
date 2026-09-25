@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant C as Client
     participant R as RateLimiter
-    
+
     C->>R: Check rate limit
     R-->>C: Allowed
     C->>R: Request
@@ -34,16 +34,16 @@ graph TB
     subgraph Check
         C[Count requests]
     end
-    
+
     subgraph Decision
         D{Allowed?}
     end
-    
+
     subgraph Result
         A[Allow]
         R[Reject]
     end
-    
+
     C --> D
     D --> A
     D --> R
@@ -63,7 +63,7 @@ flowchart LR
     L([Rate Limit]) --> D{{Decision}}
     D --> A([Allow])
     D --> R([Reject])
-    
+
     style L fill:#e1f5fe
     style A fill:#c8e6c9
     style R fill:#ffcdd2

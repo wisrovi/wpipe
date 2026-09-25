@@ -10,9 +10,11 @@ DIAGRAM:
 
 from wpipe import Pipeline
 
+
 def process(data):
     print(f"📊 Velocidad: {data.get('speed')} km/h")
     return {"procesado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l77_lambdareturn", verbose=True)

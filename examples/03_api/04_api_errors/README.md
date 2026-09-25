@@ -25,7 +25,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: API call
     A-->>P: Error
     Note over P: Handle error
@@ -39,16 +39,16 @@ graph TB
         A[Invalid URL]
         B[Connection Error]
     end
-    
+
     subgraph Pipeline
         C[Continue]
         D[Execute Steps]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -70,7 +70,7 @@ flowchart LR
     E([Error]) --> C[Continue]
     C --> S[Steps]
     S --> O([Result])
-    
+
     style E fill:#ffcdd2
     style O fill:#c8e6c9
 ```

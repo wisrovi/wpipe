@@ -103,7 +103,7 @@ def run_critical_pipeline():
             AutoRegister.register_by_tag(pipeline, "critical", registry)
             break
 
-    print(f"✓ Registered critical steps only")
+    print("✓ Registered critical steps only")
     result = pipeline.run({})
     print(f"✓ Result: {result}")
     return result
@@ -121,7 +121,7 @@ def run_data_pipeline():
     # Register only data-related steps
     AutoRegister.register_by_tag(pipeline, "data", registry)
 
-    print(f"✓ Registered data processing steps")
+    print("✓ Registered data processing steps")
     result = pipeline.run({})
     print(f"✓ Result keys: {list(result.keys())}")
     return result

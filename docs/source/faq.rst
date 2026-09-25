@@ -163,10 +163,10 @@ Each step receives the accumulated results from all previous steps:
 .. code-block:: text
 
     Input: {'x': 5}
-    
+
     Step 1 returns {'result': 10}
     Data after Step 1: {'x': 5, 'result': 10}
-    
+
     Step 2 receives {'x': 5, 'result': 10}
     Step 2 returns {'final': 20}
     Data after Step 2: {'x': 5, 'result': 10, 'final': 20}

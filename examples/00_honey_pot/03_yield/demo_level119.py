@@ -12,6 +12,7 @@ import time
 
 from wpipe import Pipeline, step
 
+
 @step(name="primero")
 def primero(data: dict) -> None:
     """Primero step.
@@ -25,9 +26,9 @@ def primero(data: dict) -> None:
     print("✅ Primero")
     return {"ok": True}
 
+
 @step(name="segundo", depends_on=["primero"], timeout=2)
 def segundo(data: dict) -> None:
-
     """Segundo step.
 
     Args:
@@ -42,6 +43,7 @@ def segundo(data: dict) -> None:
     print("⏱️ Segundo (con timeout)")
     time.sleep(0.1)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Timeout + depends_on...")

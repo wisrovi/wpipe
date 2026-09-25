@@ -2,7 +2,7 @@
 Tests for API pipeline functionality.
 """
 
-from typing import Dict, Any
+from typing import Dict
 from unittest.mock import Mock, patch
 
 import pytest
@@ -150,7 +150,7 @@ class TestPipelineWithAPI:
         """
         api_config: Dict[str, str] = {
             "base_url": "http://localhost:8418",
-            "token": "test_token"
+            "token": "test_token",
         }
         pipeline = Pipeline(api_config=api_config)
         assert pipeline.api_config == api_config
@@ -163,7 +163,7 @@ class TestPipelineWithAPI:
         """
         api_config: Dict[str, str] = {
             "base_url": "http://localhost:8418",
-            "token": "test_token"
+            "token": "test_token",
         }
         pipeline = Pipeline(api_config=api_config)
         pipeline.set_worker_id("worker123456")

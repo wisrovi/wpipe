@@ -10,9 +10,7 @@ Usage:
 """
 
 import argparse
-import json
 import subprocess
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -90,7 +88,7 @@ def generate_markdown_report(
 
     report = f"""# Code Quality Report - {project_name}
 
-**Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
+**Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 **Status:** {status_icon} QUALITY GATE
 
 ---

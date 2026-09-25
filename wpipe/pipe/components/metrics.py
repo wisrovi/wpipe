@@ -49,10 +49,7 @@ class SystemMetricsCollector:
     """
 
     def __init__(
-        self,
-        tracker: PipelineTracker,
-        pipeline_id: str,
-        interval_seconds: float = 0.5
+        self, tracker: PipelineTracker, pipeline_id: str, interval_seconds: float = 0.5
     ) -> None:
         """
         Initialize the metrics collector.

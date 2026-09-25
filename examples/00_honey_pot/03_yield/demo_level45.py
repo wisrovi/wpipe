@@ -15,7 +15,9 @@ DIAGRAM:
 
 import asyncio
 from typing import Any, Dict
+
 from wpipe import PipelineAsync
+
 
 async def start_motor(data: Any) -> Dict[str, str]:
     """Start motor step asynchronously.
@@ -30,6 +32,7 @@ async def start_motor(data: Any) -> Dict[str, str]:
     print("🔑 [ASYNC] Motor started")
     return {"engine": "on"}
 
+
 async def drive(data: Any) -> Dict[str, bool]:
     """Drive step asynchronously.
 
@@ -42,6 +45,7 @@ async def drive(data: Any) -> Dict[str, bool]:
     await asyncio.sleep(0.05)
     print("🚗 [ASYNC] Driving...")
     return {"driving": True}
+
 
 if __name__ == "__main__":
 

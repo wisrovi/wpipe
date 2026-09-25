@@ -103,7 +103,9 @@ class CompositionHelper:
         return merged
 
     @staticmethod
-    def extract_context_subset(context: dict[str, Any], keys: list[str]) -> dict[str, Any]:
+    def extract_context_subset(
+        context: dict[str, Any], keys: list[str]
+    ) -> dict[str, Any]:
         """
         Extract subset of context for child pipeline.
 

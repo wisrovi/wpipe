@@ -10,7 +10,7 @@ Condition(..., branch_true=[Background(task)])
 
 import time
 
-from wpipe import Pipeline, step, Condition
+from wpipe import Condition, Pipeline, step
 from wpipe.pipe.components.logic_blocks import Background
 
 
@@ -43,15 +43,17 @@ if __name__ == "__main__":
     print("=" * 50)
 
     pipe = Pipeline(pipeline_name="demo_138", verbose=False)
-    pipe.set_steps([
-        check,
-        Condition(
-            expression="condition == True",
-            branch_true=[Background(bg_in_true)],
-            branch_false=[regular_in_false],
-        ),
-        after_condition,
-    ])
+    pipe.set_steps(
+        [
+            check,
+            Condition(
+                expression="condition == True",
+                branch_true=[Background(bg_in_true)],
+                branch_false=[regular_in_false],
+            ),
+            after_condition,
+        ]
+    )
 
     result = pipe.run({})
     print("\n✅ Background funciona dentro de Condition!")

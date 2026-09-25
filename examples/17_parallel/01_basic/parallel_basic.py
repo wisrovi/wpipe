@@ -82,8 +82,8 @@ if __name__ == "__main__":
     elapsed = time.time() - start
 
     print(f"\n✓ Execution completed in {elapsed:.2f}s")
-    print(f"  (Sequential would take ~5s)")
+    print("  (Sequential would take ~5s)")
     print(f"  Speedup: {5.0/elapsed:.1f}x")
-    print(f"\nFinal result:")
+    print("\nFinal result:")
     print(f"  Statistics: {result.get('statistics')}")
     print(f"  Total count: {result.get('count')}")

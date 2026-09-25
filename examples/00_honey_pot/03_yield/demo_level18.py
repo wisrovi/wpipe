@@ -16,6 +16,7 @@ from typing import Any, Dict
 
 from wpipe import Pipeline, PipelineExporter, step
 
+
 @step(name="drive_section_a")
 def drive_section_a(data: Any) -> Dict[str, Any]:
     """Driving section A step.
@@ -28,6 +29,7 @@ def drive_section_a(data: Any) -> Dict[str, Any]:
     """
     print("🚗 Driving through Section A...")
     return {"section": "A", "duration": 15}
+
 
 if __name__ == "__main__":
     db_path = "output/trip_history.db"

@@ -2,8 +2,10 @@
 Module for driving the car.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from dto.car import Car, Levels
+
 from wpipe import step, timeout_sync, to_obj
 
 

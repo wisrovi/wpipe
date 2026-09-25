@@ -57,13 +57,13 @@ graph TB
         A[__init__] --> B[ready: True]
         C[is_ready] --> D[Return ready]
     end
-    
+
     subgraph DependentService
         E[__init__] --> F[Store dependency]
         F --> G[Pipeline]
         G --> H[process_step]
     end
-    
+
     I[handle] --> J[Check dependency]
     J --> K{Check result}
     K -->|Ready| G
@@ -95,12 +95,12 @@ flowchart LR
         A --> B[is_ready()?]
         B --> C{Ready?}
     end
-    
+
     subgraph Case: Ready
         C -->|Yes| D[Run pipeline]
         D --> E["{processed: True}"]
     end
-    
+
     subgraph Case: Not Ready
         C -->|No| F["{error: Dependency not ready}"]
     end

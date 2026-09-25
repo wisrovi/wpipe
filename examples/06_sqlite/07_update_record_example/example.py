@@ -6,7 +6,7 @@ Shows updating and deleting records in SQLite.
 
 import os
 
-from wpipe.sqlite import Wsqlite, SQLite
+from wpipe.sqlite import SQLite, Wsqlite
 
 
 def main() -> None:
@@ -20,7 +20,7 @@ def main() -> None:
         print(f"Created record ID: {db.record_uuid}")
 
         db.output = {"name": "updated", "value": 20}
-        print(f"Updated record")
+        print("Updated record")
 
     with SQLite(db_path) as db:
         total = db.count_records()

@@ -12,8 +12,10 @@ DIAGRAM:
 
 import os
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
 from wpipe.util import escribir_yaml, leer_yaml
+
 
 @step(name="generate_logbook")
 def generate_logbook(data: Any) -> Dict[str, str]:
@@ -38,6 +40,7 @@ def generate_logbook(data: Any) -> Dict[str, str]:
     print(f"📄 Logbook saved at {path}. Data ready for next start.")
     return {"logbook_path": path}
 
+
 @step(name="read_previous_logbook")
 def read_previous_logbook(data: Dict[str, Any]) -> Dict[str, Any]:
     """Reads a previously saved logbook.
@@ -54,6 +57,7 @@ def read_previous_logbook(data: Dict[str, Any]) -> Dict[str, Any]:
         f"📥 Logbook recovered: The car was in {history['last_position']} with {history['fuel_remaining']}% fuel."
     )
     return {"history": history}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="logbook_system_l36", verbose=True)

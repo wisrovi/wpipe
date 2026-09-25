@@ -35,17 +35,17 @@ MAX_RETRY = 3              # UPPER_SNAKE for true constants
 ```python
 def calculate_total(items: list[dict], tax_rate: float = 0.1) -> float:
     """Calculate total price including tax.
-    
+
     Args:
         items: List of item dictionaries with 'price' key.
         tax_rate: Tax rate as decimal (default: 0.1).
-    
+
     Returns:
         Total price including tax.
-    
+
     Raises:
         ValueError: If items is empty or tax_rate is negative.
-    
+
     Example:
         >>> items = [{"price": 10}, {"price": 20}]
         >>> calculate_total(items)
@@ -55,7 +55,7 @@ def calculate_total(items: list[dict], tax_rate: float = 0.1) -> float:
         raise ValueError("Items cannot be empty")
     if tax_rate < 0:
         raise ValueError("Tax rate cannot be negative")
-    
+
     subtotal = sum(item["price"] for item in items)
     return subtotal * (1 + tax_rate)
 ```
@@ -65,32 +65,32 @@ def calculate_total(items: list[dict], tax_rate: float = 0.1) -> float:
 ```python
 class UserService:
     """Service for managing user operations.
-    
+
     Attributes:
         db: Database connection instance.
         cache: Cache client for user data.
-    
+
     Example:
         >>> service = UserService(db, cache)
         >>> user = service.get_user(123)
     """
-    
+
     def __init__(self, db: Database, cache: Cache) -> None:
         """Initialize UserService.
-        
+
         Args:
             db: Database connection.
             cache: Cache client.
         """
         self._db = db
         self._cache = cache
-    
+
     def get_user(self, user_id: int) -> User | None:
         """Get user by ID.
-        
+
         Args:
             user_id: The user's unique identifier.
-        
+
         Returns:
             User object if found, None otherwise.
         """
@@ -237,7 +237,7 @@ from loguru import logger
 
 def process_data(data: dict) -> None:
     logger.info("Processing data", extra={"data_id": data.get("id")})
-    
+
     try:
         result = transform(data)
         logger.success(f"Processed successfully: {result}")
@@ -327,13 +327,13 @@ def process(data):
 def process(data):
     if not data:
         raise ValueError("Empty")
-    
+
     if not data.is_valid:
         raise ValueError("Invalid")
-    
+
     if not data.has_items:
         return None
-    
+
     return do_something(data)
 ```
 
@@ -349,33 +349,33 @@ from unittest.mock import Mock, patch
 
 class TestUserService:
     """Test suite for UserService."""
-    
+
     @pytest.fixture
     def service(self, mock_db, mock_cache):
         return UserService(mock_db, mock_cache)
-    
+
     @pytest.fixture
     def sample_user(self):
         return User(id=1, name="Test", email="test@test.com")
-    
+
     def test_get_user_found(self, service, sample_user, mock_db):
         mock_db.find.return_value = sample_user
-        
+
         result = service.get_user(1)
-        
+
         assert result == sample_user
         mock_db.find.assert_called_once_with(1)
-    
+
     def test_get_user_not_found(self, service, mock_db):
         mock_db.find.return_value = None
-        
+
         result = service.get_user(999)
-        
+
         assert result is None
-    
+
     def test_get_user_db_error(self, service, mock_db):
         mock_db.find.side_effect = DatabaseError("Connection failed")
-        
+
         with pytest.raises(ServiceError, match="Database error"):
             service.get_user(1)
 ```
@@ -416,7 +416,7 @@ def process_order(order: Order) -> str | OrderResult:
     validation = validate_order(order)
     if not validation.success:
         return validation.error
-    
+
     if order.type == "standard":
         return fulfill_standard_order(order)
     elif order.type == "express":

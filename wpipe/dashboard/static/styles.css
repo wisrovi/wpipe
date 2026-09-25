@@ -85,7 +85,7 @@ body::before {
     background: linear-gradient(180deg, rgba(10, 15, 30, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%);
     backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid rgba(99, 102, 241, 0.15);
-    box-shadow: 
+    box-shadow:
         0 4px 30px rgba(0, 0, 0, 0.4),
         0 0 40px rgba(99, 102, 241, 0.05);
 }
@@ -195,17 +195,17 @@ body::before {
     display: grid;
     place-items: center;
     font-size: 1.6rem;
-    box-shadow: 
+    box-shadow:
         0 4px 20px rgba(99, 102, 241, 0.5),
         0 0 30px rgba(139, 92, 246, 0.3);
     animation: logoPulse 3s ease-in-out infinite;
 }
 
 @keyframes logoPulse {
-    0%, 100% { 
+    0%, 100% {
         box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5), 0 0 30px rgba(139, 92, 246, 0.3);
     }
-    50% { 
+    50% {
         box-shadow: 0 4px 30px rgba(99, 102, 241, 0.7), 0 0 50px rgba(139, 92, 246, 0.5);
     }
 }
@@ -1115,8 +1115,8 @@ body::before {
 .pipeline-item.active {
     border-color: var(--accent-primary);
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(30, 41, 59, 0.8));
-    box-shadow: 
-        0 0 0 1px var(--accent-primary), 
+    box-shadow:
+        0 0 0 1px var(--accent-primary),
         0 8px 25px rgba(99, 102, 241, 0.25),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
@@ -1463,7 +1463,7 @@ body::before {
     font-size: 0.8rem;
     z-index: 9999;
     pointer-events: none;
-    box-shadow: 
+    box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.6),
         0 0 40px rgba(99, 102, 241, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -1476,8 +1476,8 @@ body::before {
     overflow: hidden;
 }
 
-#tooltip.visible { 
-    opacity: 1; 
+#tooltip.visible {
+    opacity: 1;
     transform: translateY(0);
 }
 
@@ -1799,21 +1799,21 @@ body {
     .footer {
         padding: 0.6rem 1rem;
     }
-    
+
     .footer-inner {
         flex-direction: column;
         gap: 0.8rem;
         text-align: center;
     }
-    
+
     .footer-left {
         justify-content: center;
     }
-    
+
     .footer-center {
         font-size: 0.75rem;
     }
-    
+
     .footer-right {
         justify-content: center;
     }

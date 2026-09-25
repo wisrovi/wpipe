@@ -38,11 +38,13 @@ if __name__ == "__main__":
     print("=" * 50)
 
     pipe = Pipeline(pipeline_name="demo_137", verbose=False)
-    pipe.set_steps([
-        main,
-        Background((tuple_task, "Mi Tarea Personalizada", "v2.0")),
-        finish,
-    ])
+    pipe.set_steps(
+        [
+            main,
+            Background((tuple_task, "Mi Tarea Personalizada", "v2.0")),
+            finish,
+        ]
+    )
 
     result = pipe.run({})
     print("\n✅ Background acepta tuplas (func, name, version)!")

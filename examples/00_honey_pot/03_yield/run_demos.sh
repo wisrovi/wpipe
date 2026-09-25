@@ -18,10 +18,10 @@ demos=$(ls demo_level*.py | sort -V)
 for demo in $demos; do
     echo -e "\n${GREEN}▶️  Ejecutando: $demo ...${NC}"
     echo "----------------------------------------------------"
-    
+
     # Ejecutamos el demo
     python3 "$demo"
-    
+
     # Verificamos si la ejecución fue exitosa
     if [ $? -eq 0 ]; then
         echo "----------------------------------------------------"

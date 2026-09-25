@@ -28,10 +28,10 @@ async def async_fetch():
 # Manual timing with timeout checking
 with TaskTimer("my_task", timeout_seconds=60) as timer:
     do_work()
-    
+
     if timer.exceeded_timeout():
         print("Task took too long!")
-        
+
 print(f"Elapsed: {timer.elapsed_seconds}s")
 ```
 

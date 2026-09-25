@@ -162,7 +162,7 @@ WPipe v2.4.0 represents more than just a library; it is a fundamental shift in h
 The integration with Kubernetes and GPU-accelerated hardware addresses the most significant bottleneck in modern AI: resource utilization. Traditional orchestrators often suffer from overhead that prevents GPUs from reaching their maximum throughput. WPipe, through its "Lightning Mode" and native GIL-bypassing parallelism, ensures that the underlying hardware is utilized to its full potential, providing a streamlined path from raw data ingestion to production-ready models.
 
 \section{Key Business Benefits and ROI}
-For enterprises, the adoption of WPipe translates into tangible operational efficiencies. The cost of a failed long-running training job can be astronomical, not just in terms of compute hours but also in terms of time-to-market. WPipe's intelligent checkpointing reduces this risk by 99.9\%, allowing jobs to resume from the last successful step after node evictions or hardware failures. 
+For enterprises, the adoption of WPipe translates into tangible operational efficiencies. The cost of a failed long-running training job can be astronomical, not just in terms of compute hours but also in terms of time-to-market. WPipe's intelligent checkpointing reduces this risk by 99.9\%, allowing jobs to resume from the last successful step after node evictions or hardware failures.
 
 \begin{itemize}
     \item \textbf{Operational Resilience:} Automatic recovery mechanisms and forensic error capturing reduce the time spent by data engineers on troubleshooting.
@@ -198,7 +198,7 @@ Most existing orchestration engines fall into two categories: too simple for pro
 \cleardoublepage
 % SEGUNDA PÁGINA DE INTRODUCCIÓN
 \section{The WPipe Philosophy: Resilience by Design}
-WPipe's philosophy is rooted in "defensive orchestration." We assume that hardware will fail, networks will drop, and data will be malformed. Therefore, the engine is designed to be indestructible at the core. 
+WPipe's philosophy is rooted in "defensive orchestration." We assume that hardware will fail, networks will drop, and data will be malformed. Therefore, the engine is designed to be indestructible at the core.
 \begin{enumerate}
     \item \textbf{Purity:} Zero heavy external dependencies (only \texttt{requests} and \texttt{pyyaml} at the core).
     \item \textbf{Transparency:} Every state transition is logged in a queryable SQLite database using the high-performance WAL (Write-Ahead Logging) mode.
@@ -207,7 +207,7 @@ WPipe's philosophy is rooted in "defensive orchestration." We assume that hardwa
 \end{enumerate}
 
 \section{Objectives and Scope of this Guide}
-This comprehensive guide is designed to take an architect from the fundamental concepts of WPipe to the implementation of a production-grade Kubernetes GPU cluster. 
+This comprehensive guide is designed to take an architect from the fundamental concepts of WPipe to the implementation of a production-grade Kubernetes GPU cluster.
 \begin{itemize}
     \item \textbf{Technical Mapping:} Explaining how WPipe's components map to Kubernetes primitives.
     \item \textbf{Implementation Details:} Detailed code examples for `Condition`, `For`, and `Parallel` blocks.
@@ -245,14 +245,14 @@ def process(data):
 \cleardoublepage
 % SEGUNDA PÁGINA DE ARQUITECTURA
 \section{Pillar 2: Intelligent Control Flow (Condition & For)}
-Control flow in WPipe is explicit and data-driven. 
+Control flow in WPipe is explicit and data-driven.
 \begin{itemize}
     \item \textbf{\texttt{Condition}:} Enables DAG branching. It doesn't just evaluate a boolean; it can execute complex Python expressions against the current context to determine the next path.
     \item \textbf{\texttt{For}:} Implements loops with a mandatory "Validation Expression." This ensures that loops always have a safety exit condition based on data state, preventing resource exhaustion in production.
 \end{itemize}
 
 \section{Pillar 3: Multimodal Parallelism}
-WPipe's \texttt{Parallel} block is a high-level abstraction over Python's concurrency libraries. 
+WPipe's \texttt{Parallel} block is a high-level abstraction over Python's concurrency libraries.
 \begin{itemize}
     \item \textbf{I/O-Bound (Threads):} Optimized for API calls or database operations, managing a pool of threads that share the memory context.
     \item \textbf{CPU/GPU-Bound (Processes):} Bypasses the GIL by spawning separate OS processes. This is critical for MLOps, as it allows multiple GPU inference tasks to run truly in parallel without contention.
@@ -271,7 +271,7 @@ The \texttt{Background} component allows for non-blocking task execution. This i
 \cleardoublepage
 
 \section{Enterprise Installation Guide}
-WPipe is designed to be installed in both development and production environments with minimal friction. 
+WPipe is designed to be installed in both development and production environments with minimal friction.
 \begin{itemize}
     \item \textbf{Basic Install:} Ideal for local testing and lightweight scripts.
     \item \textbf{Full Install (\texttt{wpipe[full]}):} Includes all monitoring utilities, the Web Dashboard (Flask/Socket.IO), and advanced resource tracking components.
@@ -289,7 +289,7 @@ To ensure technical mastery, WPipe includes a built-in educational framework. Th
 \cleardoublepage
 % SEGUNDA PÁGINA DE INSTALACIÓN
 \section{Configuring the GPU Cluster (Minikube/K8s)}
-For MLOps workloads, the environment must be configured to expose GPU devices to the WPipe containers. 
+For MLOps workloads, the environment must be configured to expose GPU devices to the WPipe containers.
 \begin{lstlisting}[language=bash, caption=Preparing the Kubernetes Node]
 # Enable GPU support in Minikube
 minikube start --driver docker --container-runtime docker --gpus all
@@ -398,7 +398,7 @@ Risk models require running thousands of Monte Carlo simulations. WPipe manages 
 \cleardoublepage
 % SEGUNDA PÁGINA DE CASOS DE USO
 \section{Use Case 3: Autonomous Vehicle Telemetry Processing}
-Processing sensor data from autonomous test fleets involves petabytes of data. 
+Processing sensor data from autonomous test fleets involves petabytes of data.
 \begin{itemize}
     \item \textbf{Background Ingestion:} WPipe uses daemon threads to ingest sensor streams without blocking the primary analysis.
     \item \textbf{Resource Monitoring:} Ensuring that the heavy processing doesn't starve the ingestion threads of CPU time.

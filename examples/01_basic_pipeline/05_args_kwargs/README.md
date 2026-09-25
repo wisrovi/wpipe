@@ -26,7 +26,7 @@ sequenceDiagram
     participant P as Pipeline
     participant T as transform_data
     participant V as validate_data
-    
+
     P->>T: run({value: 10}, multiplier=2, offset=5)
     T-->>P: {transformed: 25}
     P->>V: run({transformed: 25})
@@ -39,16 +39,16 @@ graph TB
         A[Input + args]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[transform_data]
         D[validate_data]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

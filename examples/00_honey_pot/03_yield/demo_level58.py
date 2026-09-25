@@ -16,8 +16,10 @@ import random
 
 from wpipe import Pipeline, step
 
+
 class NetworkError(Exception):
     pass
+
 
 @step(
     name="operacion_inestable",
@@ -26,7 +28,6 @@ class NetworkError(Exception):
     retry_on_exceptions=(NetworkError,),
 )
 def operacion_inestable(data: dict) -> None:
-
     """Operacion inestable step.
 
     Args:
@@ -46,9 +47,9 @@ def operacion_inestable(data: dict) -> None:
     print("✅ Operación completada exitosamente")
     return {"status": "ok"}
 
+
 @step(name="verificar_sistema")
 def verificar_sistema(data: dict) -> None:
-
     """Verificar sistema step.
 
     Args:
@@ -62,6 +63,7 @@ def verificar_sistema(data: dict) -> None:
     """
     print("✅ Sistema verificado")
     return {"verificado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l58_selectiveretry", verbose=True)

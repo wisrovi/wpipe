@@ -83,7 +83,9 @@ class ForAsync:
             ValueError: If neither iterations nor validation_expression is provided.
         """
         if not validation_expression and iterations is None:
-            raise ValueError("Either iterations or validation_expression must be provided")
+            raise ValueError(
+                "Either iterations or validation_expression must be provided"
+            )
         self.steps: list[Any] = steps
         self.iterations: Optional[int] = iterations
         self.validation_expression: Optional[str] = validation_expression

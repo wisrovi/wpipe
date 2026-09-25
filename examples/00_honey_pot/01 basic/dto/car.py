@@ -10,7 +10,7 @@ except ImportError:
 
     HAS_PYDANTIC = False
 
-from dataclasses import asdict, dataclass, is_dataclass
+from dataclasses import dataclass
 
 
 class Niveles:

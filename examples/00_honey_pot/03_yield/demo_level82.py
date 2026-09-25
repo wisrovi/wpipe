@@ -9,18 +9,18 @@ Pipeline --> (export) --> resultado.csv
 """
 
 import os
-
 from pathlib import Path
 
 from wpipe import Pipeline, PipelineExporter, step
+
 
 def start(data):
     print("🔑 Motor iniciado")
     return {"motor": "on"}
 
+
 @step(name="finish")
 def finish(data: dict) -> None:
-
     """Finish step.
 
     Args:
@@ -34,6 +34,7 @@ def finish(data: dict) -> None:
     """
     print("🏁 Viaje completado")
     return {"destino": "llegado"}
+
 
 if __name__ == "__main__":
     os.makedirs("output", exist_ok=True)

@@ -12,7 +12,7 @@ flowchart TD
     D -->|Yes| E[Wait Delay]
     E --> B
     D -->|No| F[Mark Failed]
-    
+
     B -.->|Attempt 1| T[Tracker]
     B -.->|Attempt 2| T
     B -.->|Attempt 3| T
@@ -28,7 +28,7 @@ classDiagram
         +tuple retry_on_exceptions
         +bool exponential_backoff
     }
-    
+
     RetryConfig --> Pipeline
 ```
 
@@ -38,7 +38,7 @@ classDiagram
 sequenceDiagram
     participant P as Pipeline
     participant T as Tracker
-    
+
     P->>T: start_step(attempt=1)
     T->>DB: INSERT step
     P->>P: Execute - FAILS

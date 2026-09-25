@@ -56,11 +56,11 @@ Nested pipelines allow you to:
         """Factory function to create processing pipelines."""
         pipeline = Pipeline()
         pipeline.set_steps([
-            (lambda d: {"input": d.get("value", 0) * multiplier}, 
+            (lambda d: {"input": d.get("value", 0) * multiplier},
              f"{name} Input", "v1.0"),
-            (lambda d: {"processed": d["input"] + 1}, 
+            (lambda d: {"processed": d["input"] + 1},
              f"{name} Process", "v1.0"),
-            (lambda d: {"output": d["processed"] * 2}, 
+            (lambda d: {"output": d["processed"] * 2},
              f"{name} Output", "v1.0"),
         ])
         return pipeline

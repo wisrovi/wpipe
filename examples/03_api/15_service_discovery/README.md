@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant R as Registry
-    
+
     P->>R: Discover services
     R-->>P: Endpoints
     P->>P: Configure
@@ -35,21 +35,21 @@ graph TB
     subgraph Discovery
         A[Query registry]
     end
-    
+
     subgraph Services
         B[API]
         C[Database]
         D[Cache]
     end
-    
+
     subgraph Config
         E[Configure]
     end
-    
+
     subgraph Test
         F[Test]
     end
-    
+
     A --> B
     A --> C
     A --> D
@@ -72,7 +72,7 @@ flowchart LR
     D([Discover]) --> S([Services])
     S --> C([Configure])
     C --> T([Test])
-    
+
     style D fill:#e1f5fe
     style T fill:#c8e6c9
 ```

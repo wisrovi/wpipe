@@ -25,7 +25,7 @@ sequenceDiagram
     participant W1 as Worker 1
     participant W2 as Worker 2
     participant W3 as Worker 3
-    
+
     P->>W1: Execute
     P->>W2: Execute
     P->>W3: Execute
@@ -39,19 +39,19 @@ graph TB
     subgraph Pool
         P[ThreadPool]
     end
-    
+
     subgraph Workers
         W1[Worker 1]
         W2[Worker 2]
         W3[Worker 3]
     end
-    
+
     subgraph Results
         R1[Result 1]
         R2[Result 2]
         R3[Result 3]
     end
-    
+
     P --> W1
     P --> W2
     P --> W3
@@ -73,6 +73,6 @@ flowchart LR
     P([Pool]) --> W1([Worker 1])
     P --> W2([Worker 2])
     P --> W3([Worker 3])
-    
+
     style P fill:#e1f5fe
 ```

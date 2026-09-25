@@ -19,11 +19,11 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-3B19A26C
+   [PIPELINE STATUS] Registered: PIPE-F01D8A6B
    🔑 Motor iniciado
    📊 Procesando...
    viaje_l84_exportmulti ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-3B19A26C: COMPLETED
+   [PIPELINE STATUS] PIPE-F01D8A6B: COMPLETED
    
    📤 Exportando en múltiples formatos...
    ✅ JSON exportado

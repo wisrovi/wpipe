@@ -10,11 +10,11 @@ with ResourceMonitor + with TaskTimer
 
 import time
 
-from wpipe import Pipeline, step, ResourceMonitor, TaskTimer
+from wpipe import Pipeline, ResourceMonitor, TaskTimer, step
+
 
 @step(name="proceso")
 def proceso(data: dict) -> None:
-
     """Proceso step.
 
     Args:
@@ -31,6 +31,7 @@ def proceso(data: dict) -> None:
     print("✅ Completado")
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Monitoreo completo...")
 
@@ -41,7 +42,7 @@ if __name__ == "__main__":
             pipe.run({})
 
     summary = monitor.get_summary()
-    print(f"\n📊 Recursos:")
+    print("\n📊 Recursos:")
     print(f"  RAM: {summary['peak_ram_mb']:.1f} MB")
     print(f"  Tiempo: {timer.elapsed_seconds:.3f}s")
     print(f"  Excedido: {timer.exceeded_timeout()}")

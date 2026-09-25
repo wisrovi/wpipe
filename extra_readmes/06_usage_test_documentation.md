@@ -53,7 +53,7 @@ class MicroservicioBasico:
             ( paso_procesamiento, "Procesamiento", "v1.0"),
             (paso_enriquecimiento, "Enriquecimiento", "v1.0"),
         ])
-    
+
     def procesar_mensaje(self, mensaje: dict) -> dict:
         self.contador_mensajes += 1
         try:
@@ -61,10 +61,10 @@ class MicroservicioBasico:
             return resultado
         except Exception as e:
             return {"error": str(e)}
-    
+
     def iniciar(self):
         self.ejecutando = True
-    
+
     def detener(self):
         self.ejecutando = False
 
@@ -403,7 +403,7 @@ logging.basicConfig(level=logging.DEBUG)
    # Good: Single responsibility
    @step(name="validate")
    def validate(data): ...
-   
+
    @step(name="transform")
    def transform(data): ...
    ```

@@ -13,11 +13,11 @@ DIAGRAM:
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="proceso_lento")
 def proceso_lento(data: dict) -> None:
-
     """Proceso lento step.
 
     Args:
@@ -32,6 +32,7 @@ def proceso_lento(data: dict) -> None:
     time.sleep(0.1)
     print("⏳ Proceso completado (tardó 100ms)")
     return {"listo": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

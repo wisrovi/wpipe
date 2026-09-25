@@ -32,7 +32,7 @@ Resultado de Ejecución
         <div style="text-align: center; margin-bottom: 40px;">
             <h2 style="color: #ef4444; margin-bottom: 10px;">¡RECLAMA TU LOGRO!</h2>
             <p style="color: #94a3b8;">Introduce tu nombre para desbloquear tu certificado oficial.</p>
-            <input type="text" id="cert-name-input" placeholder="ESCRIBE TU NOMBRE COMPLETO AQUÍ" 
+            <input type="text" id="cert-name-input" placeholder="ESCRIBE TU NOMBRE COMPLETO AQUÍ"
                    style="background: #0f172a; border: 2px solid #334155; color: white; padding: 15px 25px; border-radius: 12px; margin-top: 15px; width: 80%; max-width: 500px; text-align: center; font-size: 1.2em; font-weight: bold; outline: none; border-color: #ef4444; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
         </div>
 
@@ -43,7 +43,7 @@ Resultado de Ejecución
                     <h1 style="color: #ef4444; margin: 0; font-size: 3.2em; text-transform: uppercase; font-weight: 900; letter-spacing: 3px; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">Certificado de Misión</h1>
                     <p style="font-size: 1.3em; margin-top: 10px; opacity: 0.8; letter-spacing: 1px;">WPipe Engine Certification • Misión 3</p>
                 </div>
-                
+
                 <div style="margin: 10px 0;">
                     <p style="font-size: 1.4em; margin-bottom: 5px; color: #94a3b8;">Se otorga con honor a:</p>
                     <h2 class="cert-name-display" style="font-size: 4.2em; border-bottom: 4px solid #ef4444; min-width: 500px; display: inline-block; font-family: 'Times New Roman', serif; text-shadow: 0 0 20px rgba(255,255,255,0.3); margin: 10px 0; color: #fff;">---</h2>
@@ -67,9 +67,9 @@ Resultado de Ejecución
         </div>
 
         <div style="text-align: center; margin-top: 40px; display: flex; justify-content: center; gap: 20px;">
-            <button id="btn-download" onclick="downloadCert(80)" disabled 
+            <button id="btn-download" onclick="downloadCert(80)" disabled
                     style="background: #475569; color: #94a3b8; padding: 12px 35px; border-radius: 12px; font-weight: bold; cursor: not-allowed; border: none; transition: all 0.3s; font-size: 1em;">⬇️ DESCARGAR PNG</button>
-            <button id="btn-share" onclick="shareLinkedIn(80)" disabled 
+            <button id="btn-share" onclick="shareLinkedIn(80)" disabled
                     style="background: #475569; color: #94a3b8; padding: 12px 35px; border-radius: 12px; font-weight: bold; cursor: not-allowed; border: none; transition: all 0.3s; font-size: 1em;">🔗 COMPARTIR LOGRO</button>
             <a href="level81.html" style="background: #ef4444; color: #020617; padding: 12px 35px; border-radius: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; font-size: 1em;">CONTINUAR ➡️</a>
         </div>
@@ -83,12 +83,12 @@ Resultado de Ejecución
             const btnDownload = document.getElementById('btn-download');
             const btnShare = document.getElementById('btn-share');
             const dateDisplays = document.querySelectorAll('.cert-date-display');
-            
+
             // Inyectar fecha actual inmediatamente
             const now = new Date();
             const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
             dateDisplays.forEach(el => el.innerText = dateStr);
-            
+
             const updateUI = (val) => {
                 const cleanVal = val.trim();
                 if (cleanVal.length >= 3) {
@@ -134,8 +134,8 @@ Resultado de Ejecución
 
         function downloadCert(level) {
             const element = document.getElementById('cert-container-' + level);
-            html2canvas(element, { 
-                scale: 3, 
+            html2canvas(element, {
+                scale: 3,
                 backgroundColor: '#0f172a',
                 logging: false,
                 useCORS: true
@@ -150,11 +150,11 @@ Resultado de Ejecución
         function shareLinkedIn(level) {
             const rank = "Arquitecto WPipe Silver";
             const text = `🚀 ¡Certificación alcanzada! Acabo de obtener mi rango de ${rank} en el WPipe Learning Tour. Agradezco a @wisrovi por crear este potente motor de orquestación industrial. #wpipe #python #dataengineering #backend #wisrovidev`;
-            
+
             downloadCert(level);
             navigator.clipboard.writeText(text);
             const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
-            
+
             setTimeout(() => {
                 window.open(linkedInUrl, '_blank');
             }, 1000);

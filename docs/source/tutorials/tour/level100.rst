@@ -36,11 +36,11 @@ Resultado de Ejecución
 
 
    >>> Alerts history...
-   [PIPELINE STATUS] Registered: PIPE-E91B7989
+   [PIPELINE STATUS] Registered: PIPE-F5E5E8E1
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-E91B7989: COMPLETED
+   [PIPELINE STATUS] PIPE-F5E5E8E1: COMPLETED
    >>> Running second pipeline...
    viaje_l100_history ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    viaje_l100b        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
-   🚨 Total in history: 0
+   🚨 Total in history: 50

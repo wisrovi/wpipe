@@ -19,9 +19,9 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-2FD8827B
-   [METRIC] fuel_consumption: 8.896367744950066 L/100km
-   [METRIC] average_speed: 129 km/h
-   📊 Telemetry: 129 km/h | 8.9 L/100km
+   [PIPELINE STATUS] Registered: PIPE-F0307A38
+   [METRIC] fuel_consumption: 6.251347535485936 L/100km
+   [METRIC] average_speed: 125 km/h
+   📊 Telemetry: 125 km/h | 6.3 L/100km
    trip_efficiency_l27 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-2FD8827B: COMPLETED
+   [PIPELINE STATUS] PIPE-F0307A38: COMPLETED

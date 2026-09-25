@@ -45,11 +45,13 @@ if __name__ == "__main__":
     start = time.time()
 
     pipe = Pipeline(pipeline_name="demo_131", verbose=False)
-    pipe.set_steps([
-        main_task,
-        Background(background_task),
-        next_step,
-    ])
+    pipe.set_steps(
+        [
+            main_task,
+            Background(background_task),
+            next_step,
+        ]
+    )
 
     result = pipe.run({})
 

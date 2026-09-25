@@ -19,11 +19,10 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-2C58A975
+   [PIPELINE STATUS] Registered: PIPE-FCD1CC3D
    🔑 Motor iniciado
    viaje_l85_exportyaml ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-2C58A975: COMPLETED
+   [PIPELINE STATUS] PIPE-FCD1CC3D: COMPLETED
    
    📤 Verificando YAML...
-   ✅ YAML guardado en pipeline_configs/Viaje_L85_ExportYAML.yaml
-      Tamaño: 182 bytes
+   ⚠️ YAML no encontrado

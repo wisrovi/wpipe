@@ -21,6 +21,7 @@ from typing import Any, Dict
 
 from wpipe import Parallel, Pipeline, step, to_obj
 
+
 @step(name="front_camera")
 def front_camera(data: Any) -> Dict[str, str]:
     """Front camera processing step.
@@ -34,6 +35,7 @@ def front_camera(data: Any) -> Dict[str, str]:
     time.sleep(0.1)
     print("🔭 Looking ahead: Road clear.")
     return {"frontal": "Clear"}
+
 
 @step(name="rear_camera")
 def rear_camera(data: Any) -> Dict[str, str]:
@@ -49,6 +51,7 @@ def rear_camera(data: Any) -> Dict[str, str]:
     print("🔭 Looking back: Vehicle approaching.")
     return {"trasera": "Car at 20m"}
 
+
 @step(name="fusion_360")
 @to_obj
 def fusion_360(ctx: Any) -> Dict[str, bool]:
@@ -62,6 +65,7 @@ def fusion_360(ctx: Any) -> Dict[str, bool]:
     """
     print(f"🤖 AI Fusion: Front={ctx.frontal} | Rear={ctx.trasera}")
     return {"entorno_seguro": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l12_vision360", verbose=True)

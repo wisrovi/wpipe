@@ -6,7 +6,7 @@ Shows deleting records in SQLite.
 
 import os
 
-from wpipe.sqlite import Wsqlite, SQLite
+from wpipe.sqlite import SQLite, Wsqlite
 
 
 def main() -> None:

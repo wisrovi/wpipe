@@ -18,16 +18,16 @@ import * as path from 'path';
 function getPythonModulePath(filePath: string): string {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) return 'states';
-    
+
     const rootPath = workspaceFolders[0].uri.fsPath;
     const relativePath = path.relative(rootPath, filePath);
-    
+
     // Check if the step is inside the states/ folder
     const parts = relativePath.split(/[\\/]/);
     if (parts[0] === 'states') {
         return 'states';
     }
-    
+
     // Otherwise, generate the specific relative module path
     let cleanPath = relativePath;
     if (cleanPath.endsWith('.py')) {
@@ -42,7 +42,7 @@ function getPythonModulePath(filePath: string): string {
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('🚀 WPipe Tools: Activation started...');
-    
+
     // Start Services
     CatalogManager.init(context);
     WorkspaceIndex.indexWorkspace();
@@ -50,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const stepProvider = new WPipeStepProvider();
     vscode.window.registerTreeDataProvider('wpipeSteps', stepProvider);
-    
+
     // Providers
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider({ language: 'python' }, new WPipeCodeLensProvider()),
@@ -63,7 +63,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('wpipeSteps.refreshEntry', () => stepProvider.refresh()),
         vscode.commands.registerCommand('wpipe-vscode.refreshCatalog', () => CatalogManager.update(context, true)),
-        
+
         vscode.commands.registerCommand('wpipe-vscode.createNewStep', createNewStepWizard),
 
         vscode.commands.registerCommand('wpipeSteps.openFile', async (f: string, l: number) => {
@@ -93,7 +93,7 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('wpipe-vscode.searchSteps', async () => {
             // Index workspace steps to ensure local definitions are included
             await WorkspaceIndex.indexWorkspace();
-            
+
             interface StepQuickPickItem extends vscode.QuickPickItem {
                 step: StepEntry;
             }
@@ -170,8 +170,8 @@ export async function activate(context: vscode.ExtensionContext) {
                             return true;
                         }
                         // Check step specific fields
-                        if (step.name.toLowerCase().includes(term) || 
-                            (step.func_name && step.func_name.toLowerCase().includes(term)) || 
+                        if (step.name.toLowerCase().includes(term) ||
+                            (step.func_name && step.func_name.toLowerCase().includes(term)) ||
                             (step.namespace && step.namespace.toLowerCase().includes(term))) {
                             return true;
                         }
@@ -247,7 +247,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
             const text = editor.document.getText(range);
             const openBracketIndex = text.indexOf('[');
-            
+
             if (openBracketIndex !== -1) {
                 const offset = editor.document.offsetAt(range.start) + openBracketIndex + 1;
                 const pos = editor.document.positionAt(offset);
@@ -255,25 +255,25 @@ export async function activate(context: vscode.ExtensionContext) {
             }
 
             const items = [
-                { 
-                    label: '$(split-horizontal) Condition', 
-                    detail: 'Boolean branching (True/False)', 
-                    snippet: 'Condition(\n    expression="${1:valor > 100}",\n    branch_true=[${2:step_true}],\n    branch_false=[${3:step_false}]\n)' 
+                {
+                    label: '$(split-horizontal) Condition',
+                    detail: 'Boolean branching (True/False)',
+                    snippet: 'Condition(\n    expression="${1:valor > 100}",\n    branch_true=[${2:step_true}],\n    branch_false=[${3:step_false}]\n)'
                 },
-                { 
-                    label: '$(sync) For Loop', 
-                    detail: 'Iterative loop with validation', 
-                    snippet: 'For(\n    iterations=${1:10},\n    validation_expression="${2:status != \'error\'}",\n    steps=[${3:step_to_repeat}]\n)' 
+                {
+                    label: '$(sync) For Loop',
+                    detail: 'Iterative loop with validation',
+                    snippet: 'For(\n    iterations=${1:10},\n    validation_expression="${2:status != \'error\'}",\n    steps=[${3:step_to_repeat}]\n)'
                 },
-                { 
-                    label: '$(zap) Parallel', 
-                    detail: 'Concurrent multi-step execution', 
-                    snippet: 'Parallel(\n    steps=[${1:step1}, ${2:step2}],\n    max_workers=${3:2}\n)' 
+                {
+                    label: '$(zap) Parallel',
+                    detail: 'Concurrent multi-step execution',
+                    snippet: 'Parallel(\n    steps=[${1:step1}, ${2:step2}],\n    max_workers=${3:2}\n)'
                 },
-                { 
-                    label: '$(run-all) Background', 
-                    detail: 'Asynchronous fire-and-forget task', 
-                    snippet: 'Background(${1:slow_step})' 
+                {
+                    label: '$(run-all) Background',
+                    detail: 'Asynchronous fire-and-forget task',
+                    snippet: 'Background(${1:slow_step})'
                 }
             ];
 
@@ -289,7 +289,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 return;
             }
             if (!item || !item.filePath) return;
-            
+
             const terminal = vscode.window.createTerminal(`Run Step: ${item.label}`);
             terminal.show();
             terminal.sendText(`python "${item.filePath}"`);
@@ -315,21 +315,21 @@ export async function activate(context: vscode.ExtensionContext) {
                 vscode.window.showWarningMessage('Este paso no tiene requerimientos externos definidos.');
                 return;
             }
-            
+
             const reqUrl = item.step.requirements;
             const terminal = vscode.window.createTerminal(`Install: ${item.step.name}`);
             terminal.show();
-            
+
             try {
                 // Download requirements.txt to a local temporary file first
                 const response = await fetch(reqUrl);
                 if (!response.ok) throw new Error(`No se pudo descargar el archivo: ${response.statusText}`);
                 const content = await response.text();
-                
+
                 // Determine save location: Workspace root OR extension's global storage
                 let tempReqUri: vscode.Uri;
                 const workspaceFolders = vscode.workspace.workspaceFolders;
-                
+
                 if (workspaceFolders && workspaceFolders.length > 0) {
                     tempReqUri = vscode.Uri.joinPath(workspaceFolders[0].uri, `requirements_${item.step.name}.txt`);
                 } else {
@@ -337,9 +337,9 @@ export async function activate(context: vscode.ExtensionContext) {
                     await vscode.workspace.fs.createDirectory(context.globalStorageUri);
                     tempReqUri = vscode.Uri.joinPath(context.globalStorageUri, `requirements_${item.step.name}.txt`);
                 }
-                
+
                 await vscode.workspace.fs.writeFile(tempReqUri, new TextEncoder().encode(content));
-                
+
                 terminal.sendText(`pip install -r "${tempReqUri.fsPath}"`);
                 vscode.window.showInformationMessage(`⏳ Descargado e instalando dependencias para '${item.step.name}'...`);
             } catch (error) {
@@ -358,14 +358,14 @@ export async function activate(context: vscode.ExtensionContext) {
             // UI:  https://github.com/owner/repo/tree/branch/path/to/
             let uiUrl = item.step.examples
                 .replace('raw.githubusercontent.com', 'github.com');
-            
+
             const parts = uiUrl.split('/');
             if (parts.length >= 6) {
                 const owner = parts[3];
                 const repo = parts[4];
                 const branch = parts[5];
                 const rest = parts.slice(6).join('/');
-                
+
                 // GitHub uses /tree/ for directories and /blob/ for files
                 const type = item.step.examples.endsWith('/') ? 'tree' : 'blob';
                 uiUrl = `https://github.com/${owner}/${repo}/${type}/${branch}/${rest}`;
@@ -381,11 +381,11 @@ export async function activate(context: vscode.ExtensionContext) {
             }
 
             let rawUrl = item.step.examples;
-            
+
             try {
                 // Check if it's a directory (ends with /)
                 if (rawUrl.endsWith('/')) {
-                    // It's a directory, we need to list files. 
+                    // It's a directory, we need to list files.
                     // We'll use the GitHub API to list the directory content
                     // Extract owner, repo, and path from the raw URL
                     // Example: https://raw.githubusercontent.com/wisrovi/wpipe-plugins/001-DEVELOPMENT/src/.../examples/
@@ -394,30 +394,30 @@ export async function activate(context: vscode.ExtensionContext) {
                     const repo = parts[4];
                     const branch = parts[5];
                     const pathInRepo = parts.slice(6).join('/');
-                    
+
                     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${pathInRepo}?ref=${branch}`;
-                    
+
                     const apiResponse = await fetch(apiUrl);
                     if (!apiResponse.ok) throw new Error(`No se pudo listar el contenido de la carpeta: ${apiResponse.statusText}`);
-                    
+
                     const files = await apiResponse.json();
                     if (!Array.isArray(files)) throw new Error('Respuesta inesperada de la API de GitHub.');
-                    
+
                     const pyFiles = files.filter((f: any) => f.name.endsWith('.py') && f.name !== '__init__.py').map((f: any) => ({
                         label: `$(file-code) ${f.name}`,
                         url: f.download_url,
                         name: f.name
                     }));
-                    
+
                     if (pyFiles.length === 0) {
                         vscode.window.showInformationMessage('No se encontraron archivos de ejemplo (.py) en la carpeta.');
                         return;
                     }
-                    
-                    const selected = await vscode.window.showQuickPick(pyFiles, { 
-                        placeHolder: 'Selecciona un ejemplo para usar como plantilla:' 
+
+                    const selected = await vscode.window.showQuickPick(pyFiles, {
+                        placeHolder: 'Selecciona un ejemplo para usar como plantilla:'
                     });
-                    
+
                     if (!selected) return;
                     rawUrl = selected.url;
                 }
@@ -429,7 +429,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 }, async () => {
                     const response = await fetch(rawUrl);
                     if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-                    
+
                     const content = await response.text();
                     if (content.trim().startsWith('<!DOCTYPE html>')) {
                         throw new Error('La URL no apunta a un archivo RAW válido.');

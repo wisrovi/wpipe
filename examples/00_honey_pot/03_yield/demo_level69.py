@@ -10,11 +10,11 @@ DIAGRAM:
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="tarea_rapida")
 def tarea_rapida(data: dict) -> None:
-
     """Tarea rapida step.
 
     Args:
@@ -30,9 +30,9 @@ def tarea_rapida(data: dict) -> None:
     print("⚡ Tarea rápida")
     return {"tiempo": 20}
 
+
 @step(name="tarea_normal")
 def tarea_normal(data: dict) -> None:
-
     """Tarea normal step.
 
     Args:
@@ -47,6 +47,7 @@ def tarea_normal(data: dict) -> None:
     time.sleep(0.05)
     print("📊 Tarea normal")
     return {"tiempo": 50}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

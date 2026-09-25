@@ -10,9 +10,11 @@ DIAGRAM:
 
 from wpipe import Pipeline
 
+
 def verificar_sistema(data):
     print("🔍 Verificando sistema...")
     return {"fuel": 50, "temp": 90, "ok": True}
+
 
 def evaluar_estado(data):
     fuel = data.get("fuel", 0)
@@ -25,6 +27,7 @@ def evaluar_estado(data):
     else:
         print("✅ Sistema OK")
     return {"estado": "ok"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l80_lambdacomplex", verbose=True)

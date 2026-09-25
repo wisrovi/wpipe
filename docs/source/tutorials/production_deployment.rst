@@ -95,12 +95,12 @@ Learn how to deploy wpipe pipelines to production environments.
         try:
             # Test imports
             from wpipe import Pipeline
-            
+
             # Test basic pipeline
             p = Pipeline()
             p.set_steps([(lambda d: {}, "Test", "v1.0")])
             p.run({})
-            
+
             return {"status": "healthy"}
         except Exception as e:
             return {"status": "unhealthy", "error": str(e)}
@@ -114,9 +114,9 @@ Learn how to deploy wpipe pipelines to production environments.
 .. code-block:: yaml
 
     name: Test Pipeline
-    
+
     on: [push]
-    
+
     jobs:
       test:
         runs-on: ubuntu-latest
@@ -136,11 +136,11 @@ Learn how to deploy wpipe pipelines to production environments.
 .. code-block:: dockerfile
 
     FROM python:3.11-slim
-    
+
     WORKDIR /app
     COPY . .
     RUN pip install wpipe
-    
+
     CMD ["python", "main.py"]
 
 8. Complete Example
@@ -162,7 +162,7 @@ Learn how to deploy wpipe pipelines to production environments.
 
     class ProductionPipeline(Pipeline):
         """Production-ready pipeline with monitoring."""
-        
+
         def __init__(self):
             api_config = {
                 "base_url": os.environ.get("API_URL"),
@@ -174,7 +174,7 @@ Learn how to deploy wpipe pipelines to production environments.
                 max_retries=3,
                 retry_delay=2.0
             )
-        
+
         def run(self, *args, **kwargs):
             logger.info("Starting pipeline execution")
             try:

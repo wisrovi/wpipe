@@ -9,7 +9,7 @@ graph LR
     A[Generate Numbers] --> B[Double Values]
     B --> C[Calculate Sum]
     C --> D[Complete]
-    
+
     A -.-> T[Tracker]
     B -.-> T
     C -.-> T
@@ -23,7 +23,7 @@ sequenceDiagram
     participant P as Pipeline
     participant T as Tracker
     participant DB as SQLite
-    
+
     P->>T: start_pipeline()
     T->>DB: INSERT pipeline
     P->>T: start_step("generate_numbers")

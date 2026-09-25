@@ -8,11 +8,11 @@ DIAGRAM:
 registros con diferentes tags
 """
 
-from wpipe import Pipeline, step, AutoRegister
+from wpipe import AutoRegister, Pipeline, step
+
 
 @step(name="start", tags=["inic", "auto"])
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -27,9 +27,9 @@ def start(data: dict) -> None:
     print("🔑 Startsndo...")
     return {"estado": "iniciado"}
 
+
 @step(name="process", tags=["proc"])
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -44,9 +44,9 @@ def process(data: dict) -> None:
     print("⚡ Procesando...")
     return {"procesado": True}
 
+
 @step(name="verificar", tags=["inic"])
 def verificar(data: dict) -> None:
-
     """Verificar step.
 
     Args:
@@ -60,6 +60,7 @@ def verificar(data: dict) -> None:
     """
     print("✅ Verificando...")
     return {"verificado": True}
+
 
 if __name__ == "__main__":
     print(">>> Múltiples tags...")

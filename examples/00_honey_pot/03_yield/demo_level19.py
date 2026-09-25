@@ -16,7 +16,9 @@ Pipeline(Full Trip) [
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
+
 
 @step(name="prepare_engine")
 def prepare_engine(data: Any) -> Dict[str, str]:
@@ -30,8 +32,10 @@ def prepare_engine(data: Any) -> Dict[str, str]:
     """
     return {"engine": "READY"}
 
+
 # NEW IN L19: Defining an independent 'sub-trip'
 urban_section = Pipeline(pipeline_name="urban_driving")
+
 
 @step(name="cross_crosswalk")
 def cross_crosswalk(data: Any) -> Dict[str, bool]:
@@ -45,6 +49,7 @@ def cross_crosswalk(data: Any) -> Dict[str, bool]:
     """
     print("🚶 Urban Section: Yielding to pedestrians...")
     return {"pedestrians_crossing": False}
+
 
 urban_section.set_steps([cross_crosswalk])
 

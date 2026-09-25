@@ -50,7 +50,7 @@ graph TB
         A[__init__] --> B[Logger]
         A --> C[request_count: 0]
     end
-    
+
     D[process] --> E[Increment counter]
     E --> F[Log info]
     F --> G[Create Pipeline]
@@ -80,13 +80,13 @@ flowchart LR
         B1 --> C1[count++ = 1]
         C1 --> D1[Log #1]
     end
-    
+
     subgraph Request 2
         A2[Start] --> B2[count = 1]
         B2 --> C2[count++ = 2]
         C2 --> D2[Log #2]
     end
-    
+
     subgraph Request N
         AN[Start] --> BN[count = N-1]
         BN --> CN[count++ = N]

@@ -1,5 +1,7 @@
-from typing import Dict, Any
-from wpipe import to_obj, step
+from typing import Any, Dict
+
+from wpipe import step, to_obj
+
 
 @step(name="error_capture", version="v1.0", tags=["error_capture"])
 @to_obj
@@ -14,4 +16,3 @@ def error_capture(context: Any, error: Dict[str, Any]) -> Any:
     print(f"⚠️ MESSAGE: {error['error_message']}")
     print("-" * 60)
     return context
-

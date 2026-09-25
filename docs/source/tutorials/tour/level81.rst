@@ -19,11 +19,11 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-888D3009
+   [PIPELINE STATUS] Registered: PIPE-B4C70C03
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l81_exportjson ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-888D3009: COMPLETED
+   [PIPELINE STATUS] PIPE-B4C70C03: COMPLETED
    
    📤 Exportando a JSON...
    ✅ Exportado a output/viaje81.json

@@ -41,7 +41,7 @@ sequenceDiagram
     participant Dict as Config Dict
     participant YAML as YAML File
     participant Util as wpipe.util
-    
+
     Code->>OS: os.environ["VAR"] = "value"
     OS-->>Code: Variable set
     Code->>Dict: Create dict with env var

@@ -2,8 +2,10 @@
 Error codes and execution constants for WPipe.
 """
 
+
 class Codes:
     """Standard task and process status codes."""
+
     TASK_RUNNING = 100
     TASK_COMPLETED = 200
     TASK_FAILED = 502

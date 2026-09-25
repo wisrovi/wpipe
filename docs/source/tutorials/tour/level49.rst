@@ -24,5 +24,5 @@ Resultado de Ejecución
    
    🔑 [ASYNC] Motor started and tracked
    
-   [ASYNC STATUS] PIPE-F8AA039C: COMPLETED
+   [ASYNC STATUS] PIPE-0F0C3060: COMPLETED
    Result: {'motor': 'on'}

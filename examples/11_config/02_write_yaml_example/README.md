@@ -36,7 +36,7 @@ sequenceDiagram
     participant Util as wpipe.util
     participant YAML as YAML Library
     participant FS as File System
-    
+
     App->>Util: Call escribir_yaml(path, dict)
     Util->>YAML: Serialize dict to YAML
     YAML-->>Util: YAML string

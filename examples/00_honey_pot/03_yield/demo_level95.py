@@ -10,11 +10,11 @@ TaskTimer(timeout) + exceeded --> alert
 
 import time
 
-from wpipe import Pipeline, step, TaskTimer
+from wpipe import Pipeline, TaskTimer, step
+
 
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -28,6 +28,7 @@ def task(data: dict) -> None:
     """
     print("⚡ Ejecutando...")
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> TaskTimer con alert...")

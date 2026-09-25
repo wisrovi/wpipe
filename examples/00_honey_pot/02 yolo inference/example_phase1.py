@@ -11,10 +11,9 @@ This demonstrates:
 Run this to see Phase 1 features in action with the honey pot detector.
 """
 
-import asyncio
 import random
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from states.image_inference import ImageInference
 from states.reporter import AuthorizedPersonReporter, UnauthorizedPersonReporter
@@ -24,7 +23,6 @@ from wpipe import (
     CheckpointManager,
     Condition,
     Pipeline,
-    PipelineAsync,
     PipelineExporter,
     TaskTimer,
     timeout_sync,
@@ -72,7 +70,7 @@ def demo_phase1_features() -> None:
     if checkpoint_mgr.can_resume(pipeline_id):
         last_ckpt = checkpoint_mgr.get_last_checkpoint(pipeline_id)
         print(f"  Found checkpoint at step: {last_ckpt['step_name']}")
-        print(f"  Resume capability: ENABLED ✓\n")
+        print("  Resume capability: ENABLED ✓\n")
     else:
         print("  No previous checkpoint (first run)\n")
 
@@ -186,11 +184,11 @@ def demo_phase1_features() -> None:
     print("✓ FEATURE 5: LOG EXPORT")
     print("=" * 70 + "\n")
 
-    print(f"  Export formats supported:")
-    print(f"    - JSON (for analysis)")
-    print(f"    - CSV (for Excel/Sheets)\n")
+    print("  Export formats supported:")
+    print("    - JSON (for analysis)")
+    print("    - CSV (for Excel/Sheets)\n")
 
-    print(f"  Export paths:")
+    print("  Export paths:")
     print(f"    - Logs location: {output_dir / 'pipeline_logs.json'}")
     print(f"    - CSV location: {output_dir / 'pipeline_logs.csv'}\n")
 
@@ -208,10 +206,10 @@ def demo_phase1_features() -> None:
     )
 
     stats = checkpoint_mgr.get_checkpoint_stats(pipeline_id)
-    print(f"  ✓ Checkpoint saved")
+    print("  ✓ Checkpoint saved")
     print(f"    - Total checkpoints: {stats['total_checkpoints']}")
     print(f"    - Successful: {stats['successful']}")
-    print(f"    - Resume ready: Yes\n")
+    print("    - Resume ready: Yes\n")
 
     # ===== SUMMARY =====
     print("=" * 70)
@@ -227,7 +225,7 @@ def demo_phase1_features() -> None:
 
 All features integrated without breaking existing code!
 100% backward compatible with 500k+ existing users.
-    
+
 Next: Phase 2 - Syntax improvements & decorators
 Next: Phase 3 - Native parallelism
 """

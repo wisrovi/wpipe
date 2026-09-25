@@ -10,7 +10,6 @@ import argparse
 import subprocess
 from pathlib import Path
 
-
 CONVENTIONAL_PREFIXES = {
     ".py": "FEATURE",
     ".js": "FEATURE",
@@ -87,11 +86,11 @@ echo "Starting granular commit process..."
         rel_path = file_path.relative_to(project_path)
         message = generate_commit_message(file_path)
 
-        script += f'''
+        script += f"""
 # {rel_path}
 git add "{rel_path}"
 git commit -m "{message}"
-'''
+"""
 
     script += """
 echo "Done! All files committed."

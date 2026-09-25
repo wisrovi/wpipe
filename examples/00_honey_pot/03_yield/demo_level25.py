@@ -15,6 +15,7 @@ from typing import Any, Dict
 
 from wpipe import Parallel, Pipeline, step
 
+
 @step(name="deep_vision")
 def deep_vision(data: Any) -> Dict[str, str]:
     """Deep vision step with intense CPU load.
@@ -31,6 +32,7 @@ def deep_vision(data: Any) -> Dict[str, str]:
         _ = 100 * 100
     return {"ai": "done"}
 
+
 if __name__ == "__main__":
     # 1. Threads Mode
     p1 = Pipeline(pipeline_name="eco_mode_threads")
@@ -46,9 +48,7 @@ if __name__ == "__main__":
     # 2. Processes Mode (NEW L25)
     # Note: when using use_processes=True, ensure context data is serializable
     p2 = Pipeline(pipeline_name="sport_mode_processes")
-    p2.set_steps(
-        [Parallel(steps=[deep_vision] * 4, max_workers=4, use_processes=True)]
-    )
+    p2.set_steps([Parallel(steps=[deep_vision] * 4, max_workers=4, use_processes=True)])
 
     print(">>> [TEST 2] Processing with PROCESSES (Total Power)...")
     t2 = time.time()

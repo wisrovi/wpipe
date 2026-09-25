@@ -8,8 +8,6 @@ DIAGRAM:
 analysis.get_trend_data(days=1)
 """
 
-import time
-
 from wpipe import Pipeline, step
 
 

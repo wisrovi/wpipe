@@ -10,9 +10,9 @@ step(depends_on=["a", "b"])
 
 from wpipe import Pipeline, step
 
+
 @step(name="tarea_a")
 def tarea_a(data: dict) -> None:
-
     """Tarea a step.
 
     Args:
@@ -27,9 +27,9 @@ def tarea_a(data: dict) -> None:
     print("📗 Tarea A")
     return {"a": True}
 
+
 @step(name="tarea_b")
 def tarea_b(data: dict) -> None:
-
     """Tarea b step.
 
     Args:
@@ -44,9 +44,9 @@ def tarea_b(data: dict) -> None:
     print("📘 Tarea B")
     return {"b": True}
 
+
 @step(name="tarea_c", depends_on=["tarea_a", "tarea_b"])
 def tarea_c(data: dict) -> None:
-
     """Tarea c step.
 
     Args:
@@ -60,6 +60,7 @@ def tarea_c(data: dict) -> None:
     """
     print("📙 Tarea C (dependencies: A + B)")
     return {"c": True}
+
 
 if __name__ == "__main__":
     print(">>> Múltiples dependencias...")

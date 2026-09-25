@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
         # Show checkpoint statistics
         stats = checkpoint_mgr.get_checkpoint_stats("demo_pipeline")
-        print(f"\n--- Checkpoint Statistics ---")
+        print("\n--- Checkpoint Statistics ---")
         print(f"Total checkpoints: {stats['total_checkpoints']}")
         print(f"Successful: {stats['successful']}")
         print(f"Failed: {stats['failed']}")

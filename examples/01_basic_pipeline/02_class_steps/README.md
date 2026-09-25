@@ -27,7 +27,7 @@ sequenceDiagram
     participant C1 as DoubleValue
     participant C2 as AddFive
     participant C3 as FormatOutput
-    
+
     P->>C1: run({value: 10})
     C1-->>P: {doubled: 20}
     P->>C2: run({doubled: 20})
@@ -42,17 +42,17 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[DoubleValue]
         D[AddFive]
         E[FormatOutput]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

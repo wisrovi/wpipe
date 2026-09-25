@@ -16,7 +16,10 @@ from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
-def emergency_maintenance(context: Dict[str, Any], error: Dict[str, Any]) -> Dict[str, Any]:
+
+def emergency_maintenance(
+    context: Dict[str, Any], error: Dict[str, Any]
+) -> Dict[str, Any]:
     """Emergency maintenance handler when a sensor fails.
 
     Args:
@@ -29,6 +32,7 @@ def emergency_maintenance(context: Dict[str, Any], error: Dict[str, Any]) -> Dic
     print(f"\n🔧 SYSTEM: Error detected in '{error['step_name']}'.")
     print("🧼 ACTION: Activating sensor self-cleaning...\n")
     return context
+
 
 @step(name="verify_lens")
 def verify_lens(data: Any) -> Dict[str, str]:
@@ -47,6 +51,7 @@ def verify_lens(data: Any) -> Dict[str, str]:
         raise RuntimeError("Obstructed visibility (Dirty lens)")
     print("👀 Sensors clean. Visibility 100%.")
     return {"vision": "Clear"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l11_faulttolerance", verbose=True)

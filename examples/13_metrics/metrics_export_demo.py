@@ -67,7 +67,7 @@ def demo_metrics_export() -> None:
     print("Running pipeline with metrics collection...\n")
     result = pipeline.run({})
 
-    print(f"\n✓ Pipeline completed!")
+    print("\n✓ Pipeline completed!")
     print(f"  Result: {result}\n")
 
     # Initialize exporter
@@ -98,7 +98,7 @@ def demo_metrics_export() -> None:
     print("\n2. Exporting pipeline logs...")
     logs_path = os.path.join(output_dir, "pipeline_logs.json")
     print(f"   → Output location: {logs_path}")
-    print(f"   → Logs would be exported from tracking database\n")
+    print("   → Logs would be exported from tracking database\n")
 
     # Show available files
     print("=" * 70)

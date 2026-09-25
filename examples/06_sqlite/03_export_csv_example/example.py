@@ -4,9 +4,8 @@
 Shows exporting database contents to CSV manually.
 """
 
-import os
 import csv
-import json
+import os
 
 from wpipe.sqlite import SQLite
 
@@ -37,7 +36,7 @@ def main() -> None:
     for rec in records:
         print(f"  {rec}")
 
-    with open(csv_path, 'w', newline='') as f:
+    with open(csv_path, "w", newline="") as f:
         if records:
             writer = csv.DictWriter(f, fieldnames=records[0].keys())
             writer.writeheader()

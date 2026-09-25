@@ -1,8 +1,5 @@
-from wpipe import Pipeline
-import os
+from wpipe import Pipeline, step
 from wpipe.tracking import Metric, Severity
-
-from wpipe import step
 
 
 @step(name="step_a", version="v1.0")

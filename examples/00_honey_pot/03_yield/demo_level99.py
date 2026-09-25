@@ -10,11 +10,11 @@ múltiples threshold --> múltiples alerts
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="tarea1")
 def tarea1(data: dict) -> None:
-
     """Tarea1 step.
 
     Args:
@@ -29,9 +29,9 @@ def tarea1(data: dict) -> None:
     time.sleep(0.02)
     return {"ok": True}
 
+
 @step(name="tarea2")
 def tarea2(data: dict) -> None:
-
     """Tarea2 step.
 
     Args:
@@ -45,6 +45,7 @@ def tarea2(data: dict) -> None:
     """
     time.sleep(0.1)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Múltiples alerts...")

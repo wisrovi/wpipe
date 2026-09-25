@@ -28,11 +28,14 @@ from wpipe import (
     to_obj,
 )
 
+
 # 1. Secure Data Definition
 class CarStatus(BaseModel):
     """Pydantic model for vehicle status validation."""
+
     fuel: float = Field(..., ge=0, le=100)
     speed: float = Field(..., ge=0, le=200)
+
 
 # 2. Vision Intelligence
 @step(name="ai_vision_360")
@@ -48,6 +51,7 @@ def ai_vision_360(data: Any) -> Dict[str, Any]:
     danger = random.random() < 0.2
     return {"obstacle": danger, "distance": random.randint(2, 50)}
 
+
 # 3. Automatic Response
 @step(name="emergency_braking")
 def emergency_braking(data: Any) -> Dict[str, bool]:
@@ -62,6 +66,7 @@ def emergency_braking(data: Any) -> Dict[str, bool]:
     print("🚨 ADAS: EMERGENCY BRAKING ACTIVATED!")
     return {"braking": True}
 
+
 # Validation and Metrics
 @to_obj(CarStatus)
 def validate_telemetry(ctx: CarStatus) -> Dict[str, bool]:
@@ -75,6 +80,7 @@ def validate_telemetry(ctx: CarStatus) -> Dict[str, bool]:
     """
     Metric.record("trip_speed", ctx.speed, "km/h")
     return {"v_ok": True}
+
 
 if __name__ == "__main__":
     # Infrastructure preparation
@@ -101,14 +107,20 @@ if __name__ == "__main__":
                 iterations=3,
                 steps=[
                     # Look in parallel using multiple cores (Multiprocess)
-                    Parallel(steps=[ai_vision_360] * 3, use_processes=True, max_workers=3),
+                    Parallel(
+                        steps=[ai_vision_360] * 3, use_processes=True, max_workers=3
+                    ),
                     # Logical decision
-                    Condition(expression="obstacle == True", branch_true=[emergency_braking]),
+                    Condition(
+                        expression="obstacle == True", branch_true=[emergency_braking]
+                    ),
                     validate_telemetry,
                 ],
             ),
             (
-                lambda d: print("🏁 DESTINATION REACHED: The car has arrived on its own."),
+                lambda d: print(
+                    "🏁 DESTINATION REACHED: The car has arrived on its own."
+                ),
                 "finish",
                 "v1.0",
             ),
@@ -117,7 +129,9 @@ if __name__ == "__main__":
 
     # Event and Hook Registration
     trip.add_event(
-        event_type="log", event_name="Departure", message="Starting Madrid-Valencia route"
+        event_type="log",
+        event_name="Departure",
+        message="Starting Madrid-Valencia route",
     )
     trip.add_event(
         event_type="hook",

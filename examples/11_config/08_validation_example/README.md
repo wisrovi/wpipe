@@ -37,7 +37,7 @@ sequenceDiagram
     participant YAML as YAML File
     participant Util as wpipe.util
     participant Config as Config Dict
-    
+
     User->>YAML: Open pipeline.yaml
     User->>Util: Call leer_yaml()
     Util->>YAML: Read content

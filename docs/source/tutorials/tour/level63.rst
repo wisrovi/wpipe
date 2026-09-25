@@ -24,4 +24,4 @@ Resultado de Ejecución
    
    ✅ Conexión establecida
    🏁 Proceso finalizado
-   viaje_l63_pipelineretryexcept ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+   viaje_l63_pipelineretryexcept ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

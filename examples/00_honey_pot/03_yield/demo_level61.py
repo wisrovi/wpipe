@@ -17,9 +17,9 @@ import random
 
 from wpipe import Pipeline, step
 
+
 @step(name="conectar_api")
 def conectar_api(data: dict) -> None:
-
     """Conectar api step.
 
     Args:
@@ -36,9 +36,9 @@ def conectar_api(data: dict) -> None:
     print("✅ API conectada")
     return {"api": "ok"}
 
+
 @step(name="procesar_respuesta")
 def procesar_respuesta(data: dict) -> None:
-
     """Procesar respuesta step.
 
     Args:
@@ -52,6 +52,7 @@ def procesar_respuesta(data: dict) -> None:
     """
     print("📝 Procesando respuesta...")
     return {"procesado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

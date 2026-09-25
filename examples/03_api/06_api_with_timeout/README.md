@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: Request with timeout
     alt Timeout
         A-->>P: Timeout error
@@ -37,15 +37,15 @@ graph TB
     subgraph Config
         A[timeout: 30]
     end
-    
+
     subgraph Request
         B[Send API Call]
     end
-    
+
     subgraph Outcome
         C[Timeout or Success]
     end
-    
+
     A --> B
     B --> C
 ```
@@ -64,7 +64,7 @@ flowchart LR
     T([Timeout Config]) --> C[API Call]
     C --> R([Result])
     C --> X([Timeout Error])
-    
+
     style T fill:#e1f5fe
     style X fill:#ffcdd2
 ```

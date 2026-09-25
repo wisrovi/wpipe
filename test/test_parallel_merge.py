@@ -6,7 +6,8 @@ worker results back into the global context.
 """
 
 import pytest
-from wpipe import Pipeline, PipelineAsync, step, Parallel
+
+from wpipe import Parallel, Pipeline, PipelineAsync, step
 
 
 @step(name="inc_counter", version="v1.0")
@@ -47,7 +48,9 @@ def who_c(data: dict):
 
 def run_parallel(steps, data, merge_policy="accumulate", use_processes=False):
     p = Pipeline(pipeline_name="parallel_merge_test", show_progress=False)
-    p.set_steps([Parallel(steps=steps, merge_policy=merge_policy, use_processes=use_processes)])
+    p.set_steps(
+        [Parallel(steps=steps, merge_policy=merge_policy, use_processes=use_processes)]
+    )
     return p.run(data)
 
 
@@ -78,14 +81,18 @@ def test_parallel_accumulate_last_write_for_strings():
 
 
 def test_parallel_custom_callable_policy():
-    res = run_parallel([inc_counter, inc_counter, inc_counter], {"counter": 0},
-                       merge_policy=lambda current, new: current + new)
+    res = run_parallel(
+        [inc_counter, inc_counter, inc_counter],
+        {"counter": 0},
+        merge_policy=lambda current, new: current + new,
+    )
     assert res["counter"] == 3
 
 
 def test_parallel_accumulate_with_processes():
-    res = run_parallel([inc_counter, inc_counter, inc_counter], {"counter": 0},
-                       use_processes=True)
+    res = run_parallel(
+        [inc_counter, inc_counter, inc_counter], {"counter": 0}, use_processes=True
+    )
     assert res["counter"] == 3
 
 

@@ -17,27 +17,27 @@ flowchart TB
     subgraph Input["Input Layer"]
         MSG[Raw Message]
     end
-    
+
     subgraph Validation["Stage 1: Validation"]
         CHECK[Check required fields]
         SANITIZE[Sanitize input]
         REJECT[Reject if invalid]
     end
-    
+
     subgraph Transform["Stage 2: Transformation"]
         UPPER[Uppercase transform]
         LENGTH[Calculate length]
     end
-    
+
     subgraph Enrich["Stage 3: Enrichment"]
         TIMESTAMP[Add timestamp]
         ORIGIN[Add origin service]
     end
-    
+
     subgraph Output["Output Layer"]
         RESULT[Final Result]
     end
-    
+
     MSG --> CHECK
     CHECK -->|Valid| SANITIZE
     CHECK -->|Invalid| REJECT
@@ -109,17 +109,17 @@ OUTPUT: enriched_data (dict)
 ```mermaid
 stateDiagram-v2
     [*] --> Initialized: __init__()
-    
+
     Initialized --> Running: iniciar()
-    
+
     Running --> Processing: procesar_mensaje()
     Processing --> Running: Complete
-    
+
     Running --> Stopping: detener()
     Stopping --> Stopped: Cleanup done
-    
+
     Stopped --> [*]
-    
+
     Running --> Error: Exception
     Error --> Running: Recovery
     Error --> Stopping: Fatal error
@@ -132,13 +132,13 @@ def procesar_mensaje(self, mensaje: dict) -> dict:
     # Atomic increment
     self.contador_mensajes += 1
     mensaje_id = self.contador_mensajes
-    
+
     # Process with context
     self.logger.info(f"[MSG-{mensaje_id}] Processing...")
-    
+
     # Execute pipeline
     resultado = self.pipeline.run(mensaje)
-    
+
     self.logger.info(f"[MSG-{mensaje_id}] Completed")
     return resultado
 ```
@@ -215,19 +215,19 @@ DECISION: Should execute step?
 flowchart TD
     START[Start Service] --> INIT[Initialize Components]
     INIT --> WAIT[Wait for Messages]
-    
+
     WAIT -->|Message Received| PROCESS[Process Message]
     PROCESS --> VALIDATE[Validate]
     VALIDATE -->|Valid| TRANSFORM[Transform]
     VALIDATE -->|Invalid| ERROR[Log Error]
     ERROR --> RESPONSE
-    
+
     TRANSFORM --> ENRICH[Enrich]
     ENRICH --> STORE[Store Result]
     STORE --> RESPONSE[Send Response]
-    
+
     RESPONSE --> WAIT
-    
+
     WAIT -->|Stop Signal| CLEANUP[Cleanup]
     CLEANUP --> END[End Service]
 ```
@@ -241,7 +241,7 @@ sequenceDiagram
     participant Step1
     participant Step2
     participant Step3
-    
+
     Service->>Pipeline: run(data)
     Pipeline->>Step1: execute(data)
     Step1-->>Pipeline: result_1
@@ -262,13 +262,13 @@ flowchart LR
         I1[mensaje: str]
         I2[origen: str]
     end
-    
+
     subgraph Transformations
         T1[Uppercase]
         T2[Length]
         T3[Timestamp]
     end
-    
+
     subgraph Output
         O1[validado: bool]
         O2[procesado: bool]
@@ -277,7 +277,7 @@ flowchart LR
         O5[enriquecido: bool]
         O6[timestamp: str]
     end
-    
+
     I1 --> T1 --> O3
     I1 --> T2 --> O4
     I1 --> O1
@@ -296,7 +296,7 @@ def paso_validacion(data: dict) -> dict:
         raise ValueError("Campo 'mensaje' requerido")
     return {"validado": True, "mensaje": data["mensaje"]}
 
-# Transformation  
+# Transformation
 def paso_procesamiento(data: dict) -> dict:
     mensaje = data.get("mensaje", "")
     return {
@@ -329,7 +329,7 @@ class MicroservicioThreadSafe:
     def __init__(self):
         self._lock = threading.Lock()
         self._counter = 0
-    
+
     def procesar(self, mensaje):
         with self._lock:
             self._counter += 1
@@ -387,13 +387,13 @@ RECOVERY STRATEGY:
 def detener(self):
     # 1. Stop accepting new messages
     self.ejecutando = False
-    
+
     # 2. Wait for current processing (optional)
     # time.sleep(1)
-    
+
     # 3. Cleanup resources
     self.logger.info(f"[STOP] {self.nombre} detenido")
-    
+
     # 4. Final metrics
     print(f"Total mensajes procesados: {self.contador_mensajes}")
 ```

@@ -28,7 +28,7 @@ sequenceDiagram
     participant A1 as add_item_1
     participant A2 as add_item_2
     participant S as summarize
-    
+
     P->>I: run({})
     I-->>P: {results: [], count: 0}
     P->>A1: run({results: [], count: 0})
@@ -45,18 +45,18 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[initialize]
         D[add_item_1]
         E[add_item_2]
         F[summarize]
     end
-    
+
     subgraph Result
         G[Summary]
     end
-    
+
     A --> B
     B --> C
     C --> D

@@ -10,6 +10,7 @@ DIAGRAM:
 
 from wpipe import Pipeline, step
 
+
 @step(name="primero")
 def primero(data: dict) -> None:
     """Primero step.
@@ -23,9 +24,9 @@ def primero(data: dict) -> None:
     print("1️⃣ Primero")
     return {"done": True}
 
+
 @step(name="segundo", depends_on=["primero"])
 def segundo(data: dict) -> None:
-
     """Segundo step.
 
     Args:
@@ -39,6 +40,7 @@ def segundo(data: dict) -> None:
     """
     print("2️⃣ Segundo (depends_on primero)")
     return {"done": True}
+
 
 if __name__ == "__main__":
     print(">>> step_depends...")

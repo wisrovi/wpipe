@@ -42,7 +42,7 @@ def main():
         print("\n[Info] Error is tracked in the database and visible in dashboard")
 
     print(
-        f"\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+        "\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
 
 

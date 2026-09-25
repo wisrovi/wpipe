@@ -3,14 +3,11 @@ Unit tests for example_module.py demonstrating best practices.
 Includes fixtures, type hints, and comprehensive coverage.
 """
 
-from unittest.mock import MagicMock, patch
 import pytest
-
 from example_module import (
     DataProcessor,
     UserConfig,
     ValidationError,
-    ProcessingError,
 )
 
 

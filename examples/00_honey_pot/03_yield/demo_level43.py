@@ -11,7 +11,9 @@ DIAGRAM:
 import asyncio
 import random
 from typing import Any, Dict
+
 from wpipe import PipelineAsync
+
 
 async def connect_car(data: Any) -> Dict[str, bool]:
     """Connect car step asynchronously with potential failure.
@@ -30,6 +32,7 @@ async def connect_car(data: Any) -> Dict[str, bool]:
     print("📱 [ASYNC] Car connected")
     return {"connected": True}
 
+
 async def sync_data(data: Any) -> Dict[str, str]:
     """Synchronize data step asynchronously.
 
@@ -41,6 +44,7 @@ async def sync_data(data: Any) -> Dict[str, str]:
     """
     print("🔄 [ASYNC] Data synchronized")
     return {"sync": "ok"}
+
 
 if __name__ == "__main__":
 

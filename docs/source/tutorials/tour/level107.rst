@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    >>> Pipeline + Wsqlite...
-   [PIPELINE STATUS] Registered: PIPE-ED6AFC83
+   [PIPELINE STATUS] Registered: PIPE-53366215
    viaje_l107 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-ED6AFC83: COMPLETED
+   [PIPELINE STATUS] PIPE-53366215: COMPLETED
    ✅ Datos guardados

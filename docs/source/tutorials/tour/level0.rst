@@ -16,4 +16,3 @@ Resultado de Ejecución
 .. code-block:: text
 
    Running Create_batch step...
-

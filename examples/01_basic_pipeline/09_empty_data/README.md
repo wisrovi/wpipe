@@ -26,7 +26,7 @@ sequenceDiagram
     participant P as Pipeline
     participant S1 as step_a
     participant S2 as step_b
-    
+
     P->>S1: run({})
     S1-->>P: {processed: 0}
     P->>S2: run({processed: 0})
@@ -39,16 +39,16 @@ graph TB
         A[Empty Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[step_a]
         D[step_b]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

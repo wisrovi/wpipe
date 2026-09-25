@@ -33,7 +33,7 @@ If you need specific development tools or the latest source code:
         :sync: dev
 
         Includes testing frameworks (pytest, ruff, mypy).
-        
+
         .. code-block:: bash
 
             pip install "wpipe[dev]"
@@ -42,7 +42,7 @@ If you need specific development tools or the latest source code:
         :sync: docs
 
         Includes Sphinx and themes for building these docs locally.
-        
+
         .. code-block:: bash
 
             pip install "wpipe[docs]"

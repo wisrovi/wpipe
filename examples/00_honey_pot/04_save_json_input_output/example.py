@@ -132,18 +132,20 @@ def assert_case(case_name: str, storage: dict, expected_saved: bool) -> None:
         + storage["step_outputs"]
     )
     if expected_saved:
-        assert all(c is not None for c in cells), (
-            f"{case_name}: expected payloads to be saved, found NULL"
-        )
+        assert all(
+            c is not None for c in cells
+        ), f"{case_name}: expected payloads to be saved, found NULL"
     else:
-        assert all(c is None for c in cells), (
-            f"{case_name}: expected payloads to be omitted (NULL)"
-        )
-    print(f"    [OK] {case_name}: {'saved' if expected_saved else 'omitted (NULL)'} "
-          f"-> pipeline_input={storage['pipeline_input'] is not None}, "
-          f"pipeline_output={storage['pipeline_output'] is not None}, "
-          f"step_inputs={[s is not None for s in storage['step_inputs']]}, "
-          f"step_outputs={[s is not None for s in storage['step_outputs']]}")
+        assert all(
+            c is None for c in cells
+        ), f"{case_name}: expected payloads to be omitted (NULL)"
+    print(
+        f"    [OK] {case_name}: {'saved' if expected_saved else 'omitted (NULL)'} "
+        f"-> pipeline_input={storage['pipeline_input'] is not None}, "
+        f"pipeline_output={storage['pipeline_output'] is not None}, "
+        f"step_inputs={[s is not None for s in storage['step_inputs']]}, "
+        f"step_outputs={[s is not None for s in storage['step_outputs']]}"
+    )
 
 
 def main() -> None:
@@ -158,11 +160,19 @@ def main() -> None:
 
         print("\n--- Case 1: save_json_input_output=False ---")
         off_id = run_pipeline(db_path, config_dir, "Trip_L1", save_json=False)
-        assert_case("False -> steps/pipeline store NULL", fetch_storage(off_id, db_path), expected_saved=False)
+        assert_case(
+            "False -> steps/pipeline store NULL",
+            fetch_storage(off_id, db_path),
+            expected_saved=False,
+        )
 
         print("\n--- Case 2: save_json_input_output=True (default) ---")
         on_id = run_pipeline(db_path, config_dir, "Trip_L2", save_json=True)
-        assert_case("True -> steps/pipeline store payloads", fetch_storage(on_id, db_path), expected_saved=True)
+        assert_case(
+            "True -> steps/pipeline store payloads",
+            fetch_storage(on_id, db_path),
+            expected_saved=True,
+        )
 
         print("\n--- Case 3: default behavior (flag omitted) ---")
         pipeline = Pipeline(
@@ -173,7 +183,11 @@ def main() -> None:
         )
         pipeline.set_steps([load_cargo, drive, park])
         pipeline.run({"trip": "C"})
-        assert_case("Default -> payloads saved", fetch_storage(pipeline.pipeline_id, db_path), expected_saved=True)
+        assert_case(
+            "Default -> payloads saved",
+            fetch_storage(pipeline.pipeline_id, db_path),
+            expected_saved=True,
+        )
 
     print("\n" + "=" * 70)
     print("[OK] save_json_input_output works for both configurations")

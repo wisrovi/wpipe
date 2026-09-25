@@ -12,9 +12,9 @@ import time
 
 from wpipe import Pipeline, ResourceMonitor, step
 
+
 @step(name="proceso")
 def proceso(data: dict) -> None:
-
     """Proceso step.
 
     Args:
@@ -30,6 +30,7 @@ def proceso(data: dict) -> None:
     print("⚡ Proceso completado")
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Monitor de recursos...")
 
@@ -39,6 +40,6 @@ if __name__ == "__main__":
         pipe.run({})
 
     summary = monitor.get_summary()
-    print(f"\n📊 Resource Summary:")
+    print("\n📊 Resource Summary:")
     print(f"  Peak RAM: {summary['peak_ram_mb']:.1f} MB")
     print(f"  Avg CPU: {summary['avg_cpu_percent']:.1f}%")

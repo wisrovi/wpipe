@@ -23,10 +23,12 @@ def main() -> None:
     """Run error in recovery example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (main_step, "Main", "v1.0"),
-        (recovery_handler, "Recovery", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (main_step, "Main", "v1.0"),
+            (recovery_handler, "Recovery", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

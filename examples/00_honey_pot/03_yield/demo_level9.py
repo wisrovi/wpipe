@@ -14,8 +14,11 @@ DIAGRAM:
 """
 
 import random
-from typing import Any, Dict, Generator, Tuple
+from collections.abc import Generator
+from typing import Any, Dict, Tuple
+
 import numpy as np
+
 from wpipe import Condition, For, Pipeline, step, to_obj
 
 

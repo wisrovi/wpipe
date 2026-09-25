@@ -1,5 +1,7 @@
 from dto.car import Car, Niveles
-from wpipe import Condition, For, Pipeline, timeout_sync, to_obj, step, PipelineContext
+
+from wpipe import PipelineContext, step, timeout_sync, to_obj
+
 
 # Esquema dummy para evitar errores de importación
 class ViajeContext(PipelineContext):
@@ -8,6 +10,7 @@ class ViajeContext(PipelineContext):
     nivel_gasolina: str
     nivel_aceite: str
     nivel_neumaticos: str
+
 
 @timeout_sync(seconds=2)
 @step(name="HecharGasolina", version="v1.0", parallel=True)

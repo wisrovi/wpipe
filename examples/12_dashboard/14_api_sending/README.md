@@ -11,7 +11,7 @@ flowchart TD
     R --> W[Webhook]
     R --> S[Slack]
     R --> E2[Email]
-    
+
     W --> API[(External APIs)]
     S --> API
     E2 --> API
@@ -27,7 +27,7 @@ classDiagram
         +send_post(endpoint, data)
         +send_get(endpoint)
     }
-    
+
     class SendingMethods {
         +POST to webhook
         +GET from API
@@ -44,7 +44,7 @@ sequenceDiagram
     participant A as APIClient
     participant W as Webhook
     participant DB as SQLite
-    
+
     P->>A: execute step
     A->>W: POST /webhook
     W-->>A: 200 OK

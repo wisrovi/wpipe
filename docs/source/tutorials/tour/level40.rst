@@ -22,14 +22,12 @@ Resultado de Ejecución
    
    🚀 STARTING THE GRAND TRIP (Integration of 40 levels)...
    
-   [PIPELINE STATUS] Registered: PIPE-4D2FBA2B
-   [PARALLEL] Executing 3 steps using PROCESSES (workers=3)
-     [ERROR] Loop broken at iteration 0 due to: Can't pickle <function <lambda> at 0x7ce967c96020>: attribute lookup <lambda> on __main__ failed | Can't pickle <function <lambda> at 0x7ce967c96020>: attribute lookup <lambda> on __main__ failed | Can't pickle <function <lambda> at 0x7ce967c96020>: attribute lookup <lambda> on __main__ failed
-   🏁 DESTINATION REACHED: The car has arrived on its own.
+   [CHECKPOINT] Resuming 'final_autonomous_trip' from step 3
+   [PIPELINE STATUS] Registered: PIPE-2235236F
    total_autonomous_trip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    [HOOKS] Executing post-run tasks...
    🔌 Systems disconnected.
-   [PIPELINE STATUS] PIPE-4D2FBA2B: COMPLETED
+   [PIPELINE STATUS] PIPE-2235236F: COMPLETED
    
    ✅ LEARNING TOUR COMPLETED. 40 LEVELS OF WPIPE MASTERY.

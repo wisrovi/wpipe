@@ -7,9 +7,9 @@ Copia este template y personalízalo con los resultados reales.
 ```markdown
 # 🔒 Security Assessment Report
 
-**Project:** [Nombre del Proyecto]  
-**Date:** [Fecha]  
-**Assessment Level:** Automated Static Analysis + Dependency Check  
+**Project:** [Nombre del Proyecto]
+**Date:** [Fecha]
+**Assessment Level:** Automated Static Analysis + Dependency Check
 **Status:** 🟢 SECURE / 🟡 WARNINGS / 🔴 VULNERABLE
 
 ---

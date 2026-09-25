@@ -42,7 +42,9 @@ class APIClient:
         }
         self.timeout = timeout
 
-    def send_post(self, endpoint: str, data: dict[str, Any]) -> Optional[dict[str, Any]]:
+    def send_post(
+        self, endpoint: str, data: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
         """
         Sends a POST request to a specified endpoint.
 
@@ -62,10 +64,7 @@ class APIClient:
         url = f"{self.base_url}{endpoint}"
         try:
             response = requests.post(
-                url,
-                headers=self.headers,
-                data=json.dumps(data),
-                timeout=self.timeout
+                url, headers=self.headers, data=json.dumps(data), timeout=self.timeout
             )
             response.raise_for_status()
             return cast(Optional[dict[str, Any]], response.json())

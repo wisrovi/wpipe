@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any
+
 """
 DEMO LEVEL 57: Checkpoints con Callbacks
 ---------------------------------------
@@ -13,9 +14,9 @@ DIAGRAM:
 
 from wpipe import Pipeline, step
 
+
 @step(name="start_engine")
 def start_engine(data: dict) -> None:
-
     """Start engine step.
 
     Args:
@@ -30,9 +31,9 @@ def start_engine(data: dict) -> None:
     print("🚀 Motor arrancado")
     return {"fuel": 15, "temp": 85}
 
+
 @step(name="monitor_engine")
 def monitor_engine(data: dict) -> None:
-
     """Monitor engine step.
 
     Args:
@@ -47,9 +48,9 @@ def monitor_engine(data: dict) -> None:
     print("📊 Monitoreando motor...")
     return data
 
+
 @step(name="mostrar_alerta_combustible")
 def mostrar_alerta_combustible(context: Any) -> None:
-
     """Mostrar alert combustible step.
 
     Args:
@@ -64,9 +65,9 @@ def mostrar_alerta_combustible(context: Any) -> None:
     print("⛽ [CHECKPOINT] ¡Alerta de combustible!")
     return {"alert": "combustible"}
 
+
 @step(name="mostrar_alerta_temperatura")
 def mostrar_alerta_temperatura(context: Any) -> None:
-
     """Mostrar alert temperatura step.
 
     Args:
@@ -80,6 +81,7 @@ def mostrar_alerta_temperatura(context: Any) -> None:
     """
     print("🌡️ [CHECKPOINT] ¡Alerta de temperatura!")
     return {"alert": "temperatura"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l57_checkpoints", verbose=True)

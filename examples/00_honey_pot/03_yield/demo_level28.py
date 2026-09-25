@@ -9,7 +9,9 @@ DIAGRAM:
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
+
 
 @step(name="cross_border")
 def cross_border(data: Any) -> Dict[str, str]:
@@ -23,6 +25,7 @@ def cross_border(data: Any) -> Dict[str, str]:
     """
     print("🌍 Crossing border: Changing traffic regulations...")
     return {"country": "Portugal"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

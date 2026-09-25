@@ -18,9 +18,11 @@ def main() -> None:
     """Run API error example."""
     pipeline = Pipeline(pipeline_name="api_demo", verbose=True)
 
-    pipeline.set_steps([
-        (api_call, "API Call", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (api_call, "API Call", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"API Result: {result['result']}")

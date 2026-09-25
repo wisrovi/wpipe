@@ -111,7 +111,7 @@ export class WPipeStepProvider implements vscode.TreeDataProvider<vscode.TreeIte
         }
 
         // Map subcategories to CategoryItems
-        const categoryItems = Array.from(subcategoriesMap.values()).map(subcat => 
+        const categoryItems = Array.from(subcategoriesMap.values()).map(subcat =>
             new CategoryItem(subcat, repo, [...categoryPath, subcat])
         );
 
@@ -139,12 +139,12 @@ export class LibraryItem extends vscode.TreeItem {
         super(step.name);
         this.iconPath = new vscode.ThemeIcon('cloud');
         this.description = step.version ? `v${step.version}` : step.namespace;
-        
+
         const tooltip = new vscode.MarkdownString();
         tooltip.isTrusted = true;
         tooltip.appendMarkdown(`### 📦 ${step.name} \n`);
         if (step.version) tooltip.appendMarkdown(`*Version: ${step.version}*\n\n`);
-        
+
         if (step.description) {
             tooltip.appendMarkdown(`> ${step.description}\n\n`);
         }
@@ -167,7 +167,7 @@ export class LibraryItem extends vscode.TreeItem {
         }
 
         tooltip.appendMarkdown(`---\n*Click to insert import and usage.*`);
-        
+
         this.tooltip = tooltip;
         this.contextValue = 'libraryStep';
         this.command = { command: 'wpipeSteps.insertStep', title: 'Insert', arguments: [step] };

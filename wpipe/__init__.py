@@ -16,9 +16,10 @@ from wsqlite import WSQLite as Wsqlite_original
 _db_connections: dict[str, sqlite3.Connection] = {}
 _db_lock = threading.RLock()
 
+
 def patched_get_connection(self) -> sqlite3.Connection:
     """Obtain a shared database connection to improve performance."""
-    db_path = getattr(self, 'db_path', None) or self.__dict__.get('db_path')
+    db_path = getattr(self, "db_path", None) or self.__dict__.get("db_path")
     if db_path is None:
         raise AttributeError("WSQLite object has no attribute 'db_path'.")
 
@@ -38,7 +39,9 @@ def patched_get_connection(self) -> sqlite3.Connection:
             _db_connections[db_path] = conn
     return _db_connections[db_path]
 
+
 Wsqlite_original._get_connection = patched_get_connection
+
 
 def patched_insert(self, data: Any) -> int:
     """Insert a new record and return the generated ID."""
@@ -52,6 +55,7 @@ def patched_insert(self, data: Any) -> int:
     query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
 
     import time
+
     max_retries = 5
     retry_delay = 0.5
 
@@ -67,7 +71,7 @@ def patched_insert(self, data: Any) -> int:
                 if "no such table" in str(e):
                     # Table might not exist, try to create it
                     try:
-                        if hasattr(self, '_sync'):
+                        if hasattr(self, "_sync"):
                             self._sync.create_if_not_exists()
                             cursor.execute(query, values)
                             conn.commit()
@@ -85,7 +89,9 @@ def patched_insert(self, data: Any) -> int:
                 raise e
     return -1
 
+
 Wsqlite_original.insert = patched_insert
+
 
 def patched_update(self, record_id: Any, data: Any) -> bool:
     """Update a record and commit change."""
@@ -99,6 +105,7 @@ def patched_update(self, record_id: Any, data: Any) -> bool:
     query = f"UPDATE {table_name} SET {', '.join(columns)} WHERE id = ?"
 
     import time
+
     max_retries = 5
     retry_delay = 0.5
 
@@ -121,7 +128,9 @@ def patched_update(self, record_id: Any, data: Any) -> bool:
                 raise e
     return False
 
+
 Wsqlite_original.update = patched_update
+
 
 @atexit.register
 def _close_connections():
@@ -138,6 +147,7 @@ def _close_connections():
 
     # Final attempt to silence lingering daemon threads in environments like Binder/Jupyter
     import threading
+
     for thread in threading.enumerate():
         if thread.daemon and thread is not threading.current_thread():
             if "_RefreshThread" in str(thread):
@@ -146,6 +156,7 @@ def _close_connections():
                     thread.join(timeout=0.01)
                 except Exception:
                     pass
+
 
 # Lazy loading map
 _LAZY_MAP = {
@@ -192,6 +203,7 @@ def __getattr__(name: str) -> Any:
     if name in _LAZY_MAP:
         module_path, attr_name = _LAZY_MAP[name]
         import importlib
+
         module = importlib.import_module(module_path, __package__)
         attr = getattr(module, attr_name)
         globals()[name] = attr
@@ -199,5 +211,13 @@ def __getattr__(name: str) -> Any:
 
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
+
 __version__ = "2.5.3"
-__all__ = list(_LAZY_MAP.keys()) + ["Wsqlite", "Pipeline", "Condition", "For", "Parallel", "step"]
+__all__ = list(_LAZY_MAP.keys()) + [
+    "Wsqlite",
+    "Pipeline",
+    "Condition",
+    "For",
+    "Parallel",
+    "step",
+]

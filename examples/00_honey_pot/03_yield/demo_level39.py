@@ -11,7 +11,9 @@ DIAGRAM:
 
 import time
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
+
 
 @step(name="process_fleet_data")
 def process_fleet_data(data: Any) -> Dict[str, str]:
@@ -24,6 +26,7 @@ def process_fleet_data(data: Any) -> Dict[str, str]:
         Dict[str, str]: Sync status.
     """
     return {"sync": "Cloud"}
+
 
 if __name__ == "__main__":
     # NEW IN L39: Ideal configuration for a central server controlling the fleet
@@ -39,4 +42,6 @@ if __name__ == "__main__":
     start_time = time.time()
     print(">>> Starting fleet synchronization in SILENT mode (1000 tasks)...")
     pipe.run({})
-    print(f"⚡ Synchronization completed in {time.time() - start_time:.4f}s with zero logs.")
+    print(
+        f"⚡ Synchronization completed in {time.time() - start_time:.4f}s with zero logs."
+    )

@@ -12,6 +12,7 @@ import time
 
 from wpipe import Pipeline, step
 
+
 @step(name="task", timeout=2)
 def task(data: dict) -> None:
     """Task step.
@@ -25,6 +26,7 @@ def task(data: dict) -> None:
     print("⚡ Ejecutando task...")
     time.sleep(0.1)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> timeout decorador...")

@@ -10,9 +10,9 @@ analysis.get_pipelines_analysis()
 
 from wpipe import Pipeline, step
 
+
 @step(name="start")
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -26,9 +26,9 @@ def start(data: dict) -> None:
     """
     return {"motor": "on"}
 
+
 @step(name="process")
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -42,6 +42,7 @@ def process(data: dict) -> None:
     """
     return {"ok": True}
 
+
 if __name__ == "__main__":
     print(">>> Análisis de pipelines...")
 
@@ -54,5 +55,5 @@ if __name__ == "__main__":
     pipe.run({})
 
     analysis = pipe.tracker.analysis.get_pipelines_analysis()
-    print(f"\n📊 Análisis:")
+    print("\n📊 Análisis:")
     print(f"  Total: {len(analysis)}")

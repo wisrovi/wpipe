@@ -14,6 +14,7 @@ from typing import Any, Dict
 from wpipe import Pipeline, step
 from wpipe.util import escribir_yaml, leer_yaml
 
+
 @step(name="show_destination")
 def show_destination(data: Dict[str, Any]) -> Dict[str, str]:
     """Show destination step based on external configuration.
@@ -29,6 +30,7 @@ def show_destination(data: Dict[str, Any]) -> Dict[str, str]:
         f"📡 Satellite: Received route to {config.get('destination')} via {config.get('route')}"
     )
     return {"estimated_arrival": "14:00"}
+
 
 if __name__ == "__main__":
     # We create a configuration file simulating the mobile app

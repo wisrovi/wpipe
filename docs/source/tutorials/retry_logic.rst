@@ -56,7 +56,7 @@ Create a reusable retry decorator:
 
     def retry(max_attempts=3, delay=1.0, backoff=1.0):
         """Retry decorator with exponential backoff.
-        
+
         Args:
             max_attempts: Maximum number of attempts
             delay: Initial delay between retries (seconds)
@@ -67,7 +67,7 @@ Create a reusable retry decorator:
             def wrapper(*args, **kwargs):
                 current_delay = delay
                 last_exception = None
-                
+
                 for attempt in range(max_attempts):
                     try:
                         return func(*args, **kwargs)
@@ -78,9 +78,9 @@ Create a reusable retry decorator:
                             current_delay *= backoff
                         else:
                             raise
-                
+
                 raise last_exception
-            
+
             return wrapper
         return decorator
 
@@ -109,7 +109,7 @@ Apply the decorator to your step functions:
 
     def conditional_retry(max_attempts=3, delay=1.0):
         """Retry only on specific exceptions."""
-        
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -118,7 +118,7 @@ Apply the decorator to your step functions:
                     TimeoutError,
                     ConnectionResetError,
                 )
-                
+
                 for attempt in range(max_attempts):
                     try:
                         return func(*args, **kwargs)
@@ -130,7 +130,7 @@ Apply the decorator to your step functions:
                     except Exception as e:
                         # Don't retry on other exceptions
                         raise
-                        
+
             return wrapper
         return decorator
 
@@ -145,7 +145,7 @@ Apply the decorator to your step functions:
 
     def retry_with_logging(max_attempts=3, delay=1.0):
         """Retry with detailed logging."""
-        
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -164,7 +164,7 @@ Apply the decorator to your step functions:
                                 f"All {max_attempts} attempts failed"
                             )
                             raise
-                            
+
             return wrapper
         return decorator
 
@@ -180,13 +180,13 @@ Configure retries per-step:
 
     class RetryableStep:
         """Step with its own retry logic."""
-        
+
         def __init__(self, max_retries: int = 3):
             self.max_retries = max_retries
-        
+
         def __call__(self, data: dict) -> dict:
             last_error = None
-            
+
             for attempt in range(self.max_retries):
                 try:
                     return self._execute(data)
@@ -194,9 +194,9 @@ Configure retries per-step:
                     last_error = e
                     if attempt < self.max_retries - 1:
                         time.sleep(1 * (attempt + 1))
-            
+
             raise last_error
-        
+
         def _execute(self, data: dict) -> dict:
             # Actual implementation
             return {"result": "success"}
@@ -253,7 +253,7 @@ Configure retries per-step:
 
     def retry_with_timeout(max_attempts=3, delay=1.0, timeout_seconds=5):
         """Retry with timeout for each attempt."""
-        
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -261,7 +261,7 @@ Configure retries per-step:
                     # Set timeout
                     signal.signal(signal.SIGALRM, timeout_handler)
                     signal.alarm(timeout_seconds)
-                    
+
                     try:
                         result = func(*args, **kwargs)
                         signal.alarm(0)  # Cancel alarm
@@ -274,7 +274,7 @@ Configure retries per-step:
                             raise
                     finally:
                         signal.alarm(0)
-                        
+
             return wrapper
         return decorator
 
@@ -300,12 +300,12 @@ Here's a complete example with comprehensive retry logic:
         retry_on=(Exception,)
     ):
         """Smart retry decorator with exponential backoff."""
-        
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
                 current_delay = delay
-                
+
                 for attempt in range(max_attempts):
                     try:
                         result = func(*args, **kwargs)
@@ -314,7 +314,7 @@ Here's a complete example with comprehensive retry logic:
                                 f"{func.__name__} succeeded after {attempt + 1} attempts"
                             )
                         return result
-                        
+
                     except retry_on as e:
                         last_error = e
                         if attempt < max_attempts - 1:
@@ -329,14 +329,14 @@ Here's a complete example with comprehensive retry logic:
                                 f"{func.__name__} failed after {max_attempts} attempts"
                             )
                             raise last_error
-                    
+
                     except Exception as e:
                         # Don't retry on non-retryable exceptions
                         logger.error(f"Non-retryable error in {func.__name__}: {e}")
                         raise
-                
+
                 raise last_error
-                
+
             return wrapper
         return decorator
 
@@ -346,11 +346,11 @@ Here's a complete example with comprehensive retry logic:
     def fetch_from_api(data):
         """Fetch data from external API."""
         import random
-        
+
         # Simulate occasional failures
         if random.random() < 0.5:
             raise ConnectionError("API temporarily unavailable")
-        
+
         return {"data": ["item1", "item2", "item3"]}
 
 
@@ -366,10 +366,10 @@ Here's a complete example with comprehensive retry logic:
     def save_results(data):
         """Save results to database."""
         import random
-        
+
         if random.random() < 0.3:
             raise ConnectionError("Database connection failed")
-        
+
         return {"saved": True}
 
 

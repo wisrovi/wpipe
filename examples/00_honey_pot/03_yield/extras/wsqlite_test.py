@@ -1,14 +1,12 @@
-from wpipe.sqlite import Wsqlite
 import cv2
 
-
+from wpipe.sqlite import Wsqlite
 
 
 def test_Wsqlite():
     image = cv2.imread("images.jpeg")
 
     with Wsqlite(db_name="output/demo.db") as db:
-
         args_dict = {
             "inference": {
                 "source": image,
@@ -21,5 +19,3 @@ def test_Wsqlite():
         db.details = {"info": "Starting the process..."}
 
         db.output = {"queso": "delicioso"}
-        
-        

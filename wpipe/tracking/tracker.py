@@ -79,7 +79,7 @@ class Metric:
                 event_type="metric",
                 event_name=name,
                 message=f"Metric '{name}' recorded: {value} {unit or ''}",
-                data={"value": value, "unit": unit}
+                data={"value": value, "unit": unit},
             )
         else:
             # Fallback for when no tracker is active
@@ -134,6 +134,8 @@ class system_metrics(SystemMetricsModel):
 
 class comparisons(ComparisonModel):
     """Comparisons table model."""
+
+
 # pylint: enable=invalid-name
 
 
@@ -315,7 +317,7 @@ class PipelineTracker:
         total = len(rows)
         total_pages = (total + page_size - 1) // page_size if page_size else 0
         start = (page - 1) * page_size
-        items = rows[start:start + page_size] if page_size else rows
+        items = rows[start : start + page_size] if page_size else rows
         return {
             "items": items,
             "total": total,
@@ -331,7 +333,9 @@ class PipelineTracker:
     # CORE TRACKING LOGIC
     # ========================================
 
-    def register_pipeline(self, name: str, pipeline_steps: list[Any], **kwargs) -> dict[str, Any]:
+    def register_pipeline(
+        self, name: str, pipeline_steps: list[Any], **kwargs
+    ) -> dict[str, Any]:
         """
         Register a pipeline and its steps.
 
@@ -351,6 +355,7 @@ class PipelineTracker:
         safe_name = os.path.basename(os.path.normpath(name))
         yaml_path = os.path.join(self.config_dir, f"{safe_name}.yaml")
         if not os.path.exists(yaml_path):
+
             def _serialize_step(s):
                 if hasattr(s, "to_dict"):
                     return s.to_dict()
@@ -359,7 +364,7 @@ class PipelineTracker:
                         "type": "task",
                         "name": s[1] if len(s) > 1 else "unknown",
                         "version": s[2] if len(s) > 2 else "v1.0",
-                        "func": str(s[0])
+                        "func": str(s[0]),
                     }
                 return str(s)
 
@@ -427,7 +432,9 @@ class PipelineTracker:
         model.completed_at = datetime.now().isoformat()
         model.total_duration_ms = duration_ms
         model.output_data = (
-            _safe_json_dumps(output_data) if output_data and self.save_json_input_output else None
+            _safe_json_dumps(output_data)
+            if output_data and self.save_json_input_output
+            else None
         )
         model.error_message = error_message
         model.error_step = error_step
@@ -499,7 +506,9 @@ class PipelineTracker:
         model.completed_at = datetime.now().isoformat()
         model.duration_ms = duration_ms
         model.output_data = (
-            _safe_json_dumps(output_data) if output_data and self.save_json_input_output else None
+            _safe_json_dumps(output_data)
+            if output_data and self.save_json_input_output
+            else None
         )
         model.error_message = error_message
         model.error_traceback = error_traceback
@@ -534,7 +543,9 @@ class PipelineTracker:
         )
         self.db_pipeline_relations.insert(model)
 
-    def add_event(self, pipeline_id: str, event_type: str, event_name: str, **kwargs) -> None:
+    def add_event(
+        self, pipeline_id: str, event_type: str, event_name: str, **kwargs
+    ) -> None:
         """
         Record an event.
 
@@ -644,16 +655,29 @@ class PipelineTracker:
             step.get("step_order")
 
             if parent_id:
-                parent_model = next((s for s in steps_list if s.get("id") == parent_id or s.get("step_order") == parent_id), None)
-                is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
+                parent_model = next(
+                    (
+                        s
+                        for s in steps_list
+                        if s.get("id") == parent_id or s.get("step_order") == parent_id
+                    ),
+                    None,
+                )
+                is_skipped = (
+                    step["status"] == "skipped" or step["step_type"] == "skipped"
+                )
 
                 label = "parallel"
                 if parent_model and parent_model.get("step_type") == "condition":
                     cond_output = parent_model.get("output_data") or {}
                     branch_taken_val = None
                     if isinstance(cond_output, dict) and "branch_taken" in cond_output:
-                        branch_val = str(cond_output['branch_taken']).lower()
-                        branch_taken_val = True if (branch_val == 'true' or branch_val == '1') else False
+                        branch_val = str(cond_output["branch_taken"]).lower()
+                        branch_taken_val = (
+                            True
+                            if (branch_val == "true" or branch_val == "1")
+                            else False
+                        )
 
                     # If this step is NOT skipped, it's the taken branch
                     if not is_skipped:
@@ -661,13 +685,21 @@ class PipelineTracker:
                     else:
                         label = "FALSE" if branch_taken_val is True else "TRUE"
 
-                edges.append({
-                    "from": f"step_{parent_id}",
-                    "to": f"step_{step_id}",
-                    "label": label,
-                    "style": "dashed" if is_skipped else "solid",
-                    "color": "#10b981" if (parent_model and parent_model.get("step_type") == "condition" and not is_skipped) else None
-                })
+                edges.append(
+                    {
+                        "from": f"step_{parent_id}",
+                        "to": f"step_{step_id}",
+                        "label": label,
+                        "style": "dashed" if is_skipped else "solid",
+                        "color": "#10b981"
+                        if (
+                            parent_model
+                            and parent_model.get("step_type") == "condition"
+                            and not is_skipped
+                        )
+                        else None,
+                    }
+                )
             elif i > 0:
                 j = i - 1
                 found_prev = None
@@ -681,30 +713,43 @@ class PipelineTracker:
                 if found_prev:
                     prev_id = found_prev.get("id") or found_prev.get("step_order")
                     prev_order = found_prev.get("step_order")
-                    is_skipped = step["status"] == "skipped" or step["step_type"] == "skipped"
+                    is_skipped = (
+                        step["status"] == "skipped" or step["step_type"] == "skipped"
+                    )
 
                     label = "next"
                     if found_prev["step_type"] == "condition":
                         cond_output = found_prev.get("output_data") or {}
-                        if isinstance(cond_output, dict) and "branch_taken" in cond_output:
-                            branch_val = str(cond_output['branch_taken']).lower()
-                            if branch_val == 'true' or branch_val == '1':
+                        if (
+                            isinstance(cond_output, dict)
+                            and "branch_taken" in cond_output
+                        ):
+                            branch_val = str(cond_output["branch_taken"]).lower()
+                            if branch_val == "true" or branch_val == "1":
                                 label = "TRUE"
                             else:
                                 label = "FALSE"
                         else:
                             label = "taken" if not is_skipped else "skipped"
 
-                    edges.append({
-                        "from": f"step_{prev_id}" if prev_id else f"step_{prev_order}",
-                        "to": f"step_{step_id}",
-                        "label": label,
-                        "style": "solid" if not is_skipped else "dashed",
-                        "color": (
-                            "#10b981" if (found_prev["step_type"] == "condition" and not is_skipped)
-                            else None
-                        )
-                    })
+                    edges.append(
+                        {
+                            "from": f"step_{prev_id}"
+                            if prev_id
+                            else f"step_{prev_order}",
+                            "to": f"step_{step_id}",
+                            "label": label,
+                            "style": "solid" if not is_skipped else "dashed",
+                            "color": (
+                                "#10b981"
+                                if (
+                                    found_prev["step_type"] == "condition"
+                                    and not is_skipped
+                                )
+                                else None
+                            ),
+                        }
+                    )
 
         # Generate Mermaid script
         mermaid_lines = ["graph TD"]
@@ -727,14 +772,16 @@ class PipelineTracker:
             else:
                 mermaid_lines.append(f'    {e["from"]} {arrow} {e["to"]}')
 
-        mermaid_lines.extend([
-            "",
-            "    classDef completed fill:#10b981,stroke:#059669,color:#fff",
-            "    classDef error fill:#ef4444,stroke:#dc2626,color:#fff",
-            "    classDef running fill:#3b82f6,stroke:#2563eb,color:#fff",
-            "    classDef pending fill:#f59e0b,stroke:#d97706,color:#fff",
-            "    classDef skipped fill:#94a3b8,stroke:#64748b,color:#fff,stroke-dasharray: 5 5"
-        ])
+        mermaid_lines.extend(
+            [
+                "",
+                "    classDef completed fill:#10b981,stroke:#059669,color:#fff",
+                "    classDef error fill:#ef4444,stroke:#dc2626,color:#fff",
+                "    classDef running fill:#3b82f6,stroke:#2563eb,color:#fff",
+                "    classDef pending fill:#f59e0b,stroke:#d97706,color:#fff",
+                "    classDef skipped fill:#94a3b8,stroke:#64748b,color:#fff,stroke-dasharray: 5 5",
+            ]
+        )
 
         return {
             "pipeline_id": pipeline_id,
@@ -743,7 +790,7 @@ class PipelineTracker:
             "total_duration_ms": pipeline.get("total_duration_ms"),
             "nodes": nodes,
             "edges": edges,
-            "mermaid_script": "\n".join(mermaid_lines)
+            "mermaid_script": "\n".join(mermaid_lines),
         }
 
     def delete_pipeline(self, pipeline_id: str) -> None:
@@ -772,10 +819,14 @@ class PipelineTracker:
                 if columns:
                     modified = False
                     if "parent_step_id" not in columns:
-                        cursor.execute(f"ALTER TABLE {table} ADD COLUMN parent_step_id INTEGER")
+                        cursor.execute(
+                            f"ALTER TABLE {table} ADD COLUMN parent_step_id INTEGER"
+                        )
                         modified = True
                     if "parallel_group" not in columns:
-                        cursor.execute(f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT")
+                        cursor.execute(
+                            f"ALTER TABLE {table} ADD COLUMN parallel_group TEXT"
+                        )
                         modified = True
                     if modified:
                         conn.commit()

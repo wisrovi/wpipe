@@ -8,11 +8,11 @@ DIAGRAM:
 AutoRegister con timeout + depends_on
 """
 
-from wpipe import Pipeline, step, AutoRegister
+from wpipe import AutoRegister, Pipeline, step
+
 
 @step(name="start", tags=["inic"])
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -27,9 +27,9 @@ def start(data: dict) -> None:
     print("🔑 Startsr")
     return {"ok": True}
 
+
 @step(name="process", depends_on=["start"], timeout=5, tags=["proc"])
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -43,6 +43,7 @@ def process(data: dict) -> None:
     """
     print("⚡ Procesar")
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> AutoRegister completo...")

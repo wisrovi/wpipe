@@ -13,11 +13,11 @@ DIAGRAM:
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="paso_rapido")
 def paso_rapido(data: dict) -> None:
-
     """Paso rapido step.
 
     Args:
@@ -32,9 +32,9 @@ def paso_rapido(data: dict) -> None:
     print("⚡ Paso rápido")
     return {"ok": True}
 
+
 @step(name=" paso_lento", version="v1.0")
 def paso_lento(data: dict) -> None:
-
     """Paso lento step.
 
     Args:
@@ -49,6 +49,7 @@ def paso_lento(data: dict) -> None:
     time.sleep(0.1)
     print("🐢 Paso lento (100ms)")
     return {"ok": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

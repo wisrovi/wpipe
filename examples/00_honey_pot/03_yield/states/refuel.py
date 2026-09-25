@@ -2,9 +2,11 @@
 Module for refueling the car.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from dto.car import Car, Levels
-from wpipe import timeout_sync, to_obj, step, PipelineContext
+
+from wpipe import PipelineContext, step, timeout_sync, to_obj
 
 
 class TripContext(PipelineContext):

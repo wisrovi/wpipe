@@ -1,4 +1,4 @@
-from wpipe.decorators import AutoRegister, step
+from wpipe.decorators import step
 from wpipe.parallel import ExecutionMode, ParallelExecutor
 
 

@@ -19,7 +19,7 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-A09F737B
+   [PIPELINE STATUS] Registered: PIPE-10D88D7F
    🌍 Crossing border: Changing traffic regulations...
    travel_log_l28 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-A09F737B: COMPLETED
+   [PIPELINE STATUS] PIPE-10D88D7F: COMPLETED

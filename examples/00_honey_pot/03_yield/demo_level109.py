@@ -11,9 +11,9 @@ Pipeline(tracking_db) + Wsqlite
 from wpipe import Pipeline, step
 from wpipe.sqlite import Wsqlite
 
+
 @step(name="proceso")
 def proceso(data: dict) -> None:
-
     """Proceso step.
 
     Args:
@@ -26,6 +26,7 @@ def proceso(data: dict) -> None:
 
     """
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Wsqlite + Pipeline integration...")

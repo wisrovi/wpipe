@@ -10,13 +10,16 @@ DIAGRAM:
 
 from wpipe import Pipeline
 
+
 def start(data):
     print("🔑 Encendiendo motor")
     return {"motor": "on"}
 
+
 def iniciar_lambda(data):
     print("🔑 [LAMBDA] Motor ON")
     return {"motor": "on"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l76_lambda", verbose=True)

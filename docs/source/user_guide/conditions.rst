@@ -8,7 +8,7 @@ Overview
 
 The ``Condition`` class allows pipelines to branch based on data values.
 
-**Important:** The condition must come AFTER a step that provides the data being 
+**Important:** The condition must come AFTER a step that provides the data being
 evaluated. The condition evaluates data added by previous steps, not the initial input.
 
 Basic Usage

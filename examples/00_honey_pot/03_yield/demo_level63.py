@@ -20,15 +20,17 @@ import random
 from wpipe import Pipeline, step
 from wpipe.exception.api_error import TaskError
 
+
 class NetworkError(Exception):
     pass
+
 
 class ValidationError(Exception):
     pass
 
+
 @step(name="validar_y_conectar")
 def validar_y_conectar(data: dict) -> None:
-
     """Validar y conectar step.
 
     Args:
@@ -48,9 +50,9 @@ def validar_y_conectar(data: dict) -> None:
     print("✅ Conexión establecida")
     return {"connected": True}
 
+
 @step(name="finish")
 def finish(data: dict) -> None:
-
     """Finish step.
 
     Args:
@@ -65,6 +67,7 @@ def finish(data: dict) -> None:
     print("🏁 Proceso finalizado")
     return {"finalizado": True}
 
+
 if __name__ == "__main__":
     pipe = Pipeline(
         pipeline_name="viaje_l63_pipelineretryexcept",
@@ -75,7 +78,7 @@ if __name__ == "__main__":
     )
     pipe.set_steps([validar_y_conectar, finish])
     print("\n>>> Probando retry filter por excepción...\n")
-    
+
     try:
         pipe.run({})
     except TaskError as e:

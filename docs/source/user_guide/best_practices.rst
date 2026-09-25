@@ -68,9 +68,9 @@ Steps should follow a natural workflow:
 ::
 
     Fetch Data → Validate Input → Process Data → Save Results
-    
+
     NOT:
-    
+
     Process Data → Fetch Data → Save Results → Validate Input
 
 2. Error Handling

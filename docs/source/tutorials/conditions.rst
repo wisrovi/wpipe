@@ -38,7 +38,7 @@ Use conditions when:
     ┌─────────────────────────────────────────────────────────────────┐
     │                     CONDITION FLOW                              │
     └─────────────────────────────────────────────────────────────────┘
-    
+
     ┌──────────┐     ┌─────────────────┐
     │  Data   │────▶│   Condition    │
     └──────────┘     │  (expression) │
@@ -510,7 +510,7 @@ Ensure types match your comparison:
 
     # String comparison
     Condition(expression="status == 'active'", ...)
-    
+
     # Numeric comparison
     Condition(expression="count > 0", ...)
 

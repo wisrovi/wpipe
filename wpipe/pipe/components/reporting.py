@@ -15,7 +15,7 @@ class ReportingMixin:
         self,
         api_client: Optional[APIClient],
         task_info: dict[str, Any],
-        verbose: bool = False
+        verbose: bool = False,
     ) -> None:
         """Report task status to API."""
         if not api_client:
@@ -30,7 +30,7 @@ class ReportingMixin:
         self,
         api_client: Optional[APIClient],
         process_info: dict[str, Any],
-        verbose: bool = False
+        verbose: bool = False,
     ) -> None:
         """Report process status to API."""
         if not api_client:

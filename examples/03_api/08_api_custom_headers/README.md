@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: Request with headers
     Note right of A: Custom headers
     A-->>P: Response
@@ -36,15 +36,15 @@ graph TB
         H2[Authorization]
         H3[Content-Type]
     end
-    
+
     subgraph Request
         R[Send]
     end
-    
+
     subgraph Response
         O[Output]
     end
-    
+
     H1 --> R
     H2 --> R
     H3 --> R
@@ -64,7 +64,7 @@ stateDiagram-v2
 flowchart LR
     H([Headers]) --> R([Request])
     R --> O([Response])
-    
+
     style H fill:#e1f5fe
     style O fill:#c8e6c9
 ```

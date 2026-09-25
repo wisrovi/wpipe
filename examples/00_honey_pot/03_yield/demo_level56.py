@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any
+
 """
 DEMO LEVEL 56: Sistema de Eventos (Event Dispatcher)
 ---------------------------------------------
@@ -15,9 +16,9 @@ DIAGRAM:
 
 from wpipe import Pipeline, step
 
+
 @step(name="leer_sensores")
 def leer_sensores(data: dict) -> None:
-
     """Leer sensores step.
 
     Args:
@@ -32,9 +33,9 @@ def leer_sensores(data: dict) -> None:
     print("📡 Leyendo sensores del vehículo...")
     return {"sensores": "OK", "nivel_bateria": 15}
 
+
 @step(name="notificar_error")
 def notificar_error(context: Any) -> None:
-
     """Notificar error step.
 
     Args:
@@ -49,9 +50,9 @@ def notificar_error(context: Any) -> None:
     print("🔔 [EVENTO] Error crítico de sensores detectado")
     return {"notificado": True}
 
+
 @step(name="alert_driver")
 def alert_driver(context: Any) -> None:
-
     """Alert driver step.
 
     Args:
@@ -65,6 +66,7 @@ def alert_driver(context: Any) -> None:
     """
     print("🔔 [EVENTO] Batería baja - Alertando al conductor")
     return {"alerta_enviada": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l56_eventsystem", verbose=True)

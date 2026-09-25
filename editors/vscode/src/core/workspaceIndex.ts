@@ -33,17 +33,17 @@ export class WorkspaceIndex {
         const excludePattern = `{${combinedExcludes.join(',')}}`;
 
         const files = await vscode.workspace.findFiles('**/*.py', excludePattern, maxFiles);
-        
+
         const newSteps: Map<string, WorkspaceStep> = new Map();
 
         for (const f of files) {
             try {
                 const contentData = await vscode.workspace.fs.readFile(f);
                 if (contentData.length > 500000) continue;
-                
+
                 const content = new TextDecoder().decode(contentData);
                 const tree = parser.parse(content);
-                
+
                 tree.iterate({
                     enter: (node) => {
                         if (node.name === 'Decorator') {
@@ -56,7 +56,7 @@ export class WorkspaceIndex {
                                  let subcategory1 = '';
                                  let subcategory2 = '';
                                  let subcategory3 = '';
-                                 
+
                                  const nameMatch = decText.match(/name\s*=\s*['"](.*?)['"]/);
                                  if (nameMatch) name = nameMatch[1];
 
@@ -77,7 +77,7 @@ export class WorkspaceIndex {
 
                                  const sub3Match = decText.match(/subcategory3\s*=\s*['"](.*?)['"]/);
                                  if (sub3Match) subcategory3 = sub3Match[1];
-                                 
+
                                  if (!name && node.node.parent) {
                                      let funcDef = node.node.parent.getChild('FunctionDefinition') || node.node.parent.getChild('ClassDefinition');
                                      if (funcDef) {
@@ -85,14 +85,14 @@ export class WorkspaceIndex {
                                          if (varName) name = content.substring(varName.from, varName.to);
                                      }
                                  }
-                                 
+
                                  if (name) {
                                      const line = content.substring(0, node.from).split('\n').length - 1;
-                                     newSteps.set(name, { 
-                                         name, 
-                                         version, 
-                                         filePath: f.fsPath, 
-                                         line, 
+                                     newSteps.set(name, {
+                                         name,
+                                         version,
+                                         filePath: f.fsPath,
+                                         line,
                                          description,
                                          category,
                                          subcategory1,

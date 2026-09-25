@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant S as Services
-    
+
     P->>S: Check DB
     P->>S: Check Cache
     P->>S: Check API
@@ -38,15 +38,15 @@ graph TB
         B[Cache]
         C[API]
     end
-    
+
     subgraph Aggregate
         D[Combine]
     end
-    
+
     subgraph Report
         E[Status]
     end
-    
+
     A --> D
     B --> D
     C --> D
@@ -68,6 +68,6 @@ flowchart LR
     Cache([Cache]) --> A
     API([API]) --> A
     A --> S([Status])
-    
+
     style S fill:#c8e6c9
 ```

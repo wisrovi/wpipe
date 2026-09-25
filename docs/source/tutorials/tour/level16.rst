@@ -20,5 +20,4 @@ Resultado de Ejecución
 
 
    📡 Reading OBD2 data bus...
-   trip_l16_securedata ━━━━━━━━━━━━━━━━━━━━                      50% -:--:--
-   Validation Error: [Error Code: 502] Pydantic validation failed: Missing required variable: 'fuel_level'
+   trip_l16_securedata ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

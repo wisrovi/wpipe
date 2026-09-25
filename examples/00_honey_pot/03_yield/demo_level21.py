@@ -16,6 +16,7 @@ from typing import Any, Dict
 
 from wpipe import Pipeline, step
 
+
 # NEW IN L21: Strict time limit for the sensor
 @step(name="proximity_radar", timeout=0.2)
 def proximity_radar(data: Any) -> Dict[str, bool]:
@@ -32,6 +33,7 @@ def proximity_radar(data: Any) -> Dict[str, bool]:
     time.sleep(1.0)
     return {"obstacle": False}
 
+
 def emergency_report(context: Dict[str, Any], error: Dict[str, Any]) -> Dict[str, Any]:
     """Emergency report handler for sensor timeouts.
 
@@ -45,6 +47,7 @@ def emergency_report(context: Dict[str, Any], error: Dict[str, Any]) -> Dict[str
     print(f"\n🚨 CRITICAL ALERT: The sensor '{error['step_name']}' is not responding.")
     print("🛑 ACTION: Switching to manual driving mode.\n")
     return context
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l21_timeout", verbose=True)

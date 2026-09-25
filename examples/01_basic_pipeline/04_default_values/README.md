@@ -26,7 +26,7 @@ sequenceDiagram
     participant P as Pipeline
     participant S1 as step_with_defaults
     participant S2 as process_result
-    
+
     P->>S1: run({})
     S1-->>P: {result: 200}
     P->>S2: run({result: 200})
@@ -39,16 +39,16 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[step_with_defaults]
         D[process_result]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

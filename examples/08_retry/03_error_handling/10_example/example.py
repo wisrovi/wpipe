@@ -18,9 +18,11 @@ def main() -> None:
     """Run additional example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (final_step, "Final Step", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (final_step, "Final Step", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

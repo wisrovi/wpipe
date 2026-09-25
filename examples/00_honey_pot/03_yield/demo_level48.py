@@ -10,7 +10,9 @@ DIAGRAM:
 
 import asyncio
 from typing import Any, Dict
-from wpipe import PipelineAsync, Metric
+
+from wpipe import Metric, PipelineAsync
+
 
 async def process_data(data: Any) -> Dict[str, int]:
     """Process data step asynchronously and record metrics.
@@ -26,6 +28,7 @@ async def process_data(data: Any) -> Dict[str, int]:
     Metric.record("processed_data", 100)
     return {"processed": 100}
 
+
 async def main() -> None:
     """Main async entry point."""
     pipe = PipelineAsync(pipeline_name="trip_l48_asyncmetric", verbose=True)
@@ -35,6 +38,7 @@ async def main() -> None:
         await pipe.run({})
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -39,10 +39,12 @@ def dict_to_sns(data: Any, _seen: Optional[set[int]] = None) -> Any:
     try:
         if isinstance(data, dict):
             # Skip system keys to avoid processing non-serializable objects like progress bars
-            return SimpleNamespace(**{
-                k: (v if k in SYSTEM_KEYS else dict_to_sns(v, _seen))
-                for k, v in data.items()
-            })
+            return SimpleNamespace(
+                **{
+                    k: (v if k in SYSTEM_KEYS else dict_to_sns(v, _seen))
+                    for k, v in data.items()
+                }
+            )
         if isinstance(data, list):
             return [dict_to_sns(i, _seen) for i in data]
         return data
@@ -69,12 +71,14 @@ def object_to_dict(obj: Any, _seen: Optional[set[int]] = None) -> Any:
     if obj is None:
         return {}
 
-    # Detect and filter heavy/non-serializable objects (NumPy arrays, PyTorch/TF tensors, etc.)
     obj_type_name = type(obj).__name__
-    if obj_type_name in ("ndarray", "Tensor", "EagerTensor", "Image") or "ndarray" in str(type(obj)):
-        shape = getattr(obj, "shape", None)
-        dtype = getattr(obj, "dtype", None)
-        return f"<NDArray shape={shape} dtype={dtype}>" if shape else f"<{obj_type_name}>"
+    if obj_type_name in (
+        "ndarray",
+        "Tensor",
+        "EagerTensor",
+        "Image",
+    ) or "ndarray" in str(type(obj)):
+        return obj
 
     # Filter bytes and bytearray to avoid slow JSON fallback
     if isinstance(obj, bytes):
@@ -112,11 +116,26 @@ def object_to_dict(obj: Any, _seen: Optional[set[int]] = None) -> Any:
         if hasattr(obj, "__dict__"):
             module_name = obj.__class__.__module__ or ""
             # Avoid recursing into known system or external complex objects
-            if module_name.startswith((
-                "rich.", "threading.", "multiprocessing.", "logging.", "asyncio.",
-                "cv2", "numpy", "torch", "tensorflow", "ultralytics", "PIL",
-                "pandas", "matplotlib", "scipy", "decord", "av"
-            )):
+            if module_name.startswith(
+                (
+                    "rich.",
+                    "threading.",
+                    "multiprocessing.",
+                    "logging.",
+                    "asyncio.",
+                    "cv2",
+                    "numpy",
+                    "torch",
+                    "tensorflow",
+                    "ultralytics",
+                    "PIL",
+                    "pandas",
+                    "matplotlib",
+                    "scipy",
+                    "decord",
+                    "av",
+                )
+            ):
                 return f"<{obj.__class__.__name__}>"
 
             return {
@@ -181,6 +200,7 @@ def to_obj(arg: Any = None) -> Callable:
                 return data_arg
 
             return res_dict if res_dict is not None else {}
+
         return wrapper
 
     # If used as @to_obj (without parentheses)
@@ -204,6 +224,7 @@ def auto_dict_input(func: Callable) -> Callable:
     Returns:
         Decorated function.
     """
+
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         new_args = [object_to_dict(arg) for arg in args]

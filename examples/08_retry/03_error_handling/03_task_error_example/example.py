@@ -22,9 +22,11 @@ def main() -> None:
     """Run task validation example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (validate_input, "Validate Input", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (validate_input, "Validate Input", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({"value": 10})
     print(f"Validated: {result['validated']}")

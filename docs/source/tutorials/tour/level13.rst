@@ -20,4 +20,4 @@ Resultado de Ejecución
 
 
    [PARALLEL] Executing 3 steps using PROCESSES (workers=3)
-   trip_l13_heavyai                                            0% -:--:--
+   trip_l13_heavyai ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

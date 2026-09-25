@@ -2,7 +2,8 @@
 Module for the preparation phase of the car.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from wpipe.decorators import step
 from wpipe.parallel import ExecutionMode, ParallelExecutor
 
@@ -93,9 +94,7 @@ def preparation_phase(data: Any) -> Dict[str, Any]:
     executor.add_step(
         "inflate_tires_prep", inflate_tires_prep, mode=ExecutionMode.IO_BOUND
     )
-    executor.add_step(
-        "clean_windshield", clean_windshield, mode=ExecutionMode.IO_BOUND
-    )
+    executor.add_step("clean_windshield", clean_windshield, mode=ExecutionMode.IO_BOUND)
     executor.add_step("start_motor", start_motor)
 
     result = executor.execute(data)

@@ -24,7 +24,7 @@ graph LR
 sequenceDiagram
     participant C as Client
     participant P as Pipeline
-    
+
     C->>P: set_worker_id
     P->>P: Store ID
     C->>P: run
@@ -38,16 +38,16 @@ graph TB
         A[api_config]
         B[worker_id]
     end
-    
+
     subgraph Steps
         C[fetch_data]
         D[transform_data]
     end
-    
+
     subgraph Result
         E[transformed data]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -68,7 +68,7 @@ flowchart LR
     W[worker_id] --> P[Pipeline]
     P --> S[Steps]
     S --> R[Result]
-    
+
     style W fill:#fff9c4
     style R fill:#c8e6c9
 ```

@@ -10,11 +10,11 @@ DIAGRAM:
 [CPU Process 3] -> (Predict Pedestrian Trajectories)
 """
 
-import os
 import time
 from typing import Any, Dict
 
 from wpipe import Parallel, Pipeline, step
+
 
 @step(name="deep_analysis")
 def deep_analysis(data: Any) -> Dict[str, str]:
@@ -29,6 +29,7 @@ def deep_analysis(data: Any) -> Dict[str, str]:
     # Simulate real CPU load of a neural network model
     time.sleep(0.2)
     return {"map": "complete"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l13_heavyai", verbose=True)

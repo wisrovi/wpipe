@@ -37,7 +37,7 @@ sequenceDiagram
     participant MainPipeline
     participant NestedPipeline
     participant SubSteps
-    
+
     User->>MainPipeline: Run main pipeline
     MainPipeline->>MainPipeline: Execute Step 1
     MainPipeline->>NestedPipeline: Call nested pipeline.run()
@@ -58,13 +58,13 @@ graph TB
         MP[Main Pipeline]
         S1[Step 1]
     end
-    
+
     subgraph Nested_Pipeline
         NP[Nested Pipeline]
         NS1[Sub-Step 1]
         NS2[Sub-Step 2]
     end
-    
+
     MP --> S1
     MP --> NP
     NP --> NS1
@@ -202,7 +202,7 @@ flowchart LR
         G2[Clear naming]
         G3[Test each level]
     end
-    
+
     subgraph Avoid
         A1[Reuse across parents]
         A2[Excessive nesting]

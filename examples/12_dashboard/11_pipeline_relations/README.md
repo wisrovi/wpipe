@@ -9,10 +9,10 @@ graph TD
     A[Data Ingestion] -->|triggers| B[Processing]
     B -->|triggers| C[Validation]
     C -->|triggers| D[Export]
-    
+
     A -->|depends_on| E[Config Loader]
     B -->|depends_on| E
-    
+
     A -.-> R[(Relations DB)]
     B -.-> R
     C -.-> R
@@ -28,7 +28,7 @@ classDiagram
         +str relation_type
         +dict metadata
     }
-    
+
     class RelationTypes {
         +TRIGGERED = "triggered"
         +CONTAINS = "contains"
@@ -47,7 +47,7 @@ flowchart LR
         P3[Validation]
         P4[Export]
     end
-    
+
     P1 -->|triggered| P2
     P2 -->|triggered| P3
     P3 -->|triggered| P4

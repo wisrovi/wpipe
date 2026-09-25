@@ -1,34 +1,30 @@
-import os
-import random
-import json
 import asyncio
-from pathlib import Path
+import random
+
 from dto.car import Car
-from states.car_info_printer import CarInfoPrinter
+from states.car_info_printer import CarInfoPrinter, nested_step
 from states.change_oil import change_oil
-from states.drive import drive
 from states.deflate_tires import deflate_tires
-from states.preparation import preparation_phase
-from states.refuel import refuel
+from states.drive import drive
 from states.inflate_tires import inflate_tires
+from states.preparation import preparation_phase
 from states.print_fuel_level import print_fuel_level
-from states.car_info_printer import nested_step
+from states.refuel import refuel
 
 from wpipe import (
-    Condition, 
-    For, 
-    Metric, 
-    PipelineAsync, 
-    Severity, 
-    auto_dict_input, 
-    PipelineExporter, 
-    TaskTimer, 
-    ResourceMonitor,
-    step,
+    Condition,
+    For,
+    Metric,
     Parallel,
+    PipelineAsync,
     PipelineContext,
-    object_to_dict
+    ResourceMonitor,
+    Severity,
+    TaskTimer,
+    auto_dict_input,
+    step,
 )
+
 
 # Definimos el esquema de la Bodega (Contexto)
 class ViajeContext(PipelineContext):
@@ -38,18 +34,21 @@ class ViajeContext(PipelineContext):
     nivel_aceite: str
     nivel_neumaticos: str
 
+
 # Definimos check_lights para que el bloque Parallel no falle por NameError
 @step(name="check_lights", version="v1.0")
-async def check_lights(d): 
+async def check_lights(d):
     print("     * [ASYNC] Revisando lights traseras y delanteras... OK")
-    await asyncio.sleep(0.01) # Simulación de trabajo I/O
+    await asyncio.sleep(0.01)  # Simulación de trabajo I/O
     return d
+
 
 @step(name="random_flat_tire", version="v1.0", retry_count=10, retry_delay=0)
 async def random_flat_tire(d):
     if random.random() < 0.5:
         raise RuntimeError("Pinchazo aleatorio")
     return d
+
 
 @step(name="notify_telegram_error", version="v1.0")
 async def notify_telegram_error(context, error):
@@ -61,7 +60,9 @@ async def notify_telegram_error(context, error):
     print("-" * 60)
     return context
 
+
 db_path = "wpipe_dashboard_async.db"
+
 
 async def get_viaje_pipeline_async():
     trip = PipelineAsync(
@@ -91,7 +92,9 @@ async def get_viaje_pipeline_async():
         event_name="authorized_person",
         message="Results sent to external APIs",
         steps=[
-            CarInfoPrinter(">>> [HOOK] El trip ha terminado, enviando resumen final..."),
+            CarInfoPrinter(
+                ">>> [HOOK] El trip ha terminado, enviando resumen final..."
+            ),
         ],
     )
 
@@ -109,15 +112,8 @@ async def get_viaje_pipeline_async():
             For(
                 iterations=3,
                 steps=[
-                    CarInfoPrinter(f"--- Nuevo trip asíncrono ---", "_loop_iteration"),
-                    Parallel(
-                        steps=[
-                            refuel,
-                            change_oil,
-                            check_lights
-                        ],
-                        max_workers=3
-                    ),
+                    CarInfoPrinter("--- Nuevo trip asíncrono ---", "_loop_iteration"),
+                    Parallel(steps=[refuel, change_oil, check_lights], max_workers=3),
                     CarInfoPrinter("Resumen post-paralelo"),
                     (print_fuel_level, "Mostrar fuel", "v1.0"),
                     For(
@@ -142,6 +138,7 @@ async def get_viaje_pipeline_async():
     )
     return trip
 
+
 async def main():
     # Usamos ResourceMonitor para measure el consumption de hardware (RAM/CPU)
     with ResourceMonitor("Viaje_Completo_Async") as monitor:
@@ -158,14 +155,14 @@ async def main():
             results = await run_pipeline(car)
 
     # Resumen de recursos al terminar
-    print(f"\nResource Summary (Async):")
+    print("\nResource Summary (Async):")
     summary = monitor.get_summary()
     print(f"  - Peak RAM: {summary['peak_ram_mb']} MB")
     print(f"  - Avg CPU: {summary['avg_cpu_percent']}%")
     print(f"✓ Total time monitored: {timer.elapsed_seconds:.2f}s")
 
     print(f"\nViajes completados: {results.get('_loop_iteration')}")
-    
+
     # --- ANÁLISIS DE DATOS ---
     analysis = trip.tracker.analysis
     stats = analysis.get_stats()
@@ -174,6 +171,7 @@ async def main():
     print("=" * 70)
     print(f"  - Total Ejecuciones: {stats['total_pipelines']}")
     print(f"  - Tasa de Éxito: {stats['success_rate']}%")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

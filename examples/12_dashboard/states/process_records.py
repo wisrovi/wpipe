@@ -17,7 +17,9 @@ def process_records(data: dict) -> dict:
                         else (
                             "B"
                             if record.get("score", 0) >= 80
-                            else "C" if record.get("score", 0) >= 70 else "F"
+                            else "C"
+                            if record.get("score", 0) >= 70
+                            else "F"
                         )
                     ),
                     "passed": record.get("score", 0) >= 70,

@@ -149,7 +149,7 @@ class Condition:
             "True": True,
             "False": False,
             "None": None,
-            "__builtins__": {}
+            "__builtins__": {},
         }
         try:
             return bool(eval(self.expression, safe_globals, safe_locals))  # pylint: disable=eval-used
@@ -202,7 +202,9 @@ class For:
             merge_policy: "last_wins" (default), "accumulate" or a custom callable.
         """
         if not validation_expression and iterations is None:
-            raise ValueError("Either iterations or validation_expression must be provided")
+            raise ValueError(
+                "Either iterations or validation_expression must be provided"
+            )
         self.steps: list[Any] = steps or []
         self.iterations: Optional[int] = iterations
         self.validation_expression: Optional[str] = validation_expression
@@ -244,10 +246,16 @@ class For:
                     "True": True,
                     "False": False,
                     "None": None,
-                    "__builtins__": {}
+                    "__builtins__": {},
                 }
                 return bool(eval(self.validation_expression, safe_globals, safe_locals))  # pylint: disable=eval-used
-            except (NameError, SyntaxError, TypeError, ValueError, ZeroDivisionError) as e:
+            except (
+                NameError,
+                SyntaxError,
+                TypeError,
+                ValueError,
+                ZeroDivisionError,
+            ) as e:
                 raise ValueError(
                     f"Invalid loop expression: {self.validation_expression}. Error: {e}"
                 ) from e

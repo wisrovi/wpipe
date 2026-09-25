@@ -43,7 +43,7 @@ WPipe is extremely flexible. You can define steps using any Python callable.
             class Multiplier:
                 def __init__(self, factor):
                     self.factor = factor
-                
+
                 def __call__(self, data):
                     return {"result": data["value"] * self.factor}
 
@@ -155,17 +155,17 @@ Scale your pipelines horizontally and monitor them in real-time.
      - Code Example
    * - **Parallelism**
      - .. code-block:: python
-        
+
             from wpipe import Parallel
             Parallel(steps=[t1, t2], use_processes=True)
    * - **Async Engine**
      - .. code-block:: python
-        
+
             from wpipe import PipelineAsync
             result = await pipe.run(data)
    * - **Monitoring**
      - .. code-block:: python
-        
+
             from wpipe import ResourceMonitor
             with ResourceMonitor("Audit") as m:
                 pipe.run(data)
@@ -200,5 +200,5 @@ WPipe integrates seamlessly with your infrastructure.
             func: my_module.my_func
             version: v1.1
 
-Looking for more? 
+Looking for more?
 Check the 140-level :doc:`tutorials/tour/index` for specialized patterns.

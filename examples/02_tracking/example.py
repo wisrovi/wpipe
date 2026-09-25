@@ -6,10 +6,7 @@ The pipeline generates data, processes it, and outputs results.
 All execution data is stored in SQLite for the dashboard.
 """
 
-import tempfile
-from pathlib import Path
-
-from wpipe import Pipeline, PipelineTracker
+from wpipe import Pipeline
 
 
 def main():

@@ -101,7 +101,9 @@ class TypeValidator:
                 raise TypeError(
                     f"Expected dict for TypedDict, got {type(value).__name__}"
                 )
-            return cast(T, TypeValidator.validate_dict(value, expected_type.__annotations__))
+            return cast(
+                T, TypeValidator.validate_dict(value, expected_type.__annotations__)
+            )
 
         if origin is None:
             return TypeValidator._validate_base_type(value, expected_type)

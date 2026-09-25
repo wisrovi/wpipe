@@ -29,6 +29,7 @@ class CheckpointManager:
         # Ensure the directory for the database exists
         if db_path:
             import os
+
             db_dir = os.path.dirname(os.path.abspath(db_path))
             if not os.path.exists(db_dir):
                 os.makedirs(db_dir, exist_ok=True)
@@ -61,7 +62,7 @@ class CheckpointManager:
             step_order=step_order,
             step_name=step_name,
             status=status,
-            data=data_json
+            data=data_json,
         )
 
         # Check if already exists for this pipeline and step
@@ -82,7 +83,7 @@ class CheckpointManager:
         Returns:
             Checkpoint data or None if no checkpoint exists
         """
-        checkpoints = self.db.get_by_field(pipeline_id=pipeline_id, status='success')
+        checkpoints = self.db.get_by_field(pipeline_id=pipeline_id, status="success")
         if not checkpoints:
             return None
 
@@ -141,8 +142,8 @@ class CheckpointManager:
                 "last_checkpoint": None,
             }
 
-        successful = sum(1 for cp in checkpoints if cp.status == 'success')
-        failed = sum(1 for cp in checkpoints if cp.status == 'failed')
+        successful = sum(1 for cp in checkpoints if cp.status == "success")
+        failed = sum(1 for cp in checkpoints if cp.status == "failed")
         last_cp = max(cp.created_at for cp in checkpoints) if checkpoints else None
 
         return {

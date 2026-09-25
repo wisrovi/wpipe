@@ -25,7 +25,7 @@ sequenceDiagram
     participant C as Client
     participant P as Pipeline
     participant A as API
-    
+
     C->>P: Request with auth
     P->>A: Bearer token
     A-->>P: Protected data
@@ -38,15 +38,15 @@ graph TB
         A[Token]
         B[Bearer]
     end
-    
+
     subgraph Request
         C[API Call]
     end
-    
+
     subgraph Response
         D[Protected data]
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -64,7 +64,7 @@ stateDiagram-v2
 flowchart LR
     T([Token]) --> R([Request])
     R --> D([Protected Data])
-    
+
     style T fill:#e1f5fe
     style D fill:#c8e6c9
 ```

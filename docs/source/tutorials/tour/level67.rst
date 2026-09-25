@@ -22,8 +22,8 @@ Resultado de Ejecución
    
    >>> Probando alert threshold para step...
    
-   [PIPELINE STATUS] Registered: PIPE-034FDF64
+   [PIPELINE STATUS] Registered: PIPE-6655E9CE
    ⚡ Paso rápido
    🐢 Paso lento (100ms)
    viaje_l67_stepalert ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-034FDF64: COMPLETED
+   [PIPELINE STATUS] PIPE-6655E9CE: COMPLETED

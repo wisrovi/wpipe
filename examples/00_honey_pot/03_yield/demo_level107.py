@@ -11,8 +11,10 @@ Pipeline + Wsqlite
 from wpipe import Pipeline
 from wpipe.sqlite import Wsqlite
 
+
 def task(data):
     return {"resultado": "ok"}
+
 
 if __name__ == "__main__":
     print(">>> Pipeline + Wsqlite...")
@@ -24,4 +26,4 @@ if __name__ == "__main__":
 
     with Wsqlite(db_name=db) as wdb:
         wdb.input = {"test": "data"}
-        print(f"✅ Datos guardados")
+        print("✅ Datos guardados")

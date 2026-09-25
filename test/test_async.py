@@ -1,15 +1,18 @@
-import pytest
 import asyncio
 import sqlite3
 import threading
-from typing import Dict, Any, List, Optional, Callable
+from typing import Any, Dict
 
-from wpipe import PipelineAsync, step
+import pytest
 
 # --- RE-PARCHE DE EMERGENCIA PARA ARREGLAR BUG DE WPIPE ---
 from wsqlite import WSQLite
+
+from wpipe import PipelineAsync
+
 _db_connections = {}
 _db_lock = threading.Lock()
+
 
 def better_get_connection(self):
     db_path = getattr(self, "db_path", getattr(self, "db_name", "register.db"))
@@ -20,7 +23,9 @@ def better_get_connection(self):
             _db_connections[db_path] = conn
         return _db_connections[db_path]
 
+
 WSQLite._get_connection = better_get_connection
+
 
 async def async_add_one(data: Dict[str, Any]) -> Dict[str, int]:
     """Asynchronously increments the 'n' value in the input dictionary.
@@ -36,6 +41,7 @@ async def async_add_one(data: Dict[str, Any]) -> Dict[str, int]:
     n: int = data.get("n", 0)
     return {"n": n + 1}
 
+
 @pytest.mark.asyncio
 async def test_async_pipeline_basic() -> None:
     """Tests a basic asynchronous pipeline execution.
@@ -50,6 +56,7 @@ async def test_async_pipeline_basic() -> None:
     result = await pipeline.run(initial_data)
     assert result["n"] == 12
 
+
 @pytest.mark.asyncio
 async def test_async_pipeline_parallel() -> None:
     """Tests parallel execution in an asynchronous pipeline.
@@ -63,6 +70,7 @@ async def test_async_pipeline_parallel() -> None:
     result = await p.run({"n": 5})
     assert result["n"] == 6
 
+
 @pytest.mark.asyncio
 async def test_async_pipeline_error() -> None:
     """Tests error handling within an asynchronous pipeline.
@@ -70,6 +78,7 @@ async def test_async_pipeline_error() -> None:
     This test ensures that the pipeline can continue execution or report errors
     gracefully when one of its steps raises an exception.
     """
+
     async def async_fail(data: Dict[str, Any]) -> Dict[str, Any]:
         """A step that intentionally raises a RuntimeError."""
         raise RuntimeError("Async failure")

@@ -18,9 +18,11 @@ def main() -> None:
     """Run the basic error handling example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (success_step, "Success Step", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (success_step, "Success Step", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Pipeline completed: {result['status']}")

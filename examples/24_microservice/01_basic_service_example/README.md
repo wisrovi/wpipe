@@ -88,7 +88,7 @@ flowchart LR
     subgraph Output
         G["{validado, mensaje_upper, longitud, enriquecido}"]
     end
-    
+
     A --> B --> C --> D --> E --> F --> G
 ```
 

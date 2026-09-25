@@ -38,7 +38,6 @@ class ProgressManager:
     def __init__(self) -> None:
         """Initialize the instance (called after __new__)."""
 
-
     def __enter__(self) -> Progress:
         """
         Enter context manager for progress tracking.

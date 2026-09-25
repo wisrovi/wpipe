@@ -19,6 +19,7 @@ from typing import Any, Dict
 
 from wpipe import Parallel, Pipeline, step
 
+
 @step(name="ai_vision_360")
 def ai_vision_360(data: Any) -> Dict[str, str]:
     """AI Vision 360 processing step.
@@ -32,6 +33,7 @@ def ai_vision_360(data: Any) -> Dict[str, str]:
     print("🧠 Processing 360° artificial vision...")
     time.sleep(0.5)  # Simulate intensive processing
     return {"detections": "OK"}
+
 
 if __name__ == "__main__":
     # We activate system resource monitoring

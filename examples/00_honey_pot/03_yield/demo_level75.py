@@ -12,11 +12,11 @@ For() {
 }
 """
 
-from wpipe import Pipeline, For, Parallel, step
+from wpipe import For, Parallel, Pipeline, step
+
 
 @step(name="leer_camara")
 def leer_camara(data: dict) -> None:
-
     """Leer camara step.
 
     Args:
@@ -30,9 +30,9 @@ def leer_camara(data: dict) -> None:
     """
     print("  📷 Cámara")
 
+
 @step(name="leer_radar")
 def leer_radar(data: dict) -> None:
-
     """Leer radar step.
 
     Args:
@@ -46,9 +46,9 @@ def leer_radar(data: dict) -> None:
     """
     print("  📡 Radar")
 
+
 @step(name="leer_lidar")
 def leer_lidar(data: dict) -> None:
-
     """Leer lidar step.
 
     Args:
@@ -62,9 +62,9 @@ def leer_lidar(data: dict) -> None:
     """
     print("  🔴 LiDAR")
 
+
 @step(name="process")
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -78,6 +78,7 @@ def process(data: dict) -> None:
     """
     print("🧠 Fusionando datos...")
     return {"fusion": "completa"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="viaje_l75_forparallel", verbose=True)

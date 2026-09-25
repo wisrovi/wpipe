@@ -40,7 +40,7 @@ sequenceDiagram
     participant Pipeline
     participant Database
     participant HealthCheck
-    
+
     Kafka->>Service: Receive message
     Service->>Pipeline: Execute pipeline
     Pipeline->>Pipeline: Process steps
@@ -61,23 +61,23 @@ graph TB
         K[Kafka]
         Q[Message Queue]
     end
-    
+
     subgraph Service
         MC[Message Consumer]
         P[Pipeline]
         HS[Health Status]
         MT[Metrics]
     end
-    
+
     subgraph Storage
         DB[(SQLite)]
     end
-    
+
     subgraph Monitoring
         HC[Health Checker]
         MC[Metrics Collector]
     end
-    
+
     K --> MC
     MC --> P
     P --> DB
@@ -197,7 +197,7 @@ class MyService(Microservice):
     def __init__(self):
         super().__init__()
         self.request_count = 0
-    
+
     def process(self, data):
         self.request_count += 1
         data["request_number"] = self.request_count
@@ -243,7 +243,7 @@ flowchart LR
         D3[Track metrics]
         D4[Store results]
     end
-    
+
     subgraph Dont
         A1[Ignore errors]
         A2[Hardcode config]

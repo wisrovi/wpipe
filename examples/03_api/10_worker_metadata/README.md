@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: Register with metadata
     A-->>P: Worker ID
     P->>P: Execute steps
@@ -37,15 +37,15 @@ graph TB
         M2[environment]
         M3[tags]
     end
-    
+
     subgraph Execution
         E[Steps]
     end
-    
+
     subgraph Result
         R[Output]
     end
-    
+
     M1 --> E
     M2 --> E
     M3 --> E
@@ -65,7 +65,7 @@ flowchart LR
     M([Metadata]) --> P([Pipeline])
     P --> E([Execute])
     E --> O([Result])
-    
+
     style M fill:#e1f5fe
     style O fill:#c8e6c9
 ```

@@ -130,7 +130,9 @@ def create_app(
     ) -> list[dict[str, Any]]:
         """Get all executions of a pipeline by name."""
         tracker = PipelineTracker(db_path=db_path, config_dir=config_dir)
-        return tracker.get_pipeline_executions(pipeline_name, limit=limit, offset=offset)
+        return tracker.get_pipeline_executions(
+            pipeline_name, limit=limit, offset=offset
+        )
 
     @app.get("/api/pipelines/{pipeline_id}/graph")
     async def get_pipeline_graph(pipeline_id: str) -> dict[str, Any]:

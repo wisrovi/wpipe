@@ -25,7 +25,7 @@ graph LR
 sequenceDiagram
     participant M as Main
     participant P as Pipeline
-    
+
     M->>P: run_for_value(5)
     P-->>M: {valid: True}
     M->>P: run_for_value(10)
@@ -39,17 +39,17 @@ graph TB
     subgraph Input
         A[Values]
     end
-    
+
     subgraph Pipeline
         B[transform]
         C[validate]
         D[format]
     end
-    
+
     subgraph Output
         E[Results]
     end
-    
+
     A --> B
     B --> C
     C --> D

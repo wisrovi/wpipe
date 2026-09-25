@@ -18,8 +18,10 @@ from pydantic import BaseModel, Field, validator
 
 from wpipe import Pipeline, step, to_obj
 
+
 class SafetyCheck(BaseModel):
     """Pydantic model for tire pressure safety check."""
+
     pressure: float = Field(..., ge=1.0, le=4.0)
 
     @validator("pressure")
@@ -36,6 +38,7 @@ class SafetyCheck(BaseModel):
             print("⚠️ WARNING: Low pressure detected. Inflation recommended.")
         return v
 
+
 @step(name="pressure_sensor")
 def pressure_sensor(data: Any) -> Dict[str, float]:
     """Pressure sensor reading step.
@@ -50,6 +53,7 @@ def pressure_sensor(data: Any) -> Dict[str, float]:
     random_pressure = round(random.randint(10, 30) / 10, 2)
     return {"pressure": random_pressure}
 
+
 @step(name="verify_integrity")
 @to_obj(SafetyCheck)
 def verify_integrity(ctx: SafetyCheck) -> Dict[str, bool]:
@@ -63,6 +67,7 @@ def verify_integrity(ctx: SafetyCheck) -> Dict[str, bool]:
     """
     print(f"🛞  Tires: {ctx.pressure} bar. Physical integrity confirmed.")
     return {"tires_ok": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="safety_scan_l31", verbose=True)

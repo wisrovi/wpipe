@@ -19,7 +19,7 @@ Resultado de Ejecución
 ----------------------
 
 
-   ⛽ Fuel Alert: 10%
+   [CHECKPOINT] Resuming 'night_trip' from step 1
    
    [CHECKPOINT REACHED] rescue_point
    safety_first_l29 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

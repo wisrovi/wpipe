@@ -89,7 +89,7 @@ def main():
         parent.link_to_pipeline(collector.pipeline_id, "parent_of")
 
     print(
-        f"\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+        "\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
 
 

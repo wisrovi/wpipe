@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 DEMO LEVEL 85: Export a YAML
 -------------------------------
@@ -47,7 +45,6 @@ if __name__ == "__main__":
     print("\n📤 Verificando YAML...")
     yaml_path = Path("pipeline_configs/Viaje_L85_ExportYAML.yaml")
     if yaml_path.exists():
-
         """Start step.
 
         Args:

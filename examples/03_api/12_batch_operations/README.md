@@ -23,7 +23,7 @@ graph LR
 sequenceDiagram
     participant I as Input
     participant P as Pipeline
-    
+
     I->>P: Batch items
     P->>P: Validate
     P->>P: Transform
@@ -36,17 +36,17 @@ graph TB
     subgraph Input
         A[items list]
     end
-    
+
     subgraph Steps
         B[Validate]
         C[Transform]
         D[Aggregate]
     end
-    
+
     subgraph Output
         E[results]
     end
-    
+
     A --> B
     B --> C
     C --> D

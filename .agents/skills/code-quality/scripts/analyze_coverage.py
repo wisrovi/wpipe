@@ -11,7 +11,6 @@ Usage:
 
 import argparse
 import subprocess
-import sys
 from pathlib import Path
 
 
@@ -99,11 +98,11 @@ from {module} import *
 
 class Test{class_name}:
     """Test suite for {module} module."""
-    
+
     def test_module_imports(self):
         """Verify module imports correctly."""
         assert True
-    
+
 '''
 
     if missing_lines:

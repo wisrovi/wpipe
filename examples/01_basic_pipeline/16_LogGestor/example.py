@@ -1,8 +1,6 @@
 from wpipe.sqlite import Wsqlite
 
-
 with Wsqlite(db_name="demo.db") as db:
-
     args_dict = {
         "inference": {
             "source": "<image>",

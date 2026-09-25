@@ -10,9 +10,9 @@ analysis.get_states_analysis()
 
 from wpipe import Pipeline, step
 
+
 @step(name="start")
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -26,9 +26,9 @@ def start(data: dict) -> None:
     """
     return {"estado": "iniciado"}
 
+
 @step(name="verificar")
 def verificar(data: dict) -> None:
-
     """Verificar step.
 
     Args:
@@ -41,6 +41,7 @@ def verificar(data: dict) -> None:
 
     """
     return {"verificado": True}
+
 
 if __name__ == "__main__":
     print(">>> Análisis de estados...")

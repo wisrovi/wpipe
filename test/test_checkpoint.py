@@ -1,8 +1,9 @@
-import pytest
 from pathlib import Path
-from typing import Dict, Any
+
+import pytest
 
 from wpipe.checkpoint.checkpoint import CheckpointManager
+
 
 @pytest.fixture
 def checkpoint_mgr(tmp_path: Path) -> CheckpointManager:
@@ -16,6 +17,7 @@ def checkpoint_mgr(tmp_path: Path) -> CheckpointManager:
     """
     db_path: str = str(tmp_path / "test_checkpoints.db")
     return CheckpointManager(db_path=db_path)
+
 
 def test_checkpoint_lifecycle(checkpoint_mgr: CheckpointManager) -> None:
     """Tests the complete lifecycle of checkpoint management.
@@ -60,6 +62,7 @@ def test_checkpoint_lifecycle(checkpoint_mgr: CheckpointManager) -> None:
     checkpoint_mgr.clear_checkpoints(pipe_id)
     assert checkpoint_mgr.get_checkpoint_stats(pipe_id)["total_checkpoints"] == 0
 
+
 def test_checkpoint_with_complex_data(checkpoint_mgr: CheckpointManager) -> None:
     """Tests saving checkpoints with complex data structures.
 
@@ -67,14 +70,16 @@ def test_checkpoint_with_complex_data(checkpoint_mgr: CheckpointManager) -> None
     complex data, such as instances of custom classes.
     """
     pipe_id: str = "test_pipe_complex"
+
     class Dummy:
         """A simple class used for testing complex data serialization."""
+
         def __init__(self):
             self.x = 100
-            
+
     # Save a checkpoint containing an instance of Dummy class
     checkpoint_mgr.save_checkpoint(pipe_id, 0, "step_x", "success", {"dummy": Dummy()})
-    
+
     # Retrieve the checkpoint and assert that the complex data was preserved
     last = checkpoint_mgr.get_last_checkpoint(pipe_id)
     assert last is not None

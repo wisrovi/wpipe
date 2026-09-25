@@ -27,9 +27,9 @@ let graphState = {
 window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar-menu');
     const overlay = document.getElementById('sidebar-overlay');
-    
+
     if (!sidebar || !overlay) return;
-    
+
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
 };
@@ -38,7 +38,7 @@ window.toggleSidebar = function() {
 window.addEventListener('resize', () => {
     const sidebar = document.getElementById('sidebar-menu');
     const overlay = document.getElementById('sidebar-overlay');
-    
+
     if (window.innerWidth > 768) {
         sidebar?.classList.remove('active');
         overlay?.classList.remove('active');
@@ -136,14 +136,14 @@ function updateI18n() {
 window.showTutorial = function() {
     const modal = document.getElementById('tutorial-modal');
     if (!modal) return;
-    
+
     const t = translations[currentLang];
-    
+
     modal.style.display = 'flex';
     document.getElementById('tutorial-content').innerHTML = `
         <h2 style="margin-bottom:0.5rem"><i class="fas fa-rocket"></i> ${t.tutorialTitle}</h2>
         <p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.9rem">${t.tutorialIntro}</p>
-        
+
         <div style="text-align:left;line-height:1.8">
             <div style="background:var(--bg-tertiary);padding:0.75rem;border-radius:8px;margin-bottom:1rem">
                 <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">${t.pipelineTabs}</div>
@@ -151,7 +151,7 @@ window.showTutorial = function() {
                 <p style="font-size:0.8rem;color:var(--text-muted);margin-left:20px;margin-bottom:0.5rem">${t.graphHelp}</p>
                 <p style="margin:0.25rem 0"><i class="fas fa-database" style="width:20px;color:#10b981"></i> <strong>${t.data}</strong></p>
             </div>
-            
+
             <div style="background:var(--bg-tertiary);padding:0.75rem;border-radius:8px;margin-bottom:1rem">
                 <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">${t.globalTabs}</div>
                 <p style="margin:0.25rem 0"><i class="fas fa-chart-gantt" style="width:20px;color:#8b5cf6"></i> ${t.timeline}</p>
@@ -161,13 +161,13 @@ window.showTutorial = function() {
                 <p style="margin:0.25rem 0"><i class="fas fa-cubes" style="width:20px;color:#ef4444"></i> ${t.states}</p>
                 <p style="margin:0.25rem 0"><i class="fas fa-project-diagram" style="width:20px;color:#14b8a6"></i> ${t.pipelines}</p>
             </div>
-            
+
             <div style="background:rgba(59,130,246,0.1);padding:0.75rem;border-radius:8px;border-left:3px solid #3b82f6">
                 <div style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem">${t.history}</div>
                 <pre style="font-size:0.8rem;white-space:pre-wrap;margin:0;color:var(--text-secondary)">${t.historySteps}</pre>
             </div>
         </div>
-        
+
         <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-primary" style="margin-top:1.5rem">${t.close}</button>
     `;
 };
@@ -207,10 +207,10 @@ window.showCurrentPipelineHistory = function() {
 window.showAllPipelinesHistory = function() {
     const modal = document.getElementById('tutorial-modal');
     if (!modal) return;
-    
+
     const title = currentLang === 'es' ? 'Todas las Ejecuciones' : 'All Pipeline Executions';
     const selectMsg = currentLang === 'es' ? 'Selecciona un pipeline:' : 'Select a pipeline:';
-    
+
     modal.style.display = 'flex';
     document.getElementById('tutorial-content').innerHTML = `
         <h2 style="margin-bottom:1rem"><i class="fas fa-history"></i> ${title}</h2>
@@ -220,7 +220,7 @@ window.showAllPipelinesHistory = function() {
         </div>
         <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
     `;
-    
+
     fetch('/api/pipelines')
         .then(r => r.json())
         .then(pipelines => {
@@ -228,7 +228,7 @@ window.showAllPipelinesHistory = function() {
                 document.getElementById('all-pipelines-list').innerHTML = '<p style="color:var(--text-muted)">No pipelines found</p>';
                 return;
             }
-            
+
             // Group by pipeline name
             const grouped = {};
             pipelines.forEach(p => {
@@ -236,7 +236,7 @@ window.showAllPipelinesHistory = function() {
                 if (!grouped[name]) grouped[name] = [];
                 grouped[name].push(p);
             });
-            
+
             let html = '';
             Object.keys(grouped).sort().forEach(name => {
                 const runs = grouped[name].slice(0, 5); // Show max 5 recent
@@ -244,7 +244,7 @@ window.showAllPipelinesHistory = function() {
                     <div style="margin-bottom:1rem">
                         <div style="font-weight:600;margin-bottom:0.5rem">${escapeHtml(name)}</div>
                         ${runs.map(p => `
-                            <div class="pipeline-item" onclick="selectPipeline('${escapeHtml(p.id)}');document.getElementById('tutorial-modal').style.display='none'" 
+                            <div class="pipeline-item" onclick="selectPipeline('${escapeHtml(p.id)}');document.getElementById('tutorial-modal').style.display='none'"
                                  style="margin:0.25rem 0;padding:0.5rem;font-size:0.85rem">
                                 <div class="pipeline-status ${escapeHtml(p.status)}" style="width:8px;height:8px"></div>
                                 <span style="color:var(--text-muted)">${fmtTime(p.created_at)}</span>
@@ -273,7 +273,7 @@ async function loadPipelineHistory(pipelineName) {
 function showPipelineHistoryModal(pipelineName, currentId) {
     const modal = document.getElementById('tutorial-modal');
     if (!modal) return;
-    
+
     modal.style.display = 'flex';
     document.getElementById('tutorial-content').innerHTML = `
         <h2 style="margin-bottom:1rem"><i class="fas fa-history"></i> Pipeline History: ${pipelineName}</h2>
@@ -282,7 +282,7 @@ function showPipelineHistoryModal(pipelineName, currentId) {
         </div>
         <button onclick="document.getElementById('tutorial-modal').style.display='none'" class="btn btn-ghost" style="margin-top:1rem">Close</button>
     `;
-    
+
     fetch(`/api/pipelines/by-name/${encodeURIComponent(pipelineName)}`)
         .then(r => r.json())
         .then(pipelines => {
@@ -291,9 +291,9 @@ function showPipelineHistoryModal(pipelineName, currentId) {
                 list.innerHTML = '<p style="color:var(--text-muted)">No history found</p>';
                 return;
             }
-            
+
             list.innerHTML = pipelines.map(p => `
-                <div class="pipeline-item" onclick="selectPipeline('${escapeHtml(p.id)}');document.getElementById('tutorial-modal').style.display='none'" 
+                <div class="pipeline-item" onclick="selectPipeline('${escapeHtml(p.id)}');document.getElementById('tutorial-modal').style.display='none'"
                      style="margin:0.5rem 0;padding:0.75rem;cursor:pointer;${p.id === currentId ? 'border:2px solid #3b82f6' : ''}">
                     <div class="pipeline-status ${escapeHtml(p.status)}"></div>
                     <div class="pipeline-info">
@@ -327,7 +327,7 @@ function renderPipelineList(pipelines) {
         list.innerHTML = '<div class="empty-state"><p>No pipelines</p></div>';
         return;
     }
-    
+
     // Group pipelines by name
     const grouped = {};
     pipelines.forEach(p => {
@@ -337,12 +337,12 @@ function renderPipelineList(pipelines) {
         }
         grouped[name].push(p);
     });
-    
+
     // Sort executions by date (most recent first) within each group
     Object.keys(grouped).forEach(name => {
         grouped[name].sort((a, b) => new Date(b.started_at) - new Date(a.started_at));
     });
-    
+
     // Render grouped pipelines with collapsible sections
     let html = '';
     Object.keys(grouped).sort().forEach(name => {
@@ -350,10 +350,10 @@ function renderPipelineList(pipelines) {
         const latestStatus = executions[0].status;
         const latestDuration = executions[0].total_duration_ms;
         const count = executions.length;
-        
+
         // Escape quotes in name for onclick
         const safeName = name.replace(/'/g, "\\'");
-        
+
         html += `
             <div class="pipeline-group">
                 <div class="pipeline-group-header" onclick="togglePipelineGroup('${safeName}', event)">
@@ -368,7 +368,7 @@ function renderPipelineList(pipelines) {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="pipeline-group-content" style="display:none;">
                     ${executions.map(p => `
                         <div class="pipeline-execution" onclick="selectPipeline('${escapeHtml(p.id)}')">
@@ -387,18 +387,18 @@ function renderPipelineList(pipelines) {
             </div>
         `;
     });
-    
+
     list.innerHTML = html;
 }
 
 // Toggle pipeline group expansion
 window.togglePipelineGroup = function(name, evt) {
     if (evt) evt.stopPropagation();
-    
+
     // Find the group by looking for the header that contains this name
     const headers = document.querySelectorAll('.pipeline-group-header');
     let targetGroup = null;
-    
+
     for (let header of headers) {
         const nameEl = header.querySelector('.pipeline-name');
         if (nameEl && nameEl.textContent.trim() === name) {
@@ -406,14 +406,14 @@ window.togglePipelineGroup = function(name, evt) {
             break;
         }
     }
-    
+
     if (!targetGroup) return;
-    
+
     const content = targetGroup.querySelector('.pipeline-group-content');
     const icon = targetGroup.querySelector('.expand-icon');
-    
+
     if (!content || !icon) return;
-    
+
     const isExpanded = content.style.display !== 'none';
     content.style.display = isExpanded ? 'none' : 'block';
     icon.classList.toggle('expanded', !isExpanded);
@@ -425,18 +425,18 @@ async function selectPipeline(id) {
         const pRes = await fetch('/api/pipelines/' + id);
         if (!pRes.ok) throw new Error('Pipeline fetch failed');
         const pipeline = await pRes.json();
-        
+
         if (!pipeline) return;
 
         currentPipelineId = id;
         currentPipelineName = pipeline.name || id;
-        
+
         // Mark execution as active in the list
         document.querySelectorAll('.pipeline-execution').forEach(el => {
             el.classList.remove('active');
         });
         document.querySelector(`.pipeline-execution[onclick="selectPipeline('${id}')"]`)?.classList.add('active');
-        
+
         const gRes = await fetch('/api/pipelines/' + id + '/graph');
         if (gRes.ok) {
             const graph = await gRes.json();
@@ -447,13 +447,13 @@ async function selectPipeline(id) {
                 console.error('Render graph error:', ge);
             }
         }
-        
+
         try {
             renderSteps(pipeline);
         } catch (se) {
             console.error('Render steps error:', se);
         }
-        
+
         // Update pipeline info in header
         const info = document.getElementById('graph-pipeline-info');
         if (info) {
@@ -476,20 +476,20 @@ let panZoomInstance = null;
 async function renderGraph(graph) {
     const container = document.getElementById('mermaid-graph');
     const empty = document.getElementById('graph-empty');
-    
+
     if (!graph.nodes || graph.nodes.length === 0 || !graph.mermaid_script) {
         container.style.display = 'none';
         empty.style.display = 'block';
         return;
     }
-    
+
     container.style.display = 'flex';
     empty.style.display = 'none';
-    
+
     try {
         // Initialize mermaid
-        mermaid.initialize({ 
-            startOnLoad: false, 
+        mermaid.initialize({
+            startOnLoad: false,
             theme: 'base',
             themeVariables: {
                 primaryColor: '#3b82f6',
@@ -507,16 +507,16 @@ async function renderGraph(graph) {
 
         const { svg } = await mermaid.render('mermaid-svg', graph.mermaid_script);
         container.innerHTML = svg;
-        
+
         const svgElement = container.querySelector('svg');
         svgElement.setAttribute('id', 'graph-svg-element');
         svgElement.style.width = '100%';
         svgElement.style.height = '100%';
-        
+
         if (panZoomInstance) {
             panZoomInstance.destroy();
         }
-        
+
         panZoomInstance = svgPanZoom(svgElement, {
             zoomEnabled: true,
             controlIconsEnabled: false,
@@ -539,14 +539,14 @@ async function renderGraph(graph) {
                 nodeEl.addEventListener('click', () => selectNode(nd));
             }
         });
-        
+
     } catch (e) {
         console.error('Mermaid render error:', e);
         container.innerHTML = `<div style="padding:20px; color:#ef4444; background:rgba(239, 68, 68, 0.1); border-radius:8px;">
             <i class="fas fa-exclamation-triangle"></i> Graph Render Error: ${e.message}
         </div>`;
     }
-    
+
     document.getElementById('steps-section').style.display = 'block';
 }
 
@@ -577,11 +577,11 @@ window.graphFit = function() {
 function showNodeTooltip(e, node) {
     const tooltip = document.getElementById('tooltip');
     if (!tooltip) return;
-    
+
     let content = `<strong>${node.name}</strong><br>`;
     content += `<span>Type: ${node.type || 'task'}</span><br>`;
     content += `<span>Status: <strong style="color: ${node.status === 'completed' ? '#10b981' : node.status === 'error' ? '#f43f5e' : node.status === 'running' ? '#3b82f6' : '#f59e0b'}">${node.status}</strong></span>`;
-    
+
     if (node.duration_ms) {
         content += `<br><span>Duration: <strong>${fmtDuration(node.duration_ms)}</strong></span>`;
     }
@@ -591,7 +591,7 @@ function showNodeTooltip(e, node) {
     if (node.end_time) {
         content += `<br><span>Ended: ${fmtTime(node.end_time)}</span>`;
     }
-    
+
     // Show condition info if applicable
     if (node.type === 'condition') {
         content += `<br><span style="border-top: 1px solid rgba(148, 163, 184, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;">`;
@@ -607,12 +607,12 @@ function showNodeTooltip(e, node) {
         }
         content += `</span>`;
     }
-    
+
     // Show error message if present
     if (node.error_message && node.type !== 'condition') {
         content += `<br><span style="color: #f43f5e; border-top: 1px solid rgba(148, 163, 184, 0.3); padding-top: 0.5rem; margin-top: 0.5rem;"><strong>Error:</strong><br>${node.error_message}</span>`;
     }
-    
+
     tooltip.innerHTML = content;
     tooltip.style.display = 'block';
     tooltip.style.left = (e.pageX + 15) + 'px';
@@ -638,7 +638,7 @@ function renderSteps(pipeline) {
         sec.style.display = 'none';
         return;
     }
-    
+
     sec.style.display = 'block';
     list.innerHTML = pipeline.steps.map((s, idx) => `
         <div class="step-card" onclick="toggleStepDetails(${idx})" style="cursor:pointer">
@@ -668,19 +668,19 @@ function getStepIcon(status) {
 
 function renderStepDetails(step) {
     let html = '';
-    
+
     // Basic info
     if (step.status) {
         html += `<div style="margin-bottom:0.5rem"><strong>Status:</strong> <span class="status-badge ${step.status}">${step.status}</span></div>`;
     }
-    
+
     // Type and Version
     html += `<div style="margin-bottom:0.5rem;font-size:0.85rem">`;
     if (step.step_type) html += `<div><strong>Type:</strong> ${step.step_type}</div>`;
     if (step.step_version) html += `<div><strong>Version:</strong> ${step.step_version}</div>`;
     if (step.step_order) html += `<div><strong>Order:</strong> #${step.step_order}</div>`;
     html += `</div>`;
-    
+
     // Timing
     const startTime = step.started_at || step.start_time;
     const endTime = step.completed_at || step.end_time;
@@ -691,7 +691,7 @@ function renderStepDetails(step) {
         if (step.duration_ms) html += `<div>Duration: ${fmtDuration(step.duration_ms)}</div>`;
         html += `</div>`;
     }
-    
+
     // Hierarchy
     if (step.parent_step_id || step.parallel_group) {
         html += `<div style="margin-bottom:0.5rem;font-size:0.85rem;color:var(--text-muted)">`;
@@ -699,7 +699,7 @@ function renderStepDetails(step) {
         if (step.parallel_group) html += `<div>Parallel Group: ${step.parallel_group}</div>`;
         html += `</div>`;
     }
-    
+
     // Input
     html += `<div style="margin-bottom:0.5rem"><strong>Input:</strong></div>`;
     html += step.input_data
@@ -711,19 +711,19 @@ function renderStepDetails(step) {
     html += step.output_data
         ? `<pre style="background:var(--bg-secondary);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;max-height:300px">${formatJSON(step.output_data)}</pre>`
         : `<div style="color:var(--text-muted);font-size:0.85rem">N/A</div>`;
-    
+
     // Error
     if (step.error_message) {
         html += `<div style="margin-top:0.5rem"><strong>Error:</strong></div>`;
         html += `<pre style="background:rgba(239,68,68,0.1);padding:0.5rem;border-radius:4px;font-size:0.8rem;overflow-x:auto;color:#ef4444">${step.error_message}</pre>`;
     }
-    
+
     // Error Traceback
     if (step.error_traceback) {
         html += `<div style="margin-top:0.5rem"><strong>Traceback:</strong></div>`;
         html += `<pre style="background:rgba(239,68,68,0.1);padding:0.5rem;border-radius:4px;font-size:0.75rem;overflow-x:auto;color:#ef4444;white-space:pre-wrap">${step.error_traceback}</pre>`;
     }
-    
+
     return html || '<div style="color:var(--text-muted);font-size:0.85rem">No details available</div>';
 }
 
@@ -748,7 +748,7 @@ window.toggleAllSteps = function() {
     const allDetails = document.querySelectorAll('[id^="step-details-"]');
     const allChevrons = document.querySelectorAll('.step-chevron');
     const isExpanded = allDetails[0]?.style.display === 'block';
-    
+
     allDetails.forEach(d => d.style.display = isExpanded ? 'none' : 'block');
     allChevrons.forEach(c => c.style.transform = isExpanded ? '' : 'rotate(180deg)');
 };
@@ -781,31 +781,31 @@ const pipelineTabs = ['graph', 'data'];
 window.switchTab = function(tabName) {
     // Check if pipeline-specific tab requires selection
     if (pipelineTabs.includes(tabName) && !currentPipelineId) {
-        const msg = currentLang === 'es' 
+        const msg = currentLang === 'es'
             ? 'Selecciona un pipeline de la lista derecha primero'
             : 'Select a pipeline from the right list first';
         alert(msg);
         return;
     }
-    
+
     // Update all tabs (old layout)
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     const oldTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
     if (oldTab) oldTab.classList.add('active');
-    
+
     // Update new layout nav buttons
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     const navBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
     if (navBtn) navBtn.classList.add('active');
-    
+
     // Update pipeline-specific tabs
     document.querySelectorAll('.pipeline-tabs .tab').forEach(t => t.classList.remove('active'));
     const pipelineTab = document.querySelector(`.pipeline-tabs .tab[data-tab="${tabName}"]`);
     if (pipelineTab) pipelineTab.classList.add('active');
-    
+
     document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
     document.getElementById(`tab-${tabName}`).style.display = 'block';
-    
+
     if (tabName === 'states') {
         loadStatesAnalysis();
     } else if (tabName === 'pipelines') {
@@ -845,7 +845,7 @@ async function loadStatesAnalysis() {
 function renderStatesAnalysis(data) {
     const summary = document.getElementById('states-summary');
     if (!summary) return;
-    
+
     summary.innerHTML = `
         <div class="stat-card blue">
             <div class="stat-value">${data.total_states || 0}</div>
@@ -860,7 +860,7 @@ function renderStatesAnalysis(data) {
             <div class="stat-label">Total Errors</div>
         </div>
     `;
-    
+
     renderTable('states-most-used', data.most_used || [], ['state_name', 'execution_count', 'avg_duration_ms']);
     renderTable('states-slowest', data.slowest || [], ['state_name', 'execution_count', 'avg_duration_ms']);
     renderTable('states-errors', data.most_errors || [], ['state_name', 'error_count', 'error_rate']);
@@ -880,7 +880,7 @@ async function loadPipelinesAnalysis() {
 function renderPipelinesAnalysis(data) {
     const summary = document.getElementById('pipelines-summary');
     if (!summary) return;
-    
+
     summary.innerHTML = `
         <div class="stat-card blue">
             <div class="stat-value">${data.total_pipelines || 0}</div>
@@ -899,7 +899,7 @@ function renderPipelinesAnalysis(data) {
             <div class="stat-label">Total Errors</div>
         </div>
     `;
-    
+
     renderTable('pipelines-slowest', data.slowest || [], ['name', 'execution_count', 'avg_duration_ms']);
     renderTable('pipelines-errors', data.most_errors || [], ['name', 'error_count', 'error_rate']);
     renderTable('pipelines-recent', data.recent || [], ['name', 'status', 'created_at', 'total_duration_ms']);
@@ -908,24 +908,24 @@ function renderPipelinesAnalysis(data) {
 function renderTable(containerId, rows, columns) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    
+
     if (!rows || rows.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem">No data</p>';
         return;
     }
-    
-    const labels = { 
-        state_name: 'State', 
+
+    const labels = {
+        state_name: 'State',
         name: 'Pipeline',
-        execution_count: 'Runs', 
-        avg_duration_ms: 'Avg Duration', 
-        error_count: 'Errors', 
+        execution_count: 'Runs',
+        avg_duration_ms: 'Avg Duration',
+        error_count: 'Errors',
         error_rate: 'Error Rate',
         status: 'Status',
         created_at: 'Created',
         total_duration_ms: 'Duration'
     };
-    
+
     container.innerHTML = `
         <table class="data-table">
             <thead><tr>${columns.map(c => `<th>${labels[c] || c}</th>`).join('')}</tr></thead>
@@ -956,11 +956,11 @@ async function loadAnalytics() {
             fetch('/api/trends'),
             fetch('/api/slow-steps')
         ]);
-        
+
         const stats = await statsRes.json();
         const trends = await trendsRes.json();
         const slowSteps = await slowRes.json();
-        
+
         renderAnalyticsCharts(stats, trends);
         renderSlowSteps(slowSteps);
         renderPipelineAnalysis(stats);
@@ -972,9 +972,9 @@ async function loadAnalytics() {
 function renderAnalyticsCharts(stats, trends) {
     const ctx = document.getElementById('pie-chart');
     if (!ctx) return;
-    
+
     if (analyticsChart) analyticsChart.destroy();
-    
+
     const data = {
         labels: ['Completed', 'Running', 'Error', 'Pending'],
         datasets: [{
@@ -987,7 +987,7 @@ function renderAnalyticsCharts(stats, trends) {
             backgroundColor: ['#10b981', '#3b82f6', '#ef4444', '#f59e0b']
         }]
     };
-    
+
     analyticsChart = new Chart(ctx, {
         type: 'doughnut',
         data: data,
@@ -1001,12 +1001,12 @@ function renderAnalyticsCharts(stats, trends) {
 function renderSlowSteps(steps) {
     const container = document.getElementById('slow-steps-list');
     if (!container) return;
-    
+
     if (!steps || steps.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted)">No data</p>';
         return;
     }
-    
+
     container.innerHTML = steps.slice(0, 5).map(s => `
         <div style="display:flex;justify-content:space-between;padding:0.5rem;border-bottom:1px solid var(--border)">
             <span>${escapeHtml(s.step_name)}</span>
@@ -1018,7 +1018,7 @@ function renderSlowSteps(steps) {
 function renderPipelineAnalysis(stats) {
     const container = document.getElementById('pipeline-analysis');
     if (!container) return;
-    
+
     container.innerHTML = `
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
             <div class="stat-card blue">
@@ -1057,12 +1057,12 @@ async function loadAlerts() {
 function renderAlerts(alerts) {
     const container = document.getElementById('alerts-list');
     if (!container) return;
-    
+
     if (!alerts || alerts.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>No alerts</p></div>';
         return;
     }
-    
+
     container.innerHTML = alerts.map(a => `
         <div class="alert-card ${a.severity}" style="margin-bottom:0.75rem;padding:1rem;border-radius:8px;background:var(--bg-secondary);border-left:4px solid ${a.severity === 'critical' ? '#ef4444' : '#f59e0b'}">
             <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1104,12 +1104,12 @@ async function loadEvents() {
 function renderEvents(events) {
     const container = document.getElementById('events-list');
     if (!container) return;
-    
+
     if (!events || events.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>No events</p></div>';
         return;
     }
-    
+
     container.innerHTML = events.slice(0, 50).map(e => `
         <div class="event-item" style="display:flex;gap:1rem;padding:0.75rem;border-bottom:1px solid var(--border)">
             <div style="color:var(--text-muted);font-size:0.8rem;min-width:80px">${fmtTime(e.created_at)}</div>
@@ -1128,7 +1128,7 @@ async function loadDataTable() {
     const table = document.getElementById('data-table-select')?.value || 'pipelines';
     const search = document.getElementById('data-search')?.value || '';
     const status = document.getElementById('data-status-filter')?.value || '';
-    
+
     try {
         const res = await fetch(`/api/data/${table}?page=${dataPage}&page_size=20&search=${search}&status=${status}`);
         const data = await res.json();
@@ -1142,20 +1142,20 @@ function renderDataTable(data, table) {
     const thead = document.getElementById('data-thead');
     const tbody = document.getElementById('data-tbody');
     if (!thead || !tbody) return;
-    
+
     const items = data.items || data.data || [];
     if (!items || items.length === 0) {
         tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-muted)">No data</td></tr>';
         return;
     }
-    
+
     const columns = Object.keys(items[0]);
     thead.innerHTML = `<tr>${columns.map(c => `<th>${c}</th>`).join('')}</tr>`;
-    
+
     tbody.innerHTML = items.map(row => `
         <tr>${columns.map(c => `<td>${row[c] !== null ? row[c] : ''}</td>`).join('')}</tr>
     `).join('');
-    
+
     dataTotal = data.total || 0;
     if (data.total_pages) {
         dataPage = data.page || 1;
@@ -1167,7 +1167,7 @@ function updateDataPagination() {
     const info = document.getElementById('data-pagination-info');
     const prev = document.getElementById('data-btn-prev');
     const next = document.getElementById('data-btn-next');
-    
+
     if (info) info.textContent = `Page ${dataPage} of ${Math.ceil(dataTotal / 20)} (${dataTotal} total)`;
     if (prev) prev.disabled = dataPage <= 1;
     if (next) next.disabled = dataPage >= Math.ceil(dataTotal / 20);
@@ -1184,7 +1184,7 @@ window.dataNextPage = function() {
 let timelineChart = null;
 async function loadTimeline() {
     const days = document.getElementById('timeline-filter')?.value || 7;
-    
+
     try {
         const res = await fetch(`/api/trends?days=${days}`);
         const data = await res.json();
@@ -1197,13 +1197,13 @@ async function loadTimeline() {
 function renderTimelineChart(data) {
     const ctx = document.getElementById('timeline-chart');
     if (!ctx) return;
-    
+
     if (timelineChart) timelineChart.destroy();
-    
+
     const labels = data.map(d => d.date || d.day);
     const completed = data.map(d => d.completed || 0);
     const errors = data.map(d => d.errors || 0);
-    
+
     timelineChart = new Chart(ctx, {
         type: 'line',
         data: {

@@ -71,11 +71,11 @@ def convert_file(input_path):
     ext = input_path.suffix.lower()
     if ext not in CONVERTERS:
         return None, f"Unsupported: {ext}"
-    
+
     output = input_path.with_suffix('.md')
     if output.exists():
         return None, "Skipped (exists)"
-    
+
     cmd = CONVERTERS[ext].format(input=input_path, output=output)
     try:
         subprocess.run(cmd, shell=True, check=True)

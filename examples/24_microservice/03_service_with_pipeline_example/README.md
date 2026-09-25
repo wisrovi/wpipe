@@ -91,31 +91,31 @@ stateDiagram-v2
 ```mermaid
 flowchart TB
     subgraph Core Components
-        A[Config (YAML)] 
+        A[Config (YAML)]
         B[Pipeline (wpipe)]
         C[Worker (API)]
         D[SQLite (Persistence)]
         E[Logger]
     end
-    
+
     subgraph Pipeline Steps
         F[paso_validar]
         G[paso_procesar]
         H[paso_guardar]
     end
-    
+
     subgraph Methods
         I[registrar_worker]
         J[ejecutar]
         K[obtener_estado]
     end
-    
+
     A --> B
     C --> D
     B --> F
     B --> G
     B --> H
-    
+
     J --> B
     I --> C
     K --> A

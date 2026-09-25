@@ -48,21 +48,21 @@ def validate_user_input(user_id: str, data: dict) -> None:
 
 def process_user_data(user_id: str, data: dict) -> dict:
     """Process and return user data.
-    
+
     Args:
         user_id: Unique user identifier.
         data: User data dictionary.
-    
+
     Returns:
         Processed user data dictionary.
-    
+
     Raises:
         ValidationError: If inputs are invalid.
     """
     validate_user_input(user_id, data)
-    
+
     logger.info(f"Processing user {user_id}")
-    
+
     return {
         "id": user_id,
         "name": data.get("name"),
@@ -75,8 +75,8 @@ def process_user_data(user_id: str, data: dict) -> dict:
 ```markdown
 # 🔒 Security Assessment Report
 
-**Project:** example-service  
-**Date:** 2026-03-24  
+**Project:** example-service
+**Date:** 2026-03-24
 **Status:** 🟢 SECURE
 
 ---

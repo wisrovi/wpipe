@@ -41,7 +41,7 @@ sequenceDiagram
     participant YAML as YAML File
     participant Util as wpipe.util
     participant Pipeline as Pipeline
-    
+
     User->>YAML: Load config file
     User->>Util: Call leer_yaml()
     Util-->>User: Return config dict

@@ -8,7 +8,7 @@ export class WPipeHoverProvider implements vscode.HoverProvider {
         if (!range) return null;
 
         const word = document.getText(range);
-        
+
         // 1. Check Workspace
         const wsStep = WorkspaceIndex.getStep(word);
         if (wsStep) {

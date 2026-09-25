@@ -11,24 +11,24 @@ flowchart TB
         WAF[Web Application Firewall]
         RATE[Rate Limiting]
     end
-    
+
     subgraph Transport["Transport Security"]
         TLS[TLS 1.3]
         CERT[Certificate Validation]
     end
-    
+
     subgraph Application["Application Security"]
         AUTH[Authentication]
         AUTHZ[Authorization]
         VAL[Input Validation]
     end
-    
+
     subgraph Data["Data Security"]
         ENC[Encryption at Rest]
         MASK[Data Masking]
         TOKEN[Tokenization]
     end
-    
+
     Perimeter --> Transport
     Transport --> Application
     Application --> Data
@@ -59,7 +59,7 @@ flowchart TD
     D -->|Yes| E{Business Rules?}
     E -->|No| C
     E -->|Yes| F[Process]
-    
+
     C --> G[Log Security Event]
     G --> H[Alert]
 ```
@@ -77,49 +77,49 @@ class InputSchema(TypedDict, total=True):
 
 class InputValidator:
     """Input validation with security measures."""
-    
+
     SCHEMA = {
         "mensaje": {"type": "string", "min_length": 1, "max_length": 10000},
         "correlation_id": {"type": "string", "pattern": r"^[a-zA-Z0-9-_]+$"},
         "prioridad": {"type": "enum", "values": ["baja", "normal", "alta"]},
     }
-    
+
     @classmethod
     def validate(cls, data: dict) -> tuple[bool, str | None]:
         """Validate input data against schema."""
-        
+
         # Check required fields
         for field, spec in cls.SCHEMA.items():
             if spec.get("required", False) and field not in data:
                 return False, f"Missing required field: {field}"
-        
+
         # Validate types and constraints
         for field, value in data.items():
             if field not in cls.SCHEMA:
                 continue
-            
+
             spec = cls.SCHEMA[field]
-            
+
             # Type check
             expected_type = spec["type"]
             if expected_type == "string" and not isinstance(value, str):
                 return False, f"Invalid type for {field}"
-            
+
             # Length check
             if "min_length" in spec and len(value) < spec["min_length"]:
                 return False, f"{field} too short"
-            
+
             if "max_length" in spec and len(value) > spec["max_length"]:
                 return False, f"{field} too long"
-            
+
             # Pattern check
             if "pattern" in spec and not re.match(spec["pattern"], value):
                 return False, f"Invalid format for {field}"
-            
+
             # Enum check
             if expected_type == "enum" and value not in spec["values"]:
                 return False, f"Invalid value for {field}"
-        
+
         return True, None
 ```
 
@@ -238,11 +238,11 @@ from datetime import datetime
 
 class AuditLogger:
     """Audit logging for compliance."""
-    
+
     def __init__(self):
         self.logger = logging.getLogger("audit")
         self.logger.setLevel(logging.INFO)
-        
+
         # Separate audit log file
         handler = logging.FileHandler("logs/audit.log")
         handler.setFormatter(
@@ -252,18 +252,18 @@ class AuditLogger:
             )
         )
         self.logger.addHandler(handler)
-    
+
     def log_event(self, event_type: str, user: str, action: str, details: dict):
         """Log audit event."""
         self.logger.info(
             f"type={event_type} | user={user} | action={action} | "
             f"details={json.dumps(mask_sensitive(details))}"
         )
-    
+
     def log_access(self, user: str, resource: str, result: str):
         """Log access attempt."""
         self.log_event("ACCESS", user, resource, {"result": result})
-    
+
     def log_data_access(self, user: str, table: str, operation: str):
         """Log data access."""
         self.log_event("DATA_ACCESS", user, operation, {"table": table})
@@ -284,14 +284,14 @@ class CircuitState(Enum):
 
 class CircuitBreaker:
     """Circuit breaker pattern implementation."""
-    
+
     def __init__(self, failure_threshold: int = 5, timeout: float = 60.0):
         self.failure_threshold = failure_threshold
         self.timeout = timeout
         self.state = CircuitState.CLOSED
         self.failures = 0
         self.last_failure_time = None
-    
+
     def call(self, func, *args, **kwargs):
         """Execute function with circuit breaker."""
         if self.state == CircuitState.OPEN:
@@ -299,7 +299,7 @@ class CircuitBreaker:
                 self.state = CircuitState.HALF_OPEN
             else:
                 raise CircuitBreakerOpenError()
-        
+
         try:
             result = func(*args, **kwargs)
             self.on_success()
@@ -307,12 +307,12 @@ class CircuitBreaker:
         except Exception as e:
             self.on_failure()
             raise
-    
+
     def on_success(self):
         """Handle successful call."""
         self.failures = 0
         self.state = CircuitState.CLOSED
-    
+
     def on_failure(self):
         """Handle failed call."""
         self.failures += 1
@@ -329,17 +329,17 @@ from collections import defaultdict
 
 class RateLimiter:
     """Token bucket rate limiter."""
-    
+
     def __init__(self, rate: int, per: float):
         self.rate = rate  # tokens per time period
         self.per = per    # time period in seconds
         self.tokens = defaultdict(lambda: rate)
         self.last = defaultdict(time.time)
-    
+
     def allow(self, key: str) -> bool:
         """Check if request is allowed."""
         now = time.time()
-        
+
         # Refill tokens
         elapsed = now - self.last[key]
         self.tokens[key] = min(
@@ -347,12 +347,12 @@ class RateLimiter:
             self.tokens[key] + elapsed * (self.rate / self.per)
         )
         self.last[key] = now
-        
+
         if self.tokens[key] >= 1:
             self.tokens[key] -= 1
             return True
         return False
-    
+
     def get_remaining(self, key: str) -> int:
         """Get remaining tokens."""
         return int(self.tokens[key])
@@ -363,11 +363,11 @@ class RateLimiter:
 ```python
 class ServiceWithFallback:
     """Service with fallback behavior."""
-    
+
     def __init__(self, primary_func, fallback_func):
         self.primary = primary_func
         self.fallback = fallback_func
-    
+
     def execute(self, *args, **kwargs):
         """Execute with fallback on failure."""
         try:
@@ -405,20 +405,20 @@ def good_handler(request):
 ```python
 class SecureErrorResponse:
     """Secure error response format."""
-    
+
     PUBLIC_MESSAGES = {
         "VALIDATION_ERROR": "Invalid input provided",
         "AUTH_ERROR": "Authentication failed",
         "RATE_LIMIT": "Rate limit exceeded",
         "INTERNAL_ERROR": "An unexpected error occurred",
     }
-    
+
     @classmethod
     def create(cls, error_type: str, status_code: int):
         """Create secure error response."""
         return {
             "error": cls.PUBLIC_MESSAGES.get(
-                error_type, 
+                error_type,
                 cls.PUBLIC_MESSAGES["INTERNAL_ERROR"]
             ),
             "code": error_type,

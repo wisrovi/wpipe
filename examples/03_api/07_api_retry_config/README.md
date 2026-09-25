@@ -25,7 +25,7 @@ graph LR
 sequenceDiagram
     participant P as Pipeline
     participant A as API
-    
+
     P->>A: Attempt 1
     A-->>P: Failed
     P->>A: Attempt 2
@@ -41,11 +41,11 @@ graph TB
         A2[Attempt 2]
         A3[Attempt 3]
     end
-    
+
     subgraph Result
         B[Success or Fail]
     end
-    
+
     A1 --> A2
     A2 --> A3
     A3 --> B
@@ -67,7 +67,7 @@ flowchart LR
     R1([Retry 1]) --> R2([Retry 2])
     R2 --> R3([Retry 3])
     R3 --> O([Result])
-    
+
     style R1 fill:#fff9c4
     style O fill:#c8e6c9
 ```

@@ -10,25 +10,25 @@ flowchart TB
         DEV[Dev Environment]
         TEST[Testing]
     end
-    
+
     subgraph Staging["Staging"]
         STG_API[API]
         STG_DB[(Database)]
     end
-    
+
     subgraph Production["Production"]
         LB[Load Balancer]
-        
+
         subgraph Cluster["Service Cluster"]
             API1[API Instance 1]
             API2[API Instance 2]
             API3[API Instance N]
         end
-        
+
         DB[(Primary DB)]
         DB_R[(Replica DB)]
     end
-    
+
     DEV --> TEST
     TEST --> STG
     STG --> LB
@@ -231,22 +231,22 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     """Application settings."""
-    
+
     # Database
     database_url: str
-    
+
     # Redis
     redis_url: str
-    
+
     # Security
     api_key: str
     jwt_secret: str
-    
+
     # Application
     app_name: str = "microservice"
     debug: bool = False
     log_level: str = "INFO"
-    
+
     class Config:
         env_file = ".env"
         case_sensitive = False

@@ -26,7 +26,7 @@ sequenceDiagram
     participant P as Pipeline
     participant S1 as step_a
     participant S2 as step_b
-    
+
     P->>S1: run({value: 5})
     Note over S1: [LOG] Calling step_a
     S1-->>P: {a: 6}
@@ -42,16 +42,16 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[step_a + logger]
         D[step_b + logger]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

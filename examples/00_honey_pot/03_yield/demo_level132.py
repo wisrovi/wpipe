@@ -33,7 +33,9 @@ def failing_background(data):
 @step(name="error_handler")
 def error_handler(data, error_info):
     """Manejador de errores."""
-    print(f"⚠️ [ERROR CAPTURE] Error capturado: {error_info.get('error_message', 'Unknown')}")
+    print(
+        f"⚠️ [ERROR CAPTURE] Error capturado: {error_info.get('error_message', 'Unknown')}"
+    )
     return data
 
 
@@ -51,11 +53,13 @@ if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="demo_132", verbose=True)
     pipe.add_error_capture([error_handler])
 
-    pipe.set_steps([
-        start,
-        Background(failing_background, capture_error=True),
-        continue_after_error,
-    ])
+    pipe.set_steps(
+        [
+            start,
+            Background(failing_background, capture_error=True),
+            continue_after_error,
+        ]
+    )
 
     result = pipe.run({})
 

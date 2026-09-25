@@ -12,7 +12,7 @@ This document details the internal design and engineering philosophy behind **wp
     <div style="background: rgba(0, 242, 254, 0.05); padding: 30px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2); margin-bottom: 40px;">
         <h3 style="color: #00f2fe; margin-top: 0;">Philosophy: "Code is the Config"</h3>
         <p style="color: #94a3b8; margin-bottom: 0;">
-            Unlike XML or YAML-heavy orchestrators, WPipe treats your Python code as the source of truth. 
+            Unlike XML or YAML-heavy orchestrators, WPipe treats your Python code as the source of truth.
             We provide a thin but powerful layer of resiliency and observability over pure logic.
         </p>
     </div>
@@ -20,7 +20,7 @@ This document details the internal design and engineering philosophy behind **wp
 1. The "Warehouse" Model
 -----------------------
 
-The core mental model of WPipe is the **Warehouse**. 
+The core mental model of WPipe is the **Warehouse**.
 
 *   **Accumulation**: Instead of steps passing specific arguments to each other, every step updates a global "Warehouse" dictionary.
 *   **Context Awareness**: Every task has visibility into all previous results, allowing for complex decision-making without complex parameter passing.
@@ -62,7 +62,7 @@ WPipe is structured into four specialized layers:
 3. Persistence Strategy: WSQLite
 -------------------------------
 
-One of the most critical components of v2.4.0-LTS is the **WSQLite unification**. 
+One of the most critical components of v2.4.0-LTS is the **WSQLite unification**.
 
 *   **Zero Raw SQL**: All internal tracking (logs, steps, metrics) is handled through Pydantic-mapped models.
 *   **Thread Safety**: Connection pooling and locking mechanisms are built-in to prevent `Database is locked` errors during parallel execution.

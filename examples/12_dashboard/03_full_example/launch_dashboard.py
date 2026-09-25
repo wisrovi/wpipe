@@ -4,7 +4,6 @@ db_path = "full_example.db"
 
 
 def main():
-
     start_dashboard(
         db_path=db_path,
         host="127.0.0.1",

@@ -6,7 +6,7 @@ export class WPipeCodeLensProvider implements vscode.CodeLensProvider {
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
         const lenses: vscode.CodeLens[] = [];
         const content = document.getText();
-        
+
         try {
             const tree = parser.parse(content);
             tree.iterate({
@@ -28,7 +28,7 @@ export class WPipeCodeLensProvider implements vscode.CodeLensProvider {
                         }
                     } else if (node.name === 'CallExpression') {
                         const callText = content.substring(node.from, node.to);
-                        
+
                         // Pipeline execution
                         if (callText.includes('Pipeline(') || callText.includes('.run(')) {
                             const range = new vscode.Range(

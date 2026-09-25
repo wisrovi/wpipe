@@ -8,12 +8,11 @@ DIAGRAM:
 Demo completo de API con pipeline
 """
 
-from wpipe import Pipeline, step, Metric
-from wpipe.api_client import APIClient
+from wpipe import Metric, Pipeline, step
+
 
 @step(name="start")
 def start(data: dict) -> None:
-
     """Start step.
 
     Args:
@@ -28,9 +27,9 @@ def start(data: dict) -> None:
     print("🔑 Starting API system...")
     return {"iniciado": True}
 
+
 @step(name="process")
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -46,6 +45,7 @@ def process(data: dict) -> None:
     Metric.record("api_calls", 1)
     return {"procesado": True}
 
+
 if __name__ == "__main__":
     print("=" * 50)
     print("🎉 DEMO FINAL - API Integration")
@@ -56,4 +56,4 @@ if __name__ == "__main__":
     pipe.run({})
 
     print("\n✅ Demo completed with success!")
-    print(f"📊 Metric: api_calls = 1")
+    print("📊 Metric: api_calls = 1")

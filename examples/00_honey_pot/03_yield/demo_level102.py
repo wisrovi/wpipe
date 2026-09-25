@@ -12,9 +12,9 @@ import time
 
 from wpipe import Pipeline, step
 
+
 @step(name="rapido")
 def rapido(data: dict) -> None:
-
     """Rapido step.
 
     Args:
@@ -28,9 +28,9 @@ def rapido(data: dict) -> None:
     """
     return {"ok": True}
 
+
 @step(name="lento")
 def lento(data: dict) -> None:
-
     """Lento step.
 
     Args:
@@ -44,6 +44,7 @@ def lento(data: dict) -> None:
     """
     time.sleep(0.05)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Pasos más lentos...")

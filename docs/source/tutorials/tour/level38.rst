@@ -21,4 +21,5 @@ Resultado de Ejecución
 
    >>> Optimizing hardware: The car uses threads and processes according to the task.
    [PARALLEL] Executing 2 steps using PROCESSES (workers=2)
-   hybrid_power_l38                                            0% -:--:--
+   [PARALLEL] Executing 4 steps using THREADS (workers=4)
+   hybrid_power_l38 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00

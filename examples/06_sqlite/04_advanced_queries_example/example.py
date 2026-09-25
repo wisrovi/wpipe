@@ -9,7 +9,7 @@ import os
 from typing import Any
 
 from wpipe import Pipeline
-from wpipe.sqlite import Wsqlite, SQLite
+from wpipe.sqlite import SQLite, Wsqlite
 
 
 def paso_basico(data: dict[str, Any]) -> dict[str, Any]:

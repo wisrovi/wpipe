@@ -27,7 +27,7 @@ sequenceDiagram
     participant P1 as process_items
     participant P2 as calculate_total
     participant P3 as apply_discount
-    
+
     P->>P1: run({items: [...]})
     P1-->>P: {processed_items: [...], count: 3}
     P->>P2: run({processed_items: [...]})
@@ -42,17 +42,17 @@ graph TB
         A[Items + Discount]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[process_items]
         D[calculate_total]
         E[apply_discount]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

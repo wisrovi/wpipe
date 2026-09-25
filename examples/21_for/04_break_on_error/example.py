@@ -21,10 +21,12 @@ def main() -> None:
     """Run break on error example."""
     pipeline = Pipeline(pipeline_name="break_on_error", verbose=False)
 
-    pipeline.set_steps([
-        (lambda d: {"counter": 0}, "init", "v1"),
-        For(iterations=3, steps=[may_fail]),
-    ])
+    pipeline.set_steps(
+        [
+            (lambda d: {"counter": 0}, "init", "v1"),
+            For(iterations=3, steps=[may_fail]),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Counter: {result.get('counter')}")

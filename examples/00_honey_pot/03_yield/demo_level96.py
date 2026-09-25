@@ -10,11 +10,11 @@ tracker.get_fired_alerts() --> lista de alerts
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="task")
 def task(data: dict) -> None:
-
     """Task step.
 
     Args:
@@ -28,6 +28,7 @@ def task(data: dict) -> None:
     """
     time.sleep(0.05)
     return {"ok": True}
+
 
 if __name__ == "__main__":
     print(">>> Obteniendo alerts disparados...")

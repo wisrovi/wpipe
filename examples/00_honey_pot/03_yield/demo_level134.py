@@ -51,11 +51,13 @@ if __name__ == "__main__":
     sub_pipeline.set_steps([nested_step_1, nested_step_2])
 
     pipe = Pipeline(pipeline_name="demo_134", verbose=False)
-    pipe.set_steps([
-        prepare,
-        Background(sub_pipeline),
-        continue_main,
-    ])
+    pipe.set_steps(
+        [
+            prepare,
+            Background(sub_pipeline),
+            continue_main,
+        ]
+    )
 
     result = pipe.run({})
     print("\n✅ Pipeline principal NO esperó el sub-pipeline!")

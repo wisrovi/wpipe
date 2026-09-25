@@ -14,7 +14,9 @@ DIAGRAM:
 import asyncio
 import random
 from typing import Any, Dict
-from wpipe import PipelineAsync, Condition
+
+from wpipe import Condition, PipelineAsync
+
 
 async def evaluate_situation(data: Any) -> Dict[str, bool]:
     """Evaluate situation step asynchronously.
@@ -30,6 +32,7 @@ async def evaluate_situation(data: Any) -> Dict[str, bool]:
     print(f"🚗 [ASYNC] Evaluation: obstacle={obstacle}")
     return {"obstacle": obstacle}
 
+
 async def brake(data: Any) -> Dict[str, str]:
     """Brake step asynchronously.
 
@@ -42,6 +45,7 @@ async def brake(data: Any) -> Dict[str, str]:
     print("🛑 [ASYNC] Emergency braking")
     return {"action": "brake"}
 
+
 async def accelerate(data: Any) -> Dict[str, str]:
     """Accelerate step asynchronously.
 
@@ -53,6 +57,7 @@ async def accelerate(data: Any) -> Dict[str, str]:
     """
     print("🚀 [ASYNC] Accelerating")
     return {"action": "accelerate"}
+
 
 async def main() -> None:
     """Main async entry point."""
@@ -72,6 +77,7 @@ async def main() -> None:
         await pipe.run({})
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

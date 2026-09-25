@@ -11,11 +11,11 @@ graph TD
     C -->|FALSE| F{temp < 10?}
     F -->|TRUE| HO[Heating On]
     F -->|FALSE| NO[Normal Op]
-    
+
     CO --> L[Log]
     HO --> L
     NO --> L
-    
+
     C -.-> D[(Database)]
     CO -.-> D
     HO -.-> D
@@ -31,7 +31,7 @@ flowchart LR
         C1 -->|"✓ TRUE"| A1[cooling_on]
         C1 -->|"✗ FALSE"| A2[heating_on]
     end
-    
+
     subgraph "Cold Day (temp=5)"
         N2[read_temp] --> C2{?}
         C2 -->|"✗ FALSE"| B1[cooling_on]

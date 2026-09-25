@@ -9,11 +9,9 @@ Pipeline con múltiples ejemplos de Background
 """
 
 import time
-import threading
 
-from wpipe import Pipeline, step, Condition, Parallel
+from wpipe import Pipeline, step
 from wpipe.pipe.components.logic_blocks import Background
-
 
 # Estado compartido para demostrar ejecución
 execution_log = []
@@ -81,17 +79,19 @@ if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="demo_140", verbose=True)
     pipe.add_error_capture([error_capture_handler])
 
-    pipe.set_steps([
-        start,
-        # Múltiples backgrounds en paralelo
-        Background(log_task),
-        Background(telemetry_task),
-        # Background que falla pero se captura
-        Background(failing_bg, capture_error=True),
-        # Tarea normal después de backgrounds
-        normal_task,
-        finish,
-    ])
+    pipe.set_steps(
+        [
+            start,
+            # Múltiples backgrounds en paralelo
+            Background(log_task),
+            Background(telemetry_task),
+            # Background que falla pero se captura
+            Background(failing_bg, capture_error=True),
+            # Tarea normal después de backgrounds
+            normal_task,
+            finish,
+        ]
+    )
 
     result = pipe.run({})
 

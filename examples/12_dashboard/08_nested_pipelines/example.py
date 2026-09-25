@@ -83,7 +83,7 @@ def main():
 
     print(f"\n[Result] Records processed: {result.get('total_records', 0)}")
     print(
-        f"\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
+        "\n[Dashboard] Run: cd .. && python -m wpipe.dashboard --db wpipe_dashboard.db --config-dir configs --open"
     )
 
 

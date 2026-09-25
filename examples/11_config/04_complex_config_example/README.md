@@ -39,7 +39,7 @@ sequenceDiagram
     participant Dev as Dev Env
     participant Test as Test Env
     participant Prod as Prod Env
-    
+
     App->>Config: Load config
     App->>App: Select environment
     alt desarrollo

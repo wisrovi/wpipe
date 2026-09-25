@@ -12,7 +12,9 @@ DIAGRAM:
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
+
 
 @step(name="drive_final_stretch")
 def drive_final_stretch(data: Any) -> Dict[str, str]:
@@ -27,6 +29,7 @@ def drive_final_stretch(data: Any) -> Dict[str, str]:
     print("🚗 Driving the last few meters...")
     return {"arrival": "Parking"}
 
+
 @step(name="shutdown_protocol")
 def shutdown_protocol(data: Any) -> Dict[str, bool]:
     """Shutdown protocol step for cleaning up resources.
@@ -39,6 +42,7 @@ def shutdown_protocol(data: Any) -> Dict[str, bool]:
     """
     print("🧹 SAFETY HOOK: Deactivating cameras and clearing temporary memory...")
     return {"systems_asleep": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="safety_hooks_l37", verbose=True)

@@ -11,6 +11,7 @@ from wpipe import Pipeline
 
 class CustomError(Exception):
     """Custom error for retry demo."""
+
     pass
 
 
@@ -23,9 +24,11 @@ def main() -> None:
     """Run retry with custom exception example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (failing_step, "Failing Step", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (failing_step, "Failing Step", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

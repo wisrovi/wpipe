@@ -10,11 +10,11 @@ DIAGRAM:
 
 import time
 
-from wpipe import Pipeline, step, Metric, Severity
+from wpipe import Metric, Pipeline, Severity, step
+
 
 @step(name="validar_datos")
 def validar_datos(data: dict) -> None:
-
     """Validar datos step.
 
     Args:
@@ -30,9 +30,9 @@ def validar_datos(data: dict) -> None:
     print("✅ Datos válidos")
     return {"valido": True}
 
+
 @step(name="process")
 def process(data: dict) -> None:
-
     """Process step.
 
     Args:
@@ -47,6 +47,7 @@ def process(data: dict) -> None:
     time.sleep(0.2)
     print("📊Datos procesados")
     return {"ok": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

@@ -22,9 +22,11 @@ def main() -> None:
         verbose=True,
     )
 
-    pipeline.set_steps([
-        (process_step, "Process", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (process_step, "Process", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result['result']}")

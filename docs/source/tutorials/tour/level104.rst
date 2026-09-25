@@ -20,9 +20,9 @@ Resultado de Ejecución
 
 
    >>> Análisis de pipelines...
-   [PIPELINE STATUS] Registered: PIPE-1F031972
+   [PIPELINE STATUS] Registered: PIPE-3C89FC6C
    viaje_l104_pipelines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-1F031972: COMPLETED
+   [PIPELINE STATUS] PIPE-3C89FC6C: COMPLETED
    
    📊 Análisis:
      Total: 7

@@ -1,35 +1,34 @@
 # from wpipe_steps.database.redis.hash.read_hash_sync import RedisHashReadSync
+
+from error_capture import error_capture
 from state1 import StepClass
-from .state2 import function_name
-from state4 import StepClass4
 from state3 import StepClass3
+from state4 import StepClass4
 from state5 import function_name5
 from state6 import function_name6
 from state7 import slow_step
 from state8 import AdvancedStep8
-from state_pipe import pipe_2
 from state9 import AdvancedStep9
-from error_capture import error_capture
 from state10 import StepClass10
 from state11 import function_name11
-from states import State12, State13, StepChaeckpoint, EventsPipeline, AlertsPipeline
-from hooks import audit_pre_hook, audit_post_hook
+from state_pipe import pipe_2
+from states import AlertsPipeline, EventsPipeline, State12, State13, StepChaeckpoint
 
 from wpipe import (
-    Pipeline,
     Condition,
     For,
-    Parallel,
-    ResourceMonitor,
-    TaskTimer,
     Metric,
+    Parallel,
+    Pipeline,
+    ResourceMonitor,
     Severity,
+    TaskTimer,
 )
 from wpipe.exception.api_error import ProcessError
+from wpipe.pipe.components.logic_blocks import Background
 from wpipe.sqlite import Wsqlite
 
-from wpipe.pipe.components.logic_blocks import Background
-import os
+from .state2 import function_name
 
 pipeline = Pipeline(
     pipeline_name="my_pipeline",

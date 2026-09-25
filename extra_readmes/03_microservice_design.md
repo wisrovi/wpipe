@@ -22,7 +22,7 @@ graph TB
         ISP[Interface Segregation]
         DIP[Dependency Inversion]
     end
-    
+
     SRP --> Impl1[Step Functions]
     OCP --> Impl2[Pipeline Extension]
     LSP --> Impl3[Pipeline Subclasses]
@@ -47,7 +47,7 @@ classDiagram
         +iniciar() None
         +detener() None
     }
-    
+
     class Pipeline {
         +pipeline_name: str
         +verbose: bool
@@ -56,14 +56,14 @@ classDiagram
         +set_steps(steps: list) None
         +run(context: dict) dict
     }
-    
+
     class Step {
         +func: Callable
         +name: str
         +version: str
         +run(context: dict) dict
     }
-    
+
     MicroservicioBasico --> Pipeline : uses
     Pipeline --> Step : manages
 ```
@@ -89,7 +89,7 @@ flowchart LR
         S2 --> S3[Step 3]
         S3 --> O[Output]
     end
-    
+
     style Pipeline fill:#e1f5fe
     style I fill:#fff3e0
     style O fill:#e8f5e9
@@ -114,19 +114,19 @@ classDiagram
     class original_func {
         +__call__(data)
     }
-    
+
     class step_decorator {
         +name: str
         +version: str
         +__call__(data)
     }
-    
+
     class decorated_func {
         +NAME: str
         +VERSION: str
         +__call__(data)
     }
-    
+
     original_func <-- step_decorator : wraps
     step_decorator <-- decorated_func : creates
 ```
@@ -140,7 +140,7 @@ stateDiagram-v2
     Running --> Stopping: stop()
     Stopping --> Stopped: cleanup()
     Stopped --> [*]
-    
+
     Running --> Processing: new message
     Processing --> Running: complete
 ```
@@ -152,22 +152,22 @@ stateDiagram-v2
 ```python
 class MicroserviceInterface(ABC):
     """Abstract interface for all microservices."""
-    
+
     @abstractmethod
     def procesar_mensaje(self, mensaje: dict) -> dict:
         """Process a single message."""
         pass
-    
+
     @abstractmethod
     def iniciar(self) -> None:
         """Start the service."""
         pass
-    
+
     @abstractmethod
     def detener(self) -> None:
         """Stop the service gracefully."""
         pass
-    
+
     @abstractmethod
     def health_check(self) -> dict:
         """Return service health status."""
@@ -179,16 +179,16 @@ class MicroserviceInterface(ABC):
 ```python
 class PipelineStep(Protocol):
     """Protocol for pipeline steps."""
-    
+
     def __call__(self, data: dict) -> dict:
         """Process input data and return transformed data."""
         ...
-    
+
     @property
     def NAME(self) -> str:
         """Step name identifier."""
         ...
-    
+
     @property
     def VERSION(self) -> str:
         """Step version."""
@@ -240,20 +240,20 @@ classDiagram
         +message: str
         +step: str
     }
-    
+
     class ValidationError {
         +field: str
         +value: any
     }
-    
+
     class ProcessingError {
         +original: Exception
     }
-    
+
     class TimeoutError {
         +timeout_seconds: float
     }
-    
+
     PipelineError <|-- ValidationError
     PipelineError <|-- ProcessingError
     PipelineError <|-- TimeoutError
@@ -317,18 +317,18 @@ flowchart TB
     subgraph Container["Service Container"]
         Svc[Microservice]
     end
-    
+
     subgraph Dependencies["Injected Dependencies"]
         Log[Logger]
         Pipe[Pipeline]
         DB[Database]
     end
-    
+
     subgraph Config["Configuration"]
         Yaml[YAML Config]
         Env[Environment]
     end
-    
+
     Config --> Container
     Dependencies --> Container
 ```
@@ -342,7 +342,7 @@ sequenceDiagram
     participant Logger
     participant Pipeline
     participant Service
-    
+
     Main->>Config: Load YAML
     Config-->>Main: config_dict
     Main->>Logger: Initialize

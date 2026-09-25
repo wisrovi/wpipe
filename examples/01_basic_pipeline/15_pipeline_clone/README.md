@@ -25,7 +25,7 @@ graph LR
 sequenceDiagram
     participant M as Main
     participant F as Factory
-    
+
     M->>F: create_configured_pipeline()
     F-->>M: {v1: 10}
     M->>F: create_configured_pipeline([extra])
@@ -38,16 +38,16 @@ graph TB
         A[Base Steps]
         B[Extra Steps]
     end
-    
+
     subgraph Pipeline
         C[Base Step]
         D[Extra Step]
     end
-    
+
     subgraph Result
         E[Output]
     end
-    
+
     A --> C
     B --> D
     C --> E

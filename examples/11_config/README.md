@@ -39,7 +39,7 @@ sequenceDiagram
     participant ConfigLoader
     participant YAML
     participant Pipeline
-    
+
     User->>ConfigLoader: Load config file
     ConfigLoader->>YAML: Parse YAML file
     YAML-->>ConfigLoader: Return config dict
@@ -60,17 +60,17 @@ graph TB
         EL[Environment Loader]
         VV[Validation]
     end
-    
+
     subgraph Pipeline_Builder
         PB[Pipeline Builder]
         SL[Step Loader]
     end
-    
+
     subgraph Execution
         P[Pipeline]
         EX[Executor]
     end
-    
+
     YF --> EL
     EL --> VV
     VV --> PB
@@ -150,12 +150,12 @@ verbose: true
 pipeline:
   name: "my_pipeline"
   version: "v1.0.0"
-  
+
 steps:
   - name: "Step 1"
     function: "process_data"
     enabled: true
-    
+
   - name: "Step 2"
     function: "validate_results"
     enabled: true
@@ -224,7 +224,7 @@ flowchart LR
         D2[Use environment variables]
         D3[Keep configs versioned]
     end
-    
+
     subgraph Dont
         A1[Hardcode values]
         A2[Skip validation]

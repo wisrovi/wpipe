@@ -11,7 +11,9 @@ DIAGRAM:
 
 import time
 from typing import Any, Dict
-from wpipe import Pipeline, step, Parallel
+
+from wpipe import Parallel, Pipeline, step
+
 
 @step(name="heavy_ai_4k")
 def heavy_ai_4k(data: Any) -> Dict[str, str]:
@@ -26,6 +28,7 @@ def heavy_ai_4k(data: Any) -> Dict[str, str]:
     time.sleep(0.3)
     return {"video_analyzed": "OK"}
 
+
 @step(name="light_air_sensor")
 def light_air_sensor(data: Any) -> Dict[str, str]:
     """Light air quality sensor step using threads.
@@ -37,6 +40,7 @@ def light_air_sensor(data: Any) -> Dict[str, str]:
         Dict[str, str]: Air quality status.
     """
     return {"air_quality": "Excellent"}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="hybrid_power_l38", verbose=True)
@@ -50,5 +54,7 @@ if __name__ == "__main__":
         ]
     )
 
-    print(">>> Optimizing hardware: The car uses threads and processes according to the task.")
+    print(
+        ">>> Optimizing hardware: The car uses threads and processes according to the task."
+    )
     pipe.run({})

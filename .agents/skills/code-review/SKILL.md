@@ -102,5 +102,5 @@ Ver `references/coding-standards.md` para reglas detalladas:
 
 ## About the Author
 
-**[Author]**  
+**[Author]**
 AI Solutions Architect & Technology Evangelist

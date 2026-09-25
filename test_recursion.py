@@ -8,11 +8,13 @@ pipeline using WPipe, including conditional branches and parallel execution.
 import logging
 import traceback
 from typing import Any, Dict
-from wpipe import Pipeline, step, Condition, Parallel, For
+
+from wpipe import Condition, For, Parallel, Pipeline, step
 
 # Configure logger
 logging.basicConfig(level=logging.INFO)
 logger: logging.Logger = logging.getLogger(__name__)
+
 
 # Mock steps
 @step(name="check_requirements")
@@ -28,6 +30,7 @@ def check_requirements(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     return data
 
+
 @step(name="clean_folder")
 def clean_folder(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -40,6 +43,7 @@ def clean_folder(data: Dict[str, Any]) -> Dict[str, Any]:
         The updated data dictionary.
     """
     return data
+
 
 @step(name="reset_part_model")
 def reset_part_model(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -54,6 +58,7 @@ def reset_part_model(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     return data
 
+
 @step(name="reset_damage_search")
 def reset_damage_search(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -67,6 +72,7 @@ def reset_damage_search(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     return data
 
+
 @step(name="open_video_capture")
 def open_video_capture(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -79,6 +85,7 @@ def open_video_capture(data: Dict[str, Any]) -> Dict[str, Any]:
         The updated data dictionary.
     """
     return data
+
 
 @step(name="create_batch_frames")
 def create_batch_frames(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -94,6 +101,7 @@ def create_batch_frames(data: Dict[str, Any]) -> Dict[str, Any]:
     data["process_completed"] = 0
     return data
 
+
 @step(name="filter_by_car")
 def filter_by_car(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -107,12 +115,14 @@ def filter_by_car(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     return data
 
+
 # Mock classes for steps that are classes
 @step(name="DamageDetector")
 class DamageDetector:
     """
     Step class to detect damage in frames.
     """
+
     def __init__(self) -> None:
         """Initialize the DamageDetector."""
 
@@ -128,11 +138,13 @@ class DamageDetector:
         """
         return data
 
+
 @step(name="PartSegmentator")
 class PartSegmentator:
     """
     Step class to segment parts in frames.
     """
+
     def __init__(self) -> None:
         """Initialize the PartSegmentator."""
 
@@ -148,6 +160,7 @@ class PartSegmentator:
         """
         return data
 
+
 @step(name="get_angle")
 def get_angle(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -161,11 +174,13 @@ def get_angle(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     return data
 
+
 @step(name="DamageSegmentator")
 class DamageSegmentator:
     """
     Step class to segment damage areas.
     """
+
     def __init__(self) -> None:
         """Initialize the DamageSegmentator."""
 
@@ -181,11 +196,13 @@ class DamageSegmentator:
         """
         return data
 
+
 @step(name="DamageClasification")
 class DamageClasification:
     """
     Step class to classify detected damage.
     """
+
     def __init__(self) -> None:
         """Initialize the DamageClasification."""
 
@@ -201,11 +218,13 @@ class DamageClasification:
         """
         return data
 
+
 @step(name="DamageSecondClasification")
 class DamageSecondClasification:
     """
     Step class for secondary damage classification.
     """
+
     def __init__(self) -> None:
         """Initialize the DamageSecondClasification."""
 
@@ -221,6 +240,7 @@ class DamageSecondClasification:
         """
         return data
 
+
 @step(name="add_watermark")
 def add_watermark(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -234,6 +254,7 @@ def add_watermark(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     return data
 
+
 @step(name="save_video_report")
 def save_video_report(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -246,6 +267,7 @@ def save_video_report(data: Dict[str, Any]) -> Dict[str, Any]:
         The updated data dictionary.
     """
     return data
+
 
 @step(name="damage_tracker")
 def damage_tracker(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -261,6 +283,7 @@ def damage_tracker(data: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("[main] damage_tracker...")
     return data
 
+
 @step(name="parts_tracker")
 def parts_tracker(data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -275,64 +298,67 @@ def parts_tracker(data: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("[main] parts_tracker...")
     return data
 
+
 def build_and_run_pipeline() -> None:
     """
     Build and execute the test pipeline.
     """
     # Build the pipeline
     pipeline_instance: Pipeline = Pipeline(pipeline_name="test_pipeline")
-    pipeline_instance.set_steps([
-        check_requirements,
-        clean_folder,
-        reset_part_model,
-        reset_damage_search,
-        open_video_capture,
-        For(
-            validation_expression="process_completed == 0",
-            steps=[
-                create_batch_frames,
-                Condition(
-                    expression="active_background_extractor == 1",
-                    branch_true=[filter_by_car],
-                    branch_false=[],
-                ),
-                Parallel(
-                    steps=[
-                        DamageDetector(),  # Damage detector only
-                        PartSegmentator(),  # Runs on thread B
-                        get_angle,          # Runs on thread C
-                    ],
-                    max_workers=2,
-                ),
-                Parallel(
-                    steps=[
-                        DamageSegmentator(),      # Runs on thread A
-                        DamageClasification(),    # Runs on thread B
-                        DamageSecondClasification(),  # Runs on thread C
-                    ],
-                    max_workers=3,
-                ),
-                add_watermark,
-                save_video_report,
-            ],
-        ),
-        Condition(
-            expression="tracker_external == 1",
-            branch_true=[
-                (
-                    lambda context: logger.info("[main] damage_tracker..."),
-                    "damage_tracker",
-                    "v1.0",
-                ),
-                (
-                    lambda context: logger.info("[main] parts_tracker..."),
-                    "parts_tracker",
-                    "v1.0",
-                ),
-            ],
-            branch_false=[],
-        ),
-    ])
+    pipeline_instance.set_steps(
+        [
+            check_requirements,
+            clean_folder,
+            reset_part_model,
+            reset_damage_search,
+            open_video_capture,
+            For(
+                validation_expression="process_completed == 0",
+                steps=[
+                    create_batch_frames,
+                    Condition(
+                        expression="active_background_extractor == 1",
+                        branch_true=[filter_by_car],
+                        branch_false=[],
+                    ),
+                    Parallel(
+                        steps=[
+                            DamageDetector(),  # Damage detector only
+                            PartSegmentator(),  # Runs on thread B
+                            get_angle,  # Runs on thread C
+                        ],
+                        max_workers=2,
+                    ),
+                    Parallel(
+                        steps=[
+                            DamageSegmentator(),  # Runs on thread A
+                            DamageClasification(),  # Runs on thread B
+                            DamageSecondClasification(),  # Runs on thread C
+                        ],
+                        max_workers=3,
+                    ),
+                    add_watermark,
+                    save_video_report,
+                ],
+            ),
+            Condition(
+                expression="tracker_external == 1",
+                branch_true=[
+                    (
+                        lambda context: logger.info("[main] damage_tracker..."),
+                        "damage_tracker",
+                        "v1.0",
+                    ),
+                    (
+                        lambda context: logger.info("[main] parts_tracker..."),
+                        "parts_tracker",
+                        "v1.0",
+                    ),
+                ],
+                branch_false=[],
+            ),
+        ]
+    )
 
     # Run the pipeline
     try:
@@ -340,9 +366,10 @@ def build_and_run_pipeline() -> None:
         result: Dict[str, Any] = pipeline_instance.run(initial_data)
         print("Pipeline executed successfully")
         print("Result:", result)
-    except Exception as err: # pylint: disable=broad-exception-caught
+    except Exception as err:  # pylint: disable=broad-exception-caught
         print("Pipeline execution failed with error:", err)
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     build_and_run_pipeline()

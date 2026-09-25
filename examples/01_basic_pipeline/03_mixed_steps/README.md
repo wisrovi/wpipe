@@ -27,7 +27,7 @@ sequenceDiagram
     participant F1 as extract_numbers
     participant C1 as SumNumbers
     participant F2 as calculate_average
-    
+
     P->>F1: run({})
     F1-->>P: {numbers: [1,2,3,4,5]}
     P->>C1: run({numbers: [1,2,3,4,5]})
@@ -42,17 +42,17 @@ graph TB
         A[Input]
         B[Pipeline]
     end
-    
+
     subgraph Execution
         C[extract_numbers]
         D[SumNumbers]
         E[calculate_average]
     end
-    
+
     subgraph Result
         F[Output]
     end
-    
+
     A --> B
     B --> C
     C --> D

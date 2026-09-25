@@ -10,7 +10,9 @@ Steps executed 3 times sequentially
 
 import asyncio
 from typing import Any
+
 from wpipe import PipelineAsync
+
 
 async def process_frame_0(data: Any) -> None:
     """Process frame 0 step asynchronously.
@@ -20,6 +22,7 @@ async def process_frame_0(data: Any) -> None:
     """
     print("🖼️ [ASYNC] Frame 0")
 
+
 async def process_frame_1(data: Any) -> None:
     """Process frame 1 step asynchronously.
 
@@ -28,6 +31,7 @@ async def process_frame_1(data: Any) -> None:
     """
     print("🖼️ [ASYNC] Frame 1")
 
+
 async def process_frame_2(data: Any) -> None:
     """Process frame 2 step asynchronously.
 
@@ -35,6 +39,7 @@ async def process_frame_2(data: Any) -> None:
         data: Input data.
     """
     print("🖼️ [ASYNC] Frame 2")
+
 
 async def main() -> None:
     """Main async entry point."""
@@ -45,6 +50,7 @@ async def main() -> None:
         await pipe.run({})
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

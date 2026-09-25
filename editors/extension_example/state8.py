@@ -1,9 +1,12 @@
-from wpipe import step, to_obj, PipelineContext
-from wpipe.timeout import timeout_sync
 from typing import Any
+
+from wpipe import PipelineContext, step, to_obj
+from wpipe.timeout import timeout_sync
+
 
 class MyContext(PipelineContext):
     field: str
+
 
 @step(
     name="AdvancedStep8",

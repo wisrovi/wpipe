@@ -13,7 +13,7 @@ Welcome to the future of Python orchestration. This guide will help you set up *
         <div style="background: #0f172a; padding: 25px; border-radius: 10px;">
             <h2 style="color: #00f2fe; margin-top: 0; border: none;">⚡ Fast-Track to Power</h2>
             <p style="color: #f8fafc; margin-bottom: 0;">
-                WPipe is designed for engineers who value <strong>performance, zero-boilerplate</strong>, and <strong>resilience</strong>. 
+                WPipe is designed for engineers who value <strong>performance, zero-boilerplate</strong>, and <strong>resilience</strong>.
                 Let's get your environment ready.
             </p>
         </div>
@@ -58,7 +58,7 @@ Ensure the engine is correctly synchronized with your system.
 
     import wpipe
     from wpipe import Pipeline
-    
+
     print(f"🚀 WPipe v{wpipe.__version__} - Engine Synchronized.")
     # Expected: 🚀 WPipe v2.4.0 - Engine Synchronized.
 
@@ -135,7 +135,7 @@ Here is a complete, production-ready example demonstrating data accumulation.
 
         # Execute
         final_warehouse = engine.run({"input": "raw_signal"})
-        
+
         print(f"Result: {final_warehouse}")
         # Result: {'input': 'raw_signal', 'a': 10, 'b': 20}
 

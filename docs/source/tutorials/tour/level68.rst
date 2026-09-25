@@ -22,8 +22,11 @@ Resultado de Ejecución
    
    >>> Probando múltiples alerts...
    
-   [PIPELINE STATUS] Registered: PIPE-FE0C4C6F
+   [PIPELINE STATUS] Registered: PIPE-E7E5A796
    ✅ Datos válidos
    📊Datos procesados
    viaje_l68_multiplealerts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-FE0C4C6F: COMPLETED
+   [ALERTS] Firing 2 alert hooks...
+   🚨 [CRITICAL] Pipeline muy lento!
+   ⚠️ [WARNING] Pipeline lento
+   [PIPELINE STATUS] PIPE-E7E5A796: COMPLETED

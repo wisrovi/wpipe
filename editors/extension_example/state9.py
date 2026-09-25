@@ -1,10 +1,14 @@
-from wpipe import step, to_obj, PipelineContext
-from wpipe.timeout import timeout_sync
 from typing import Any
+
 from pydantic import BaseModel
+
+from wpipe import step, to_obj
+from wpipe.timeout import timeout_sync
+
 
 class MyContext(BaseModel):
     field: str
+
 
 @step(
     name="AdvancedStep9",

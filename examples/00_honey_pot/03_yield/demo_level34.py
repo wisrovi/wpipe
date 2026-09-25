@@ -13,7 +13,9 @@ DIAGRAM:
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step
+
 
 @step(name="piloting_system")
 def piloting_system(data: Any) -> Dict[str, str]:
@@ -26,6 +28,7 @@ def piloting_system(data: Any) -> Dict[str, str]:
         Dict[str, str]: Piloting status.
     """
     return {"piloting": "ACTIVE"}
+
 
 @step(name="infotainment")
 def infotainment(data: Any) -> None:
@@ -40,6 +43,7 @@ def infotainment(data: Any) -> None:
     print("🎵 Radio: Trying to connect to the cloud...")
     raise RuntimeError("Network error: Streaming not available")
 
+
 @step(name="maintain_distance")
 def maintain_distance(data: Any) -> Dict[str, bool]:
     """Radar distance maintenance step.
@@ -52,6 +56,7 @@ def maintain_distance(data: Any) -> Dict[str, bool]:
     """
     print("📏 Radar: Maintaining active safety distance.")
     return {"distance_ok": True}
+
 
 if __name__ == "__main__":
     # NEW IN L34: A radio error does not stop navigation

@@ -5,8 +5,6 @@ Demonstrates how to send pipeline execution results to external APIs.
 Useful for notifications, webhooks, and integration with other systems.
 """
 
-import time
-
 from wpipe import Pipeline, PipelineTracker
 
 

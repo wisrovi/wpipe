@@ -23,10 +23,12 @@ def main() -> None:
     """Run continue after error example."""
     pipeline = Pipeline(verbose=True)
 
-    pipeline.set_steps([
-        (initial_step, "Initial", "v1.0"),
-        (recovery_step, "Recovery", "v1.0"),
-    ])
+    pipeline.set_steps(
+        [
+            (initial_step, "Initial", "v1.0"),
+            (recovery_step, "Recovery", "v1.0"),
+        ]
+    )
 
     result = pipeline.run({})
     print(f"Result: {result}")

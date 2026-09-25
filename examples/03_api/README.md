@@ -21,20 +21,20 @@ graph TB
         AC[api_config]
         WC[worker_id]
     end
-    
+
     subgraph API_Client
         RS[Requests Session]
         HT[HTTP Transport]
         RL[Retry Logic]
         LG[Logging]
     end
-    
+
     subgraph API_Server
         NW[newprocess endpoint]
         EW[endprocess endpoint]
         MR[matricula endpoint]
     end
-    
+
     P --> AC
     P --> WC
     P --> RS
@@ -202,7 +202,7 @@ flowchart LR
         D3[Configure timeouts]
         D4[Use retries]
     end
-    
+
     subgraph Dont
         N1[Assume API available]
         N2[Hardcode URLs]

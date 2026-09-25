@@ -14,6 +14,7 @@ DIAGRAM:
 """
 
 from typing import Any, Dict
+
 from wpipe import Pipeline, step, to_obj
 
 

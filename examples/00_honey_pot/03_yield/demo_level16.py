@@ -18,11 +18,14 @@ from pydantic import BaseModel, Field
 
 from wpipe import Pipeline, step, to_obj
 
+
 # NEW IN L16: The car only accepts data in logical physical ranges
 class SensorData(BaseModel):
     """Pydantic model for sensor data validation."""
+
     tire_pressure: float = Field(..., ge=1.5, le=3.5)
     fuel_level: float = Field(..., ge=0, le=100)
+
 
 @step(name="read_obd2")
 def read_obd2(data: Any) -> Dict[str, Any]:
@@ -42,6 +45,7 @@ def read_obd2(data: Any) -> Dict[str, Any]:
 
     return {"tire_pressure": 2.3, "fuel_level": 75.0}
 
+
 @step(name="analyze_safety")
 @to_obj(SensorData)  # <--- ACTIVE VALIDATION
 def analyze_safety(ctx: SensorData) -> Dict[str, bool]:
@@ -57,6 +61,7 @@ def analyze_safety(ctx: SensorData) -> Dict[str, bool]:
         f"📊 Validated Telemetry: Pressure={ctx.tire_pressure}bar, Fuel={ctx.fuel_level}%"
     )
     return {"safe_to_circulate": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(pipeline_name="trip_l16_securedata", verbose=True)

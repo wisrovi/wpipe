@@ -19,10 +19,10 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-56977695
+   [PIPELINE STATUS] Registered: PIPE-C1A2D65B
    🚗 Driving through Section A...
    trip_l18_exporter ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-56977695: COMPLETED
+   [PIPELINE STATUS] PIPE-C1A2D65B: COMPLETED
    
    >>> Generating CSV report for the insurance company...
    ✅ Report saved in output/trip_report.csv

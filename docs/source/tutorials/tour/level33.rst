@@ -20,7 +20,7 @@ Resultado de Ejecución
 
 
    [PARALLEL] Executing 2 steps using PROCESSES (workers=2)
-   vision_360_l33                                            0% -:--:--
+   vision_360_l33 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
    
    📊 FULL 360 MAP: ['_pipeline_start_time', 'error']
       Detections: None + None

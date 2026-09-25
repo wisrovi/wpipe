@@ -15,9 +15,9 @@ import random
 
 from wpipe import Pipeline, step
 
+
 @step(name="operacion_peligrosa")
 def operacion_peligrosa(data: dict) -> None:
-
     """Operacion peligrosa step.
 
     Args:
@@ -34,8 +34,8 @@ def operacion_peligrosa(data: dict) -> None:
     print("✅ Operación completada")
     return {"status": "ok"}
 
-def manejador_errores(context, error: dict) -> dict:
 
+def manejador_errores(context, error: dict) -> dict:
     """Operacion peligrosa step.
 
     Args:
@@ -50,6 +50,7 @@ def manejador_errores(context, error: dict) -> dict:
     print(f"🔴 [CALLBACK] Error capturado: {error['error_message']}")
     print("📧 Enviando notificación...")
     return {"notificado": True}
+
 
 if __name__ == "__main__":
     pipe = Pipeline(

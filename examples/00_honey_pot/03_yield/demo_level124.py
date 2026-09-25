@@ -16,4 +16,4 @@ if __name__ == "__main__":
     client = APIClient(base_url="https://jsonplaceholder.typicode.com")
 
     print("✅ POST request preparado")
-    print(f"📡 Endpoint: /posts")
+    print("📡 Endpoint: /posts")

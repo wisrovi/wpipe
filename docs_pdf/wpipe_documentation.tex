@@ -123,25 +123,25 @@
 \begin{titlepage}
     \centering
     \vspace*{2cm}
-    
+
     % Logo placeholder
     \ifdefined\includegraphicwidth
     \centering
     \fi
-    
+
     \vspace{1.5cm}
-    
+
     {\color{blue!70!black}\Huge\textbf{\sffamily wpipe}}\\[0.3cm]
     {\color{blue!70!black}\LARGE\textbf{\sffamily Python Pipeline Library}}\\[1cm]
-    
+
     {\color{orange!80!black}\Large\textbf{\sffamily for Sequential Data Processing}}\\[1.5cm]
-    
+
     {\large\textit{\sffamily A Modern Implementation Guide for}}\\[0.3cm]
     {\Large\textbf{\sffamily Production-Ready Data Pipelines}}\\[2cm]
-    
+
     {\large\sffamily Version 1.0.0 LTS}\\[0.5cm]
     {\large\sffamily\the\year}\\[2cm]
-    
+
     \fbox{
         \parbox{0.8\textwidth}{
             \centering\sffamily
@@ -151,7 +151,7 @@
             YAML Configuration $\bullet$ Nested Pipelines $\bullet$ Progress Tracking
         }
     }
-    
+
     \vspace{2cm}
     \vfill
     {\large\sffamily\textbf{MIT License}}\\
@@ -164,24 +164,24 @@
 \begin{titlepage}
     \centering
     \vspace*{3cm}
-    
+
     {\color{blue!70!black}\Large\textbf{\sffamily About the Author}}\\[1.5cm]
-    
+
     {\Large\textbf{\sffamily William Steve Rodriguez Villamizar}}\\[0.5cm]
     {\large\sffamily\textit{Líder de IA y Arquitecto de Soluciones}}\\[0.3cm]
     {\large\sffamily\textit{eCaptureDtech}}\\[0.2cm]
     {\large\sffamily\textit{Badajoz, Extremadura, España}}\\[1.5cm]
-    
+
     \begin{tabular}{c}
         \Large\textbf{\sffamily Contact Information:}\\[0.8cm]
         \href{https://es.linkedin.com/in/wisrovi-rodriguez}{\Large LinkedIn: es.linkedin.com/in/wisrovi-rodriguez}\\[0.4cm]
         \href{https://github.com/wisrovi}{\Large GitHub: github.com/wisrovi}\\[0.4cm]
         \href{https://wisrovi.github.io}{\Large Portfolio: wisrovi.github.io}
     \end{tabular}
-    
+
     \vspace{2cm}
     \vfill
-    
+
     \fbox{
         \parbox{0.8\textwidth}{
             \centering\sffamily
@@ -504,7 +504,7 @@ Step functions receive accumulated data and must return dictionaries:
 def my_step(data):
     # Access data from previous steps
     previous_value = data.get("key", "default")
-    
+
     # Process and return new data
     return {"new_key": previous_value * 2}
 \end{lstlisting}
@@ -518,7 +518,7 @@ class DataProcessor:
     def __init__(self, multiplier: float):
         self.multiplier = multiplier
         self.count = 0
-    
+
     def __call__(self, data: dict) -> dict:
         self.count += 1
         value = data.get("value", 0)
@@ -1134,7 +1134,7 @@ if __name__ == "__main__":
         (calculate_average, "Calculate Average", "v1.0"),
         (format_result, "Format Result", "v1.0"),
     ])
-    
+
     result = pipeline.run({})
     print(result)
 \end{lstlisting}

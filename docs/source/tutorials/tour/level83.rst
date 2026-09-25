@@ -19,9 +19,9 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-F12328AC
+   [PIPELINE STATUS] Registered: PIPE-F3C14EA0
    viaje_l83_exportstats ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-F12328AC: COMPLETED
+   [PIPELINE STATUS] PIPE-F3C14EA0: COMPLETED
    
    📊 Exportando estadísticas...
    ✅ Exportado a output/viaje83_stats.json

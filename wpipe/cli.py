@@ -33,7 +33,10 @@ def main():
         "--host", type=str, default="127.0.0.1", help="Host address to bind the server"
     )
     dashboard_parser.add_argument(
-        "--db", type=str, default="wpipe_dashboard.db", help="Path to the SQLite database"
+        "--db",
+        type=str,
+        default="wpipe_dashboard.db",
+        help="Path to the SQLite database",
     )
     dashboard_parser.add_argument(
         "--config-dir", type=str, help="Directory containing pipeline configurations"
@@ -85,6 +88,7 @@ def main():
         except Exception as e:
             print(f"❌ Execution Error: {e}")
             import traceback
+
             traceback.print_exc()
             sys.exit(1)
 

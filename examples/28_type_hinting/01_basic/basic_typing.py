@@ -4,10 +4,9 @@ Basic type hinting example.
 Demonstrates basic type validation in pipelines.
 """
 
-import time
-from typing import Any, Dict, TypedDict
+from typing import Any, Dict
 
-from wpipe import PipelineContext, TimeoutError, TypeValidator
+from wpipe import PipelineContext, TypeValidator
 
 
 class UserContext(PipelineContext):
@@ -44,7 +43,7 @@ def process_step_1(context: UserContext) -> Dict[str, Any]:
 
 def process_step_2(context: Dict[str, Any]) -> Dict[str, Any]:
     """Second processing step."""
-    print(f"Further processing...")
+    print("Further processing...")
     return {"step": 2, "completed": True}
 
 
@@ -66,11 +65,11 @@ if __name__ == "__main__":
 
         result_1 = process_step_1(context)
         context.update(result_1)
-        print(f"✓ Step 1 completed")
+        print("✓ Step 1 completed")
 
         result_2 = process_step_2(context)
         context.update(result_2)
-        print(f"✓ Step 2 completed\n")
+        print("✓ Step 2 completed\n")
     except (TypeError, KeyError) as e:
         print(f"✗ Processing failed: {e}\n")
 

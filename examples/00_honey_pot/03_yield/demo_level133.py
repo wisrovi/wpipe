@@ -8,12 +8,11 @@ DIAGRAM:
 Pipeline → [Background] → [Background] → [Background] → next
 """
 
-import time
 import threading
+import time
 
 from wpipe import Pipeline, step
 from wpipe.pipe.components.logic_blocks import Background
-
 
 counter = {"value": 0}
 lock = threading.Lock()
@@ -66,13 +65,15 @@ if __name__ == "__main__":
     start_time = time.time()
 
     pipe = Pipeline(pipeline_name="demo_133", verbose=False)
-    pipe.set_steps([
-        start,
-        Background(task_1),
-        Background(task_2),
-        Background(task_3),
-        finish,
-    ])
+    pipe.set_steps(
+        [
+            start,
+            Background(task_1),
+            Background(task_2),
+            Background(task_3),
+            finish,
+        ]
+    )
 
     result = pipe.run({})
 

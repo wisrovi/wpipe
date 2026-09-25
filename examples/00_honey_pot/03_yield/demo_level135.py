@@ -45,11 +45,13 @@ if __name__ == "__main__":
     start = time.time()
 
     pipe = Pipeline(pipeline_name="demo_135", verbose=False)
-    pipe.set_steps([
-        process_data,
-        Background(telemetry),
-        save_result,
-    ])
+    pipe.set_steps(
+        [
+            process_data,
+            Background(telemetry),
+            save_result,
+        ]
+    )
 
     result = pipe.run({})
 

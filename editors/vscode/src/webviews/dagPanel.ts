@@ -9,12 +9,12 @@ export class DAGPanel {
     private _disposables: vscode.Disposable[] = [];
 
     public static async createOrShow(uri: vscode.Uri, doc: vscode.TextDocument) {
-        if (DAGPanel.currentPanel) { 
-            DAGPanel.currentPanel._panel.reveal(); 
-            await DAGPanel.currentPanel._update(doc, true); 
-            return; 
+        if (DAGPanel.currentPanel) {
+            DAGPanel.currentPanel._panel.reveal();
+            await DAGPanel.currentPanel._update(doc, true);
+            return;
         }
-        const p = vscode.window.createWebviewPanel('wpipeDAG', 'WPipe Analysis', vscode.ViewColumn.Two, { 
+        const p = vscode.window.createWebviewPanel('wpipeDAG', 'WPipe Analysis', vscode.ViewColumn.Two, {
             enableScripts: true,
             retainContextWhenHidden: true
         });
@@ -32,10 +32,10 @@ export class DAGPanel {
     private constructor(p: vscode.WebviewPanel, doc: vscode.TextDocument) {
         this._panel = p;
         this._panel.onDidDispose(() => { DAGPanel.currentPanel = undefined; }, null, this._disposables);
-        
+
         // Inicialización
         this._update(doc, true);
-        
+
         this._panel.webview.onDidReceiveMessage(async message => {
             if (message.command === 'downloadImage') {
                 const saveUri = await vscode.window.showSaveDialog({
@@ -74,13 +74,13 @@ export class DAGPanel {
         }, null, this._disposables);
 
         // SOLO escribimos archivo al guardar si el panel está abierto para este documento
-        vscode.workspace.onDidSaveTextDocument(e => { 
-            if (e === doc) this._update(doc, true); 
+        vscode.workspace.onDidSaveTextDocument(e => {
+            if (e === doc) this._update(doc, true);
         }, null, this._disposables);
 
         // Al cambiar de editor, solo actualizamos la VISTA, no escribimos archivo (evita duplicidad innecesaria)
-        vscode.window.onDidChangeActiveTextEditor(e => { 
-            if (e && e.document.languageId === 'python') this._update(e.document, false); 
+        vscode.window.onDidChangeActiveTextEditor(e => {
+            if (e && e.document.languageId === 'python') this._update(e.document, false);
         }, null, this._disposables);
     }
 
@@ -175,7 +175,7 @@ export class DAGPanel {
                             svgElement.style.width = '100%';
                             svgElement.style.height = '100%';
                             svgElement.style.display = 'block';
-                            
+
                             if (pz) pz.destroy();
                             pz = svgPanZoom(svgElement, {
                                 zoomEnabled: true,
@@ -189,7 +189,7 @@ export class DAGPanel {
                             document.getElementById('zoom-in').onclick = () => pz.zoomIn();
                             document.getElementById('zoom-out').onclick = () => pz.zoomOut();
                             document.getElementById('zoom-reset').onclick = () => { pz.resetZoom(); pz.center(); };
-                            
+
                             document.getElementById('download-svg').onclick = () => {
                                 try {
                                     const serializer = new XMLSerializer();
@@ -310,7 +310,7 @@ export class DAGPanel {
     private parse(doc: vscode.TextDocument, fileName: string): any {
         const content = doc.getText();
         let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5,cursor:pointer\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2,cursor:pointer\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n";
-        
+
         let totalSteps = 0; let totalLogic = 0; let maxDepth = 0;
         const tree = parser.parse(content);
         const pipelineInstances: any[] = [];
@@ -354,7 +354,7 @@ export class DAGPanel {
             const res = this.parseRec(doc, stepsContent, stepsOffset, `start_${uid}`, "L" + uid, 0);
             g += res.graph.split('\n').map((l: string) => l.trim() ? "    " + l : "").join('\n') + "\n";
             totalSteps += res.steps; totalLogic += res.logic; if (res.depth > maxDepth) maxDepth = res.depth;
-            
+
             let lastId = res.lastId;
             let lastLabel = res.lastIncomingLabel;
 
@@ -375,15 +375,15 @@ export class DAGPanel {
         });
 
         let bigO = "O(n)"; if (maxDepth === 1) bigO = "O(n²)"; else if (maxDepth > 1) bigO = `O(n^${maxDepth + 1})`;
-        
+
         const suggestions: string[] = [];
         if (totalSteps > 5 && totalLogic === 0) {
             suggestions.push("💡 Tip: Your pipeline is linear. Consider using 'Parallel' if steps are independent.");
         }
 
-        return { 
-            graph: seenPipelines.size > 0 ? g : "flowchart TD\n  NoPipe[No pipeline detected]", 
-            stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size }, 
+        return {
+            graph: seenPipelines.size > 0 ? g : "flowchart TD\n  NoPipe[No pipeline detected]",
+            stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size },
             bigO,
             suggestions
         };
@@ -397,12 +397,12 @@ export class DAGPanel {
             const r: {text: string, offset: number}[] = []; let cur = ""; let d = 0; let start = 0;
             for (let i = 0; i < c.length; i++) {
                 if (c[i] === '[' || c[i] === '(') d++; else if (c[i] === ']' || c[i] === ')') d--;
-                if (c[i] === ',' && d === 0) { 
-                    r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) }); 
-                    cur = ""; start = i + 1; 
+                if (c[i] === ',' && d === 0) {
+                    r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+                    cur = ""; start = i + 1;
                 } else cur += c[i];
             }
-            if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) }); 
+            if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
             return r;
         };
 
@@ -414,26 +414,26 @@ export class DAGPanel {
             currentLabel = "";
 
             if (tr.startsWith('Condition(')) {
-                lCount++; 
+                lCount++;
                 const exprMatch = tr.match(/expression\s*=\s*(["'])(.*?)\1/);
                 const expr = exprMatch ? exprMatch[2] : "Condition";
                 graph += `  ${curr} ${edge} ${id}{"${expr}"}:::logic\n`;
                 graph += `  click ${id} call handleNodeClick("${line}")\n`;
-                
+
                 const tCont = this.ext(tr, 'branch_true'); const fCont = this.ext(tr, 'branch_false'); const mid = id + "_m";
-                if (tCont) { 
+                if (tCont) {
                     const tOffset = item.offset + tr.indexOf(tCont);
-                    const r = this.parseRec(doc, tCont, tOffset, id, id + "T", depth, "True"); 
-                    graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`; 
-                    sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth; 
+                    const r = this.parseRec(doc, tCont, tOffset, id, id + "T", depth, "True");
+                    graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`;
+                    sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                 }
                 else graph += `  ${id} -- True --> ${mid}(( ))\n`;
-                
-                if (fCont) { 
+
+                if (fCont) {
                     const fOffset = item.offset + tr.indexOf(fCont);
-                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth, "False"); 
-                    graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`; 
-                    sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth; 
+                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth, "False");
+                    graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`;
+                    sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                 }
                 else graph += `  ${id} -- False --> ${mid}(( ))\n`;
                 curr = mid;
@@ -454,25 +454,25 @@ export class DAGPanel {
                 lCount++; graph += `  ${curr} ${edge} ${id}[[" 🔄 For Loop "]]:::logic\n`;
                 graph += `  click ${id} call handleNodeClick("${line}")\n`;
                 const fCont = this.ext(tr, 'steps');
-                if (fCont) { 
+                if (fCont) {
                     const fOffset = item.offset + tr.indexOf(fCont);
-                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth + 1, "body"); 
-                    graph += r.graph + `  ${r.lastId} --> ${id}\n`; sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth; 
+                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth + 1, "body");
+                    graph += r.graph + `  ${r.lastId} --> ${id}\n`; sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                 }
                 curr = id;
                 currentLabel = "exit";
             } else if (tr.startsWith('Background(')) {
-                lCount++; 
+                lCount++;
                 const lblMatch = tr.match(/Background\((.*?)\)/);
                 const lbl = lblMatch ? lblMatch[1].split(',')[0].trim() : "BG Task";
                 graph += `  ${curr} -. async .-> ${id}((" ⚡ ${lbl} ")):::step\n`;
                 graph += `  click ${id} call handleNodeClick("${line}")\n`;
             } else {
                 let lbl = tr.split('(')[0].replace(/[\[\]]/g, '').trim();
-                if (lbl) { 
-                    sCount++; graph += `  ${curr} ${edge} ${id}[" 🚀 ${lbl} "]:::step\n`; 
+                if (lbl) {
+                    sCount++; graph += `  ${curr} ${edge} ${id}[" 🚀 ${lbl} "]:::step\n`;
                     graph += `  click ${id} call handleNodeClick("${line}")\n`;
-                    curr = id; 
+                    curr = id;
                 }
             }
         });
@@ -483,12 +483,12 @@ export class DAGPanel {
         const r: {text: string, offset: number}[] = []; let cur = ""; let d = 0; let start = 0;
         for (let i = 0; i < c.length; i++) {
             if (c[i] === '[' || c[i] === '(') d++; else if (c[i] === ']' || c[i] === ')') d--;
-            if (c[i] === ',' && d === 0) { 
-                r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) }); 
-                cur = ""; start = i + 1; 
+            if (c[i] === ',' && d === 0) {
+                r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
+                cur = ""; start = i + 1;
             } else cur += c[i];
         }
-        if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) }); 
+        if (cur.trim()) r.push({ text: cur.trim(), offset: baseOffset + start + (cur.length - cur.trimStart().length) });
         return r;
     }
     private ext(c: string, a: string): string | null {

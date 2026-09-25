@@ -2,9 +2,10 @@
 Module for printing car information using classes and pipelines.
 """
 
-from typing import Dict, Any, Optional
-from wpipe import to_obj, Pipeline
-from wpipe.decorators import step, AutoRegister, get_step_registry
+from typing import Any, Dict, Optional
+
+from wpipe import Pipeline, to_obj
+from wpipe.decorators import AutoRegister, get_step_registry, step
 
 
 @step(name="car_info_printer", version="v1.0")

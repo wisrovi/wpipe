@@ -19,11 +19,11 @@ Resultado de Ejecución
 ----------------------
 
 
-   [PIPELINE STATUS] Registered: PIPE-507953F8
+   [PIPELINE STATUS] Registered: PIPE-681013A9
    🔑 Motor iniciado
    🏁 Viaje completado
    viaje_l82_exportcsv ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
-   [PIPELINE STATUS] PIPE-507953F8: COMPLETED
+   [PIPELINE STATUS] PIPE-681013A9: COMPLETED
    
    📤 Exportando a CSV...
    ✅ Exportado a output/viaje82.csv

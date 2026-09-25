@@ -8,7 +8,8 @@ DIAGRAM:
 @step(depends_on=["step1"])
 """
 
-from wpipe import Pipeline, step, AutoRegister
+from wpipe import AutoRegister, Pipeline, step
+
 
 @step(name="start", tags=["inic"])
 def start(data: dict) -> None:
@@ -23,9 +24,9 @@ def start(data: dict) -> None:
     print("🔑 Paso 1: Startsr")
     return {"iniciado": True}
 
+
 @step(name="validar", depends_on=["start"], tags=["proc"])
 def validar(data: dict) -> None:
-
     """Validar step.
 
     Args:
@@ -39,6 +40,7 @@ def validar(data: dict) -> None:
     """
     print("✅ Paso 2: Validar (depende de start)")
     return {"validado": True}
+
 
 if __name__ == "__main__":
     print(">>> AutoRegister con dependencias...")
