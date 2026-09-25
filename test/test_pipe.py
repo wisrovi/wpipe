@@ -67,7 +67,7 @@ def test_pipeline_components(tmp_path):
 
 
 def test_pipeline_errors(tmp_path):
-    p = Pipeline(pipeline_name="test_errors", show_progress=False)
+    p = Pipeline(pipeline_name="test_errors", continue_on_error=True, show_progress=False)
     p.set_steps([error_step])
 
     res = p.run({})
@@ -85,7 +85,7 @@ def test_pipeline_timeout(tmp_path):
         time.sleep(2)
         return {"done": True}
 
-    p = Pipeline(pipeline_name="test_timeout", show_progress=False)
+    p = Pipeline(pipeline_name="test_timeout", continue_on_error=True, show_progress=False)
     p.set_steps([sleep_step])
 
     res = p.run({})
