@@ -65,7 +65,7 @@ class PipelineAsync(APIClient):
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
-        continue_on_error: bool = True,
+        continue_on_error: bool = False,
         break_on_error: Optional[bool] = None,
         show_progress: bool = True,
         save_json_input_output: bool = True,
@@ -86,7 +86,7 @@ class PipelineAsync(APIClient):
             config_dir: Directory containing configuration files.
             parent_pipeline_id: ID of the parent pipeline if nested.
             collect_system_metrics: Whether to collect resource usage.
-            continue_on_error: Whether to proceed if a step fails.
+            continue_on_error: Whether to proceed if a step fails (defaults to False for fail-fast safety).
             break_on_error: If set, overrides continue_on_error (break_on_error=True sets continue_on_error=False).
             show_progress: Whether to show a progress bar.
             save_json_input_output: Whether to store the input/output JSON blobs
