@@ -23,23 +23,23 @@ graph TB
         C[Condition<br/>pipe.py]
         PM[ProgressManager<br/>pipe.py]
     end
-    
+
     subgraph Integration["🔌 Integration"]
         API[APIClient<br/>api_client.py]
         SQL[Sqlite<br/>sqlite/]
         WS[Wsqlite<br/>sqlite/]
     end
-    
+
     subgraph Utilities["🛠️ Utilities"]
         LOG[new_logger<br/>log/]
         RAM[memory<br/>ram/]
         YAML[leer_yaml<br/>util/]
     end
-    
+
     subgraph Exceptions["⚠️ Exceptions"]
         E[Exception Classes<br/>exception/]
     end
-    
+
     P --> C
     P --> PM
     P --> API
@@ -84,12 +84,12 @@ flowchart LR
     B --> D[Conditions]
     B --> E[SQLite]
     B --> F[API Client]
-    
+
     C --> G[Results Dict]
     D --> G
     E --> H[Database]
     F --> I[External API]
-    
+
     G --> J[Final Output]
 ```
 
@@ -164,12 +164,19 @@ wpipe/
 
 ## Usage Examples
 
-### Pipeline
+### Pipeline with Error Capture
 
 ```python
-from wpipe import Pipeline
+from wpipe import Pipeline, step, to_obj
+
+@step(name="error_capture", version="v1.0")
+@to_obj
+def error_capture(context, error):
+    print(f"Error in step {error['step_name']}: {error['error_message']}")
+    return context
 
 pipeline = Pipeline(verbose=True)
+pipeline.add_error_capture([error_capture], break_on_error=True)
 pipeline.set_steps([
     (fetch_data, "Fetch Data", "v1.0"),
     (process_data, "Process Data", "v1.0"),
