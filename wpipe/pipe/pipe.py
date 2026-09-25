@@ -43,6 +43,7 @@ class Step:
         name (str): The name of the step.
         version (str): The version of the step.
     """
+
     func: Callable
     name: str
     version: str
@@ -124,6 +125,7 @@ class Pipeline(APIClient):
         tracking_db = self.tracking_db
         if self._tracker is None and tracking_db:
             from wpipe.tracking import PipelineTracker
+
             self._tracker = PipelineTracker(
                 tracking_db,
                 save_json_input_output=self.save_json_input_output,
@@ -133,6 +135,7 @@ class Pipeline(APIClient):
     @tracker.setter
     def tracker(self, value: Any) -> None:
         self._tracker = value
+
     pipeline_name: str = "Pipeline"
     pipeline_id: Optional[str] = None
     _step_order: int = 0
@@ -221,12 +224,12 @@ class Pipeline(APIClient):
         # Initialize tracking if database path provided
         if tracking_db:
             from wpipe.tracking import PipelineTracker
+
             self.tracker = PipelineTracker(
                 tracking_db,
                 config_dir,
                 save_json_input_output=self.save_json_input_output,
             )
-
 
     def add_pre_hook(self, hook: Callable) -> "Pipeline":
         """
@@ -333,7 +336,7 @@ class Pipeline(APIClient):
                     "True": True,
                     "False": False,
                     "None": None,
-                    "__builtins__": {}
+                    "__builtins__": {},
                 }
                 try:
                     if eval(cp["expression"], safe_globals, data):  # pylint: disable=eval-used
@@ -360,32 +363,48 @@ class Pipeline(APIClient):
                             data = self._execute_step(step_item, data)
 
                         cp["fired"] = True
-                except (NameError, SyntaxError, TypeError, ValueError, ZeroDivisionError) as e:
+                except (
+                    NameError,
+                    SyntaxError,
+                    TypeError,
+                    ValueError,
+                    ZeroDivisionError,
+                ) as e:
                     if self.verbose:
-                        print(f"[CHECKPOINT INFO] Milestone '{cp['name']}' skip/busy: {e}")
+                        print(
+                            f"[CHECKPOINT INFO] Milestone '{cp['name']}' skip/busy: {e}"
+                        )
         return data
 
-    def add_error_capture(self, steps: list[Any]) -> "Pipeline":
+    def add_error_capture(
+        self, steps: list[Any], break_on_error: bool = False
+    ) -> "Pipeline":
         """
         Add steps to execute when an error occurs in the pipeline.
 
         Args:
             steps: List of steps for error handling.
+            break_on_error: If True, halts pipeline execution after error capture.
+                            If False (default), continues execution with continue_on_error = True.
 
         Returns:
             Pipeline: Current pipeline instance for chaining.
         """
-        self.continue_on_error = True
+        self.continue_on_error = not break_on_error
         self._error_capture_tasks.extend(steps)
         return self
 
-    def _execute_error_capture(self, data: dict[str, Any], error_info: dict[str, Any]) -> dict[str, Any]:
+    def _execute_error_capture(
+        self, data: dict[str, Any], error_info: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute error capture steps safely without standard task invocation to avoid recursion."""
         if not self._error_capture_tasks:
             return data
 
         if self.verbose:
-            print(f"\n[ERROR CAPTURE] Processing error in state '{error_info.get('step_name', 'unknown')}'...")
+            print(
+                f"\n[ERROR CAPTURE] Processing error in state '{error_info.get('step_name', 'unknown')}'..."
+            )
 
         for task in self._error_capture_tasks:
             try:
@@ -395,7 +414,11 @@ class Pipeline(APIClient):
                     if isinstance(task, tuple)
                     else (
                         getattr(func, "NAME", None)
-                        or getattr(func, "__name__", getattr(func.__class__, "__name__", "error_handler"))
+                        or getattr(
+                            func,
+                            "__name__",
+                            getattr(func.__class__, "__name__", "error_handler"),
+                        )
                     )
                 )
 
@@ -432,7 +455,9 @@ class Pipeline(APIClient):
 
         return data
 
-    def link_to_pipeline(self, other_pipeline_id: str, relation_type: str = "related") -> None:
+    def link_to_pipeline(
+        self, other_pipeline_id: str, relation_type: str = "related"
+    ) -> None:
         """Create a relationship to another pipeline."""
         if self.tracker and self.pipeline_id:
             self.tracker.link_pipelines(
@@ -467,7 +492,8 @@ class Pipeline(APIClient):
                     "name": getattr(s[0], "NAME", s[1]),
                     "version": getattr(s[0], "VERSION", s[2]),
                 }
-                for s in self.tasks_list if isinstance(s, tuple)
+                for s in self.tasks_list
+                if isinstance(s, tuple)
             ],
         }
 
@@ -498,29 +524,41 @@ class Pipeline(APIClient):
                     process_registered = self.register_process(msg)
                     if process_registered:
                         updated_tasks = []
-                        for son, rta in zip(process_registered.get("sons", []), self.tasks_list):
+                        for son, rta in zip(
+                            process_registered.get("sons", []), self.tasks_list
+                        ):
                             if isinstance(rta, tuple):
-                                updated_tasks.append((rta[0], rta[1], rta[2], son.get("id")))
+                                updated_tasks.append(
+                                    (rta[0], rta[1], rta[2], son.get("id"))
+                                )
                             else:
                                 updated_tasks.append(rta)
                         self.tasks_list = updated_tasks
                         self.process_id = process_registered.get("father")
 
                         if self.verbose:
-                            print(f"[INFO] [START] pipeline: new process ({self.process_id})")
+                            print(
+                                f"[INFO] [START] pipeline: new process ({self.process_id})"
+                            )
                 else:
                     status = self.end_process(msg)
                     if not status:
                         if self.SHOW_API_ERRORS:
-                            raise ApiError("API problem ending process", Codes.UPDATE_PROCESS_OK)
+                            raise ApiError(
+                                "API problem ending process", Codes.UPDATE_PROCESS_OK
+                            )
                         if self.verbose:
                             print(f"[INFO] [END] pipeline update problem: {status}")
             except Exception as exc:
                 if self.SHOW_API_ERRORS:
-                    raise ApiError("Problem updating Process", Codes.UPDATE_PROCESS_ERROR) from exc
+                    raise ApiError(
+                        "Problem updating Process", Codes.UPDATE_PROCESS_ERROR
+                    ) from exc
                 print("Problem updating Process")
 
-    def _task_invoke_with_report(self, func: Callable, *args: Any, **kwargs: Any) -> dict[str, Any]:
+    def _task_invoke_with_report(
+        self, func: Callable, *args: Any, **kwargs: Any
+    ) -> dict[str, Any]:
         """Invoke a task with API reporting."""
         self._api_task_update({"task_id": self.task_id, "status": "start"})
 
@@ -548,11 +586,13 @@ class Pipeline(APIClient):
             }
 
             result["error"] = error_message
-            self._api_task_update({
-                "task_id": self.task_id,
-                "status": "error",
-                "details": json.dumps(error_info),
-            })
+            self._api_task_update(
+                {
+                    "task_id": self.task_id,
+                    "status": "error",
+                    "details": json.dumps(error_info),
+                }
+            )
 
             if self.verbose:
                 for error in errors_list:
@@ -582,7 +622,9 @@ class Pipeline(APIClient):
                 "task_id": self.task_id,
             }
             safe_error = clean_for_json(error)
-            self._api_process_update({"id": self.process_id, "details": json.dumps(safe_error)})
+            self._api_process_update(
+                {"id": self.process_id, "details": json.dumps(safe_error)}
+            )
 
             if self.continue_on_error:
                 result["error"] = error
@@ -618,42 +660,77 @@ class Pipeline(APIClient):
             if isinstance(item, Condition):
                 normalized_true = [normalize_step(s) for s in item.branch_true]
                 normalized_false = [normalize_step(s) for s in item.branch_false]
-                new_list.append(Condition(
-                    expression=item.expression,
-                    branch_true=normalized_true,
-                    branch_false=normalized_false,
-                ))
+                new_list.append(
+                    Condition(
+                        expression=item.expression,
+                        branch_true=normalized_true,
+                        branch_false=normalized_false,
+                    )
+                )
             elif isinstance(item, For):
                 normalized_steps = [normalize_step(s) for s in item.steps]
-                new_list.append(For(
-                    validation_expression=item.validation_expression,
-                    iterations=item.iterations,
-                    steps=normalized_steps,
-                ))
+                new_list.append(
+                    For(
+                        validation_expression=item.validation_expression,
+                        iterations=item.iterations,
+                        steps=normalized_steps,
+                    )
+                )
             elif isinstance(item, Parallel):
                 normalized_steps = [normalize_step(s) for s in item.steps]
-                new_list.append(Parallel(
-                    steps=normalized_steps,
-                    max_workers=item.max_workers,
-                    use_processes=item.use_processes,
-                    merge_policy=item.merge_policy,
-                ))
+                new_list.append(
+                    Parallel(
+                        steps=normalized_steps,
+                        max_workers=item.max_workers,
+                        use_processes=item.use_processes,
+                        merge_policy=item.merge_policy,
+                    )
+                )
             elif isinstance(item, Background):
                 normalized_step = normalize_step(item.step)
                 if isinstance(normalized_step, tuple):
                     bg_step = list(normalized_step)
                     if len(bg_step) >= 4 and isinstance(bg_step[3], dict):
-                        bg_step[3] = {**bg_step[3], "_is_background": True, "_background_capture_error": item.capture_error}
+                        bg_step[3] = {
+                            **bg_step[3],
+                            "_is_background": True,
+                            "_background_capture_error": item.capture_error,
+                        }
                     elif len(bg_step) == 3:
-                        bg_step.append({"_is_background": True, "_background_capture_error": item.capture_error})
+                        bg_step.append(
+                            {
+                                "_is_background": True,
+                                "_background_capture_error": item.capture_error,
+                            }
+                        )
                     else:
-                        bg_step = [normalized_step[0], normalized_step[1] if len(normalized_step) > 1 else "background",
-                                   normalized_step[2] if len(normalized_step) > 2 else "v1.0",
-                                   {"_is_background": True, "_background_capture_error": item.capture_error}]
+                        bg_step = [
+                            normalized_step[0],
+                            normalized_step[1]
+                            if len(normalized_step) > 1
+                            else "background",
+                            normalized_step[2] if len(normalized_step) > 2 else "v1.0",
+                            {
+                                "_is_background": True,
+                                "_background_capture_error": item.capture_error,
+                            },
+                        ]
                 else:
-                    name = getattr(normalized_step, "NAME", getattr(normalized_step, "__name__", "background"))
+                    name = getattr(
+                        normalized_step,
+                        "NAME",
+                        getattr(normalized_step, "__name__", "background"),
+                    )
                     version = getattr(normalized_step, "VERSION", "v1.0")
-                    bg_step = [normalized_step, name, version, {"_is_background": True, "_background_capture_error": item.capture_error}]
+                    bg_step = [
+                        normalized_step,
+                        name,
+                        version,
+                        {
+                            "_is_background": True,
+                            "_background_capture_error": item.capture_error,
+                        },
+                    ]
                 new_list.append(tuple(bg_step))
             elif isinstance(item, Pipeline):
                 new_list.append((item, item.pipeline_name or "SubPipeline", "v1.0", {}))
@@ -662,7 +739,7 @@ class Pipeline(APIClient):
                 version = getattr(item, "VERSION", "v1.0")
                 meta = getattr(item, "_wpipe_metadata", {})
                 new_list.append((item, name, version, meta))
-            elif (isinstance(item, tuple) and len(item) >= 2 and callable(item[0])):
+            elif isinstance(item, tuple) and len(item) >= 2 and callable(item[0]):
                 new_list.append(normalize_step(item))
             else:
                 raise ValueError("Invalid step type in tasks list")
@@ -674,7 +751,9 @@ class Pipeline(APIClient):
         """Alias for set_steps for backward compatibility."""
         return self.set_steps(steps)
 
-    def add_pipeline(self, pipeline: Any, name: str, version: str = "v1.0") -> "Pipeline":
+    def add_pipeline(
+        self, pipeline: Any, name: str, version: str = "v1.0"
+    ) -> "Pipeline":
         """
         Alias to add another pipeline as a step.
         """
@@ -717,14 +796,22 @@ class Pipeline(APIClient):
             elif callable(name):
                 step_item = name
                 # Extract real name from the callable
-                name = getattr(step_item, "NAME", getattr(step_item, "__name__", step_item.__class__.__name__))
+                name = getattr(
+                    step_item,
+                    "NAME",
+                    getattr(step_item, "__name__", step_item.__class__.__name__),
+                )
             elif kwargs and list(kwargs.values()):
                 first_val = list(kwargs.values())[0]
-                if isinstance(first_val, (Condition, For, Parallel, Background, Pipeline)) or callable(first_val):
+                if isinstance(
+                    first_val, (Condition, For, Parallel, Background, Pipeline)
+                ) or callable(first_val):
                     step_item = first_val
 
             if step_item is None:
-                raise ValueError("Either 'func', 'state', or a valid logic block must be provided")
+                raise ValueError(
+                    "Either 'func', 'state', or a valid logic block must be provided"
+                )
 
         if isinstance(step_item, (Condition, For, Parallel, Background, Pipeline)):
             current_steps = list(self.tasks_list)
@@ -733,7 +820,9 @@ class Pipeline(APIClient):
             return self
 
         if not name or not isinstance(name, str):
-            name = getattr(step_item, "NAME", getattr(step_item, "__name__", "unknown_step"))
+            name = getattr(
+                step_item, "NAME", getattr(step_item, "__name__", "unknown_step")
+            )
 
         meta = {
             "depends_on": depends_on,
@@ -789,21 +878,33 @@ class Pipeline(APIClient):
 
         # Apply settings: Step Meta > Decorator > Pipeline Default
         if decorator_meta:
-            max_retries = getattr(decorator_meta, "retry_count", max_retries) or max_retries
-            retry_delay = getattr(decorator_meta, "retry_delay", retry_delay) or retry_delay
-            retry_on_exceptions = getattr(decorator_meta, "retry_on_exceptions", retry_on_exceptions) or retry_on_exceptions
+            max_retries = (
+                getattr(decorator_meta, "retry_count", max_retries) or max_retries
+            )
+            retry_delay = (
+                getattr(decorator_meta, "retry_delay", retry_delay) or retry_delay
+            )
+            retry_on_exceptions = (
+                getattr(decorator_meta, "retry_on_exceptions", retry_on_exceptions)
+                or retry_on_exceptions
+            )
             timeout = getattr(decorator_meta, "timeout", None)
 
         if step_meta:
             if isinstance(step_meta, dict):
                 max_retries = step_meta.get("retry_count", None) or max_retries
                 retry_delay = step_meta.get("retry_delay", None) or retry_delay
-                retry_on_exceptions = step_meta.get("retry_on_exceptions", None) or retry_on_exceptions
+                retry_on_exceptions = (
+                    step_meta.get("retry_on_exceptions", None) or retry_on_exceptions
+                )
                 timeout = step_meta.get("timeout", timeout)
             else:
                 max_retries = getattr(step_meta, "retry_count", None) or max_retries
                 retry_delay = getattr(step_meta, "retry_delay", None) or retry_delay
-                retry_on_exceptions = getattr(step_meta, "retry_on_exceptions", None) or retry_on_exceptions
+                retry_on_exceptions = (
+                    getattr(step_meta, "retry_on_exceptions", None)
+                    or retry_on_exceptions
+                )
                 timeout = getattr(step_meta, "timeout", timeout)
 
         kwargs.pop("parent_step_id", None)
@@ -812,6 +913,7 @@ class Pipeline(APIClient):
         last_exception = None
         for attempt in range(max_retries + 1):
             try:
+
                 def _run():
                     if self.send_to_api:
                         return self._task_invoke_with_report(func, *args, **kwargs)
@@ -840,7 +942,10 @@ class Pipeline(APIClient):
                 # We look for the last frame that doesn't contain 'site-packages' or 'wpipe'
                 relevant_frame = tb_list[-1]
                 for frame in reversed(tb_list):
-                    if "site-packages" not in frame.filename and "wpipe/pipe" not in frame.filename:
+                    if (
+                        "site-packages" not in frame.filename
+                        and "wpipe/pipe" not in frame.filename
+                    ):
                         relevant_frame = frame
                         break
 
@@ -865,20 +970,35 @@ class Pipeline(APIClient):
                 else:
                     raise TaskError(str(e), Codes.TASK_FAILED) from e
 
-        raise last_exception if last_exception else TaskError("Unknown error", Codes.TASK_FAILED)
+        raise (
+            last_exception
+            if last_exception
+            else TaskError("Unknown error", Codes.TASK_FAILED)
+        )
 
     @staticmethod
-    def _run_parallel_step(pipeline_instance: "Pipeline", step_item: Any, step_data: dict[str, Any], pipe_kwargs: dict[str, Any]) -> dict[str, Any]:
+    def _run_parallel_step(
+        pipeline_instance: "Pipeline",
+        step_item: Any,
+        step_data: dict[str, Any],
+        pipe_kwargs: dict[str, Any],
+    ) -> dict[str, Any]:
         """Helper static method to run a step in parallel."""
         try:
             return pipeline_instance._execute_step(step_item, step_data, **pipe_kwargs)
         except Exception as e:  # pylint: disable=broad-exception-caught
             return {"error": f"Parallel execution error: {str(e)}"}
 
-    def _execute_step(self, item: Any, data: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+    def _execute_step(
+        self, item: Any, data: dict[str, Any], **kwargs: Any
+    ) -> dict[str, Any]:
         """Execute a single step."""
         # Clean kwargs to prevent collision with named arguments
-        kwargs = {k: v for k, v in kwargs.items() if k not in ("parent_step_id", "parallel_group")}
+        kwargs = {
+            k: v
+            for k, v in kwargs.items()
+            if k not in ("parent_step_id", "parallel_group")
+        }
         parent_step_id = kwargs.get("parent_step_id")
         parallel_group = kwargs.get("parallel_group")
 
@@ -898,7 +1018,9 @@ class Pipeline(APIClient):
                 for step_in_loop in item.steps:
                     loop_data = self._execute_step(step_in_loop, loop_data, **kwargs)
                     if "error" in loop_data:
-                        print(f"  [ERROR] Loop broken at iteration {iteration} due to: {loop_data['error']}")
+                        print(
+                            f"  [ERROR] Loop broken at iteration {iteration} due to: {loop_data['error']}"
+                        )
                         break
                 if "error" in loop_data:
                     break
@@ -907,7 +1029,9 @@ class Pipeline(APIClient):
             return data
 
         if isinstance(item, Parallel):
-            return self._execute_parallel(item, data, parent_step_id, parallel_group, **kwargs)
+            return self._execute_parallel(
+                item, data, parent_step_id, parallel_group, **kwargs
+            )
 
         is_background = False
         capture_error = False
@@ -916,9 +1040,13 @@ class Pipeline(APIClient):
             capture_error = item[3].get("_background_capture_error", False)
 
         if is_background:
-            return self._execute_background_step(item, data, capture_error, parent_step_id, parallel_group, **kwargs)
+            return self._execute_background_step(
+                item, data, capture_error, parent_step_id, parallel_group, **kwargs
+            )
 
-        return self._execute_task_step(item, data, parent_step_id, parallel_group, **kwargs)
+        return self._execute_task_step(
+            item, data, parent_step_id, parallel_group, **kwargs
+        )
 
     def _execute_parallel(
         self,
@@ -926,12 +1054,15 @@ class Pipeline(APIClient):
         data: dict[str, Any],
         parent_step_id: Optional[int],
         parallel_group: Optional[str],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Execute steps in parallel."""
         # pylint: disable=too-many-locals
         tracked_id = self._start_step_tracking(
-            "Parallel Block", "v1.0", "parallel", data,
+            "Parallel Block",
+            "v1.0",
+            "parallel",
+            data,
             parent_step_id=parent_step_id,
             parallel_group=parallel_group,
         )
@@ -943,7 +1074,9 @@ class Pipeline(APIClient):
 
         if self.verbose:
             mode = "PROCESSES" if is_multiprocess else "THREADS"
-            print(f"[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})")
+            print(
+                f"[PARALLEL] Executing {len(item.steps)} steps using {mode} (workers={max_workers})"
+            )
 
         try:
             current_group = f"group_{tracked_id or 'none'}"
@@ -952,16 +1085,20 @@ class Pipeline(APIClient):
             # Check if data is picklable if using processes
             if is_multiprocess:
                 import pickle
+
                 try:
                     pickle.dumps(loop_data)
                 except (pickle.PicklingError, TypeError, AttributeError) as e:
                     if self.verbose:
-                        print(f"[WARNING] Data not picklable: {e}. Falling back to THREADS.")
+                        print(
+                            f"[WARNING] Data not picklable: {e}. Falling back to THREADS."
+                        )
                     is_multiprocess = False
                     ExecutorClass = ThreadPoolExecutor
 
             if is_multiprocess:
                 import copy as cp  # pylint: disable=import-outside-toplevel
+
                 clean_self = cp.copy(self)
                 clean_self.tracker = None
                 clean_self._metrics_collector = None
@@ -972,17 +1109,34 @@ class Pipeline(APIClient):
                 futures: dict[Any, tuple[int, Any]] = {}
                 for idx, step in enumerate(item.steps):
                     if is_multiprocess:
-                        fut = executor.submit(self._run_parallel_step, clean_self, step, loop_data.copy(), {
-                            **kwargs, "parent_step_id": tracked_id, "parallel_group": current_group,
-                        })
+                        fut = executor.submit(
+                            self._run_parallel_step,
+                            clean_self,
+                            step,
+                            loop_data.copy(),
+                            {
+                                **kwargs,
+                                "parent_step_id": tracked_id,
+                                "parallel_group": current_group,
+                            },
+                        )
                     else:
+
                         def _thread_worker(s, d):
                             # Ensure we don't pass duplicate arguments to _execute_step
-                            worker_kwargs = {k: v for k, v in kwargs.items() if k not in ("parent_step_id", "parallel_group")}
-                            return self._execute_step(s, d,
-                                                   parent_step_id=tracked_id,
-                                                   parallel_group=current_group,
-                                                   **worker_kwargs)
+                            worker_kwargs = {
+                                k: v
+                                for k, v in kwargs.items()
+                                if k not in ("parent_step_id", "parallel_group")
+                            }
+                            return self._execute_step(
+                                s,
+                                d,
+                                parent_step_id=tracked_id,
+                                parallel_group=current_group,
+                                **worker_kwargs,
+                            )
+
                         fut = executor.submit(_thread_worker, step, loop_data.copy())
                     futures[fut] = (idx, step)
 
@@ -1003,7 +1157,9 @@ class Pipeline(APIClient):
         except Exception as e:  # pylint: disable=broad-exception-caught
             data["error"] = f"Executor failure: {str(e)}"
         finally:
-            self._end_step_tracking(tracked_id, data if "error" not in data else None, data.get("error"))
+            self._end_step_tracking(
+                tracked_id, data if "error" not in data else None, data.get("error")
+            )
         return data
 
     def _execute_background_step(
@@ -1013,7 +1169,7 @@ class Pipeline(APIClient):
         capture_error: bool,
         parent_step_id: Optional[int],
         parallel_group: Optional[str],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Execute a background step without blocking the pipeline."""
         import threading as bg_thread
@@ -1033,16 +1189,29 @@ class Pipeline(APIClient):
         def run_background():
             try:
                 if func:
-                    self._task_invoke(func, name, task_data, parent_step_id=parent_step_id, parallel_group=parallel_group, **kwargs)
+                    self._task_invoke(
+                        func,
+                        name,
+                        task_data,
+                        parent_step_id=parent_step_id,
+                        parallel_group=parallel_group,
+                        **kwargs,
+                    )
             except Exception as e:  # pylint: disable=broad-exception-caught
                 if capture_error:
-                    error_info = {"step_name": name, "error": str(e), "error_message": str(e)}
+                    error_info = {
+                        "step_name": name,
+                        "error": str(e),
+                        "error_message": str(e),
+                    }
                     self._execute_error_capture(task_data, error_info)
                 if self.verbose:
                     print(f"[BACKGROUND ERROR] {name}: {e}")
 
         # Use daemon thread so process can exit without waiting
-        bg_thread.Thread(target=run_background, daemon=True, name=f"wpipe_bg_{name}").start()
+        bg_thread.Thread(
+            target=run_background, daemon=True, name=f"wpipe_bg_{name}"
+        ).start()
 
         return data
 
@@ -1052,7 +1221,7 @@ class Pipeline(APIClient):
         data: dict[str, Any],
         parent_step_id: Optional[int],
         parallel_group: Optional[str],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Execute a single task step."""
         func, name, version, step_id, step_meta = None, "unknown", "v1.0", None, {}
@@ -1068,7 +1237,9 @@ class Pipeline(APIClient):
         elif callable(item):
             func = item
             # Look for step name in priorities: NAME attribute > __name__ > class name
-            name = getattr(item, "NAME", getattr(item, "__name__", item.__class__.__name__))
+            name = getattr(
+                item, "NAME", getattr(item, "__name__", item.__class__.__name__)
+            )
             if name == "task" or name == "function":
                 # Fallback to a more descriptive name if possible
                 name = item.__class__.__name__
@@ -1084,7 +1255,7 @@ class Pipeline(APIClient):
                 "name": name,
                 "version": version,
                 "step_type": "task",
-                "metadata": step_meta
+                "metadata": step_meta,
             }
 
             # Global Pre-Hooks
@@ -1095,14 +1266,21 @@ class Pipeline(APIClient):
                     if self.verbose:
                         print(f"[PRE-HOOK ERROR] {e}")
 
-            tracked_id = self._start_step_tracking(name, version, "task", data,
-                                                   parent_step_id=parent_step_id,
-                                                   parallel_group=parallel_group)
+            tracked_id = self._start_step_tracking(
+                name,
+                version,
+                "task",
+                data,
+                parent_step_id=parent_step_id,
+                parallel_group=parallel_group,
+            )
             data["progress_rich"] = data.get("progress_rich") or self.progress_rich
 
             result_status = "success"
             try:
-                result_data = self._task_invoke(func, name, data, __step_meta__=step_meta, **kwargs)
+                result_data = self._task_invoke(
+                    func, name, data, __step_meta__=step_meta, **kwargs
+                )
                 data.update(result_data or {})
                 if not self.continue_on_error:
                     data.pop("error", None)
@@ -1119,20 +1297,28 @@ class Pipeline(APIClient):
                     raise
                 data["error"] = str(e)
             finally:
-                hooks = self._end_step_tracking(tracked_id, data if "error" not in data else None, data.get("error"))
+                hooks = self._end_step_tracking(
+                    tracked_id, data if "error" not in data else None, data.get("error")
+                )
                 data = self._handle_alert_hooks(hooks, data)
 
                 # Global Post-Hooks (only if not already raised)
                 if result_status == "success" or self.continue_on_error:
                     for hook in self._post_hooks:
                         try:
-                            hook(data, step_info, data.get("error") if "error" in data else "success")
+                            hook(
+                                data,
+                                step_info,
+                                data.get("error") if "error" in data else "success",
+                            )
                         except Exception as e:
                             if self.verbose:
                                 print(f"[POST-HOOK ERROR] {e}")
         return data
 
-    def _run_branch(self, steps: list[Any], data: dict[str, Any], **kwargs: Any) -> tuple[dict[str, Any], list[int]]:
+    def _run_branch(
+        self, steps: list[Any], data: dict[str, Any], **kwargs: Any
+    ) -> tuple[dict[str, Any], list[int]]:
         """Execute a branch of steps."""
         executed_ids: list[int] = []
         cond_parent_id = kwargs.pop("_condition_parent_id", None)
@@ -1153,37 +1339,68 @@ class Pipeline(APIClient):
                     taken = "true" if res else "false"
                     err = None
                 except Exception as e:  # pylint: disable=broad-exception-caught
-                    branch, skipped_branch, taken, err = item.branch_false, item.branch_true, "false", str(e)
+                    branch, skipped_branch, taken, err = (
+                        item.branch_false,
+                        item.branch_true,
+                        "false",
+                        str(e),
+                    )
 
-                cond_id = self._start_step_tracking(cond_name, "1.0.0", "condition", {"expression": cond_expr}, parent_step_id=current_kwargs.get("parent_step_id"))
+                cond_id = self._start_step_tracking(
+                    cond_name,
+                    "1.0.0",
+                    "condition",
+                    {"expression": cond_expr},
+                    parent_step_id=current_kwargs.get("parent_step_id"),
+                )
                 if cond_id:
                     executed_ids.append(cond_id)
 
                 # Execute taken branch (pass cond_id as parent for the first step)
-                data, b_ids = self._run_branch(branch, data, _condition_parent_id=cond_id, **kwargs)
+                data, b_ids = self._run_branch(
+                    branch, data, _condition_parent_id=cond_id, **kwargs
+                )
                 executed_ids.extend(b_ids)
 
                 # Log skipped branch for visualization
                 if skipped_branch and self.tracker:
                     for skip_idx, skip_item in enumerate(skipped_branch):
-                        skip_name = getattr(skip_item, "NAME", getattr(skip_item, "name", getattr(skip_item, "__name__", "skipped_step")))
-                        skip_type = "condition" if isinstance(skip_item, Condition) else "task"
+                        skip_name = getattr(
+                            skip_item,
+                            "NAME",
+                            getattr(
+                                skip_item,
+                                "name",
+                                getattr(skip_item, "__name__", "skipped_step"),
+                            ),
+                        )
+                        skip_type = (
+                            "condition" if isinstance(skip_item, Condition) else "task"
+                        )
 
                         # Only the first skipped item points to the condition block
                         p_id = cond_id if skip_idx == 0 else None
 
-                        skip_id = self._start_step_tracking(skip_name, "1.0.0", skip_type, {}, parent_step_id=p_id)
+                        skip_id = self._start_step_tracking(
+                            skip_name, "1.0.0", skip_type, {}, parent_step_id=p_id
+                        )
                         if skip_id:
-                            self.tracker.complete_step(skip_id, {"branch_taken": "skipped"})
+                            self.tracker.complete_step(
+                                skip_id, {"branch_taken": "skipped"}
+                            )
                             if self.tracker and self.tracker.db_steps:
-                                step_records = self.tracker.db_steps.get_by_field(id=skip_id)
+                                step_records = self.tracker.db_steps.get_by_field(
+                                    id=skip_id
+                                )
                                 if step_records:
                                     skip_model = step_records[0]
                                     skip_model.status = "skipped"
                                     self.tracker.db_steps.update(skip_id, skip_model)
 
                 if cond_id:
-                    hooks = self._end_step_tracking(cond_id, {"branch_taken": taken, "expression": cond_expr}, err)
+                    hooks = self._end_step_tracking(
+                        cond_id, {"branch_taken": taken, "expression": cond_expr}, err
+                    )
                     data = self._handle_alert_hooks(hooks, data)
             else:
                 data = self._execute_step(item, data, **current_kwargs)
@@ -1204,11 +1421,20 @@ class Pipeline(APIClient):
         if not self.tracker or not self.pipeline_id:
             return None
         self._step_order += 1
-        filtered_input = {k: v for k, v in (input_data or {}).items() if k != "progress_rich" and not callable(v)}
+        filtered_input = {
+            k: v
+            for k, v in (input_data or {}).items()
+            if k != "progress_rich" and not callable(v)
+        }
         return self.tracker.start_step(
-            pipeline_id=self.pipeline_id, step_order=self._step_order, step_name=name,
-            step_version=version, step_type=step_type, input_data=filtered_input,
-            parent_step_id=parent_step_id, parallel_group=parallel_group,
+            pipeline_id=self.pipeline_id,
+            step_order=self._step_order,
+            step_name=name,
+            step_version=version,
+            step_type=step_type,
+            input_data=filtered_input,
+            parent_step_id=parent_step_id,
+            parallel_group=parallel_group,
         )
 
     def _end_step_tracking(
@@ -1221,14 +1447,22 @@ class Pipeline(APIClient):
         """End tracking a pipeline step."""
         if not self.tracker or not step_id:
             return []
-        filtered_out = {k: v for k, v in (output_data or {}).items()
-                        if k not in ("progress_rich", "error") and not callable(v)}
+        filtered_out = {
+            k: v
+            for k, v in (output_data or {}).items()
+            if k not in ("progress_rich", "error") and not callable(v)
+        }
         return self.tracker.complete_step(
-            step_id=step_id, output_data=filtered_out, error_message=error_message,
-            error_traceback=error_traceback, pipeline_id=self.pipeline_id,
+            step_id=step_id,
+            output_data=filtered_out,
+            error_message=error_message,
+            error_traceback=error_traceback,
+            pipeline_id=self.pipeline_id,
         )
 
-    def _handle_alert_hooks(self, hooks: list[Any], data: dict[str, Any]) -> dict[str, Any]:
+    def _handle_alert_hooks(
+        self, hooks: list[Any], data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute alert hooks."""
         if not hooks:
             return data
@@ -1273,12 +1507,18 @@ class Pipeline(APIClient):
         data["_pipeline_start_time"] = pipeline_start.isoformat()
 
         start_at_step = 0
-        if checkpoint_mgr and checkpoint_id and checkpoint_mgr.can_resume(checkpoint_id):
+        if (
+            checkpoint_mgr
+            and checkpoint_id
+            and checkpoint_mgr.can_resume(checkpoint_id)
+        ):
             last = checkpoint_mgr.get_last_checkpoint(checkpoint_id)
             data.update(last["data"] or {})
             start_at_step = last["step_order"] + 1
             if self.verbose:
-                print(f"[CHECKPOINT] Resuming '{checkpoint_id}' from step {start_at_step}")
+                print(
+                    f"[CHECKPOINT] Resuming '{checkpoint_id}' from step {start_at_step}"
+                )
 
         metrics_collector: Optional[SystemMetricsCollector] = None
         if self.tracker:
@@ -1298,12 +1538,16 @@ class Pipeline(APIClient):
                 self.tracker.add_event(pipeline_id=self.pipeline_id, **event)
             self._pending_events = []
             if self._collect_system_metrics:
-                metrics_collector = SystemMetricsCollector(self.tracker, self.pipeline_id)
+                metrics_collector = SystemMetricsCollector(
+                    self.tracker, self.pipeline_id
+                )
                 metrics_collector.start()
 
         return data, metrics_collector, start_at_step
 
-    def _setup_progress_bar_manager(self, total_steps: int) -> tuple[Callable[[int], Any], int]:
+    def _setup_progress_bar_manager(
+        self, total_steps: int
+    ) -> tuple[Callable[[int], Any], int]:
         """
         Sets up and returns a progress bar generator.
 
@@ -1318,6 +1562,7 @@ class Pipeline(APIClient):
                 - A generator function that yields step index and progress object.
                 - The total number of steps.
         """
+
         def progress_bar_gen(size: int):
             from tqdm import tqdm
 
@@ -1383,7 +1628,10 @@ class Pipeline(APIClient):
                 data = self._execute_step(item, data, **step_kwargs)
 
                 if "error" in data:
-                    error_msg, error_step = data["error"], getattr(item, "NAME", str(item))
+                    error_msg, error_step = (
+                        data["error"],
+                        getattr(item, "NAME", str(item)),
+                    )
                     if not self.continue_on_error:
                         break
                 else:
@@ -1392,10 +1640,18 @@ class Pipeline(APIClient):
                 data = self._evaluate_checkpoints(data)
                 if checkpoint_mgr and checkpoint_id and "error" not in data:
                     # Safely get step name for checkpoint
-                    name = getattr(item, "NAME", getattr(item, "__name__", f"step_{idx}"))
+                    name = getattr(
+                        item, "NAME", getattr(item, "__name__", f"step_{idx}")
+                    )
                     # Filter out progress_rich and errors from data for checkpoint
-                    cp_data = {k: v for k, v in data.items() if k != "progress_rich" and k != "error"}
-                    checkpoint_mgr.save_checkpoint(checkpoint_id, idx, name, "success", cp_data)
+                    cp_data = {
+                        k: v
+                        for k, v in data.items()
+                        if k != "progress_rich" and k != "error"
+                    }
+                    checkpoint_mgr.save_checkpoint(
+                        checkpoint_id, idx, name, "success", cp_data
+                    )
         except Exception as e:  # pylint: disable=broad-exception-caught
             # Catching broader exceptions here as _execute_step should handle TaskError/ApiError
             error_msg, error_step = str(e), self.task_name
@@ -1428,7 +1684,14 @@ class Pipeline(APIClient):
             metrics_collector.stop()
         self._complete_tracking(data, error_msg, error_step)
         # Clear checkpoints only if pipeline completed successfully and a checkpoint manager was used.
-        if not error_msg and self.tracker and hasattr(self, 'checkpoint_mgr') and self.checkpoint_mgr and hasattr(self, 'checkpoint_id') and self.checkpoint_id:
+        if (
+            not error_msg
+            and self.tracker
+            and hasattr(self, "checkpoint_mgr")
+            and self.checkpoint_mgr
+            and hasattr(self, "checkpoint_id")
+            and self.checkpoint_id
+        ):
             self.checkpoint_mgr.clear_checkpoints(self.checkpoint_id)
 
     def _pipeline_run(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
@@ -1465,54 +1728,80 @@ class Pipeline(APIClient):
         progress_bar_gen, total_steps = self._setup_progress_bar_manager(total_steps)
 
         # Prepare arguments for step execution
-        step_kwargs = {k: v for k, v in kwargs.items() if k not in ("checkpoint_mgr", "checkpoint_id")}
+        step_kwargs = {
+            k: v
+            for k, v in kwargs.items()
+            if k not in ("checkpoint_mgr", "checkpoint_id")
+        }
 
         # Execute steps
         error_msg, error_step = None, None
         try:
             data, error_msg, error_step = self._execute_all_pipeline_steps(
-                data, start_at_step, progress_bar_gen, total_steps,
-                checkpoint_mgr, checkpoint_id, step_kwargs
+                data,
+                start_at_step,
+                progress_bar_gen,
+                total_steps,
+                checkpoint_mgr,
+                checkpoint_id,
+                step_kwargs,
             )
         finally:
             # Finalize execution (post-run tasks, stop metrics, complete tracking)
-            self._finalize_pipeline_execution(data, metrics_collector, error_msg, error_step)
+            self._finalize_pipeline_execution(
+                data, metrics_collector, error_msg, error_step
+            )
 
-        data.pop("progress_rich", None) # Clean up progress_rich from data
+        data.pop("progress_rich", None)  # Clean up progress_rich from data
         return data
 
-    def _complete_tracking(self, data: dict[str, Any], error_msg: Optional[str], error_step: Optional[str]) -> None:
+    def _complete_tracking(
+        self, data: dict[str, Any], error_msg: Optional[str], error_step: Optional[str]
+    ) -> None:
         """Finalize tracking for the pipeline."""
         if self.tracker and self.pipeline_id:
             try:
                 output = data.copy() if not error_msg else {}
                 output["pipeline_start_time"] = data.get("_pipeline_start_time")
                 output["pipeline_end_time"] = datetime.now().isoformat()
-                start = datetime.fromisoformat(output["pipeline_start_time"]) if output.get("pipeline_start_time") else None
+                start = (
+                    datetime.fromisoformat(output["pipeline_start_time"])
+                    if output.get("pipeline_start_time")
+                    else None
+                )
                 if start:
-                    output["pipeline_elapsed_time_ms"] = (datetime.now() - start).total_seconds() * 1000
+                    output["pipeline_elapsed_time_ms"] = (
+                        datetime.now() - start
+                    ).total_seconds() * 1000
 
                 hooks = self.tracker.complete_pipeline(
-                    pipeline_id=self.pipeline_id, output_data=output,
-                    error_message=error_msg, error_step=error_step,
+                    pipeline_id=self.pipeline_id,
+                    output_data=output,
+                    error_message=error_msg,
+                    error_step=error_step,
                 )
                 self._handle_alert_hooks(hooks, data)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 if self.verbose:
                     print(f"[WARNING] Tracker completion failed: {e}")
             if self.verbose:
-                print(f"[PIPELINE STATUS] {self.pipeline_id}: {'ERROR' if error_msg else 'COMPLETED'}")
+                print(
+                    f"[PIPELINE STATUS] {self.pipeline_id}: {'ERROR' if error_msg else 'COMPLETED'}"
+                )
 
     def run(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         """Execute the pipeline."""
         if "error" in (args[0] if args else {}):
-            raise TaskError(f"[{self.task_name}] Initial data contains error", Codes.TASK_FAILED)
+            raise TaskError(
+                f"[{self.task_name}] Initial data contains error", Codes.TASK_FAILED
+            )
         result = self._pipeline_run_with_report(*args, **kwargs)
 
         # Release database locks after execution
         if self.tracking_db:
             try:
                 from wpipe import _db_connections, _db_lock
+
                 with _db_lock:
                     if self.tracking_db in _db_connections:
                         _db_connections[self.tracking_db].commit()
