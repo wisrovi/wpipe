@@ -160,6 +160,7 @@ class Pipeline(APIClient):
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
         continue_on_error: bool = True,
+        break_on_error: Optional[bool] = None,
         show_progress: bool = True,
         save_json_input_output: bool = True,
     ) -> None:
@@ -180,6 +181,7 @@ class Pipeline(APIClient):
             parent_pipeline_id: ID of the parent pipeline if nested.
             collect_system_metrics: Whether to collect resource usage.
             continue_on_error: Whether to proceed if a step fails.
+            break_on_error: If set, overrides continue_on_error (break_on_error=True sets continue_on_error=False).
             show_progress: Whether to show a progress bar.
             save_json_input_output: Whether to store the input/output JSON blobs
                 of the pipeline and its executed steps in the tracking database.
@@ -204,7 +206,9 @@ class Pipeline(APIClient):
         self.retry_on_exceptions = retry_on_exceptions
         self.parent_pipeline_id = parent_pipeline_id
         self._collect_system_metrics = collect_system_metrics
-        self.continue_on_error = continue_on_error
+        self.continue_on_error = (
+            not break_on_error if break_on_error is not None else continue_on_error
+        )
         self.show_progress = show_progress
         self.save_json_input_output = save_json_input_output
         self.tracking_db = tracking_db
