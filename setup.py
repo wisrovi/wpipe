@@ -7,7 +7,8 @@ a tool for creating pipelines connected to an API.
 
 from pathlib import Path
 from typing import List
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 
 def get_long_description() -> str:
@@ -38,7 +39,7 @@ def run_setup() -> None:
 
     setup(
         name="wpipe",
-        version="2.5.3",
+        version="2.5.4",
         description="Library for creating pipelines connected to an API",
         author="William Steve Rodriguez Villamizar",
         author_email="wisrovi.rodriguez@gmail.com",
