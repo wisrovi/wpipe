@@ -68,17 +68,24 @@ Diferénciate de los scripts lineales. WPipe te ofrece superpoderes:
 pip install wpipe
 ```
 
-## ⌨️ WPipe CLI
+## 🧩 VS Code Extension (WPipe Tools)
 
-WPipe incluye una interfaz de línea de comandos para facilitar la gestión de tus flujos de trabajo:
+WPipe cuenta con su extensión oficial para **VS Code** (`WPipe Tools`), diseñada para acelerar el desarrollo y la depuración visual de pipelines.
 
-```bash
-# Iniciar el dashboard de visualización
-wpipe dashboard --port 8035 --open
+- **Instalación:** Busca `WPipe Tools` en el VS Code Marketplace o ejecuta `ext install wpipe.wpipe-vscode`.
+- **Previsualización DAG:** Abre el Command Palette (`Ctrl+Shift+P`) y ejecuta `WPipe: Preview Pipeline DAG`.
 
-# Ejecutar un script de pipeline directamente
-wpipe run mi_pipeline.py
-```
+### 🧠 Snippets Inteligentes en VS Code
+Escribe `wp` en cualquier archivo Python para desplegar los plantillas aceleradas:
+
+| Snippet | Comando | Descripción |
+|---------|---------|-------------|
+| **WPipe Complete** | `wppipecomplete` | Genera un pipeline profesional completo con `add_error_capture(..., break_on_error=True)`, alertas, checkpoints, eventos y métricas de recursos. |
+| **WPipe Advanced** | `wppipeadv` | Pipeline robusto con retries, metrics y gestión de configuración. |
+| **WPipe Pipeline** | `wppipe` | Pipeline básico con almacenamiento de tracking en base de datos. |
+| **WPipe Step Func** | `wpstep` | Paso rápido basado en funciones. |
+| **WPipe Step Adv** | `wpstepadv` | Paso avanzado en clase con retries, timeouts y DTOs Pydantic. |
+| **WPipe Error Capture** | `wperrorcapture` | Registra el capturador de errores forense. |
 
 ---
 
