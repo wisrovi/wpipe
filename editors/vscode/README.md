@@ -46,7 +46,7 @@ Accelerate your development with artificial intelligence.
 ### 🧠 Intelligent snippets (The "Pro" Way)
 Don't just write code—write *excellent* code.
 - **`wpstep` / `wpstepadv`**: Create everything from simple functions to robust classes with built-in retries and timeouts.
-- **`wppipe` / `wppipeadv`**: Scaffold production-ready pipelines with metric tracking and persistence in seconds.
+- **`wppipe` / `wppipeadv` / `wppipecomplete`**: Scaffold production-ready pipelines with error capture (`break_on_error`), alerts, checkpoints, events, metric tracking, and persistence in seconds.
 - **Quick Fixes:** Hover over any standard Python function and click the lightbulb to instantly convert it into a WPipe Step.
 
 ### 🛡️ World-Class YAML Validation
