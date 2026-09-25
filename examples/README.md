@@ -82,7 +82,7 @@ sequenceDiagram
     participant Step2
     participant Condition
     participant Database
-    
+
     User->>Pipeline: Create Pipeline instance
     Pipeline->>Pipeline: Initialize steps list
     User->>Pipeline: Add steps (function/class/lambda)
@@ -114,24 +114,24 @@ graph TB
     subgraph User Layer
         U[User Code]
     end
-    
+
     subgraph Core
         P[Pipeline Engine]
         S[Step Executor]
         C[Condition Evaluator]
         R[Retry Manager]
     end
-    
+
     subgraph Storage
         DB[SQLite]
         Y[YAML Config]
     end
-    
+
     subgraph API
         A[API Client]
         W[Worker Tracker]
     end
-    
+
     U --> P
     P --> S
     P --> C
@@ -153,7 +153,7 @@ The wpipe library doesn't require compilation, but the development environment s
    ```bash
    # Create virtual environment
    uv venv --python 3.10
-   
+
    # Activate environment
    source .venv/bin/activate
    ```
@@ -229,6 +229,8 @@ examples/
 ├── 02_tracking/               # Pipeline tracking
 ├── 03_api/                   # API integration
 ├── 04_error_handling/          # Error handling
+│   ├── example.py
+│   └── 02_break_on_error_example/ # Break on error & forensic capture
 ├── 05_conditions/            # Conditional execution
 ├── 06_sqlite/                # SQLite database
 ├── 07_nested/                 # Nested pipelines
@@ -381,12 +383,12 @@ wpipe supports loading pipeline configuration from YAML files:
 pipeline:
   name: "my_pipeline"
   version: "v1.0.0"
-  
+
 steps:
   - name: "Step 1"
     function: "process_data"
     enabled: true
-    
+
   - name: "Step 2"
     function: "validate_results"
     enabled: true
@@ -490,22 +492,22 @@ flowchart LR
     subgraph Input
         I[Input Data]
     end
-    
+
     subgraph Pipeline_Execution
         P[Pipeline] --> S[Step 1]
         S --> C{Condition?}
         C -->|True| T[Branch A]
         C -->|False| F[Branch B]
     end
-    
+
     subgraph Storage
         DB[(SQLite)]
     end
-    
+
     subgraph Output
         O[Result]
     end
-    
+
     I --> P
     P --> DB
     T --> O
