@@ -1,13 +1,17 @@
+<p align="center">
+  <a href="https://pypi.org/project/wpipe/"><img src="https://img.shields.io/pypi/v/wpipe?style=for-the-badge&logo=pypi&color=3b82f6" alt="PyPI version" /></a>
+  <a href="https://pypi.org/project/wpipe/"><img src="https://img.shields.io/pypi/pyversions/wpipe.svg?style=for-the-badge&logo=python&color=3775A9" alt="Python versions" /></a>
+  <a href="https://linkedin.com/in/wisrovi-rodriguez"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://wisrovi.dev"><img src="https://img.shields.io/badge/Author-wisrovi.dev-111827?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Portal" /></a>
+  <a href="https://orcid.org/0009-0005-0710-1861"><img src="https://img.shields.io/badge/ORCID-0009--0005--0710--1861-A6CE39?style=for-the-badge&logo=orcid&logoColor=white" alt="ORCID" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" /></a>
+</p>
+
 # 🚀 WPipe v2.2.0
 
 **El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
 
-WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye ahora un **Tour de Aprendizaje con 140 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
-
-[![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
-[![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Documentation Status](https://readthedocs.org/projects/wpipe/badge/?version=latest)](https://wpipe.readthedocs.io/en/latest/?badge=latest)
+WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye un **Tour de Aprendizaje con 140 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
 
 ---
 
@@ -542,4 +546,17 @@ Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
 
 ---
 
- Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia.
+## 👤 Autor & Afiliación Oficial
+
+* **William Steve Rodriguez Villamizar (Wisrovi)**
+* **Cargo:** Principal AI Engineer & Applied AI Solutions Architect | Scientific Researcher
+* 🌐 **Portal Oficial:** [wisrovi.dev](https://wisrovi.dev)
+* 💼 **LinkedIn:** [wisrovi-rodriguez](https://www.linkedin.com/in/wisrovi-rodriguez/)
+* 🆔 **ORCID:** [0009-0005-0710-1861](https://orcid.org/0009-0005-0710-1861)
+* 📦 **PyPI:** [pypi.org/user/wisrovi/](https://pypi.org/user/wisrovi/)
+* 🐙 **GitHub:** [@wisrovi](https://github.com/wisrovi)
+
+---
+
+Diseñado con ❤️ por **William Rodriguez (Wisrovi)** para ingenieros que no aceptan menos que la excelencia.
+
