@@ -5,6 +5,7 @@ Provides decorators for converting between dicts and objects,
 and for creating structured state classes from functions.
 """
 
+import asyncio
 from dataclasses import asdict, is_dataclass
 from functools import wraps
 from types import SimpleNamespace
@@ -165,6 +166,42 @@ def to_obj(arg: Any = None) -> Callable:
     from wpipe.type_hinting.validators import TypeValidator
 
     def actual_decorator(func: Callable, schema: Any = None) -> Callable:
+        is_async = asyncio.iscoroutinefunction(func) or (
+            callable(func) and asyncio.iscoroutinefunction(getattr(func, "__call__", None))
+        )
+
+        if is_async:
+            @wraps(func)
+            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+                data_arg = None
+                data_idx = -1
+
+                for i, val in enumerate(args):
+                    if isinstance(val, dict):
+                        data_arg = val
+                        data_idx = i
+                        break
+
+                if schema and data_arg is not None:
+                    TypeValidator.validate(data_arg, schema)
+
+                new_args = list(args)
+                if data_idx != -1:
+                    new_args[data_idx] = dict_to_sns(data_arg)
+
+                result = await func(*new_args, **kwargs)
+
+                if result is None:
+                    return data_arg if data_arg is not None else {}
+
+                res_dict = object_to_dict(result)
+                if not res_dict and data_arg is not None:
+                    return data_arg
+
+                return res_dict if res_dict is not None else {}
+
+            return async_wrapper
+
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Identify the data dictionary (store)
