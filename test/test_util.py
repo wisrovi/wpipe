@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from types import SimpleNamespace
 from typing import Dict, List
 
+import asyncio
 import pytest
 from pydantic import BaseModel
 
@@ -158,6 +159,18 @@ def test_to_obj_decorator():
 
     res_none = func_ret_none({"initial": 1})
     assert res_none == {"initial": 1}  # Returns original data if None but modified
+
+
+@pytest.mark.asyncio
+async def test_to_obj_decorator_async():
+    @to_obj
+    async def my_async_func(data):
+        assert isinstance(data, SimpleNamespace)
+        await asyncio.sleep(0.001)
+        return {"result": data.a * 3}
+
+    res = await my_async_func({"a": 10})
+    assert res == {"result": 30}
 
     # Returns empty dict, fallback to data_arg
     @to_obj
