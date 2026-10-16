@@ -1,5 +1,4 @@
-"""
-Transform decorators for pipeline steps.
+"""Transform decorators for pipeline steps.
 
 Provides decorators for converting between dicts and objects,
 and for creating structured state classes from functions.
@@ -81,11 +80,9 @@ def object_to_dict(obj: Any, _seen: Optional[set[int]] = None) -> Any:
     ) or "ndarray" in str(type(obj)):
         return obj
 
-    # Filter bytes and bytearray to avoid slow JSON fallback
-    if isinstance(obj, bytes):
-        return f"<bytes len={len(obj)}>"
-    if isinstance(obj, bytearray):
-        return f"<bytearray len={len(obj)}>"
+    # Preserve bytes and bytearray as-is to allow passing binary payloads between pipeline steps
+    if isinstance(obj, (bytes, bytearray)):
+        return obj
 
     # Prevent infinite recursion by tracking object identity
     obj_id = id(obj)
@@ -167,10 +164,11 @@ def to_obj(arg: Any = None) -> Callable:
 
     def actual_decorator(func: Callable, schema: Any = None) -> Callable:
         is_async = asyncio.iscoroutinefunction(func) or (
-            callable(func) and asyncio.iscoroutinefunction(getattr(func, "__call__", None))
+            callable(func) and asyncio.iscoroutinefunction(func.__call__)
         )
 
         if is_async:
+
             @wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 data_arg = None
