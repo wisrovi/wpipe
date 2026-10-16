@@ -1,7 +1,10 @@
 import * as vscode from 'vscode';
 
-export function showCheatSheet() {
-    const panel = vscode.window.createWebviewPanel('wpipeCheatSheet', '🚀 WPipe Professional Cheat Sheet', vscode.ViewColumn.Beside, { enableScripts: true });
+export function showCheatSheet(extensionUri: vscode.Uri) {
+    const panel = vscode.window.createWebviewPanel('wpipeCheatSheet', '🚀 WPipe Professional Cheat Sheet', vscode.ViewColumn.Beside, {
+        enableScripts: true,
+        localResourceRoots: [extensionUri]
+    });
     panel.webview.html = `
         <html>
         <head>
