@@ -1,5 +1,4 @@
-"""
-WPipe - Pipeline Orchestration Library.
+"""WPipe - Pipeline Orchestration Library.
 
 A high-performance library for building and orchestrating data processing pipelines
 with support for parallel execution, error handling, checkpoints, and more.
@@ -212,7 +211,7 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
-__version__ = "2.5.10"
+__version__ = "2.5.13"
 __all__ = list(_LAZY_MAP.keys()) + [
     "Wsqlite",
     "Pipeline",
