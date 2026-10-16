@@ -34,7 +34,7 @@ function updateDiagnostics(document: vscode.TextDocument, collection: vscode.Dia
         enter: (node) => {
             if (node.name === 'CallExpression') {
                 const callText = content.substring(node.from, node.to);
-                if (callText.includes('.set_steps(') || (callText.includes('Pipeline(') && callText.includes('steps='))) {
+                if (callText.includes('.set_steps(') || ((callText.includes('Pipeline(') || callText.includes('PipelineAsync(')) && (callText.includes('steps=') || callText.includes('[')))) {
                     // Extract step names from set_steps([ ... ])
                     const match = callText.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/) ||
                                   callText.match(/steps\s*=\s*\[([\s\S]*?)\]/);
