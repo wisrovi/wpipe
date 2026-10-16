@@ -7,7 +7,8 @@ export function showAiAssistant(extensionUri: vscode.Uri) {
         vscode.ViewColumn.Beside,
         {
             enableScripts: true,
-            retainContextWhenHidden: true
+            retainContextWhenHidden: true,
+            localResourceRoots: [extensionUri]
         }
     );
 
