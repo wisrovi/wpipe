@@ -52,6 +52,7 @@ repos:
       - id: codespell
         args:
           - "--skip=*.lock,*.csv,*.json,node_modules,venv,dist"
+          - "-L=oficial,secuencial,clases"
           # - "--write-changes"  # Uncomment this line if you want precommits to automatically fix spelling errors
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
