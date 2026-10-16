@@ -227,7 +227,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
         vscode.commands.registerCommand('wpipe-vscode.findStepUsage', (stepName?: string) => findStepUsage(stepName)),
 
-        vscode.commands.registerCommand('wpipe-vscode.showCheatSheet', showCheatSheet),
+        vscode.commands.registerCommand('wpipe-vscode.showCheatSheet', () => showCheatSheet(context.extensionUri)),
 
         vscode.commands.registerCommand('wpipe-vscode.openAiAssistant', () => showAiAssistant(context.extensionUri)),
 
