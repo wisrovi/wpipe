@@ -30,7 +30,7 @@ export class WPipeCodeLensProvider implements vscode.CodeLensProvider {
                         const callText = content.substring(node.from, node.to);
 
                         // Pipeline execution
-                        if (callText.includes('Pipeline(') || callText.includes('.run(')) {
+                        if (callText.includes('Pipeline(') || callText.includes('PipelineAsync(') || callText.includes('.run(')) {
                             const range = new vscode.Range(
                                 document.positionAt(node.from),
                                 document.positionAt(node.to)
