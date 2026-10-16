@@ -5020,6 +5020,7 @@ ${res.graph}`;
                         <div class="stat-item"><span>Steps</span><b>${stats.steps}</b></div>
                         <div class="stat-item"><span>Logic Blocks</span><b>${stats.logic}</b></div>
                         <div class="stat-item"><span>Pipelines</span><b>${stats.pipes}</b></div>
+                        ${stats.asyncPipes > 0 ? `<div class="stat-item"><span>Async Pipes</span><b style="color:#38bdf8;">\u26A1 ${stats.asyncPipes}</b></div>` : ""}
                     </div>
                     <div class="complexity-box">
                         <span style="font-size:8px;color:#666;">COMPUTATIONAL COST</span>
@@ -5049,10 +5050,11 @@ ${res.graph}`;
   }
   parse(doc, fileName) {
     const content2 = doc.getText();
-    let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5,cursor:pointer\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2,cursor:pointer\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n";
+    let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5,cursor:pointer\n  classDef asyncStep fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff,rx:5,ry:5,cursor:pointer\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2,cursor:pointer\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n  classDef startAsync fill:#0284c7,stroke:#38bdf8,color:#fff\n";
     let totalSteps = 0;
     let totalLogic = 0;
     let maxDepth = 0;
+    let totalAsyncPipes = 0;
     const tree = parser.parse(content2);
     const pipelineInstances = [];
     const addStateCalls = [];
@@ -5060,7 +5062,7 @@ ${res.graph}`;
       enter: (node) => {
         if (node.name === "CallExpression") {
           const callText = content2.substring(node.from, node.to);
-          if (callText.includes(".set_steps(") || callText.startsWith("Pipeline(") && callText.includes("steps=")) {
+          if (callText.includes(".set_steps(") || (callText.startsWith("Pipeline(") || callText.startsWith("PipelineAsync(")) && (callText.includes("steps=") || callText.includes("["))) {
             pipelineInstances.push({ text: callText, from: node.from, to: node.to });
           } else if (callText.includes(".add_state(")) {
             addStateCalls.push({ text: callText, from: node.from, to: node.to });
@@ -5073,23 +5075,31 @@ ${res.graph}`;
       const pipeVar = inst.text.split(".")[0].split("(")[0].trim() || "Pipeline";
       if (seenPipelines.has(pipeVar)) return;
       seenPipelines.add(pipeVar);
+      const isAsync = inst.text.includes("PipelineAsync") || new RegExp(`\\b${pipeVar}\\s*=\\s*PipelineAsync\\b`).test(content2) || content2.includes("PipelineAsync") && content2.includes(`from wpipe import PipelineAsync`);
+      if (isAsync) totalAsyncPipes++;
       const uid = Math.random().toString(36).substr(2, 5);
-      g += `  subgraph sg_${uid} ["\u{1F4E6} ${pipeVar} (in ${fileName})"]
+      const prefixLabel = isAsync ? `\u26A1 PipelineAsync: ${pipeVar}` : `\u{1F4E6} ${pipeVar}`;
+      const startClass = isAsync ? `startAsync` : `startN`;
+      g += `  subgraph sg_${uid} ["${prefixLabel} (in ${fileName})"]
     direction TD
-    start_${uid}(( )):::startN
+    start_${uid}(( )):::${startClass}
 `;
       let stepsContent = "";
       let stepsOffset = inst.from;
       const m1 = inst.text.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/);
       const m2 = inst.text.match(/steps\s*=\s*\[([\s\S]*?)\]/);
+      const m3 = inst.text.match(/(?:Pipeline|PipelineAsync)\s*\([^,\]]*,?\s*\[([\s\S]*?)\]\s*\)/);
       if (m1) {
         stepsContent = m1[1];
         stepsOffset += inst.text.indexOf(m1[1]);
       } else if (m2) {
         stepsContent = m2[1];
         stepsOffset += inst.text.indexOf(m2[1]);
+      } else if (m3) {
+        stepsContent = m3[1];
+        stepsOffset += inst.text.indexOf(m3[1]);
       }
-      const res = this.parseRec(doc, stepsContent, stepsOffset, `start_${uid}`, "L" + uid, 0);
+      const res = this.parseRec(doc, stepsContent, stepsOffset, `start_${uid}`, "L" + uid, 0, "", isAsync);
       g += res.graph.split("\n").map((l) => l.trim() ? "    " + l : "").join("\n") + "\n";
       totalSteps += res.steps;
       totalLogic += res.logic;
@@ -5101,7 +5111,7 @@ ${res.graph}`;
           const am = addCall.text.match(/\.add_state\s*\(([\s\S]*?)\)/);
           if (am) {
             const amOffset = addCall.from + addCall.text.indexOf(am[1]);
-            const res2 = this.parseRec(doc, am[1], amOffset, lastId, "A" + Math.random().toString(36).substr(2, 3), 0, lastLabel);
+            const res2 = this.parseRec(doc, am[1], amOffset, lastId, "A" + Math.random().toString(36).substr(2, 3), 0, lastLabel, isAsync);
             g += res2.graph.split("\n").map((l) => l.trim() ? "    " + l : "").join("\n") + "\n";
             totalSteps += res2.steps;
             totalLogic += res2.logic;
@@ -5122,12 +5132,12 @@ ${res.graph}`;
     }
     return {
       graph: seenPipelines.size > 0 ? g : "flowchart TD\n  NoPipe[No pipeline detected]",
-      stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size },
+      stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size, asyncPipes: totalAsyncPipes },
       bigO,
       suggestions
     };
   }
-  parseRec(doc, content2, offset, prev, prefix, depth, incomingLabel = "") {
+  parseRec(doc, content2, offset, prev, prefix, depth, incomingLabel = "", isAsync = false) {
     let graph = "";
     let curr = prev;
     let sCount = 0;
@@ -5171,7 +5181,7 @@ ${res.graph}`;
         const mid = id2 + "_m";
         if (tCont) {
           const tOffset = item.offset + tr.indexOf(tCont);
-          const r = this.parseRec(doc, tCont, tOffset, id2, id2 + "T", depth, "True");
+          const r = this.parseRec(doc, tCont, tOffset, id2, id2 + "T", depth, "True", isAsync);
           graph += r.graph + `  ${r.lastId} --> ${mid}(( ))
 `;
           sCount += r.steps;
@@ -5181,7 +5191,7 @@ ${res.graph}`;
 `;
         if (fCont) {
           const fOffset = item.offset + tr.indexOf(fCont);
-          const r = this.parseRec(doc, fCont, fOffset, id2, id2 + "F", depth, "False");
+          const r = this.parseRec(doc, fCont, fOffset, id2, id2 + "F", depth, "False", isAsync);
           graph += r.graph + `  ${r.lastId} --> ${mid}(( ))
 `;
           sCount += r.steps;
@@ -5201,7 +5211,7 @@ ${res.graph}`;
         if (pCont) {
           const pOffset = item.offset + tr.indexOf(pCont);
           this.smartSplitWithOffsets(pCont, pOffset).forEach((ps, pi) => {
-            const r = this.parseRec(doc, ps.text, ps.offset, id2, id2 + "P" + pi, depth, "flow");
+            const r = this.parseRec(doc, ps.text, ps.offset, id2, id2 + "P" + pi, depth, "flow", isAsync);
             graph += r.graph + `  ${r.lastId} --> ${mid}(( ))
 `;
             sCount += r.steps;
@@ -5222,7 +5232,7 @@ ${res.graph}`;
         const fCont = this.ext(tr, "steps");
         if (fCont) {
           const fOffset = item.offset + tr.indexOf(fCont);
-          const r = this.parseRec(doc, fCont, fOffset, id2, id2 + "F", depth + 1, "body");
+          const r = this.parseRec(doc, fCont, fOffset, id2, id2 + "F", depth + 1, "body", isAsync);
           graph += r.graph + `  ${r.lastId} --> ${id2}
 `;
           sCount += r.steps;
@@ -5235,7 +5245,7 @@ ${res.graph}`;
         lCount++;
         const lblMatch = tr.match(/Background\((.*?)\)/);
         const lbl = lblMatch ? lblMatch[1].split(",")[0].trim() : "BG Task";
-        graph += `  ${curr} -. async .-> ${id2}((" \u26A1 ${lbl} ")):::step
+        graph += `  ${curr} -. async .-> ${id2}((" \u26A1 ${lbl} ")):::asyncStep
 `;
         graph += `  click ${id2} call handleNodeClick("${line}")
 `;
@@ -5243,7 +5253,12 @@ ${res.graph}`;
         let lbl = tr.split("(")[0].replace(/[\[\]]/g, "").trim();
         if (lbl) {
           sCount++;
-          graph += `  ${curr} ${edge} ${id2}[" \u{1F680} ${lbl} "]:::step
+          const docText = doc.getText();
+          const isStepAsyncFunc = docText.includes(`async def ${lbl}`) || isAsync;
+          const stepIcon = isStepAsyncFunc ? "\u26A1" : "\u{1F680}";
+          const stepStyle = isStepAsyncFunc ? "asyncStep" : "step";
+          const asyncTag = docText.includes(`async def ${lbl}`) ? " (async)" : "";
+          graph += `  ${curr} ${edge} ${id2}[" ${stepIcon} ${lbl}${asyncTag} "]:::${stepStyle}
 `;
           graph += `  click ${id2} call handleNodeClick("${line}")
 `;
@@ -5302,8 +5317,11 @@ ${res.graph}`;
 
 // src/webviews/cheatSheet.ts
 var vscode6 = __toESM(require("vscode"));
-function showCheatSheet() {
-  const panel = vscode6.window.createWebviewPanel("wpipeCheatSheet", "\u{1F680} WPipe Professional Cheat Sheet", vscode6.ViewColumn.Beside, { enableScripts: true });
+function showCheatSheet(extensionUri) {
+  const panel = vscode6.window.createWebviewPanel("wpipeCheatSheet", "\u{1F680} WPipe Professional Cheat Sheet", vscode6.ViewColumn.Beside, {
+    enableScripts: true,
+    localResourceRoots: [extensionUri]
+  });
   panel.webview.html = `
         <html>
         <head>
@@ -5443,7 +5461,8 @@ function showAiAssistant(extensionUri) {
     vscode7.ViewColumn.Beside,
     {
       enableScripts: true,
-      retainContextWhenHidden: true
+      retainContextWhenHidden: true,
+      localResourceRoots: [extensionUri]
     }
   );
   panel.webview.html = getHtml(panel.webview);
@@ -5568,7 +5587,8 @@ var DashboardPanel = class _DashboardPanel {
       column || vscode8.ViewColumn.One,
       {
         enableScripts: true,
-        retainContextWhenHidden: true
+        retainContextWhenHidden: true,
+        localResourceRoots: [extensionUri]
       }
     );
     _DashboardPanel.currentPanel = new _DashboardPanel(panel, port);
@@ -5850,7 +5870,7 @@ var WPipeCodeLensProvider = class {
             }
           } else if (node.name === "CallExpression") {
             const callText = content2.substring(node.from, node.to);
-            if (callText.includes("Pipeline(") || callText.includes(".run(")) {
+            if (callText.includes("Pipeline(") || callText.includes("PipelineAsync(") || callText.includes(".run(")) {
               const range = new vscode12.Range(
                 document.positionAt(node.from),
                 document.positionAt(node.to)
@@ -6025,7 +6045,7 @@ function updateDiagnostics(document, collection) {
     enter: (node) => {
       if (node.name === "CallExpression") {
         const callText = content2.substring(node.from, node.to);
-        if (callText.includes(".set_steps(") || callText.includes("Pipeline(") && callText.includes("steps=")) {
+        if (callText.includes(".set_steps(") || (callText.includes("Pipeline(") || callText.includes("PipelineAsync(")) && (callText.includes("steps=") || callText.includes("["))) {
           const match = callText.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/) || callText.match(/steps\s*=\s*\[([\s\S]*?)\]/);
           if (match) {
             const stepsContent = match[1];
@@ -6318,7 +6338,7 @@ async function activate(context) {
     vscode17.commands.registerCommand("wpipe-vscode.openDashboard", (dbPath) => openDashboard(context, dbPath)),
     vscode17.commands.registerCommand("wpipe-vscode.replayLogs", replayLogErrors),
     vscode17.commands.registerCommand("wpipe-vscode.findStepUsage", (stepName) => findStepUsage(stepName)),
-    vscode17.commands.registerCommand("wpipe-vscode.showCheatSheet", showCheatSheet),
+    vscode17.commands.registerCommand("wpipe-vscode.showCheatSheet", () => showCheatSheet(context.extensionUri)),
     vscode17.commands.registerCommand("wpipe-vscode.openAiAssistant", () => showAiAssistant(context.extensionUri)),
     vscode17.commands.registerCommand("wpipe-vscode.runPipeline", async (filePath) => {
       if (vscode17.env.uiKind === vscode17.UIKind.Web) {
