@@ -279,6 +279,7 @@ export class DAGPanel {
                         <div class="stat-item"><span>Steps</span><b>${stats.steps}</b></div>
                         <div class="stat-item"><span>Logic Blocks</span><b>${stats.logic}</b></div>
                         <div class="stat-item"><span>Pipelines</span><b>${stats.pipes}</b></div>
+                        ${stats.asyncPipes > 0 ? `<div class="stat-item"><span>Async Pipes</span><b style="color:#38bdf8;">⚡ ${stats.asyncPipes}</b></div>` : ''}
                     </div>
                     <div class="complexity-box">
                         <span style="font-size:8px;color:#666;">COMPUTATIONAL COST</span>
@@ -309,9 +310,10 @@ export class DAGPanel {
 
     private parse(doc: vscode.TextDocument, fileName: string): any {
         const content = doc.getText();
-        let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5,cursor:pointer\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2,cursor:pointer\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n";
+        let g = "flowchart TD\n  classDef step fill:#1e1e1e,stroke:#007acc,stroke-width:2px,color:#fff,rx:5,ry:5,cursor:pointer\n  classDef asyncStep fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff,rx:5,ry:5,cursor:pointer\n  classDef logic fill:#1e1e1e,stroke:#ce9178,stroke-width:2px,color:#fff,rx:2,ry:2,cursor:pointer\n  classDef startN fill:#007acc,stroke:#007acc,color:#fff\n  classDef startAsync fill:#0284c7,stroke:#38bdf8,color:#fff\n";
 
         let totalSteps = 0; let totalLogic = 0; let maxDepth = 0;
+        let totalAsyncPipes = 0;
         const tree = parser.parse(content);
         const pipelineInstances: any[] = [];
         const addStateCalls: any[] = [];
@@ -320,7 +322,8 @@ export class DAGPanel {
             enter: (node) => {
                 if (node.name === 'CallExpression') {
                     const callText = content.substring(node.from, node.to);
-                    if (callText.includes('.set_steps(') || (callText.startsWith('Pipeline(') && callText.includes('steps='))) {
+                    if (callText.includes('.set_steps(') || 
+                        ((callText.startsWith('Pipeline(') || callText.startsWith('PipelineAsync(')) && (callText.includes('steps=') || callText.includes('[')))) {
                         pipelineInstances.push({ text: callText, from: node.from, to: node.to });
                     } else if (callText.includes('.add_state(')) {
                         addStateCalls.push({ text: callText, from: node.from, to: node.to });
@@ -336,22 +339,33 @@ export class DAGPanel {
             if (seenPipelines.has(pipeVar)) return;
             seenPipelines.add(pipeVar);
 
+            const isAsync = inst.text.includes('PipelineAsync') ||
+                new RegExp(`\\b${pipeVar}\\s*=\\s*PipelineAsync\\b`).test(content) ||
+                (content.includes('PipelineAsync') && content.includes(`from wpipe import PipelineAsync`));
+            if (isAsync) totalAsyncPipes++;
+
             const uid = Math.random().toString(36).substr(2, 5);
-            g += `  subgraph sg_${uid} ["📦 ${pipeVar} (in ${fileName})"]\n    direction TD\n    start_${uid}(( )):::startN\n`;
+            const prefixLabel = isAsync ? `⚡ PipelineAsync: ${pipeVar}` : `📦 ${pipeVar}`;
+            const startClass = isAsync ? `startAsync` : `startN`;
+            g += `  subgraph sg_${uid} ["${prefixLabel} (in ${fileName})"]\n    direction TD\n    start_${uid}(( )):::${startClass}\n`;
 
             let stepsContent = '';
             let stepsOffset = inst.from;
             const m1 = inst.text.match(/(?:set_steps|steps)\s*\(\s*\[([\s\S]*?)\]\s*\)/);
             const m2 = inst.text.match(/steps\s*=\s*\[([\s\S]*?)\]/);
+            const m3 = inst.text.match(/(?:Pipeline|PipelineAsync)\s*\([^,\]]*,?\s*\[([\s\S]*?)\]\s*\)/);
             if (m1) {
                 stepsContent = m1[1];
                 stepsOffset += inst.text.indexOf(m1[1]);
             } else if (m2) {
                 stepsContent = m2[1];
                 stepsOffset += inst.text.indexOf(m2[1]);
+            } else if (m3) {
+                stepsContent = m3[1];
+                stepsOffset += inst.text.indexOf(m3[1]);
             }
 
-            const res = this.parseRec(doc, stepsContent, stepsOffset, `start_${uid}`, "L" + uid, 0);
+            const res = this.parseRec(doc, stepsContent, stepsOffset, `start_${uid}`, "L" + uid, 0, "", isAsync);
             g += res.graph.split('\n').map((l: string) => l.trim() ? "    " + l : "").join('\n') + "\n";
             totalSteps += res.steps; totalLogic += res.logic; if (res.depth > maxDepth) maxDepth = res.depth;
 
@@ -363,7 +377,7 @@ export class DAGPanel {
                     const am = addCall.text.match(/\.add_state\s*\(([\s\S]*?)\)/);
                     if (am) {
                         const amOffset = addCall.from + addCall.text.indexOf(am[1]);
-                        const res2 = this.parseRec(doc, am[1], amOffset, lastId, "A" + Math.random().toString(36).substr(2, 3), 0, lastLabel);
+                        const res2 = this.parseRec(doc, am[1], amOffset, lastId, "A" + Math.random().toString(36).substr(2, 3), 0, lastLabel, isAsync);
                         g += res2.graph.split('\n').map((l: string) => l.trim() ? "    " + l : "").join('\n') + "\n";
                         totalSteps += res2.steps; totalLogic += res2.logic; if (res2.depth > maxDepth) maxDepth = res2.depth;
                         lastId = res2.lastId;
@@ -383,13 +397,13 @@ export class DAGPanel {
 
         return {
             graph: seenPipelines.size > 0 ? g : "flowchart TD\n  NoPipe[No pipeline detected]",
-            stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size },
+            stats: { steps: totalSteps, logic: totalLogic, pipes: seenPipelines.size, asyncPipes: totalAsyncPipes },
             bigO,
             suggestions
         };
     }
 
-    private parseRec(doc: vscode.TextDocument, content: string, offset: number, prev: string, prefix: string, depth: number, incomingLabel: string = ""): any {
+    private parseRec(doc: vscode.TextDocument, content: string, offset: number, prev: string, prefix: string, depth: number, incomingLabel: string = "", isAsync: boolean = false): any {
         let graph = ""; let curr = prev; let sCount = 0; let lCount = 0; let maxSubDepth = depth;
         let currentLabel = incomingLabel;
 
@@ -423,7 +437,7 @@ export class DAGPanel {
                 const tCont = this.ext(tr, 'branch_true'); const fCont = this.ext(tr, 'branch_false'); const mid = id + "_m";
                 if (tCont) {
                     const tOffset = item.offset + tr.indexOf(tCont);
-                    const r = this.parseRec(doc, tCont, tOffset, id, id + "T", depth, "True");
+                    const r = this.parseRec(doc, tCont, tOffset, id, id + "T", depth, "True", isAsync);
                     graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`;
                     sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                 }
@@ -431,7 +445,7 @@ export class DAGPanel {
 
                 if (fCont) {
                     const fOffset = item.offset + tr.indexOf(fCont);
-                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth, "False");
+                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth, "False", isAsync);
                     graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`;
                     sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                 }
@@ -444,7 +458,7 @@ export class DAGPanel {
                 if (pCont) {
                     const pOffset = item.offset + tr.indexOf(pCont);
                     this.smartSplitWithOffsets(pCont, pOffset).forEach((ps, pi) => {
-                        const r = this.parseRec(doc, ps.text, ps.offset, id, id + "P" + pi, depth, "flow");
+                        const r = this.parseRec(doc, ps.text, ps.offset, id, id + "P" + pi, depth, "flow", isAsync);
                         graph += r.graph + `  ${r.lastId} --> ${mid}(( ))\n`;
                         sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                     });
@@ -456,7 +470,7 @@ export class DAGPanel {
                 const fCont = this.ext(tr, 'steps');
                 if (fCont) {
                     const fOffset = item.offset + tr.indexOf(fCont);
-                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth + 1, "body");
+                    const r = this.parseRec(doc, fCont, fOffset, id, id + "F", depth + 1, "body", isAsync);
                     graph += r.graph + `  ${r.lastId} --> ${id}\n`; sCount += r.steps; lCount += r.logic; if (r.depth > maxSubDepth) maxSubDepth = r.depth;
                 }
                 curr = id;
@@ -465,12 +479,18 @@ export class DAGPanel {
                 lCount++;
                 const lblMatch = tr.match(/Background\((.*?)\)/);
                 const lbl = lblMatch ? lblMatch[1].split(',')[0].trim() : "BG Task";
-                graph += `  ${curr} -. async .-> ${id}((" ⚡ ${lbl} ")):::step\n`;
+                graph += `  ${curr} -. async .-> ${id}((" ⚡ ${lbl} ")):::asyncStep\n`;
                 graph += `  click ${id} call handleNodeClick("${line}")\n`;
             } else {
                 let lbl = tr.split('(')[0].replace(/[\[\]]/g, '').trim();
                 if (lbl) {
-                    sCount++; graph += `  ${curr} ${edge} ${id}[" 🚀 ${lbl} "]:::step\n`;
+                    sCount++;
+                    const docText = doc.getText();
+                    const isStepAsyncFunc = docText.includes(`async def ${lbl}`) || isAsync;
+                    const stepIcon = isStepAsyncFunc ? "⚡" : "🚀";
+                    const stepStyle = isStepAsyncFunc ? "asyncStep" : "step";
+                    const asyncTag = docText.includes(`async def ${lbl}`) ? " (async)" : "";
+                    graph += `  ${curr} ${edge} ${id}[" ${stepIcon} ${lbl}${asyncTag} "]:::${stepStyle}\n`;
                     graph += `  click ${id} call handleNodeClick("${line}")\n`;
                     curr = id;
                 }
