@@ -32,7 +32,7 @@ repos:
     rev: 25.9.0
     hooks:
       - id: black
-        language_version: python3.9
+        language_version: python3
 
   # 12/2026
   # - repo: https://github.com/pre-commit/mirrors-mypy
