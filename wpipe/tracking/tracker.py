@@ -1,6 +1,4 @@
-"""
-wpipe Pipeline Tracker - Professional Execution Tracking System using WSQLite.
-"""
+"""wpipe Pipeline Tracker - Professional Execution Tracking System using WSQLite."""
 
 import json
 import os
@@ -31,9 +29,14 @@ from .analysis import AnalysisManager
 from .queries import QueryManager
 
 
+def _default_json_serializer(obj: Any) -> Any:
+    if isinstance(obj, (bytes, bytearray)):
+        return f"<bytes len={len(obj)}>"
+    return str(obj)
+
+
 def _safe_json_dumps(data: Any) -> str:
-    """
-    Safe JSON dump that handles non-serializable objects and circular references.
+    """Safe JSON dump that handles non-serializable objects and circular references.
 
     Args:
         data: The data to serialize.
@@ -44,7 +47,7 @@ def _safe_json_dumps(data: Any) -> str:
     try:
         # First convert everything to a clean dict/list structure
         clean_data = object_to_dict(data)
-        return json.dumps(clean_data)
+        return json.dumps(clean_data, default=_default_json_serializer)
     except (TypeError, OverflowError, ValueError):
         try:
             # Fallback for exotic types not covered
@@ -65,8 +68,7 @@ class Metric:
 
     @staticmethod
     def record(name: str, value: float, unit: Optional[str] = None) -> None:
-        """
-        Record a numeric metric in the current pipeline execution.
+        """Record a numeric metric in the current pipeline execution.
 
         Args:
             name: Name of the metric.
@@ -140,8 +142,7 @@ class comparisons(ComparisonModel):
 
 
 class PipelineTracker:
-    """
-    Unified Pipeline Tracker.
+    """Unified Pipeline Tracker.
 
     Orchestrates registration, step tracking, alerts, and dashboard queries.
     """
@@ -153,8 +154,7 @@ class PipelineTracker:
         config_dir: Optional[str] = None,
         save_json_input_output: bool = True,
     ):
-        """
-        Initialize the PipelineTracker.
+        """Initialize the PipelineTracker.
 
         Args:
             db_path: Path to the SQLite database.
@@ -336,8 +336,7 @@ class PipelineTracker:
     def register_pipeline(
         self, name: str, pipeline_steps: list[Any], **kwargs
     ) -> dict[str, Any]:
-        """
-        Register a pipeline and its steps.
+        """Register a pipeline and its steps.
 
         Args:
             name: Pipeline name.
@@ -402,8 +401,7 @@ class PipelineTracker:
         error_message: Optional[str] = None,
         error_step: Optional[str] = None,
     ) -> list[str]:
-        """
-        Mark a pipeline as completed or failed.
+        """Mark a pipeline as completed or failed.
 
         Args:
             pipeline_id: Unique pipeline identifier.
@@ -446,8 +444,7 @@ class PipelineTracker:
     def start_step(
         self, pipeline_id: str, step_order: int, step_name: str, **kwargs
     ) -> int:
-        """
-        Mark a step as started.
+        """Mark a step as started.
 
         Args:
             pipeline_id: Unique pipeline identifier.
@@ -483,8 +480,7 @@ class PipelineTracker:
         error_traceback: Optional[str] = None,
         pipeline_id: Optional[str] = None,
     ) -> list[str]:
-        """
-        Mark a step as completed or failed.
+        """Mark a step as completed or failed.
 
         Args:
             step_id: Unique step identifier.
@@ -528,8 +524,7 @@ class PipelineTracker:
     def link_pipelines(
         self, parent_id: str, child_id: str, relation_type: str = "triggered"
     ) -> None:
-        """
-        Link two pipelines with a relationship.
+        """Link two pipelines with a relationship.
 
         Args:
             parent_id: Parent pipeline ID.
@@ -546,8 +541,7 @@ class PipelineTracker:
     def add_event(
         self, pipeline_id: str, event_type: str, event_name: str, **kwargs
     ) -> None:
-        """
-        Record an event.
+        """Record an event.
 
         Args:
             pipeline_id: Unique pipeline identifier.
@@ -567,8 +561,7 @@ class PipelineTracker:
         self.db_events.insert(model)
 
     def record_system_metrics(self, pipeline_id: str, metrics: dict[str, Any]) -> None:
-        """
-        Record system metrics.
+        """Record system metrics.
 
         Args:
             pipeline_id: Unique pipeline identifier.
@@ -586,8 +579,7 @@ class PipelineTracker:
         self.db_system_metrics.insert(model)
 
     def acknowledge_alert(self, alert_id: int) -> dict[str, str]:
-        """
-        Acknowledge a fired alert.
+        """Acknowledge a fired alert.
 
         Args:
             alert_id: Unique alert identifier.
@@ -601,8 +593,7 @@ class PipelineTracker:
         return {"status": "success"}
 
     def get_pipeline_graph(self, pipeline_id: str) -> dict[str, Any]:
-        """
-        Get pipeline data formatted for graph visualization with full metadata.
+        """Get pipeline data formatted for graph visualization with full metadata.
 
         Args:
             pipeline_id: Unique pipeline identifier.
@@ -691,13 +682,15 @@ class PipelineTracker:
                         "to": f"step_{step_id}",
                         "label": label,
                         "style": "dashed" if is_skipped else "solid",
-                        "color": "#10b981"
-                        if (
-                            parent_model
-                            and parent_model.get("step_type") == "condition"
-                            and not is_skipped
-                        )
-                        else None,
+                        "color": (
+                            "#10b981"
+                            if (
+                                parent_model
+                                and parent_model.get("step_type") == "condition"
+                                and not is_skipped
+                            )
+                            else None
+                        ),
                     }
                 )
             elif i > 0:
@@ -734,9 +727,9 @@ class PipelineTracker:
 
                     edges.append(
                         {
-                            "from": f"step_{prev_id}"
-                            if prev_id
-                            else f"step_{prev_order}",
+                            "from": (
+                                f"step_{prev_id}" if prev_id else f"step_{prev_order}"
+                            ),
                             "to": f"step_{step_id}",
                             "label": label,
                             "style": "solid" if not is_skipped else "dashed",
@@ -794,8 +787,7 @@ class PipelineTracker:
         }
 
     def delete_pipeline(self, pipeline_id: str) -> None:
-        """
-        Delete all data related to a pipeline.
+        """Delete all data related to a pipeline.
 
         Args:
             pipeline_id: Unique pipeline identifier.
