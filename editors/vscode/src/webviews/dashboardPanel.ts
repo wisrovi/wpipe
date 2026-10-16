@@ -23,6 +23,7 @@ export class DashboardPanel {
             {
                 enableScripts: true,
                 retainContextWhenHidden: true,
+                localResourceRoots: [extensionUri]
             }
         );
 
