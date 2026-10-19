@@ -1,5 +1,4 @@
-"""
-Async Pipeline module for orchestrating asynchronous task execution.
+"""Async Pipeline module for orchestrating asynchronous task execution.
 
 This module provides the PipelineAsync class for managing and executing
 a sequence of async tasks, with support for conditional branching,
@@ -21,8 +20,7 @@ from .pipe import Background, Condition, Parallel, SystemMetricsCollector
 
 
 def _is_async_callable(func: Any) -> bool:
-    """
-    Check if a callable is async (handles both functions and callable objects).
+    """Check if a callable is async (handles both functions and callable objects).
 
     Args:
         func: The object to check.
@@ -38,8 +36,7 @@ def _is_async_callable(func: Any) -> bool:
 
 
 class PipelineAsync(APIClient):
-    """
-    Async Pipeline for orchestrating asynchronous task execution with API tracking support.
+    """Async Pipeline for orchestrating asynchronous task execution with API tracking support.
 
     Attributes:
         worker_id (Optional[str]): Unique identifier for the worker.
@@ -62,6 +59,7 @@ class PipelineAsync(APIClient):
         retry_on_exceptions: tuple[type, ...] = (Exception,),
         tracking_db: Optional[str] = None,
         pipeline_name: Optional[str] = None,
+        name: Optional[str] = None,
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
         collect_system_metrics: bool = False,
@@ -70,8 +68,7 @@ class PipelineAsync(APIClient):
         show_progress: bool = True,
         save_json_input_output: bool = True,
     ) -> None:
-        """
-        Initialize the Async Pipeline.
+        """Initialize the Async Pipeline.
 
         Args:
             worker_id: Unique identifier for the worker.
@@ -83,6 +80,7 @@ class PipelineAsync(APIClient):
             retry_on_exceptions: Exceptions that trigger a retry.
             tracking_db: Path to the SQLite database for tracking.
             pipeline_name: Name of this pipeline instance.
+            name: Alias for pipeline_name.
             config_dir: Directory containing configuration files.
             parent_pipeline_id: ID of the parent pipeline if nested.
             collect_system_metrics: Whether to collect resource usage.
@@ -129,7 +127,7 @@ class PipelineAsync(APIClient):
                 save_json_input_output=self.save_json_input_output,
             )
 
-        self.pipeline_name: str = pipeline_name or "Pipeline"
+        self.pipeline_name: str = pipeline_name or name or "Pipeline"
         self.pipeline_id: Optional[str] = None
         self.tasks_list: list[Any] = []
         self._step_order: int = 0
@@ -147,6 +145,15 @@ class PipelineAsync(APIClient):
         self._metrics_collector: Optional[SystemMetricsCollector] = None
         self.progress_rich: Optional[Progress] = None
 
+    @property
+    def name(self) -> str:
+        """Alias for pipeline_name."""
+        return self.pipeline_name
+
+    @name.setter
+    def name(self, val: str) -> None:
+        self.pipeline_name = val
+
     def add_event(
         self,
         event_type: str,
@@ -156,8 +163,7 @@ class PipelineAsync(APIClient):
         tags: Optional[list[str]] = None,
         steps: Optional[list[Any]] = None,
     ) -> None:
-        """
-        Add an event or annotation to the pipeline.
+        """Add an event or annotation to the pipeline.
 
         Args:
             event_type: Category of the event.
@@ -195,8 +201,7 @@ class PipelineAsync(APIClient):
         expression: str = "True",
         steps: Optional[list[Any]] = None,
     ) -> None:
-        """
-        Add a checkpoint to the pipeline.
+        """Add a checkpoint to the pipeline.
 
         Args:
             checkpoint_name: Unique name for the checkpoint.
@@ -212,11 +217,8 @@ class PipelineAsync(APIClient):
             }
         )
 
-    def add_error_capture(
-        self, steps: list[Any], break_on_error: bool = False
-    ) -> None:
-        """
-        Add steps to be executed when an error occurs.
+    def add_error_capture(self, steps: list[Any], break_on_error: bool = False) -> None:
+        """Add steps to be executed when an error occurs.
 
         Args:
             steps: List of callables or logic blocks for error handling.
@@ -227,8 +229,7 @@ class PipelineAsync(APIClient):
         self._error_capture_tasks.extend(steps)
 
     def add_pre_hook(self, hook: Callable) -> "PipelineAsync":
-        """
-        Add a global pre-execution hook.
+        """Add a global pre-execution hook.
 
         Args:
             hook: Callable (sync or async) to execute before each step.
@@ -238,8 +239,7 @@ class PipelineAsync(APIClient):
         return self
 
     def add_post_hook(self, hook: Callable) -> "PipelineAsync":
-        """
-        Add a global post-execution hook.
+        """Add a global post-execution hook.
 
         Args:
             hook: Callable (sync or async) to execute after each step.
@@ -249,8 +249,7 @@ class PipelineAsync(APIClient):
         return self
 
     async def _evaluate_checkpoints(self, data: dict[str, Any]) -> dict[str, Any]:
-        """
-        Evaluate and fire checkpoints based on current data.
+        """Evaluate and fire checkpoints based on current data.
 
         Args:
             data: Current pipeline context.
@@ -270,7 +269,9 @@ class PipelineAsync(APIClient):
                     "__builtins__": {},
                 }
                 try:
-                    if eval(cp["expression"], safe_globals, safe_locals):  # pylint: disable=eval-used
+                    if eval(
+                        cp["expression"], safe_globals, safe_locals
+                    ):  # pylint: disable=eval-used
                         if self.verbose:
                             print(f"\n[ASYNC CHECKPOINT REACHED] {cp['name']}")
 
@@ -296,8 +297,7 @@ class PipelineAsync(APIClient):
         return data
 
     def set_worker_id(self, worker_id: str) -> None:
-        """
-        Set the worker ID.
+        """Set the worker ID.
 
         Args:
             worker_id: The worker identifier string.
@@ -316,8 +316,7 @@ class PipelineAsync(APIClient):
     async def _task_invoke(
         self, func: Any, name: str, *args: Any, **kwargs: Any
     ) -> Any:
-        """
-        Invoke an async task, optionally with retry logic.
+        """Invoke an async task, optionally with retry logic.
 
         Args:
             func: The callable to invoke.
@@ -451,8 +450,7 @@ class PipelineAsync(APIClient):
     async def _execute_step(
         self, item: Any, data: dict[str, Any], **kwargs: Any
     ) -> dict[str, Any]:
-        """
-        Execute a single step in the async pipeline.
+        """Execute a single step in the async pipeline.
 
         Args:
             item: The step to execute (callable, logic block, etc).
@@ -805,8 +803,7 @@ class PipelineAsync(APIClient):
         return data
 
     async def run(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
-        """
-        Execute the async pipeline.
+        """Execute the async pipeline.
 
         Args:
             *args: Positional arguments, typically the initial data dictionary.
@@ -830,8 +827,7 @@ class PipelineAsync(APIClient):
         return result
 
     def set_steps(self, steps: list[Any]) -> None:
-        """
-        Set the async pipeline steps.
+        """Set the async pipeline steps.
 
         Args:
             steps: List of steps to be executed.
