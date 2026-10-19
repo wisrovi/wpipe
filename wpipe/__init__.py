@@ -191,7 +191,7 @@ _LAZY_MAP = {
 
 # Direct imports for core components to ensure availability and IDE support
 from .decorators import step  # noqa: E402
-from .pipe import Condition, For, Parallel, Pipeline  # noqa: E402
+from .pipe import Background, Condition, For, Parallel, Pipeline  # noqa: E402
 
 
 def __getattr__(name: str) -> Any:
@@ -218,5 +218,6 @@ __all__ = list(_LAZY_MAP.keys()) + [
     "Condition",
     "For",
     "Parallel",
+    "Background",
     "step",
 ]
