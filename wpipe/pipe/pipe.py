@@ -1,5 +1,4 @@
-"""
-Pipeline module for orchestrating task execution.
+"""Pipeline module for orchestrating task execution.
 
 This module provides the Pipeline class for managing and executing
 a sequence of tasks, with support for conditional branching,
@@ -35,8 +34,7 @@ from .components.progress import ProgressManager
 
 
 class Step:
-    """
-    Represents a single executable step within a pipeline.
+    """Represents a single executable step within a pipeline.
 
     Attributes:
         func (Callable): The callable function or method to execute.
@@ -49,8 +47,7 @@ class Step:
     version: str
 
     def __init__(self, func: Callable, name: str, version: str = "") -> None:
-        """
-        Initializes a Step object.
+        """Initializes a Step object.
 
         Args:
             func: The callable function or method to be executed as part of the step.
@@ -62,8 +59,7 @@ class Step:
         self.version = version
 
     def run(self, data: dict[str, Any]) -> dict[str, Any]:
-        """
-        Executes the step function with the provided data context.
+        """Executes the step function with the provided data context.
 
         The `data` dictionary contains the current state and context
         of the pipeline execution. The function is expected to return
@@ -84,8 +80,7 @@ class Step:
 
 
 class Pipeline(APIClient):
-    """
-    Pipeline for orchestrating task execution with API tracking support.
+    """Pipeline for orchestrating task execution with API tracking support.
 
     Attributes:
         worker_id (Optional[str]): Unique identifier for the worker.
@@ -122,6 +117,7 @@ class Pipeline(APIClient):
 
     @property
     def tracker(self) -> Optional["PipelineTracker"]:
+        """Get the pipeline tracker instance."""
         tracking_db = self.tracking_db
         if self._tracker is None and tracking_db:
             from wpipe.tracking import PipelineTracker
@@ -155,6 +151,7 @@ class Pipeline(APIClient):
         retry_on_exceptions: tuple[type, ...] = (Exception,),
         tracking_db: Optional[str] = None,
         pipeline_name: Optional[str] = None,
+        name: Optional[str] = None,
         pipeline_version: Optional[str] = None,
         config_dir: Optional[str] = None,
         parent_pipeline_id: Optional[str] = None,
@@ -164,8 +161,7 @@ class Pipeline(APIClient):
         show_progress: bool = True,
         save_json_input_output: bool = True,
     ) -> None:
-        """
-        Initialize the Pipeline.
+        """Initialize the Pipeline.
 
         Args:
             worker_id: Unique identifier for the worker.
@@ -177,6 +173,8 @@ class Pipeline(APIClient):
             retry_on_exceptions: Exceptions that trigger a retry.
             tracking_db: Path to the SQLite database for tracking.
             pipeline_name: Name of this pipeline instance.
+            name: Alias for pipeline_name.
+            pipeline_version: Version of the pipeline.
             config_dir: Directory containing configuration files.
             parent_pipeline_id: ID of the parent pipeline if nested.
             collect_system_metrics: Whether to collect resource usage.
@@ -212,7 +210,7 @@ class Pipeline(APIClient):
         self.show_progress = show_progress
         self.save_json_input_output = save_json_input_output
         self.tracking_db = tracking_db
-        self.pipeline_name = pipeline_name or "Pipeline"
+        self.pipeline_name = pipeline_name or name or "Pipeline"
         self.pipeline_version = pipeline_version or "1.0.0"
 
         # Global Hooks / Middlewares
@@ -235,9 +233,17 @@ class Pipeline(APIClient):
                 save_json_input_output=self.save_json_input_output,
             )
 
+    @property
+    def name(self) -> str:
+        """Alias for pipeline_name."""
+        return self.pipeline_name
+
+    @name.setter
+    def name(self, val: str) -> None:
+        self.pipeline_name = val
+
     def add_pre_hook(self, hook: Callable) -> "Pipeline":
-        """
-        Add a global pre-execution hook.
+        """Add a global pre-execution hook.
 
         Args:
             hook: Callable to execute before each step.
@@ -247,8 +253,7 @@ class Pipeline(APIClient):
         return self
 
     def add_post_hook(self, hook: Callable) -> "Pipeline":
-        """
-        Add a global post-execution hook.
+        """Add a global post-execution hook.
 
         Args:
             hook: Callable to execute after each step.
@@ -266,8 +271,7 @@ class Pipeline(APIClient):
         tags: Optional[list[str]] = None,
         steps: Optional[list[Any]] = None,
     ) -> "Pipeline":
-        """
-        Add an event/annotation to the pipeline.
+        """Add an event/annotation to the pipeline.
 
         Args:
             event_type: Category of the event.
@@ -311,8 +315,7 @@ class Pipeline(APIClient):
         expression: str = "True",
         steps: Optional[list[Any]] = None,
     ) -> "Pipeline":
-        """
-        Add a checkpoint that triggers when expression is True.
+        """Add a checkpoint that triggers when expression is True.
 
         Args:
             checkpoint_name: Name of the checkpoint.
@@ -343,7 +346,9 @@ class Pipeline(APIClient):
                     "__builtins__": {},
                 }
                 try:
-                    if eval(cp["expression"], safe_globals, data):  # pylint: disable=eval-used
+                    if eval(
+                        cp["expression"], safe_globals, data
+                    ):  # pylint: disable=eval-used
                         if self.verbose:
                             print(f"\n[CHECKPOINT REACHED] {cp['name']}")
 
@@ -383,8 +388,7 @@ class Pipeline(APIClient):
     def add_error_capture(
         self, steps: list[Any], break_on_error: bool = False
     ) -> "Pipeline":
-        """
-        Add steps to execute when an error occurs in the pipeline.
+        """Add steps to execute when an error occurs in the pipeline.
 
         Args:
             steps: List of steps for error handling.
@@ -615,10 +619,10 @@ class Pipeline(APIClient):
         try:
             result = self._pipeline_run(*args, **kwargs)
             self._api_process_update({"id": self.process_id, "details": ""})
-        except TaskError as te:
+        except TaskError as task_err:
             error = {
-                "message": str(te),
-                "error_code": te.error_code,
+                "message": str(task_err),
+                "error_code": task_err.error_code,
                 "process_name": self.process_id,
                 "worker_id": self.worker_id,
                 "worker_name": self.worker_name or "worker",
@@ -635,9 +639,9 @@ class Pipeline(APIClient):
                 return result
 
             # Re-raise the original user exception to maintain compatibility with examples
-            if te.__cause__:
-                raise te.__cause__ from None
-            raise ProcessError(str(te), Codes.TASK_FAILED) from te
+            if task_err.__cause__:
+                raise task_err.__cause__ from None
+            raise ProcessError(str(task_err), Codes.TASK_FAILED) from task_err
         except ApiError as ae:
             raise ApiError(str(ae), Codes.API_ERROR) from ae
 
@@ -710,9 +714,11 @@ class Pipeline(APIClient):
                     else:
                         bg_step = [
                             normalized_step[0],
-                            normalized_step[1]
-                            if len(normalized_step) > 1
-                            else "background",
+                            (
+                                normalized_step[1]
+                                if len(normalized_step) > 1
+                                else "background"
+                            ),
                             normalized_step[2] if len(normalized_step) > 2 else "v1.0",
                             {
                                 "_is_background": True,
@@ -758,16 +764,12 @@ class Pipeline(APIClient):
     def add_pipeline(
         self, pipeline: Any, name: str, version: str = "v1.0"
     ) -> "Pipeline":
-        """
-        Alias to add another pipeline as a step.
-        """
+        """Alias to add another pipeline as a step."""
         self.add_state(name=name, func=pipeline.run, version=version)
         return self
 
     def add_condition(self, condition: Any) -> "Pipeline":
-        """
-        Add a condition to the pipeline.
-        """
+        """Add a condition to the pipeline."""
         self.add_state(func=condition)
         return self
 
@@ -849,8 +851,7 @@ class Pipeline(APIClient):
 
     @property
     def steps(self) -> list["Step"]:
-        """
-        Provides access to the pipeline steps as Step objects for compatibility.
+        """Provides access to the pipeline steps as Step objects for compatibility.
 
         This property iterates through the internal `tasks_list` and creates
         `Step` objects, which encapsulate a callable function, its name,
@@ -1487,8 +1488,7 @@ class Pipeline(APIClient):
         checkpoint_id: Optional[str],
         **kwargs: Any,
     ) -> tuple[dict[str, Any], Optional[SystemMetricsCollector], int]:
-        """
-        Initializes the context for a pipeline run.
+        """Initializes the context for a pipeline run.
 
         This includes setting the start time, handling checkpoint resumption,
         registering the pipeline with the tracker, and initializing system
@@ -1552,8 +1552,7 @@ class Pipeline(APIClient):
     def _setup_progress_bar_manager(
         self, total_steps: int
     ) -> tuple[Callable[[int], Any], int]:
-        """
-        Sets up and returns a progress bar generator.
+        """Sets up and returns a progress bar generator.
 
         Configures the progress bar based on the `show_progress` attribute,
         utilizing `ProgressManager` for rich output or `tqdm` as a fallback.
@@ -1598,8 +1597,7 @@ class Pipeline(APIClient):
         checkpoint_id: Optional[str],
         step_kwargs: dict[str, Any],
     ) -> tuple[dict[str, Any], Optional[str], Optional[str]]:
-        """
-        Executes all steps of the pipeline sequentially.
+        """Executes all steps of the pipeline sequentially.
 
         This method iterates through the pipeline tasks, executes each step,
         handles errors according to `continue_on_error` setting, evaluates checkpoints,
@@ -1670,8 +1668,7 @@ class Pipeline(APIClient):
         error_msg: Optional[str],
         error_step: Optional[str],
     ) -> None:
-        """
-        Finalizes the pipeline execution.
+        """Finalizes the pipeline execution.
 
         This includes running post-run tasks, stopping system metrics collection,
         completing the pipeline tracking, and clearing checkpoints if the pipeline
@@ -1699,8 +1696,7 @@ class Pipeline(APIClient):
             self.checkpoint_mgr.clear_checkpoints(self.checkpoint_id)
 
     def _pipeline_run(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
-        """
-        Internal pipeline run implementation orchestrated by reporting wrappers.
+        """Internal pipeline run implementation orchestrated by reporting wrappers.
 
         This method orchestrates the execution of the pipeline by calling
         several helper methods to manage context initialization, progress
