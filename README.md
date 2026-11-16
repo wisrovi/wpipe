@@ -1,690 +1,307 @@
-# 🚀 WPipe v2.5.1
-
 <img width="1682" height="943" alt="image" src="https://github.com/user-attachments/assets/9618bcca-4253-43b1-a483-7941a1130edf" />
 
+<p align="center">
+  <a href="https://pypi.org/project/wpipe/"><img src="https://img.shields.io/pypi/v/wpipe?style=for-the-badge&logo=pypi&color=3b82f6" alt="PyPI version" /></a>
+  <a href="https://pypi.org/project/wpipe/"><img src="https://img.shields.io/pypi/dm/wpipe?style=for-the-badge&color=10b981" alt="PyPI Downloads" /></a>
+  <a href="https://pypi.org/project/wpipe/"><img src="https://img.shields.io/pypi/pyversions/wpipe?style=for-the-badge&logo=python&color=ffd343&logoColor=black" alt="Python Versions" /></a>
+  <a href="https://linkedin.com/in/wisrovi-rodriguez"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://wisrovi.dev"><img src="https://img.shields.io/badge/Author-wisrovi.dev-111827?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Portal" /></a>
+  <a href="https://orcid.org/0009-0005-0710-1861"><img src="https://img.shields.io/badge/ORCID-0009--0005--0710--1861-A6CE39?style=for-the-badge&logo=orcid&logoColor=white" alt="ORCID" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" /></a>
+</p>
 
-**El motor de orquestación de pipelines más rápido, resiliente y puro para Python.**
+# 🚀 WPipe: Enterprise Pipeline & Directed Acyclic Graph (DAG) Orchestrator
 
-WPipe es una librería profesional diseñada para automatizar flujos de trabajo complejos, garantizando que tus datos viajen seguros, tus procesos sean ultra-rápidos y tus fallos sean fáciles de diagnosticar. Incluye ahora un **Tour de Aprendizaje con 140 Niveles** para dominar la librería desde lo más básico hasta lo más avanzado.
+**The fastest, most resilient, and purest pipeline orchestration engine for Python.**
 
-[![PyPI version](https://badge.fury.io/py/wpipe.svg)](https://badge.fury.io/py/wpipe)
-[![Python versions](https://img.shields.io/pypi/pyversions/wpipe.svg)](https://pypi.org/project/wpipe/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Documentation Status](https://readthedocs.org/projects/wpipe/badge/?version=latest)](https://wpipe.readthedocs.io/en/latest/?badge=latest)
-
----
-
-## 💎 ¿Por qué WPipe?
-
-Diferénciate de los scripts lineales. WPipe te ofrece superpoderes:
-
-| Superpoder | Descripción |
-|------------|-------------|
-| ⚡ **Modo Relámpago** | Optimización extrema de SQLite (WAL Mode) y sincronización thread-safe para ejecuciones paralelas. |
-| 🧵 **Paralelismo Nativo** | Ejecuta tareas en Hilos o Procesos con un solo comando. Bypass del GIL para tareas pesadas de CPU. |
-| 🛡️ **Checkpoints Inteligentes** | Resiliencia ante objetos no serializables y referencias circulares. Si el sistema cae, WPipe reanuda exactamente donde se quedó. |
-| 🔍 **Captura de Errores Forense** | Olvídate de los errores genéricos. Recibe notificaciones detalladas con el archivo y la línea exacta del fallo. |
-| 🧬 **Contratos de Datos** | Valida tu "Bodega" de datos automáticamente con esquemas estrictos pero extensibles. |
-| 🔄 **Paridad Síncrona/Asíncrona** | Elige entre `Pipeline` o `PipelineAsync` con el 100% de las mismas funcionalidades. |
+WPipe is an enterprise-grade framework designed to automate complex, high-throughput computational workflows. It guarantees zero data loss, ultra-low execution latency, and deterministic post-mortem diagnosis. Featuring **native sync & async runtime parity**, **transparent GIL-bypass multiprocessing**, **forensic error capture**, and an interactive **Live Real-time Web Dashboard**.
 
 ---
 
-## 📊 Features (25 Features)
+## 📑 Table of Contents
 
-| Feature | Descripción |
-|---------|-------------|
-| 🔗 Pipeline Orchestration | Crear pipelines con funciones y clases como pasos |
-| 🌳 Conditional Branches | Ejecutar diferentes rutas basadas en condiciones de datos |
-| 🔄 Retry Logic | Reintentos automáticos con estrategias configurables |
-| 🌐 API Integration | Conectar a APIs externas, registrar workers |
-| 💾 SQLite Storage | Persistir resultados de ejecución a base de datos |
-| ⚠️ Error Handling | Excepciones personalizadas y códigos de error detallados |
-| 📋 YAML Configuration | Cargar y gestionar configuraciones |
-| 🔀 Nested Pipelines | Componer flujos de trabajo complejos |
-| 📊 Progress Tracking | Salida rica en terminal |
-| 🧪 Type Hints | Anotaciones de tipo completas |
-| 🔒 Memory Control | Utilidades integradas de memoria |
-| 🧩 Composable | Componentes reutilizables de pipeline |
-| ⚡ Parallel Execution | Ejecutar pasos en paralelo (I/O o CPU bound) |
-| 📂 Pipeline Composition | Usar pipelines como pasos de otros pipelines |
-| 🎯 Step Decorators | Definir pasos en línea con @step decorator |
-| 💾 Checkpointing | Guardar y resumir desde checkpoints |
-| ⏱️ Timeouts | Prevenir tareas colgadas con soporte de timeout |
-| 📈 Resource Monitoring | Rastrear RAM y CPU durante ejecución |
-| 📤 Export | Exportar logs, métricas y estadísticas a JSON/CSV |
-| 🎪 Events & Hooks | Eventos pre/post ejecución y hooks personalizados |
-| 📉 Alerts | Alertas configurables basadas en métricas |
-| 🔐 Type Validation | Validación de esquemas con PipelineContext |
-| 🔄 Async Pipeline | Soporte completo para pipelines asíncronos |
-| 🏗️ DAG Scheduling | Programación basada en grafos acíclicos dirigida |
-| 🌐 Dashboard Web | Dashboard visual en tiempo real |
-| ⚡ **Background Tasks** | Ejecutar tareas sin bloquear el pipeline (fire & forget) |
+- [🏛️ Architectural Overview](#️-architectural-overview)
+- [💎 Why WPipe?](#-why-wpipe)
+- [📦 Installation](#-installation)
+- [🛠️ Key Technologies and Libraries](#️-key-technologies-and-libraries)
+- [🧩 VS Code Official Extension (WPipe Tools)](#-vs-code-official-extension-wpipe-tools)
+- [🚀 5-Minute Quick Start](#-5-minute-quick-start)
+- [🧩 Core Composition Blocks](#-core-composition-blocks)
+  - [1. Sequential Pipeline (`Pipeline` / `PipelineAsync`)](#1-sequential-pipeline-pipeline--pipelineasync)
+  - [2. Parallel Execution (`Parallel`)](#2-parallel-execution-parallel)
+  - [3. Conditional Routing (`Condition`)](#3-conditional-routing-condition)
+  - [4. Iterative Execution (`For`)](#4-iterative-execution-for)
+  - [5. Background Fire & Forget Tasks (`Background`)](#5-background-fire--forget-tasks-background)
+- [🔍 Forensic Error Capture & Telemetry](#-forensic-error-capture--telemetry)
+- [📊 Real-time Visual Web Dashboard](#-real-time-visual-web-dashboard)
+- [⚙️ Configuration & Database Tracking](#️-configuration--database-tracking)
+- [🧪 Unit Testing & Quality Assurance](#-unit-testing--quality-assurance)
+- [👤 Author & Official Affiliation](#-author--official-affiliation)
+- [📜 License](#-license)
 
 ---
 
-## 🚀 Instalación
+## 🏛️ Architectural Overview
+
+```
++========================================================================================+
+|                                    WPIPE ECOSYSTEM                                     |
++========================================================================================+
+|                                                                                        |
+|   🔌 DECLARATIVE ORCHESTRATION ENGINE (`Pipeline` / `PipelineAsync`)                   |
+|   +--------------------------------------------------------------------------------+   |
+|   |  • Dual Runtime: Synchronous and Asynchronous (`asyncio`) complete parity       |   |
+|   |  • Composition Blocks: Parallel (Processes/Threads), Condition, For, Background |   |
+|   |  • Step Decorator: Inline `@step` with strict type hints & auto-DTO reflection |   |
+|   +--------------------------------------------------------------------------------+   |
+|                                          |                                             |
+|                                          v                                             |
+|   🛡️ RESILIENCE, INTEGRITY & RECOVERY LAYER                                           |
+|   +--------------------------------------------------------------------------------+   |
+|   |  • Forensic Error Capture: Line-accurate exception traces and context dumps    |   |
+|   |  • Automatic Checkpointing: Resume execution from latest committed state        |   |
+|   |  • Lightning Database Engine: High-concurrency WAL mode via `wsqlite`           |   |
+|   +--------------------------------------------------------------------------------+   |
+|                                          |                                             |
+|                                          v                                             |
+|   📊 TELEMETRY, METRICS & VISUAL OBSERVABILITY                                         |
+|   +--------------------------------------------------------------------------------+   |
+|   |  • Real-time Web Dashboard: Interactive DAG graphs, metrics, and event alerts  |   |
+|   |  • Resource Monitoring: Non-intrusive CPU & RAM consumption tracking           |   |
+|   |  • VS Code WPipe Tools: Live DAG visualization, snippets, and step catalog      |   |
+|   +--------------------------------------------------------------------------------+   |
++========================================================================================+
+```
+
+---
+
+## 💎 Why WPipe?
+
+Traditional linear scripts and ad-hoc pipelines lack resilience, observability, and structured error handling.
+
+| Capability | Impact & Engineering Benefit |
+| :--- | :--- |
+| ⚡ **Lightning Storage Engine** | Uses `wsqlite` with WAL mode and thread-safe connection pooling for sub-millisecond tracking persistence. |
+| 🧵 **Native Multiprocessing & Multithreading** | Transparently runs CPU-heavy steps across isolated processes to bypass the Python GIL or lightweight I/O threads. |
+| 🛡️ **Intelligent Checkpointing** | Resilient against non-serializable objects and circular references. Recovers cleanly after system halts. |
+| 🔍 **Forensic Error Capturing** | Pinpoints the exact file, line number, and execution context that caused failures, preventing silent dropouts. |
+| ⚡ **Background Tasks (`Background`)** | Fire-and-forget asynchronous tasks that execute without blocking the critical DAG execution path. |
+| 🔄 **Sync / Async Parity** | 100% architectural parity between synchronous `Pipeline` and coroutine-driven `PipelineAsync`. |
+
+---
+
+## 📦 Installation
 
 ```bash
+# Standard installation from PyPI
 pip install wpipe
+
+# Using poetry
+poetry add wpipe
 ```
-
-## 🧩 VS Code Extension (WPipe Tools)
-
-WPipe cuenta con su extensión oficial para **VS Code** (`WPipe Tools`), diseñada para acelerar el desarrollo y la depuración visual de pipelines.
-
-- **Instalación:** Busca `WPipe Tools` en el VS Code Marketplace o ejecuta `ext install wpipe.wpipe-vscode`.
-- **Previsualización DAG:** Abre el Command Palette (`Ctrl+Shift+P`) y ejecuta `WPipe: Preview Pipeline DAG`.
-
-### 🧠 Snippets Inteligentes en VS Code
-Escribe `wp` en cualquier archivo Python para desplegar los plantillas aceleradas:
-
-| Snippet | Comando | Descripción |
-|---------|---------|-------------|
-| **WPipe Complete** | `wppipecomplete` | Genera un pipeline profesional completo con `add_error_capture(..., break_on_error=True)`, alertas, checkpoints, eventos y métricas de recursos. |
-| **WPipe Advanced** | `wppipeadv` | Pipeline robusto con retries, metrics y gestión de configuración. |
-| **WPipe Pipeline** | `wppipe` | Pipeline básico con almacenamiento de tracking en base de datos. |
-| **WPipe Step Func** | `wpstep` | Paso rápido basado en funciones. |
-| **WPipe Step Adv** | `wpstepadv` | Paso avanzado en clase con retries, timeouts y DTOs Pydantic. |
-| **WPipe Error Capture** | `wperrorcapture` | Registra el capturador de errores forense. |
 
 ---
 
-## 📖 Guía Completa
+## 🛠️ Key Technologies and Libraries
 
-### 1. Conceptos Fundamentales
+WPipe is built on top of high-performance modern Python standards:
 
-WPipe se basa en **5 pilares** que puedes combinar libremente:
-
-```python
-from wpipe import Pipeline, step, Condition, For, Parallel
-```
-
-| Pilar | Uso |
-|-------|-----|
-| **`step`** | Decorador para definir funciones como pasos del pipeline |
-| **`Pipeline`** | Contenedor principal que orquesta la ejecución |
-| **`Condition`** | Ramificación condicional basada en expresiones |
-| **`For`** | Bucles con validación de parada y `merge_policy` (accumulate/last_wins/callable) |
-| **`Parallel`** | Ejecución paralela de múltiples pasos |
-| **`Hooks`** | Middlewares globales (Pre/Post) para lógica transversal |
+- **Python (3.9 - 3.14)**: Modern typed runtime with strict type annotations.
+- **WSQLite (`wsqlite`)**: Optimized SQLite persistence engine operating in high-concurrency WAL (Write-Ahead Logging) mode.
+- **Pydantic (v1 / v2)**: Strict data contract validation and automatic DTO model serialization.
+- **FastAPI & Uvicorn**: Underlying REST server powering the real-time interactive web dashboard.
+- **Loguru**: Structured, asynchronous diagnostic logging.
+- **PSUtil**: Real-time system telemetry tracking per-step CPU and RAM utilization.
+- **Pytest**: Comprehensive test suite ensuring zero-regression execution across all modules.
 
 ---
 
-### 2. Tu Primer Pipeline con Hooks
+## 🧩 VS Code Official Extension (WPipe Tools)
 
+WPipe features an official **VS Code extension** (`WPipe Tools`) to accelerate development, debugging, and live visual inspection:
+
+- **Installation:** Search for `WPipe Tools` in the VS Code Marketplace or run:
+  ```bash
+  ext install wpipe.wpipe-vscode
+  ```
+- **Live DAG Visualizer:** Open the Command Palette (`Ctrl+Shift+P`) and select `WPipe: Preview Pipeline DAG`.
+
+### 🧠 Developer Snippets
+Type `wp` in any Python file to trigger productive scaffolding:
+
+| Snippet | Keyword | Description |
+| :--- | :--- | :--- |
+| **WPipe Complete** | `wppipecomplete` | Complete enterprise pipeline with error capture, break-on-error, checkpoints, and resource metrics. |
+| **WPipe Advanced** | `wppipeadv` | Resilient pipeline with retries, configuration handling, and alerts. |
+| **WPipe Basic** | `wppipe` | Clean standard pipeline with database tracking. |
+| **WPipe Step Func** | `wpstep` | Lightweight functional step. |
+| **WPipe Step Class** | `wpstepadv` | Class-based step with retries, timeouts, and Pydantic DTO typing. |
+| **WPipe Error Capture** | `wperrorcapture` | Registers forensic error handler. |
+
+---
+
+## 🚀 5-Minute Quick Start
+
+### Basic Pipeline with Step Decorators
 ```python
 from wpipe import Pipeline, step
 
-@step(name="saludar")
-def saludar(context):
-    return {"mensaje": f"Hola, WPipe!"}
+# 1. Define modular pipeline steps
+@step(name="IngestData", version="1.0.0")
+def ingest_data(context: dict) -> dict:
+    context["raw_records"] = [10, 20, 30, 40]
+    return context
 
-p = Pipeline()
-# Añade hooks globales para auditoría o logging
-p.add_pre_hook(lambda ctx, info: print(f"🚀 Iniciando: {info['name']}"))
-p.add_post_hook(lambda ctx, info, res: print(f"✅ Finalizado: {info['name']}"))
+@step(name="ProcessData", version="1.0.0")
+def process_data(context: dict) -> dict:
+    context["sum_total"] = sum(context["raw_records"])
+    return context
 
-p.add_state(saludar)
-p.run({})
+# 2. Instantiate and run pipeline
+pipe = Pipeline(pipeline_name="quickstart_pipeline")
+pipe.set_steps([ingest_data, process_data])
+
+result = pipe.run({"status": "INIT"})
+print(f"Pipeline Result: {result['sum_total']}")  # 100
 ```
 
-pipeline = Pipeline(pipeline_name="miPrimero")
-pipeline.set_steps([saludar])
+---
 
-result = pipeline.run({"name": "Mundo"})
-# {'mensaje': 'Hola, Mundo!'}
-```
+## 🧩 Core Composition Blocks
 
-### 3. Pipeline con Validación de Tipos
+WPipe allows flexible workflow assembly using 5 native orchestration blocks:
 
 ```python
-from wpipe import Pipeline, step, PipelineContext
-
-class Usuario(PipelineContext):
-    nombre: str
-    edad: int
-    email: str
-
-@step(name="validar_usuario")
-def validar(usuario: Usuario):
-    if usuario.edad < 18:
-        return {"validado": False, "razon": "menor de edad"}
-    return {"validado": True}
-
-pipeline = Pipeline(pipeline_name="validacion")
-pipeline.set_steps([validar])
-
-result = pipeline.run({"nombre": "Ana", "edad": 25, "email": "ana@ejemplo.com"})
-# {'validado': True}
+from wpipe import Pipeline, PipelineAsync, Background, Condition, For, Parallel, step
 ```
 
-### 4. Ramificaciones Condicionales
+### 1. Sequential Pipeline (`Pipeline` / `PipelineAsync`)
+Executes a linear sequence of steps, validating outputs and recording telemetry.
 
 ```python
-from wpipe import Pipeline, step, Condition
+pipe = Pipeline(pipeline_name="order_processing")
+pipe.set_steps([validate_order, charge_payment, notify_customer])
+pipe.run(order_payload)
+```
 
-@step(name="procesar")
-def procesar(data):
-    return {"resultado": "procesado"}
+### 2. Parallel Execution (`Parallel`)
+Executes multiple steps simultaneously using either threads (I/O bound) or isolated processes (CPU bound):
 
-@step(name="alerta")
-def alertar(data):
-    return {"alerta": "¡Datos críticos!"}
+```python
+pipe.set_steps([
+    Parallel([
+        generate_pdf_report,
+        generate_excel_summary,
+        broadcast_webhook,
+    ], mode="threads", max_workers=3)
+])
+```
 
-pipeline = Pipeline(pipeline_name="condicional")
-pipeline.set_steps([
+### 3. Conditional Routing (`Condition`)
+Branches execution paths dynamically based on data inside the context:
+
+```python
+pipe.set_steps([
     Condition(
-        expression="valor > 100",
-        branch_true=[procesar],
-        branch_false=[alertar]
+        condition=lambda ctx: ctx.get("is_vip", False),
+        if_true=[apply_vip_discount, priority_dispatch],
+        if_false=[apply_standard_discount]
     )
 ])
-
-pipeline.run({"valor": 50})  # Ejecuta alertar
-pipeline.run({"valor": 150})  # Ejecuta procesar
 ```
 
-### 5. Ejecución Paralela
+### 4. Iterative Execution (`For`)
+Iterates over a list in the context, processing items with configurable merge policies (`accumulate`, `last_wins`):
 
 ```python
-from wpipe import Pipeline, step, Parallel
-
-@step(name="tarea_a")
-def tarea_a(data):
-    return {"a": "listo"}
-
-@step(name="tarea_b")
-def tarea_b(data):
-    return {"b": "listo"}
-
-@step(name="tarea_c")
-def tarea_c(data):
-    return {"c": "listo"}
-
-pipeline = Pipeline(pipeline_name="paralelo")
-pipeline.set_steps([
-    Parallel(
-        steps=[tarea_a, tarea_b, tarea_c],
-        max_workers=3
+pipe.set_steps([
+    For(
+        items="image_urls",
+        step=download_and_resize_image,
+        merge_policy="accumulate"
     )
 ])
-
-result = pipeline.run({})
-# Las 3 tareas se ejecutan simultáneamente
 ```
 
-### 6. Background Tasks (Fire & Forget)
+### 5. Background Fire & Forget Tasks (`Background`)
+Offloads non-critical, slow operations (e.g. audit logs, cleanup, telemetry pushes) to daemon threads without blocking pipeline throughput:
 
 ```python
-from wpipe import Pipeline, step
-from wpipe.pipe.components.logic_blocks import Background
-
-@step(name="tarea_principal")
-def tarea_principal(data):
-    print("Ejecutando tarea principal...")
-    return {"status": "completado"}
-
-@step(name="tarea_lenta")
-def tarea_lenta(data):
-    import time
-    print("Enviando telemetría...")
-    time.sleep(2)  # Simula operación lenta
-    print("¡Telemetría enviada!")
-
-pipeline = Pipeline(pipeline_name="con_background")
-pipeline.set_steps([
-    tarea_principal,
-    Background(tarea_lenta),  # No bloquea el pipeline
-])
-
-result = pipeline.run({})
-# El pipeline NO espera 2 segundos, continúa inmediatamente
-# La tarea lenta se ejecuta en background (daemon thread)
-```
-
-### 7. Checkpoints (Resiliencia)
-
-```python
-from wpipe import Pipeline, step, CheckpointManager
-
-pipeline = Pipeline(pipeline_name="resiliente")
-
-# Definir checkpoint basado en expresión lógica
-pipeline.add_checkpoint(
-    checkpoint_name="datos_listos",
-    expression="temperatura > 0"
-)
-
-@step(name="procesar")
-def procesar(data):
-    return {"status": "completado"}
-
-pipeline.set_steps([procesar])
-
-# Si el sistema cae, WPipe reanuda automáticamente
-chk = CheckpointManager("mi_db.db")
-if chk.can_resume("resiliente"):
-    pipeline.resume()
-else:
-    pipeline.run({"temperatura": 25})
-```
-
-### 7. Reintentos Automáticos
-
-```python
-from wpipe import Pipeline, step
-
-@step(name="conexion_api", retry_count=3, retry_delay=1)
-def conexion_api(data):
-    # Simulamos posible fallo
-    if not data.get("disponible"):
-        raise ConnectionError("API no disponible")
-    return {"conectado": True}
-
-pipeline = Pipeline(pipeline_name="retry")
-pipeline.set_steps([conexion_api])
-pipeline.run({"disponible": False})  # Reintenta 3 veces antes de fallar
-```
-
-### 8. Timeouts
-
-```python
-from wpipe import Pipeline, step, timeout_sync
-
-@timeout_sync(seconds=5)
-@step(name="tarea_lenta")
-def tarea_lenta(data):
-    import time
-    time.sleep(10)  # Simula tarea lenta
-    return {"status": "ok"}
-
-pipeline = Pipeline(pipeline_name="timeout")
-pipeline.set_steps([tarea_lenta])
-# Si tarda más de 5 segundos, lanza TimeoutError
-```
-
-### 9. Pipeline Asíncrono
-
-```python
-import asyncio
-from wpipe import PipelineAsync, step
-
-@step(name="async_task")
-async def async_task(data):
-    await asyncio.sleep(1)
-    return {"result": "async done"}
-
-async def main():
-    pipeline = PipelineAsync(pipeline_name="async_demo")
-    pipeline.set_steps([async_task])
-    result = await pipeline.run({"data": "test"})
-    return result
-
-asyncio.run(main())
-```
-
-### 10. Pipelines Anidados
-
-```python
-from wpipe import Pipeline, step
-
-# Pipeline hijo
-sub_pipeline = Pipeline(pipeline_name="hijo")
-sub_pipeline.set_steps([step_a, step_b])
-
-# Pipeline padre que usa el hijo
-parent_pipeline = Pipeline(pipeline_name="padre")
-parent_pipeline.set_steps([
-    paso_inicial,
-    sub_pipeline,  # ¡Se ejecuta como un paso más!
-    paso_final
+pipe.set_steps([
+    process_transaction,
+    Background(send_audit_telemetry),  # Runs in daemon thread; does not block pipeline!
+    return_response_to_client
 ])
 ```
 
-### 11. Exportar Resultados
+---
+
+## 🔍 Forensic Error Capture & Telemetry
+
+Configure fail-fast guarantees and pinpoint exact exception origins:
 
 ```python
-from wpipe import PipelineExporter
+def on_pipeline_failure(error_info: dict) -> None:
+    print(f"🚨 Failed at Step: {error_info['step_name']}")
+    print(f"   Exception: {error_info['error_message']}")
+    print(f"   Origin: {error_info['file_name']}:{error_info['line_number']}")
 
-exporter = PipelineExporter("tracking.db")
-
-# Exportar a JSON
-json_data = exporter.export_pipeline_logs(format="json")
-
-# Exportar a CSV
-csv_data = exporter.export_pipeline_logs(format="csv")
-
-# Exportar estadísticas
-stats = exporter.export_statistics(format="json")
+pipe = Pipeline(pipeline_name="critical_billing")
+pipe.add_error_capture(on_pipeline_failure, break_on_error=True)
 ```
 
-### 12. Dashboard Web
+---
+
+## 📊 Real-time Visual Web Dashboard
+
+Launch the embedded real-time web dashboard with a single command to inspect DAG execution, latency waterfalls, and database checkpoints:
 
 ```python
 from wpipe import start_dashboard
 
-# Inicia el dashboard en http://localhost:5000
-start_dashboard(db_path="tracking.db", port=5000)
-```
-
-#### Control de almacenamiento de datos (Input/Output)
-
-Por defecto, WPipe guarda los datos de entrada/salida de cada estado y del
-pipeline en la base de datos de tracking. Si tus datos son pesados (imágenes,
-video, tensores) y quieres reducir el tamaño de la DB, deshabilita su
-persistencia con `save_json_input_output=False`. El dashboard seguirá
-funcionando y mostrará `N/A` en las secciones Input/Output.
-
-```python
-pipeline = Pipeline(pipeline_name="Trip_L1", verbose=True, save_json_input_output=False)
+# Starts dashboard on http://localhost:8080
+start_dashboard(db_path="wpipe_tracking.db", port=8080)
 ```
 
 ---
 
-## 🎯 Uso Avanzado: El Viaje Resiliente
+## ⚙️ Configuration & Database Tracking
 
-Este ejemplo combina **todas las características** de WPipe:
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `pipeline_name` | `str` | `"Pipeline"` | Human-readable pipeline identifier. |
+| `tracking_db` | `str` | `None` | Path to SQLite tracking database (WAL mode). |
+| `collect_system_metrics` | `bool` | `False` | Enables real-time CPU and RAM percentage tracking. |
+| `show_progress` | `bool` | `True` | Displays rich console progress indicators in terminal. |
+| `max_retries` | `int` | `0` | Number of automated step retries on failure. |
+| `retry_delay` | `float` | `0.0` | Delay in seconds between retries. |
 
-```python
-from wpipe import (
-    Pipeline, For, Condition, Parallel, step, to_obj,
-    PipelineContext, CheckpointManager, Metric, Severity
-)
+---
 
-# 1. Definimos el contrato de datos
-class MiContexto(PipelineContext):
-    motor: str
-    temperatura: float
-    nivel_gasolina: str
+## 🧪 Unit Testing & Quality Assurance
 
-# 2. Creamos pasos con validación automática
-@step(name="VerificarMotor", retry_count=3)
-@to_obj(MiContexto)
-def verificar_motor(ctx: MiContexto):
-    print(f"Chequeando motor: {ctx.motor}")
-    return {"temperatura": 85.5}
+WPipe maintains an exhaustive test suite verifying sync/async pipelines, parallel execution, loop iterations, and database integrity:
 
-@step(name="CargarCombustible")
-def cargar_combustible(data):
-    return {"nivel_gasolina": "completo"}
-
-@step(name="Conducir")
-def conducir(data):
-    return {"distancia": 100}
-
-# 3. Orquestación de Alto Nivel
-viaje = Pipeline(pipeline_name="ViajeLTS", verbose=True)
-
-# Añadimos checkpoint inteligente
-viaje.add_checkpoint(
-    checkpoint_name="arranque",
-    expression="temperatura > 0"
-)
-
-# Añadimos alertas
-viaje.tracker.add_alert_threshold(
-    metric=Metric.PIPELINE_DURATION,
-    expression=">5000",
-    severity=Severity.WARNING,
-    steps=[lambda d: print("⚠ Pipeline lento!")]
-)
-
-# 4. Configuramos los pasos
-viaje.set_steps([
-    verificar_motor,
-    Parallel(
-        steps=[cargar_combustible, revisar_neumaticos],
-        max_workers=2,
-        merge_policy="accumulate"   # suma números, extiende listas, fusiona dicts
-    ),
-    For(
-        iterations=10,
-        validation_expression="nivel_gasolina != 'vacío'",
-        steps=[conducir],
-        merge_policy="last_wins"    # solo última iteración gana
-    )
-])
-
-# 5. Ejecutamos
-results = viaje.run({"motor": "V8", "temperatura": 20})
+```bash
+# Run all unit tests
+pytest test/ -v
 ```
 
 ---
 
-## 🔀 Merge Policy: Fusión de Resultados en Paralelo y Bucles
+## 👤 Author & Official Affiliation
 
-Cuando se ejecutan pasos en paralelo (`Parallel`) o en bucle (`For`), cada worker recibe una **copia del contexto** (`base`). Al finalizar, solo las claves que el worker **realmente modificó** se fusionan de vuelta al contexto global usando `merge_policy`.
-
-### `Parallel(merge_policy=...)` — Default: `"accumulate"`
-
-| Policy | Comportamiento |
-|--------|----------------|
-| `"accumulate"` (default) | Suma números, extiende listas, fusiona dicts; resto: último write gana |
-| `"last_wins"` | Último step en orden de declaración gana |
-| `callable(current, new) -> merged` | Resolución personalizada |
-
-```python
-# Ejemplo: suma contadores en paralelo
-p = Pipeline()
-p.set_steps([
-    Parallel(
-        steps=[
-            lambda ctx: {**ctx, "counter": ctx.get("counter", 0) + 1},
-            lambda ctx: {**ctx, "counter": ctx.get("counter", 0) + 10}
-        ],
-        merge_policy="accumulate"   # 1 + 10 = 11 se suma al base
-    )
-])
-result = p.run({"counter": 100})
-print(result["counter"])  # 111 (100 + 1 + 10)
-```
-
-```python
-# Ejemplo: último write gana
-p = Pipeline()
-p.set_steps([
-    Parallel(
-        steps=[
-            lambda ctx: {**ctx, "value": "A"},
-            lambda ctx: {**ctx, "value": "B"}
-        ],
-        merge_policy="last_wins"
-    )
-])
-result = p.run({})
-print(result["value"])  # "B" (segundo step en orden de declaración)
-```
-
-```python
-# Ejemplo: merge personalizado
-p = Pipeline()
-p.set_steps([
-    Parallel(
-        steps=[
-            lambda ctx: {**ctx, "items": ["a"]},
-            lambda ctx: {**ctx, "items": ["b"]}
-        ],
-        merge_policy=lambda cur, new: cur + new  # concatena listas
-    )
-])
-result = p.run({"items": ["start"]})
-print(result["items"])  # ["start", "a", "b"]
-```
-
-### `For(merge_policy=...)` — Default: `"last_wins"`
-
-En bucles, `base` es el contexto **antes de la primera iteración**. Solo claves modificadas en la última iteración (o acumuladas) se fusionan.
-
-| Policy | Uso típico |
-|--------|------------|
-| `"last_wins"` (default) | Solo resultado de la última iteración persiste |
-| `"accumulate"` | Acumula contadores/listas a lo largo de iteraciones |
-| `callable` | Lógica custom por iteración |
-
-```python
-# Acumular en cada iteración del bucle
-p = Pipeline()
-p.set_steps([
-    For(
-        iterations=5,
-        steps=[lambda ctx: {**ctx, "sum": ctx.get("sum", 0) + 1}],
-        merge_policy="accumulate"
-    )
-])
-result = p.run({"sum": 10})
-print(result["sum"])  # 15 (10 + 5 iteraciones)
-```
-
-```python
-# Solo última iteración (default)
-p = Pipeline()
-p.set_steps([
-    For(
-        iterations=3,
-        steps=[lambda ctx: {**ctx, "value": ctx.get("value", 0) + 100}],
-        merge_policy="last_wins"
-    )
-])
-result = p.run({"value": 0})
-print(result["value"])  # 100 (solo última iteración: 0+100)
-```
+* **William Steve Rodriguez Villamizar (Wisrovi)**
+* **Role:** AI Leader & Solutions Architect at eCaptureDtech | Principal AI Engineer
+* 📧 **Email:** [wisrovi.rodriguez@gmail.com](mailto:wisrovi.rodriguez@gmail.com)
+* 🌐 **Official Portal:** [wisrovi.dev](https://wisrovi.dev)
+* 💼 **LinkedIn:** [wisrovi-rodriguez](https://www.linkedin.com/in/wisrovi-rodriguez/)
+* 🆔 **ORCID:** [0009-0005-0710-1861](https://orcid.org/0009-0005-0710-1861)
+* 📦 **PyPI:** [pypi.org/user/wisrovi/](https://pypi.org/user/wisrovi/)
+* 🐙 **GitHub:** [@wisrovi](https://github.com/wisrovi)
 
 ---
 
-## 📊 Observabilidad Completa
+## 📜 License
 
-WPipe no solo ejecuta, **entiende** tu proceso:
-
-```python
-# Análisis de rendimiento
-analysis = pipeline.tracker.analysis
-stats = analysis.get_stats()
-
-# Estadísticas globales
-print(f"Total ejecuciones: {stats['total_pipelines']}")
-print(f"Tasa de éxito: {stats['success_rate']}%")
-print(f"Duración media: {stats['avg_duration_ms']}ms")
-
-# Detectar cuellos de botella
-slow_steps = analysis.get_top_slow_steps(limit=5)
-for step in slow_steps:
-    print(f"{step['step_name']}: {step['avg_duration_ms']}ms")
-
-# Exportar a JSON/CSV para auditorías
-exporter = PipelineExporter("tracking.db")
-exporter.export_pipeline_logs(format="json", output_path="reporte.json")
-```
-
----
-
-## 📋 API Reference (Resumen)
-
-| Clase/Función | Descripción |
-|--------------|------------|
-| `Pipeline` | Pipeline síncrono principal (`save_json_input_output=True` por defecto) |
-| `PipelineAsync` | Pipeline asíncrono (`save_json_input_output=True` por defecto) |
-| `@step(name, version, retry_count, ...)` | Decorador para definir pasos |
-| `Condition(expression, branch_true, branch_false)` | Ramificación condicional |
-| `For(iterations, validation_expression, steps, merge_policy="last_wins")` | Bucle con validación y merge policy |
-| `Parallel(steps, max_workers, use_processes, merge_policy="accumulate")` | Ejecución paralela con merge policy |
-| `CheckpointManager` | Gestor de checkpoints |
-| `PipelineExporter` | Exportador de logs/métricas |
-| `start_dashboard(port)` | Dashboard web |
-| `ResourceMonitor` | Monitor de RAM/CPU |
-| `PipelineContext` | TypedDict para validación de tipos |
-
----
-
-## 🛡️ Calidad y Soporte
-
-| Aspecto | Detalle |
-|--------|---------|
-| **LTS** | WPipe v2.1+ cuenta con soporte a largo plazo |
-| **Test Coverage** | 95%+ pruebas en entornos síncronos y asíncronos |
-| **Arquitectura** | Unificación bajo `wsqlite`, sin SQL crudo en el núcleo |
-| **Python** | Compatible con Python 3.9+ |
-
----
-
-## DASHBOARD
-
-### Tutorial
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/ebc5159c-a159-430b-9722-a4b57f4a3742" />
-
-### Principal menus
-
-#### Timeline:
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/a21f43fc-4c91-4d3e-a34c-99bf8b9b28d6" />
-
-#### Analitics:
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/69624571-6872-492e-b56a-e32f41a9abd4" />
-
-#### Alerts:
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/451f5ece-bc0c-4f31-b2da-f61c9a35d2bb" />
-
-#### Events:
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/6390d842-493a-45cd-9cbb-3636b234e28e" />
-
-#### states:
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/f70cc3d6-7eb5-4288-9aa6-f7a70455872a" />
-
-#### Pipelines:
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/91debeec-9add-4bc8-acb0-b70bb4c6cbc9" />
-
-### Graph pipeline
-
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/90795e53-948b-44dd-89f5-5b1e346e7241" />
-
-## states data transaction
-
-<img width="1786" height="924" alt="image" src="https://github.com/user-attachments/assets/71786eb7-f0ff-4262-b0f1-bfc1da4dc236" />
-
----
-
-## 🛠️ Extensiones para Editores
-
-### Visual Studio Code
-WPipe cuenta con una extensión oficial para mejorar la experiencia de desarrollo:
-- **Snippets:** Autocompletado para `@step`, `Pipeline`, `Parallel` y más.
-- **Validación YAML:** Soporte para esquemas de configuración de pipelines.
-- **Comandos:** Acceso rápido a herramientas de WPipe.
-
-Puedes encontrar la extensión y las instrucciones de instalación en la carpeta `editors/vscode/`.
-
----
-
-## 📄 Licencia
-
-MIT License - Libre para usar, modificar y distribuir.
-
----
-
-## 🏢 ¿Usas WPipe? (Opcional)
-
-¡Nos encantaría saberlo! Si usas WPipe en producción, nos motiva mucho saberlo.
-
-** badge opcional:**
-
-```markdown
-[![Built with WPipe](https://img.shields.io/badge/Built%20with-WPipe-blue)](https://github.com/wisrovi/wpipe)
-```
-
-📧 **Contáctanos:** wisrovi.rodriguez@gmail.com
-
-Consulta **USERS.md** para ver la lista completa de usuarios reconocidos.
-
----
-
-## 📜 Historial de Versiones (Resumen)
-
-| Versión | Fecha | Cambios Principales |
-|---------|-------|---------------------|
-| **2.5.2** | 2026-08-07 | `For.merge_policy` fix (accumulate/last_wins/callable), async For handler |
-| **2.5.1** | 2026-08-07 | Parallel merge_policy fix, checkpoints unblocked, dashboard get_table_data, mypy/ruff 0 |
-| **2.5.0** | 2026-08-06 | Flag `save_json_input_output`, Parallel.merge_policy, optimizaciones |
-| **2.4.3** | — | Optimización serializador, memoria compartida, checkpoints |
-| **2.4.0** | — | Bump estable LTS |
-
----
-
-Diseñado con ❤️ por **William Rodriguez** (wisrovi) para ingenieros que no aceptan menos que la excelencia.
+Distributed under the **MIT License**. Free for commercial, enterprise, and academic research use.
